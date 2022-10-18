@@ -1,0 +1,95 @@
+{
+  "name": "create-ts-json-schema",
+  "version": "0.5.0",
+  "description": "",
+  "scripts": {
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "dev": "ts-node --project ./tsconfig.json lib/cli.ts",
+    "debug": "node --inspect-brk -r ts-node/register lib/cli.ts",
+    "test": "jest"
+  },
+  "main": "index.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": [
+      {
+        "import": "./dist/esm/esm.js",
+        "require": "./dist/cjs/cjs.js"
+      },
+      "./dist/cjs/cjs.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imjuni/create-ts-json-schema.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imjuni/create-ts-json-schema/issues"
+  },
+  "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "fast-glob": "^3.2.12",
+    "fast-safe-stringify": "^2.1.1",
+    "find-up": "^5.0.0",
+    "fuse.js": "^6.6.2",
+    "inquirer": "^8.2.4",
+    "inquirer-autocomplete-prompt": "^2.0.0",
+    "jsonc-parser": "^3.2.0",
+    "mathjs": "^11.3.0",
+    "minimist": "^1.2.7",
+    "my-easy-fp": "^0.16.0",
+    "my-node-fp": "^0.8.1",
+    "my-only-either": "^1.3.0",
+    "pino": "^8.6.1",
+    "pino-pretty": "^9.1.1",
+    "ts-json-schema-generator": "^1.1.2",
+    "ts-morph": "^16.0.0",
+    "tsimportlib": "0.0.3",
+    "tslib": "^2.4.0",
+    "type-fest": "^3.1.0",
+    "yargs": "^17.6.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^9.0.1",
+    "@sindresorhus/tsconfig": "^3.0.1",
+    "@tsconfig/node14": "^1.0.3",
+    "@types/inquirer": "^9.0.2",
+    "@types/jest": "^29.1.2",
+    "@types/lowdb": "^1.0.11",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.11.0",
+    "@types/parse-gitignore": "^1.0.0",
+    "@types/source-map-support": "^0.5.6",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.25.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.2.1",
+    "execa": "^5.1.1",
+    "jest": "^29.2.0",
+    "just-task": "^1.6.1",
+    "prettier-eslint": "^15.0.1",
+    "prettier-plugin-organize-imports": "^3.1.1",
+    "read-pkg": "^5.2.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-sourcemaps": "^0.6.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-ts": "^3.0.2",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.0",
+    "typescript": "^4.8.4"
+  }
+}
