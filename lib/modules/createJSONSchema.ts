@@ -34,9 +34,9 @@ export default function createJSONSchema({
       topRef: schemaConfig?.topRef ?? false,
       jsDoc: schemaConfig?.jsDoc ?? 'extended',
       sortProps: schemaConfig?.sortProps ?? true,
-      strictTuples: schemaConfig?.strictTuples,
+      strictTuples: schemaConfig?.strictTuples ?? true,
       skipTypeCheck: schemaConfig?.skipTypeCheck ?? option.skipError,
-      encodeRefs: schemaConfig?.encodeRefs,
+      encodeRefs: schemaConfig?.encodeRefs ?? true,
       extraTags: schemaConfig?.extraTags,
       additionalProperties: schemaConfig?.additionalProperties ?? false,
     };

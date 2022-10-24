@@ -1,7 +1,8 @@
 import getExportedName from '@compilers/getExportedName';
-import IConsoleOption from '@configs/interfaces/IConsoleOption';
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import isFilterByModifier from '@modules/isFilterByModifier';
+import isSourceFileInclude from '@modules/isSourceFileInclude';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
 import * as tsm from 'ts-morph';
@@ -9,7 +10,7 @@ import * as tsm from 'ts-morph';
 /**
  * getExportTypes function params
  */
-interface IGetAllExportTypesParams<T extends IConsoleOption | IDatabaseOption> {
+interface IGetAllExportTypesParams<T extends IDeleteSchemaOption | IAddSchemaOption> {
   project: tsm.Project;
   option: T;
 }
@@ -21,7 +22,7 @@ interface IGetExportTypesReturn {
   node: tsm.ExportedDeclarations;
 }
 
-export default function getAllExportedTypes<T extends IConsoleOption | IDatabaseOption>({
+export default function getAllExportedTypes<T extends IDeleteSchemaOption | IAddSchemaOption>({
   project,
   option,
 }: IGetAllExportTypesParams<T>): PassFailEither<Error, IGetExportTypesReturn[]> {
@@ -33,7 +34,7 @@ export default function getAllExportedTypes<T extends IConsoleOption | IDatabase
         return { sourceFile, filePath };
       })
       .filter((source) => isFilterByModifier(option, source.filePath))
-      .filter((source) => option.files.includes(source.filePath))
+      .filter((source) => isSourceFileInclude(option.files, source.filePath))
       .map((source) => {
         const exportedDeclarationsMap = source.sourceFile.getExportedDeclarations();
 
@@ -43,6 +44,13 @@ export default function getAllExportedTypes<T extends IConsoleOption | IDatabase
               filePath: source.sourceFile.getFilePath().toString(),
               identifier: getExportedName(exportedDeclaration),
               exportedDeclarations: exportedDeclaration,
+              importMap: {
+                typeAlias: source.sourceFile.getTypeAliases(),
+                interface: source.sourceFile.getInterfaces(),
+                class: source.sourceFile.getClasses(),
+                enum: source.sourceFile.getEnums(),
+                variable: source.sourceFile.getVariableDeclarations(),
+              },
             }));
           })
           .flat();

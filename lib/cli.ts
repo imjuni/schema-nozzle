@@ -1,32 +1,53 @@
+import addBuilder from '@cli/add-builder';
 import builder from '@cli/builder';
-import consoleBuilder from '@cli/console-builder';
-import dbBuilder from '@cli/db-builder';
-import IConsoleOption from '@configs/interfaces/IConsoleOption';
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import deleteBuilder from '@cli/delete-builder';
+import addOnDatabase from '@commands/addOnDatabase';
+import deleteOnDatabase from '@commands/deleteOnDatabase';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import isValidateConfig from '@configs/isValidateConfig';
 import logger from '@tools/logger';
 import yargs, { CommandModule } from 'yargs';
-import { createOnConsole, createOnDatabase } from './ctjs';
 
 const log = logger();
 log.level = 'debug';
 
-const dbCmd: CommandModule<IDatabaseOption, IDatabaseOption> = {
-  command: 'db',
-  describe: 'schema generate on single json file',
-  builder: (argv) => dbBuilder(builder(argv)),
+const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
+  command: 'add',
+  describe: 'add or update schema on json db file',
+  builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
-    await createOnDatabase(argv);
+    await addOnDatabase(argv);
     log.trace('complete');
   },
 };
 
-const consoleCmd: CommandModule<IConsoleOption, IConsoleOption> = {
-  command: 'console',
+const deleteCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
+  command: 'delete',
   describe: 'schema generate on console output or output file',
-  builder: (argv) => consoleBuilder(builder(argv)),
+  builder: (argv) => deleteBuilder(builder(argv)),
   handler: async (argv) => {
-    const schemas = await createOnConsole(argv);
+    const schemas = await deleteOnDatabase(argv);
+    log.trace(schemas);
+  },
+};
+
+const refreshCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
+  command: 'refresh',
+  describe: 'schema generate on console output or output file',
+  builder: (argv) => deleteBuilder(builder(argv)),
+  handler: async (argv) => {
+    const schemas = await deleteOnDatabase(argv);
+    log.trace(schemas);
+  },
+};
+
+const truncateCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
+  command: 'truncate',
+  describe: 'schema generate on console output or output file',
+  builder: (argv) => deleteBuilder(builder(argv)),
+  handler: async (argv) => {
+    const schemas = await deleteOnDatabase(argv);
     log.trace(schemas);
   },
 };
@@ -34,8 +55,10 @@ const consoleCmd: CommandModule<IConsoleOption, IConsoleOption> = {
 const parser = yargs(process.argv.slice(2));
 
 parser
-  .command(dbCmd as CommandModule<{}, IDatabaseOption>)
-  .command(consoleCmd as CommandModule<{}, IConsoleOption>)
+  .command(addCmd as CommandModule<{}, IAddSchemaOption>)
+  .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
+  .command(refreshCmd as CommandModule<{}, IDeleteSchemaOption>)
+  .command(truncateCmd as CommandModule<{}, IDeleteSchemaOption>)
   .check(isValidateConfig)
   .recommendCommands()
   .demandCommand()

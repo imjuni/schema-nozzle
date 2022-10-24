@@ -1,10 +1,10 @@
 import IBaseOption from '@configs/interfaces/IBaseOption';
 import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import getFilesFromPrompt from '@modules/getFilesFromPrompt';
+import getAddFilesFromPrompt from '@modules/getAddFilesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
 
-export default async function getFiles({
+export default async function getAddFiles({
   resolvedPaths,
   option,
 }: {
@@ -13,7 +13,7 @@ export default async function getFiles({
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.files == null || option.files.length <= 0) {
-      const files = await getFilesFromPrompt(resolvedPaths, option);
+      const files = await getAddFilesFromPrompt(resolvedPaths, option);
       return pass(files);
     }
 

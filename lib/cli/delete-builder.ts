@@ -1,7 +1,7 @@
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import { Argv } from 'yargs';
 
-export default function dbBuilder(argv: Argv<{}>) {
+export default function deleteBuilder(argv: Argv<{}>) {
   // have no alias option
   argv.option('output', {
     alias: 'o',
@@ -10,5 +10,5 @@ export default function dbBuilder(argv: Argv<{}>) {
     demandOption: true,
   });
 
-  return argv as Argv<IDatabaseOption>;
+  return argv as Argv<IDeleteSchemaOption>;
 }

@@ -1,0 +1,143 @@
+[
+  {
+    "record": {
+      "id": "IProfessorDto",
+      "import": [
+        {
+          "name": "IProfessorDto",
+          "from": [
+            "I18nDto"
+          ]
+        },
+        {
+          "name": "IProfessorDto",
+          "from": [
+            "TMAJOR"
+          ]
+        }
+      ],
+      "export": [],
+      "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"nick\":{\"type\":\"string\"},\"name\":{\"$ref\":\"I18nDto\"},\"age\":{\"type\":\"number\"},\"major\":{\"$ref\":\"TMAJOR\"},\"students\":{\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"createAt\":{\"type\":\"string\",\"format\":\"date-time\"},\"id\":{\"type\":\"string\"},\"nick\":{\"type\":\"string\"},\"name\":{\"$ref\":\"I18nDto\"},\"age\":{\"type\":\"number\"},\"major\":{\"$ref\":\"TMAJOR\"}},\"required\":[\"age\",\"createAt\",\"id\",\"major\",\"name\",\"nick\"]}},\"required\":[\"id\",\"nick\",\"name\",\"age\",\"major\",\"students\"],\"additionalProperties\":false}",
+      "schemaobj": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nick": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "I18nDto"
+          },
+          "age": {
+            "type": "number"
+          },
+          "major": {
+            "$ref": "TMAJOR"
+          },
+          "students": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "createAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "id": {
+                "type": "string"
+              },
+              "nick": {
+                "type": "string"
+              },
+              "name": {
+                "$ref": "I18nDto"
+              },
+              "age": {
+                "type": "number"
+              },
+              "major": {
+                "$ref": "TMAJOR"
+              }
+            },
+            "required": [
+              "age",
+              "createAt",
+              "id",
+              "major",
+              "name",
+              "nick"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "nick",
+          "name",
+          "age",
+          "major",
+          "students"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "definitions": [
+      {
+        "id": "I18nDto",
+        "import": [],
+        "export": [
+          {
+            "name": "I18nDto",
+            "to": [
+              "IProfessorDto"
+            ]
+          }
+        ],
+        "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"content\":{\"type\":\"string\"}},\"required\":[\"id\",\"language\",\"content\"],\"additionalProperties\":false}",
+        "schemaobj": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "language",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      },
+      {
+        "id": "TMAJOR",
+        "import": [],
+        "export": [
+          {
+            "name": "TMAJOR",
+            "to": [
+              "IProfessorDto"
+            ]
+          }
+        ],
+        "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"string\",\"enum\":[\"computer science\",\"electrical\"]}",
+        "schemaobj": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "string",
+          "enum": [
+            "computer science",
+            "electrical"
+          ]
+        }
+      }
+    ]
+  }
+]

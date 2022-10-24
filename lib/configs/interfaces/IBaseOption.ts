@@ -1,6 +1,6 @@
 export default interface IBaseOption {
   /** configuration file */
-  config: string;
+  config?: string;
 
   /** tsconfig.json file path */
   project: string;
@@ -13,6 +13,9 @@ export default interface IBaseOption {
 
   /** no banner in generated schema */
   noBanner: boolean;
+
+  /** database file directory */
+  output: string;
 
   skipError: boolean;
 

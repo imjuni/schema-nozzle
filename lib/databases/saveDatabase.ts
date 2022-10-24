@@ -1,4 +1,5 @@
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import dbFileName from '@databases/interfaces/dbFileName';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import fastSafeStringify from 'fast-safe-stringify';
@@ -7,8 +8,8 @@ import { isDirectory } from 'my-node-fp';
 import path from 'path';
 
 export default async function saveDatabase(
-  option: IDatabaseOption,
-  db: Record<string, IDatabaseRecord>,
+  option: IAddSchemaOption | IDeleteSchemaOption,
+  db: Record<string, IDatabaseRecord | undefined>,
 ) {
   const dbPath = (await isDirectory(option.output))
     ? path.join(option.output, dbFileName)

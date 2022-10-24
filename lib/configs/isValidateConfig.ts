@@ -1,12 +1,14 @@
-import IConsoleOption from '@configs/interfaces/IConsoleOption';
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import logger from 'lib/tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
 
 const log = logger();
 
-export default function isValidateConfig<T extends IConsoleOption | IDatabaseOption>(option: T) {
+export default function isValidateConfig<T extends IDeleteSchemaOption | IAddSchemaOption>(
+  option: T,
+) {
   const { project } = option;
   const resolvedProject = path.isAbsolute(project) ? project : path.resolve(project);
 

@@ -34,6 +34,7 @@
   "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
   "dependencies": {
     "chalk": "^4.1.2",
+    "fast-copy": "^3.0.0",
     "fast-glob": "^3.2.12",
     "fast-safe-stringify": "^2.1.1",
     "find-up": "^5.0.0",
@@ -46,6 +47,7 @@
     "my-easy-fp": "^0.16.0",
     "my-node-fp": "^0.8.1",
     "my-only-either": "^1.3.0",
+    "object-traversal": "^1.0.1",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.1",
     "ts-json-schema-generator": "^1.1.2",
@@ -53,6 +55,8 @@
     "tsimportlib": "0.0.3",
     "tslib": "^2.4.0",
     "type-fest": "^3.1.0",
+    "url-join": "^5.0.0",
+    "url-naong": "^1.0.0",
     "yargs": "^17.6.0"
   },
   "devDependencies": {

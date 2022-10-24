@@ -25,7 +25,7 @@ async function getFilePath(filePath: string, cwd: string): Promise<string> {
   return replaceSepToPosix(win32DriveLetterUpdown(path.resolve(filePathWithCwd), 'upper'));
 }
 
-export default async function getFilesFromPrompt(
+export default async function getAddFilesFromPrompt(
   resolvedPaths: IResolvedPaths,
   option: IBaseOption,
 ): Promise<string[]> {

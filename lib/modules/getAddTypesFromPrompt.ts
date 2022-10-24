@@ -31,7 +31,7 @@ const weight: Record<TEXPORTED_TYPE, number> = {
   [TEXPORTED_TYPE.BINDING_ELEMENT]: Number.MAX_SAFE_INTEGER,
 };
 
-export default async function getTypesFromPrompt({
+export default async function getAddTypesFromPrompt({
   project,
   option,
 }: IGetTypesFromPrompt): Promise<string[]> {

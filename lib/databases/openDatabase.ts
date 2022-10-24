@@ -1,4 +1,5 @@
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import dbFileName from '@databases/interfaces/dbFileName';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import safeParse from '@tools/safeParse';
@@ -6,7 +7,7 @@ import fs from 'fs';
 import { exists, isDirectory } from 'my-node-fp';
 import path from 'path';
 
-export default async function openDatabase(option: IDatabaseOption) {
+export default async function openDatabase(option: IAddSchemaOption | IDeleteSchemaOption) {
   const dbPath = (await isDirectory(option.output))
     ? path.join(option.output, dbFileName)
     : option.output;

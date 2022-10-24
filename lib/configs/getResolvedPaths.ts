@@ -1,10 +1,10 @@
-import IConsoleOption from '@configs/interfaces/IConsoleOption';
-import IDatabaseOption from '@configs/interfaces/IDatabaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import { replaceSepToPosix, win32DriveLetterUpdown } from 'my-node-fp';
 import path from 'path';
 
-export default function getResolvedPaths<T extends IConsoleOption | IDatabaseOption>(
+export default function getResolvedPaths<T extends IDeleteSchemaOption | IAddSchemaOption>(
   option: T,
 ): IResolvedPaths {
   const project = replaceSepToPosix(win32DriveLetterUpdown(path.resolve(option.project), 'upper'));

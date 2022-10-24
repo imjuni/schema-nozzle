@@ -1,0 +1,114 @@
+{
+  "file://examples/IStudentDto.ts/IStudentDto": {
+    "id": "file://examples/IStudentDto.ts/IStudentDto",
+    "type": "interface",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"},\"major\":{\"$ref\":\"#/definitions/TMAJOR\"}},\"required\":[\"id\",\"name\",\"age\",\"major\"],\"additionalProperties\":false,\"definitions\":{\"TMAJOR\":{\"type\":\"string\",\"enum\":[\"computer science\",\"electrical\"]}}}",
+    "schemaobj": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "age": {
+          "type": "number"
+        },
+        "major": {
+          "$ref": "#/definitions/TMAJOR"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "age",
+        "major"
+      ],
+      "additionalProperties": false,
+      "definitions": {
+        "TMAJOR": {
+          "type": "string",
+          "enum": [
+            "computer science",
+            "electrical"
+          ]
+        }
+      }
+    },
+    "banner": ""
+  },
+  "file://lib/configs/interfaces/IDatabaseOption.ts/IDatabaseOption": {
+    "id": "file://lib/configs/interfaces/IDatabaseOption.ts/IDatabaseOption",
+    "type": "interface",
+    "schema": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"config\":{\"type\":\"string\",\"description\":\"configuration file\"},\"project\":{\"type\":\"string\",\"description\":\"tsconfig.json file path\"},\"files\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"input filename\"},\"types\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"type name in input filename\"},\"noBanner\":{\"type\":\"boolean\",\"description\":\"no banner in generated schema\"},\"skipError\":{\"type\":\"boolean\"},\"prefix\":{\"type\":\"string\"},\"postfix\":{\"type\":\"string\"},\"verbose\":{\"type\":\"boolean\",\"description\":\"verbose message\"},\"type\":{\"type\":\"string\",\"const\":\"db\"},\"output\":{\"type\":\"string\",\"description\":\"output file or database file directory\"}},\"required\":[\"config\",\"files\",\"noBanner\",\"output\",\"project\",\"skipError\",\"type\",\"types\",\"verbose\"],\"additionalProperties\":false,\"definitions\":{}}",
+    "schemaobj": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string",
+          "description": "configuration file"
+        },
+        "project": {
+          "type": "string",
+          "description": "tsconfig.json file path"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "input filename"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "type name in input filename"
+        },
+        "noBanner": {
+          "type": "boolean",
+          "description": "no banner in generated schema"
+        },
+        "skipError": {
+          "type": "boolean"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "postfix": {
+          "type": "string"
+        },
+        "verbose": {
+          "type": "boolean",
+          "description": "verbose message"
+        },
+        "type": {
+          "type": "string",
+          "const": "db"
+        },
+        "output": {
+          "type": "string",
+          "description": "output file or database file directory"
+        }
+      },
+      "required": [
+        "config",
+        "files",
+        "noBanner",
+        "output",
+        "project",
+        "skipError",
+        "type",
+        "types",
+        "verbose"
+      ],
+      "additionalProperties": false,
+      "definitions": {}
+    },
+    "banner": ""
+  }
+}
