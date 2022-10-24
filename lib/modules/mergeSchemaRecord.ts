@@ -1,12 +1,10 @@
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import { TDatabase } from '@modules/interfaces/TDatabase';
 import fastCopy from 'fast-copy';
 import { settify } from 'my-easy-fp';
 import { LastArrayElement } from 'type-fest';
 
-export default function mergeSchemaRecord(
-  db: Record<string, IDatabaseRecord>,
-  schema: IDatabaseRecord,
-): IDatabaseRecord {
+export default function mergeSchemaRecord(db: TDatabase, schema: IDatabaseRecord): IDatabaseRecord {
   const prevSchema = db[schema.id];
 
   if (prevSchema == null) {

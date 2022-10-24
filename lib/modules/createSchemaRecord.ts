@@ -1,12 +1,17 @@
+import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import createJSONSchema from '@modules/createJSONSchema';
+import getImportDeclarationMap from '@modules/getImportDeclaration';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
 import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
 import fastCopy from 'fast-copy';
 import fastSafeStringify from 'fast-safe-stringify';
 import { JSONSchema7 } from 'json-schema';
+import { getDirname } from 'my-node-fp';
 import { TPickPass } from 'my-only-either';
 import { TraversalCallback, TraversalCallbackContext, traverse } from 'object-traversal';
+import path from 'path';
+import * as tsm from 'ts-morph';
 
 const traverseHandle: TraversalCallback = ({
   parent,
@@ -22,22 +27,31 @@ const traverseHandle: TraversalCallback = ({
 };
 
 interface ICreateSchemaRecordArgs {
-  schemaMetadata: TPickPass<ReturnType<typeof createJSONSchema>>;
+  resolvedPaths: IResolvedPaths;
+  project: tsm.Project;
+  metadata: TPickPass<ReturnType<typeof createJSONSchema>>;
 }
 
-export default function createSchemaRecord({ schemaMetadata }: ICreateSchemaRecordArgs): {
+export default async function createSchemaRecord({
+  resolvedPaths,
+  project,
+  metadata,
+}: ICreateSchemaRecordArgs): Promise<{
   record: IDatabaseRecord;
   definitions?: IDatabaseRecord[];
-} {
-  const targetSchema = fastCopy(schemaMetadata.schema);
+}> {
+  const basePath = await getDirname(resolvedPaths.project);
+  const targetSchema = fastCopy(metadata.schema);
+  const importMap = getImportDeclarationMap({ project });
+
   traverse(targetSchema, traverseHandle);
 
-  const id = schemaMetadata.typeName;
+  const id = metadata.typeName;
   const stringified = fastSafeStringify({ ...targetSchema, definitions: undefined });
 
-  // definitions에 있는 것을 추출
-  if (schemaMetadata.schema.definitions != null) {
-    const definitions = Object.entries(schemaMetadata.schema.definitions)
+  // extract schema from definitions field
+  if (metadata.schema.definitions != null) {
+    const definitions = Object.entries(metadata.schema.definitions)
       .map(([key, value]) => ({ key, value }))
       .filter(
         (definition): definition is { key: string; value: JSONSchema7 } =>
@@ -46,7 +60,7 @@ export default function createSchemaRecord({ schemaMetadata }: ICreateSchemaReco
       .map((definition) => {
         const definitionId = definition.key;
         const definitionSchema: JSONSchema7 = {
-          $schema: schemaMetadata.schema.$schema,
+          $schema: metadata.schema.$schema,
           ...definition.value,
         };
 
@@ -58,17 +72,27 @@ export default function createSchemaRecord({ schemaMetadata }: ICreateSchemaReco
             ? [
                 {
                   name: definitionId,
+                  filePath: '',
                   to: [id],
                 },
               ]
             : [];
 
+        const importDeclaration = importMap[definitionId];
+
+        if (importDeclaration == null) {
+          throw new Error(`Cannot found import name: ${definitionId}`);
+        }
+
         const definitionRecord: IDatabaseRecord = {
           id: definitionId,
+          filePath: path.relative(
+            basePath,
+            importDeclaration.node.getSourceFile().getFilePath().toString(),
+          ),
           import: [],
           export: exportValue,
           schema: definitionStringified,
-          schemaobj: definitionSchema,
         };
 
         return definitionRecord;
@@ -86,10 +110,10 @@ export default function createSchemaRecord({ schemaMetadata }: ICreateSchemaReco
 
     const record: IDatabaseRecord = {
       id,
+      filePath: path.relative(basePath, metadata.filePath),
       import: importValue,
       export: [],
       schema: stringified,
-      schemaobj: { ...targetSchema, definitions: undefined },
     };
 
     return { record, definitions };
@@ -97,10 +121,10 @@ export default function createSchemaRecord({ schemaMetadata }: ICreateSchemaReco
 
   const record: IDatabaseRecord = {
     id,
+    filePath: path.relative(basePath, metadata.filePath),
     import: [],
     export: [],
     schema: stringified,
-    schemaobj: targetSchema,
   };
 
   return { record };

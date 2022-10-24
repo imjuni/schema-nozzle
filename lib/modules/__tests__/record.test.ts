@@ -1,5 +1,4 @@
 import getTsProject from '@compilers/getTsProject';
-import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import getResolvedPaths from '@configs/getResolvedPaths';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import createJSONSchema from '@modules/createJSONSchema';
@@ -15,49 +14,6 @@ import path from 'path';
 import * as env from './env';
 
 test('T001-create-schema-record', async () => {
-  const expectation = parse(
-    (await fs.promises.readFile(path.join(__dirname, 'data', '001.json'))).toString(),
-  );
-
-  const record = createSchemaRecord({
-    schemaMetadata: {
-      filePath: '/home/user/project/college/TStudentDto.ts',
-      typeName: 'TStudentDto',
-      schema: {
-        $schema: 'http://json-schema.org/draft-07/schema#',
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-          },
-          name: {
-            type: 'string',
-          },
-          age: {
-            type: 'number',
-          },
-          major: {
-            $ref: 'TMAJOR',
-          },
-        },
-        required: ['id', 'name', 'age', 'major'],
-        additionalProperties: false,
-        definitions: {
-          TMAJOR: {
-            type: 'string',
-            enum: ['computer science', 'electrical'],
-          },
-        },
-      },
-      type: TEXPORTED_TYPE.INTERFACE,
-      banner: '',
-    },
-  });
-
-  expect(record).toEqual(expectation);
-});
-
-test('T002-create-schema-record', async () => {
   const expectation = parse(
     (await fs.promises.readFile(path.join(__dirname, 'data', '002.json'))).toString(),
   );
@@ -94,14 +50,21 @@ test('T002-create-schema-record', async () => {
       type: targetType.type,
       filePath: targetType.filePath,
       typeName: targetType.identifier,
+      imports: targetType.imports,
     }),
   );
 
-  const records = schemas
-    .filter(
-      (schema): schema is TPickIPass<ReturnType<typeof createJSONSchema>> => schema.type === 'pass',
-    )
-    .map((schema) => createSchemaRecord({ schemaMetadata: schema.pass }));
+  const records = await Promise.all(
+    schemas
+      .filter(
+        (schema): schema is TPickIPass<ReturnType<typeof createJSONSchema>> =>
+          schema.type === 'pass',
+      )
+      .map((schema) => schema.pass)
+      .map(async (schema) =>
+        createSchemaRecord({ project: project.pass, resolvedPaths, metadata: schema }),
+      ),
+  );
 
   expect(records).toEqual(expectation);
 });

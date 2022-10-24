@@ -10,4 +10,5 @@ export const TEXPORTED_TYPE = {
   BINDING_ELEMENT: 'binding-element',
 } as const;
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
 export type TEXPORTED_TYPE = typeof TEXPORTED_TYPE[keyof typeof TEXPORTED_TYPE];

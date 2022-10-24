@@ -2,7 +2,6 @@ import getAllExportedTypes from '@compilers/getAllExportTypes';
 import getExportedType from '@compilers/getExportedType';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import isFilterByModifier from '@modules/isFilterByModifier';
 import isSourceFileInclude from '@modules/isSourceFileInclude';
 import * as tsm from 'ts-morph';
 
@@ -15,15 +14,19 @@ export default function getTargetTypes<T extends IDeleteSchemaOption | IAddSchem
   project,
   option,
 }: IValidateFileType<T>) {
-  const { files } = option;
+  const files = 'files' in option ? option.files : [];
 
   const allSourceFiles = project
     .getSourceFiles()
     .map((sourceFile) => ({ source: sourceFile, filePath: sourceFile.getFilePath().toString() }));
 
-  const sourceFiles = allSourceFiles
-    .filter((sourceFile) => isFilterByModifier(option, sourceFile.filePath))
-    .filter((source) => isSourceFileInclude(files, source.filePath));
+  const sourceFiles = allSourceFiles.filter((source) => {
+    if ('files' in option) {
+      return isSourceFileInclude(files, source.filePath);
+    }
+
+    return true;
+  });
 
   const allExportedTypes = getAllExportedTypes({ project, option });
 
@@ -43,6 +46,10 @@ export default function getTargetTypes<T extends IDeleteSchemaOption | IAddSchem
       identifier: exportedType.identifier,
       node: exportedType.node,
       type: getExportedType(exportedType.node),
+      imports: exportedType.sourceFile
+        .getNodesReferencingOtherSourceFiles()
+        .map((reference) => reference.asKind(tsm.SyntaxKind.ImportDeclaration))
+        .filter((reference): reference is tsm.ImportDeclaration => reference != null),
     })),
   };
 }

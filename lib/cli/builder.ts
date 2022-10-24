@@ -17,6 +17,12 @@ export default function builder(argv: Argv<{}>) {
       alias: 'v',
       describe: 'verbose message',
       type: 'string',
+    })
+    .option('output', {
+      alias: 'o',
+      describe: 'database file path',
+      type: 'string',
+      demandOption: true,
     });
 
   // have no alias option
@@ -25,12 +31,6 @@ export default function builder(argv: Argv<{}>) {
       describe: 'configuration file path',
       type: 'string',
       default: true,
-    })
-    .option('files', {
-      describe: 'configuration file path',
-      type: 'string',
-      default: [],
-      array: true,
     })
     .option('types', {
       describe: 'configuration file path',

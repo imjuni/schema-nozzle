@@ -52,6 +52,16 @@ task('+rollup:prod', async () => {
   });
 });
 
+task('lint', async () => {
+  const cmd = 'eslint';
+  const option = '--cache .';
+
+  await execa(cmd, splitArgs(option), {
+    stderr: process.stderr,
+    stdout: process.stdout,
+  });
+});
+
 task('+build', async () => {
   const cmd = 'tsc';
   const option = '--incremental --project tsconfig.json';

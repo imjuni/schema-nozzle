@@ -1,4 +1,4 @@
-import IBaseOption from '@configs/interfaces/IBaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import getAddTypesFromPrompt from '@modules/getAddTypesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
@@ -9,7 +9,7 @@ export default async function getAddTypes({
   option,
 }: {
   project: tsm.Project;
-  option: IBaseOption;
+  option: IAddSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.types == null || option.types.length <= 0) {

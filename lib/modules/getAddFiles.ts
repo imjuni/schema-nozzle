@@ -1,4 +1,4 @@
-import IBaseOption from '@configs/interfaces/IBaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import getAddFilesFromPrompt from '@modules/getAddFilesFromPrompt';
 import { isError } from 'my-easy-fp';
@@ -9,11 +9,11 @@ export default async function getAddFiles({
   option,
 }: {
   resolvedPaths: IResolvedPaths;
-  option: IBaseOption;
+  option: IAddSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.files == null || option.files.length <= 0) {
-      const files = await getAddFilesFromPrompt(resolvedPaths, option);
+      const files = await getAddFilesFromPrompt(resolvedPaths);
       return pass(files);
     }
 

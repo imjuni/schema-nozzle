@@ -1,7 +1,5 @@
 import IPromptAnswerSelectFile from '@cli/interfaces/IPromptAnswerSelectFile';
-import IBaseOption from '@configs/interfaces/IBaseOption';
 import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import getFilterByModifier from '@modules/getFilterByModifier';
 import posixJoin from '@tools/posixJoin';
 import fastGlob from 'fast-glob';
 import { exists } from 'find-up';
@@ -27,7 +25,6 @@ async function getFilePath(filePath: string, cwd: string): Promise<string> {
 
 export default async function getAddFilesFromPrompt(
   resolvedPaths: IResolvedPaths,
-  option: IBaseOption,
 ): Promise<string[]> {
   inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);
 
@@ -36,10 +33,9 @@ export default async function getAddFilesFromPrompt(
     ignore: ['node_modules', 'dist/**', 'artifact/**', '**/*.d.ts', '**/__test__', '**/__tests__'],
   });
 
-  const filteredFiles = getFilterByModifier(option, files);
-  const fuse = new Fuse(filteredFiles, { includeScore: true });
+  const fuse = new Fuse(files, { includeScore: true });
 
-  if (filteredFiles.length <= 0) {
+  if (files.length <= 0) {
     throw new Error(`Cannot found typescript source files: ${resolvedPaths.cwd}`);
   }
 

@@ -1,7 +1,7 @@
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import dbFileName from '@databases/interfaces/dbFileName';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import { TDatabase } from '@modules/interfaces/TDatabase';
 import safeParse from '@tools/safeParse';
 import fs from 'fs';
 import { exists, isDirectory } from 'my-node-fp';
@@ -14,7 +14,7 @@ export default async function openDatabase(option: IAddSchemaOption | IDeleteSch
 
   const rawDb = (await exists(dbPath)) ? (await fs.promises.readFile(dbPath)).toString() : '{}';
 
-  const db = safeParse<Record<string, IDatabaseRecord>>(rawDb);
+  const db = safeParse<TDatabase>(rawDb);
 
   if (db.type === 'fail') throw db.fail;
 

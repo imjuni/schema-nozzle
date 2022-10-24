@@ -1,19 +1,20 @@
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import IBaseOption from '@configs/interfaces/IBaseOption';
 import CreateJSONSchemaError from '@errors/CreateJsonSchemaError';
-import getBanner from '@modules/getBanner';
 import ICreatedJSONSchema from '@modules/interfaces/ICreatedJSONSchema';
 import { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
 import * as TSJ from 'ts-json-schema-generator';
+import * as tsm from 'ts-morph';
 
-interface ICreateJSONSchema {
+interface ICreateJSONSchemaArgs {
   option: IBaseOption;
   filePath: string;
   typeName: string;
   type: TEXPORTED_TYPE;
   schemaConfig?: TSJ.Config;
+  imports: tsm.ImportDeclaration[];
 }
 
 export default function createJSONSchema({
@@ -21,8 +22,12 @@ export default function createJSONSchema({
   schemaConfig,
   filePath,
   type,
+  imports,
   typeName,
-}: ICreateJSONSchema): PassFailEither<Error, ICreatedJSONSchema> {
+}: ICreateJSONSchemaArgs): PassFailEither<
+  Error,
+  ICreatedJSONSchema & { imports: tsm.ImportDeclaration[] }
+> {
   try {
     const generatorOption: TSJ.Config = {
       path: filePath,
@@ -49,8 +54,8 @@ export default function createJSONSchema({
       filePath,
       typeName,
       schema,
+      imports,
       type,
-      banner: getBanner(option),
     });
   } catch (catched) {
     const err = isError(catched) ?? new Error('unknown error raised');

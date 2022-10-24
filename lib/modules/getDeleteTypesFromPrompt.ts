@@ -1,9 +1,10 @@
 import IBaseOption from '@configs/interfaces/IBaseOption';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import { TNullableDatabase } from '@modules/interfaces/TDatabase';
 import inquirer from 'inquirer';
 
 interface IGetTypesFromPrompt {
-  db: Record<string, IDatabaseRecord | undefined>;
+  db: TNullableDatabase;
   option: IBaseOption;
 }
 

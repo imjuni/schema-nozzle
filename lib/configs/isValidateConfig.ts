@@ -17,7 +17,7 @@ export default function isValidateConfig<T extends IDeleteSchemaOption | IAddSch
     return false;
   }
 
-  if (option.files != null && option.files.length > 0) {
+  if ('files' in option && option.files != null && option.files.length > 0) {
     const files = option.files.map((file) => ({ file, exists: existsSync(file) }));
     const notExistFiles = files.filter((file) => file.exists === false);
     log.error(`Cannot found files: ${notExistFiles.map((file) => file.file).join(', ')}`);

@@ -2,7 +2,7 @@ import IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
 import getExportedName from '@compilers/getExportedName';
 import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
-import IBaseOption from '@configs/interfaces/IBaseOption';
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import inquirer from 'inquirer';
 import path from 'path';
 import * as tsm from 'ts-morph';
@@ -16,7 +16,7 @@ interface IChoiceTypeItem {
 
 interface IGetTypesFromPrompt {
   project: tsm.Project;
-  option: IBaseOption;
+  option: IAddSchemaOption;
 }
 
 const weight: Record<TEXPORTED_TYPE, number> = {

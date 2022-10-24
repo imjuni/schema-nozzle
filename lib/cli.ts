@@ -1,6 +1,6 @@
-import addBuilder from '@cli/add-builder';
+import addBuilder from '@cli/addBuilder';
 import builder from '@cli/builder';
-import deleteBuilder from '@cli/delete-builder';
+import deleteBuilder from '@cli/deleteBuilder';
 import addOnDatabase from '@commands/addOnDatabase';
 import deleteOnDatabase from '@commands/deleteOnDatabase';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
@@ -17,7 +17,7 @@ const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
   describe: 'add or update schema on json db file',
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
-    await addOnDatabase(argv);
+    await addOnDatabase(argv, true);
     log.trace('complete');
   },
 };

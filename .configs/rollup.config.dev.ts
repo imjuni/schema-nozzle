@@ -16,48 +16,8 @@ export default [
     ],
     plugins: [
       nodeResolve({
-        resolveOnly: (module) => {
-          return pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null;
-        },
-      }),
-      ts({ tsconfig: 'tsconfig.json' }),
-    ],
-  },
-  {
-    input: 'lib/pipe-md.ts',
-    output: [
-      {
-        format: 'cjs',
-        file: 'dist/pipe-md.js',
-        banner: '#!/usr/bin/env node',
-      },
-    ],
-    plugins: [
-      nodeResolve({
-        resolveOnly: (module) => {
-          return pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null;
-        },
-      }),
-      ts({ tsconfig: 'tsconfig.json' }),
-    ],
-  },
-  {
-    input: 'lib/pipe-md.ts',
-    output: [
-      {
-        format: 'cjs',
-        file: 'dist/pipe-md.cjs',
-      },
-      {
-        format: 'esm',
-        file: 'dist/pipe-md.mjs',
-      },
-    ],
-    plugins: [
-      nodeResolve({
-        resolveOnly: (module) => {
-          return pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null;
-        },
+        resolveOnly: (module) =>
+          pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null,
       }),
       ts({ tsconfig: 'tsconfig.json' }),
     ],

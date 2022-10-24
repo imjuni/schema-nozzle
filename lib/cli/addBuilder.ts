@@ -3,11 +3,11 @@ import { Argv } from 'yargs';
 
 export default function addBuilder(argv: Argv<{}>) {
   // have no alias option
-  argv.option('output', {
-    alias: 'o',
-    describe: 'database file path',
+  argv.option('files', {
+    describe: 'configuration file path',
     type: 'string',
-    demandOption: true,
+    default: [],
+    array: true,
   });
 
   return argv as Argv<IAddSchemaOption>;

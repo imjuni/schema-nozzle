@@ -1,7 +1,6 @@
 import getExportedName from '@compilers/getExportedName';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import isFilterByModifier from '@modules/isFilterByModifier';
 import isSourceFileInclude from '@modules/isSourceFileInclude';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
@@ -33,8 +32,13 @@ export default function getAllExportedTypes<T extends IDeleteSchemaOption | IAdd
         const filePath = sourceFile.getFilePath().toString();
         return { sourceFile, filePath };
       })
-      .filter((source) => isFilterByModifier(option, source.filePath))
-      .filter((source) => isSourceFileInclude(option.files, source.filePath))
+      .filter((source) => {
+        if ('files' in option) {
+          return isSourceFileInclude(option.files, source.filePath);
+        }
+
+        return true;
+      })
       .map((source) => {
         const exportedDeclarationsMap = source.sourceFile.getExportedDeclarations();
 
@@ -44,13 +48,6 @@ export default function getAllExportedTypes<T extends IDeleteSchemaOption | IAdd
               filePath: source.sourceFile.getFilePath().toString(),
               identifier: getExportedName(exportedDeclaration),
               exportedDeclarations: exportedDeclaration,
-              importMap: {
-                typeAlias: source.sourceFile.getTypeAliases(),
-                interface: source.sourceFile.getInterfaces(),
-                class: source.sourceFile.getClasses(),
-                enum: source.sourceFile.getEnums(),
-                variable: source.sourceFile.getVariableDeclarations(),
-              },
             }));
           })
           .flat();

@@ -5,12 +5,8 @@ import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 export const baseOption: IBaseOption = {
   config: undefined,
   project: '.',
-  files: [],
   types: [],
-  noBanner: true,
   skipError: true,
-  prefix: undefined,
-  postfix: undefined,
   verbose: false,
   output: '.',
 };
@@ -18,6 +14,7 @@ export const baseOption: IBaseOption = {
 export const addCmdOption: IAddSchemaOption = {
   ...baseOption,
   type: 'add-schema',
+  files: [],
 };
 
 export const deleteCmdOption: IDeleteSchemaOption = {
