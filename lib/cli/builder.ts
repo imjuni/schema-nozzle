@@ -22,7 +22,6 @@ export default function builder(argv: Argv<{}>) {
       alias: 'o',
       describe: 'database file path',
       type: 'string',
-      demandOption: true,
     });
 
   // have no alias option

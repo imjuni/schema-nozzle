@@ -56,7 +56,7 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
       }),
     );
 
-    const validSchemas = (
+    const records = (
       await Promise.all(
         schemas
           .filter(
@@ -73,7 +73,7 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
       .flat()
       .map((schema) => mergeSchemaRecord(db, schema));
 
-    await saveScheams(option, ...validSchemas);
+    await saveScheams(option, ...records);
     spinner.stop({ message: 'Complete', channel: 'succeed' });
 
     return schemas;

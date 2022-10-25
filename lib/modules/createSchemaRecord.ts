@@ -7,6 +7,7 @@ import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
 import fastCopy from 'fast-copy';
 import fastSafeStringify from 'fast-safe-stringify';
 import { JSONSchema7 } from 'json-schema';
+import { settify } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import { TPickPass } from 'my-only-either';
 import { TraversalCallback, TraversalCallbackContext, traverse } from 'object-traversal';
@@ -67,16 +68,16 @@ export default async function createSchemaRecord({
         traverse(definitionSchema, traverseHandle);
 
         const definitionStringified = fastSafeStringify(definitionSchema);
-        const exportValue: ISchemaExportInfo[] =
+        const exportValue: ISchemaExportInfo =
           definitionId !== id
-            ? [
-                {
-                  name: definitionId,
-                  filePath: '',
-                  to: [id],
-                },
-              ]
-            : [];
+            ? {
+                name: definitionId,
+                to: [id],
+              }
+            : {
+                name: definitionId,
+                to: [],
+              };
 
         const importDeclaration = importMap[definitionId];
 
@@ -90,7 +91,10 @@ export default async function createSchemaRecord({
             basePath,
             importDeclaration.node.getSourceFile().getFilePath().toString(),
           ),
-          import: [],
+          import: {
+            name: definitionId,
+            from: [],
+          },
           export: exportValue,
           schema: definitionStringified,
         };
@@ -98,7 +102,7 @@ export default async function createSchemaRecord({
         return definitionRecord;
       });
 
-    const importValue = definitions
+    const duplicableImportValue: ISchemaImportInfo = definitions
       .map((definition) => definition.id)
       .filter((definition) => id !== definition)
       .map(
@@ -106,13 +110,30 @@ export default async function createSchemaRecord({
           name: id,
           from: [definition],
         }),
+      )
+      .reduce(
+        (aggregation, importInfo) => {
+          return { ...aggregation, from: [...aggregation.from, ...importInfo.from] };
+        },
+        {
+          name: id,
+          from: [],
+        },
       );
+
+    const importValue: ISchemaImportInfo = {
+      ...duplicableImportValue,
+      from: settify(duplicableImportValue.from),
+    };
 
     const record: IDatabaseRecord = {
       id,
       filePath: path.relative(basePath, metadata.filePath),
       import: importValue,
-      export: [],
+      export: {
+        name: id,
+        to: [],
+      },
       schema: stringified,
     };
 
@@ -122,8 +143,14 @@ export default async function createSchemaRecord({
   const record: IDatabaseRecord = {
     id,
     filePath: path.relative(basePath, metadata.filePath),
-    import: [],
-    export: [],
+    import: {
+      name: id,
+      from: [],
+    },
+    export: {
+      name: id,
+      to: [],
+    },
     schema: stringified,
   };
 

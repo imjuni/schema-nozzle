@@ -43,8 +43,7 @@ class Spinner {
 
   start(message?: string) {
     if (this.#isEnable && message != null) {
-      this.#spinner.text = message;
-      this.#spinner.start();
+      this.#spinner.start(message);
       this.#isStart = true;
     } else if (this.#isEnable) {
       this.#spinner.start();
@@ -61,10 +60,10 @@ class Spinner {
   stop(display?: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
     if (this.#isStart === true && display != null) {
       this.#spinner[display.channel](display.message);
-      this.#spinner.stopAndPersist();
+      this.#spinner.stop();
       this.#isStart = false;
     } else if (this.#isStart === true) {
-      this.#spinner.stopAndPersist();
+      this.#spinner.stop();
       this.#isStart = false;
     }
   }

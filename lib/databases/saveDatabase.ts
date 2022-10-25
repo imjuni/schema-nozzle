@@ -1,5 +1,6 @@
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import dbFileName from '@databases/interfaces/dbFileName';
 import { TNullableDatabase } from '@modules/interfaces/TDatabase';
 import fastSafeStringify from 'fast-safe-stringify';
@@ -8,7 +9,7 @@ import { isDirectory } from 'my-node-fp';
 import path from 'path';
 
 export default async function saveDatabase(
-  option: IAddSchemaOption | IDeleteSchemaOption,
+  option: IAddSchemaOption | IDeleteSchemaOption | ITruncateSchemaOption,
   db: TNullableDatabase,
 ) {
   const dbPath = (await isDirectory(option.output))

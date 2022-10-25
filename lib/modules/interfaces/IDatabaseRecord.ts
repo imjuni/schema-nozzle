@@ -6,8 +6,7 @@ export default interface IDatabaseRecord {
   id: string;
   schema: string;
   filePath: string;
-  import: ISchemaImportInfo[];
-  export: ISchemaExportInfo[];
+  import: ISchemaImportInfo;
+  export: ISchemaExportInfo;
   // type: TEXPORTED_TYPE;
-  banner?: string;
 }

@@ -4,6 +4,7 @@ import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import inquirer from 'inquirer';
+import { first } from 'my-easy-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';
 
@@ -67,6 +68,10 @@ export default async function getAddTypesFromPrompt({
 
   if (choiceAbleTypes.length <= 0) {
     throw new Error('Cannot found interface or type-alias on typescript source file');
+  }
+
+  if (choiceAbleTypes.length === 1) {
+    return [first(choiceAbleTypes).value.identifier];
   }
 
   const answer = await inquirer.prompt<IPromptAnswerSelectType>([

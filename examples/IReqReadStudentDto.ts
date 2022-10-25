@@ -1,9 +1,12 @@
 import IStudentDto from './IStudentDto';
 
-export interface IReqReadStudentQuerystring {
-  name: IStudentDto['name'];
-}
+export default interface IReqReadStudentDto {
+  Querystring: {
+    name: IStudentDto['name'];
+    major: IStudentDto['major'];
+  };
 
-export interface IReqReadStudentParams {
-  id: IStudentDto['id'];
+  Param: {
+    id: IStudentDto['id'];
+  };
 }

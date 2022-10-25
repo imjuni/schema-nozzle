@@ -4,8 +4,8 @@ import getResolvedPaths from '@configs/getResolvedPaths';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
+import deleteSchemaRecord from '@modules/deleteSchemaRecord';
 import getDeleteTypes from '@modules/getDeleteTypes';
-import { TNullableDatabase } from '@modules/interfaces/TDatabase';
 import fastCopy from 'fast-copy';
 
 // import logger from '@tools/logger';
@@ -29,13 +29,10 @@ export default async function deleteOnDatabase(nullableOption: IDeleteSchemaOpti
 
   const option: IDeleteSchemaOption = { ...nullableOption, types: types.pass };
 
-  const newDb = option.types.reduce<TNullableDatabase>((aggregation, typeName) => {
-    if (aggregation[typeName] != null) {
-      return { ...aggregation, [typeName]: undefined };
-    }
-
-    return { ...aggregation };
-  }, fastCopy(db));
+  const newDb = types.pass.reduce(
+    (aggregation, typeName) => deleteSchemaRecord(aggregation, typeName),
+    fastCopy(db),
+  );
 
   await saveDatabase(option, newDb);
 }
