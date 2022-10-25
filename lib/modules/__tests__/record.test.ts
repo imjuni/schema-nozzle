@@ -47,10 +47,8 @@ test('T001-create-schema-record', async () => {
     createJSONSchema({
       option: nullableOption,
       schemaConfig: undefined,
-      type: targetType.type,
       filePath: targetType.filePath,
       typeName: targetType.identifier,
-      imports: targetType.imports,
     }),
   );
 

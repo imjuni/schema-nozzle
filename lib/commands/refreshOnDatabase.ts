@@ -2,59 +2,48 @@ import spinner from '@cli/spinner';
 import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import openDatabase from '@databases/openDatabase';
 import saveScheams from '@databases/saveScheams';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
-import getAddFiles from '@modules/getAddFiles';
-import getAddTypes from '@modules/getAddTypes';
-import getTargetTypes from '@modules/getTargetTypes';
 import mergeSchemaRecord from '@modules/mergeSchemaRecord';
 import { isError } from 'my-easy-fp';
 import { TPickIPass } from 'my-only-either';
 
-export default async function addOnDatabase(nullableOption: IAddSchemaOption, isMessage?: boolean) {
+export default async function refreshOnDatabase(option: IRefreshSchemaOption, isMessage?: boolean) {
   try {
     spinner.isEnable = isMessage ?? false;
 
-    const resolvedPaths = getResolvedPaths(nullableOption);
+    const resolvedPaths = getResolvedPaths(option);
+    const db = await openDatabase(resolvedPaths);
+
     const project = await getTsProject(resolvedPaths.project);
 
     if (project.type === 'fail') throw project.fail;
 
-    const files = await getAddFiles({ resolvedPaths, option: nullableOption });
-
-    if (files.type === 'fail') throw files.fail;
-
-    const diagnostics = getDiagnostics({ option: nullableOption, project: project.pass });
+    const diagnostics = getDiagnostics({ option, project: project.pass });
 
     if (diagnostics.type === 'fail') throw diagnostics.fail;
 
-    const types = await getAddTypes({
-      project: project.pass,
-      option: { ...nullableOption, files: files.pass },
+    const targetTypes = Object.values(db).map((record) => {
+      return {
+        filePath: record.filePath,
+        typeName: record.id,
+      };
     });
-
-    if (types.type === 'fail') throw types.fail;
-
-    const option: IAddSchemaOption = { ...nullableOption, files: files.pass, types: types.pass };
-
-    const targetTypes = getTargetTypes({ project: project.pass, option });
 
     spinner.start('Start schema generation!');
 
-    const db = await openDatabase(resolvedPaths);
-
-    const schemas = targetTypes.exportedTypes.map((targetType) => {
+    const schemas = targetTypes.map((targetType) => {
       const schema = createJSONSchema({
         option,
         schemaConfig: undefined,
         filePath: targetType.filePath,
-        typeName: targetType.identifier,
+        typeName: targetType.typeName,
       });
 
-      spinner.update({ message: `generate schema: ${targetType.identifier}`, channel: 'info' });
+      spinner.update({ message: `generate schema: ${targetType.typeName}`, channel: 'info' });
       return schema;
     });
 
@@ -78,13 +67,11 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
     await saveScheams(option, db, ...records);
 
     spinner.stop({
-      message: `[${targetTypes.exportedTypes
-        .map((targetType) => `"${targetType.identifier}"`)
-        .join(', ')}] add complete`,
+      message: `[${targetTypes
+        .map((targetType) => `"${targetType.typeName}"`)
+        .join(', ')}] refresh complete`,
       channel: 'succeed',
     });
-
-    return schemas;
   } catch (catched) {
     spinner.stop({ message: 'Error occured...', channel: 'fail' });
     const err = isError(catched) ?? new Error('Unknown error raised');

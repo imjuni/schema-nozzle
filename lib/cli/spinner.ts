@@ -51,9 +51,22 @@ class Spinner {
     }
   }
 
-  update(message: string) {
+  static getColor(channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'>): ora.Color {
+    if (channel === 'fail') {
+      return 'red';
+    }
+
+    if (channel === 'succeed') {
+      return 'green';
+    }
+
+    return 'cyan';
+  }
+
+  update(display: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
     if (this.#isEnable) {
-      this.#spinner.text = message;
+      this.#spinner.color = Spinner.getColor(display.channel);
+      this.#spinner.text = display.message;
     }
   }
 

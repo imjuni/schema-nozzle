@@ -13,7 +13,4 @@ export default interface IBaseOption {
 
   /** skip compile error */
   skipError: boolean;
-
-  /** verbose message */
-  verbose: boolean;
 }

@@ -13,11 +13,6 @@ export default function builder(argv: Argv<{}>) {
       describe: 'configuration file path',
       type: 'string',
     })
-    .option('verbose', {
-      alias: 'v',
-      describe: 'verbose message',
-      type: 'string',
-    })
     .option('output', {
       alias: 'o',
       describe: 'database file path',
@@ -26,13 +21,8 @@ export default function builder(argv: Argv<{}>) {
 
   // have no alias option
   argv
-    .option('no-banner', {
-      describe: 'configuration file path',
-      type: 'string',
-      default: true,
-    })
     .option('types', {
-      describe: 'configuration file path',
+      describe: 'TypeScript type of source code. You can use interface, type alias, enum, class.',
       type: 'string',
       default: [],
       array: true,

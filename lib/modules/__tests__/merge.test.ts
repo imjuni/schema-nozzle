@@ -25,7 +25,7 @@ test('T001-create-schema-record', async () => {
     project: path.join(__dirname, '../../../examples/tsconfig.json'),
   };
   const resolvedPaths = getResolvedPaths(nullableOption);
-  const db = await openDatabase(nullableOption);
+  const db = await openDatabase(resolvedPaths);
 
   const project = await getTsProject(resolvedPaths.project);
   if (project.type === 'fail') throw project.fail;
@@ -50,10 +50,8 @@ test('T001-create-schema-record', async () => {
     createJSONSchema({
       option: nullableOption,
       schemaConfig: undefined,
-      type: targetType.type,
       filePath: targetType.filePath,
       typeName: targetType.identifier,
-      imports: targetType.imports,
     }),
   );
 

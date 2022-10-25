@@ -3,6 +3,7 @@ import getExportedName from '@compilers/getExportedName';
 import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { first } from 'my-easy-fp';
 import path from 'path';
@@ -71,6 +72,15 @@ export default async function getAddTypesFromPrompt({
   }
 
   if (choiceAbleTypes.length === 1) {
+    const autoSelectedIdentifier = first(choiceAbleTypes).value.identifier;
+    console.log(
+      `${chalk.green(
+        '?',
+      )} Select type(interface or type alias) for JSONSchema extraction:  ${chalk.cyan(
+        autoSelectedIdentifier,
+      )}`,
+    );
+
     return [first(choiceAbleTypes).value.identifier];
   }
 

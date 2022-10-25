@@ -1,5 +1,4 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import dbFileName from '@databases/interfaces/dbFileName';
 import { TDatabase } from '@modules/interfaces/TDatabase';
 import safeParse from '@tools/safeParse';
@@ -7,10 +6,10 @@ import fs from 'fs';
 import { exists, isDirectory } from 'my-node-fp';
 import path from 'path';
 
-export default async function openDatabase(option: IAddSchemaOption | IDeleteSchemaOption) {
-  const dbPath = (await isDirectory(option.output))
-    ? path.join(option.output, dbFileName)
-    : option.output;
+export default async function openDatabase(resolvedPaths: IResolvedPaths) {
+  const dbPath = (await isDirectory(resolvedPaths.output))
+    ? path.join(resolvedPaths.output, dbFileName)
+    : resolvedPaths.output;
 
   const rawDb = (await exists(dbPath)) ? (await fs.promises.readFile(dbPath)).toString() : '{}';
 

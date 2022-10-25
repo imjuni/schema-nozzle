@@ -4,7 +4,7 @@ import { Argv } from 'yargs';
 export default function addBuilder(argv: Argv<{}>) {
   // have no alias option
   argv.option('files', {
-    describe: 'configuration file path',
+    describe: 'TypeScript source code file path',
     type: 'string',
     default: [],
     array: true,

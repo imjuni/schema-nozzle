@@ -13,7 +13,7 @@ export default async function getDeleteTypes({
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.types == null || option.types.length <= 0) {
-      const types = await getDeleteTypesFromPrompt({ db, option });
+      const types = await getDeleteTypesFromPrompt({ db, useListUI: false });
       return pass(types);
     }
 

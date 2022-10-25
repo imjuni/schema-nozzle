@@ -46,10 +46,6 @@ export default function getTargetTypes<T extends IDeleteSchemaOption | IAddSchem
       identifier: exportedType.identifier,
       node: exportedType.node,
       type: getExportedType(exportedType.node),
-      imports: exportedType.sourceFile
-        .getNodesReferencingOtherSourceFiles()
-        .map((reference) => reference.asKind(tsm.SyntaxKind.ImportDeclaration))
-        .filter((reference): reference is tsm.ImportDeclaration => reference != null),
     })),
   };
 }
