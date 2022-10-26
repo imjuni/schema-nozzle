@@ -1,8 +1,11 @@
 import IBaseOption from '@configs/interfaces/IBaseOption';
 
 export default interface IAddSchemaOption extends IBaseOption {
-  type: 'add-schema';
+  discriminator: 'add-schema';
 
   /** input filename */
   files: string[];
+
+  /** use checkbox with multiple selections */
+  multiple: boolean;
 }

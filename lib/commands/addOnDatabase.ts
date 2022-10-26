@@ -9,7 +9,6 @@ import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
-import getTargetTypes from '@modules/getTargetTypes';
 import mergeSchemaRecord from '@modules/mergeSchemaRecord';
 import { isError } from 'my-easy-fp';
 import { TPickIPass } from 'my-only-either';
@@ -38,23 +37,25 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
 
     if (types.type === 'fail') throw types.fail;
 
-    const option: IAddSchemaOption = { ...nullableOption, files: files.pass, types: types.pass };
-
-    const targetTypes = getTargetTypes({ project: project.pass, option });
+    const option: IAddSchemaOption = {
+      ...nullableOption,
+      files: files.pass,
+      types: types.pass.map((typeName) => typeName.typeName),
+    };
 
     spinner.start('Start schema generation!');
 
     const db = await openDatabase(resolvedPaths);
 
-    const schemas = targetTypes.exportedTypes.map((targetType) => {
+    const schemas = types.pass.map((targetType) => {
       const schema = createJSONSchema({
         option,
         schemaConfig: undefined,
         filePath: targetType.filePath,
-        typeName: targetType.identifier,
+        typeName: targetType.typeName,
       });
 
-      spinner.update({ message: `generate schema: ${targetType.identifier}`, channel: 'info' });
+      spinner.update({ message: `generate schema: ${targetType.typeName}`, channel: 'info' });
       return schema;
     });
 
@@ -78,8 +79,8 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
     await saveScheams(option, db, ...records);
 
     spinner.stop({
-      message: `[${targetTypes.exportedTypes
-        .map((targetType) => `"${targetType.identifier}"`)
+      message: `[${types.pass
+        .map((targetType) => `"${targetType.typeName}"`)
         .join(', ')}] add complete`,
       channel: 'succeed',
     });

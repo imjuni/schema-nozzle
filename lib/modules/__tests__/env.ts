@@ -7,17 +7,17 @@ export const baseOption: IBaseOption = {
   project: '.',
   types: [],
   skipError: true,
-  verbose: false,
   output: '.',
 };
 
 export const addCmdOption: IAddSchemaOption = {
   ...baseOption,
-  type: 'add-schema',
+  discriminator: 'add-schema',
   files: [],
+  multiple: false,
 };
 
 export const deleteCmdOption: IDeleteSchemaOption = {
   ...baseOption,
-  type: 'delete-schema',
+  discriminator: 'delete-schema',
 };

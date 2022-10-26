@@ -16,9 +16,8 @@ export default [
     ],
     plugins: [
       nodeResolve({
-        resolveOnly: (module) => {
-          return pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null;
-        },
+        resolveOnly: (module) =>
+          pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null,
       }),
       ts({ tsconfig: 'tsconfig.prod.json' }),
     ],

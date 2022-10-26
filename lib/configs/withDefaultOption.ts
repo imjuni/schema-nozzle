@@ -7,9 +7,11 @@ import { getDirname } from 'my-node-fp';
 export default async function withDefaultOption<
   T extends IAddSchemaOption | IDeleteSchemaOption | ITruncateSchemaOption | IRefreshSchemaOption,
 >(option: T): Promise<T> {
-  if (option.output == null || option.output === '') {
-    return { ...option, output: await getDirname(option.project) };
+  const next = { ...option };
+
+  if (next.output == null || next.output === '') {
+    next.output = await getDirname(option.project);
   }
 
-  return option;
+  return next;
 }

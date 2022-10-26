@@ -13,7 +13,7 @@ export default async function getAddFiles({
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.files == null || option.files.length <= 0) {
-      const files = await getAddFilesFromPrompt(resolvedPaths);
+      const files = await getAddFilesFromPrompt(resolvedPaths, option.multiple);
       return pass(files);
     }
 

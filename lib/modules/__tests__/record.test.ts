@@ -39,7 +39,7 @@ test('T001-create-schema-record', async () => {
   const option: IAddSchemaOption = {
     ...nullableOption,
     files: files.pass,
-    types: types.pass,
+    types: types.pass.map((typeName) => typeName.typeName),
   };
   const targetTypes = getTargetTypes({ project: project.pass, option });
 

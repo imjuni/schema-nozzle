@@ -3,10 +3,14 @@ import getExportedName from '@compilers/getExportedName';
 import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IFileWithType from '@modules/interfaces/IFileWithType';
+import { TFUZZY_SCORE_LIMIT } from '@modules/interfaces/TFUZZY_SCORE_LIMIT';
 import chalk from 'chalk';
+import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
+import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
+import { bignumber } from 'mathjs';
 import { first } from 'my-easy-fp';
-import path from 'path';
 import * as tsm from 'ts-morph';
 
 interface IChoiceTypeItem {
@@ -16,9 +20,10 @@ interface IChoiceTypeItem {
   type: TEXPORTED_TYPE;
 }
 
-interface IGetTypesFromPrompt {
+interface IGetTypesFromPromptArgs {
   project: tsm.Project;
   option: IAddSchemaOption;
+  isMultipleSelect: boolean;
 }
 
 const weight: Record<TEXPORTED_TYPE, number> = {
@@ -36,11 +41,11 @@ const weight: Record<TEXPORTED_TYPE, number> = {
 export default async function getAddTypesFromPrompt({
   project,
   option,
-}: IGetTypesFromPrompt): Promise<string[]> {
+  isMultipleSelect,
+}: IGetTypesFromPromptArgs): Promise<IFileWithType[]> {
   const choiceAbleTypes = option.files
     .map((filePath) => {
-      const fileName = path.basename(filePath);
-      const sourceFile = project.getSourceFileOrThrow(fileName);
+      const sourceFile = project.getSourceFileOrThrow(filePath);
       const exportedDeclarationsMap = sourceFile.getExportedDeclarations();
 
       const types = Array.from(exportedDeclarationsMap.entries())
@@ -58,10 +63,13 @@ export default async function getAddTypesFromPrompt({
       return types;
     })
     .flat()
-    .map<{
-      name: string;
-      value: IChoiceTypeItem;
-    }>((choiceAbleType) => ({ name: choiceAbleType.identifier, value: choiceAbleType }))
+    .map((choiceAbleType) => {
+      return {
+        name: choiceAbleType.identifier,
+        value: choiceAbleType,
+        disabled: false,
+      };
+    })
     .sort((l, r) => {
       const diff = weight[l.value.type] - weight[r.value.type];
       return diff !== 0 ? diff : l.value.filePath.localeCompare(r.value.filePath);
@@ -81,7 +89,78 @@ export default async function getAddTypesFromPrompt({
       )}`,
     );
 
-    return [first(choiceAbleTypes).value.identifier];
+    const firstTypeItem = first(choiceAbleTypes);
+
+    return [{ filePath: firstTypeItem.value.filePath, typeName: firstTypeItem.value.identifier }];
+  }
+
+  if (isMultipleSelect) {
+    inquirer.registerPrompt('checkbox-plus', CheckboxPlusPrompt);
+
+    const fuse = new Fuse(choiceAbleTypes, {
+      includeScore: true,
+      keys: ['identifier', 'filePath'],
+    });
+
+    const answer = await inquirer.prompt<
+      Omit<IPromptAnswerSelectType, 'typeName'> & { typeName: IChoiceTypeItem[] }
+    >([
+      {
+        type: 'checkbox-plus',
+        name: 'typeName',
+        pageSize: 20,
+        highlight: true,
+        searchable: true,
+        message: 'Select type(interface or type alias) for JSONSchema extraction: ',
+        validate(tsFilesAnswer: string[]) {
+          if (tsFilesAnswer.length === 0) {
+            return 'You must choose at least one type in source code files.';
+          }
+
+          return true;
+        },
+        source: (_answersSoFar: any, input: string) => {
+          const safeInput = input == null ? '' : input;
+
+          if (safeInput === '') {
+            return new Promise((resolve) => {
+              resolve(choiceAbleTypes);
+            });
+          }
+
+          return new Promise((resolve) => {
+            const fused = fuse
+              .search(safeInput)
+              .map((matched) => {
+                return {
+                  ...matched,
+                  oneBased: bignumber(1)
+                    .sub(bignumber(matched.score ?? 0))
+                    .mul(100)
+                    .floor()
+                    .div(100)
+                    .toNumber(),
+                  percent: bignumber(1)
+                    .sub(bignumber(matched.score ?? 0))
+                    .mul(10000)
+                    .floor()
+                    .div(100)
+                    .toNumber(),
+                };
+              })
+              .filter((matched) => matched.percent > TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
+              .sort((l, r) => r.percent - l.percent)
+              .map((matched) => matched.item);
+
+            resolve(fused);
+          });
+        },
+      },
+    ]);
+
+    return answer.typeName.map((typeName) => {
+      return { filePath: typeName.filePath, typeName: typeName.identifier };
+    });
   }
 
   const answer = await inquirer.prompt<IPromptAnswerSelectType>([
@@ -94,5 +173,5 @@ export default async function getAddTypesFromPrompt({
     },
   ]);
 
-  return [answer.typeName.identifier];
+  return [{ filePath: answer.typeName.filePath, typeName: answer.typeName.identifier }];
 }

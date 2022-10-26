@@ -36,6 +36,7 @@
     "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
     "isolatedModules": true /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
+    "allowJs": true,
 
     /* Module Resolution Options */
     // "moduleResolution": "Node16" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
@@ -50,13 +51,14 @@
       "@modules/*": ["lib/modules/*"],
       "@tools/*": ["lib/tools/*"]
     },
-    // "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "allowSyntheticDefaultImports": true,
 
     /* Experimental Options */
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
     "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
-    "pretty": true
+    "pretty": true,
+    "typeRoots": ["lib/@types", "node_modules/@types"]
   },
   "include": ["**/*"],
   "exclude": ["examples/**", "dist/**", "**/.configs/**", "**/docs/**/*"]
