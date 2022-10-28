@@ -3,42 +3,64 @@ import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import minimist from 'minimist';
-import { getDirnameSync } from 'my-node-fp';
+import { existsSync, getDirnameSync } from 'my-node-fp';
 
 const log = logger();
 
-function getConfigFilePath(argv: minimist.ParsedArgs, projectPath?: string): string | undefined {
-  const argvConfigFilePath = argv.c ?? argv.config;
-  const projectDirPath = projectPath != null ? getDirnameSync(projectPath) : undefined;
+const configFileName = '.ctjsrc';
+const tsconfigFileName = 'tsconfig.json';
 
-  const configFilePathSearchResultOnCwd = findUp.sync('.ctjsrc');
-  const configFilePathSearchProjectDirPath =
-    projectDirPath != null ? findUp.sync('.ctjsrc', { cwd: projectDirPath }) : undefined;
+function getConfigObject(configFilePath: string): any {
+  if (existsSync(configFilePath) === false) {
+    return {};
+  }
 
-  return (
-    argvConfigFilePath ?? configFilePathSearchResultOnCwd ?? configFilePathSearchProjectDirPath
-  );
+  const configBuf = fs.readFileSync(configFilePath);
+  const configObj = parse(configBuf.toString());
+  return configObj;
 }
 
 export default function preLoadConfig() {
   try {
     const argv = minimist(process.argv.slice(2));
-
+    const configFilePath =
+      argv.config != null || argv.c != null
+        ? findUp.sync([argv.config, argv.c])
+        : findUp.sync(configFileName);
     const tsconfigPath =
       argv.project != null || argv.p != null
         ? findUp.sync([argv.project, argv.p])
-        : findUp.sync('tsconfig.json');
+        : findUp.sync(tsconfigFileName);
 
-    const configFilePath = getConfigFilePath(argv, tsconfigPath);
-    const config = configFilePath != null ? parse(fs.readFileSync(configFilePath).toString()) : {};
+    if (configFilePath != null && tsconfigPath == null) {
+      const configObj = getConfigObject(configFilePath);
+      return { ...configObj, c: configFilePath, config: configFilePath };
+    }
 
-    return {
-      ...config,
-      p: tsconfigPath,
-      project: tsconfigPath,
-      c: configFilePath,
-      config: configFilePath,
-    };
+    if (configFilePath == null && tsconfigPath != null) {
+      const alternativeConfigPath = findUp.sync(configFileName, {
+        cwd: getDirnameSync(tsconfigPath),
+      });
+
+      if (alternativeConfigPath != null) {
+        const configObj = getConfigObject(alternativeConfigPath);
+
+        return {
+          ...configObj,
+          p: tsconfigPath,
+          project: tsconfigPath,
+          c: configFilePath,
+          config: configFilePath,
+        };
+      }
+
+      return {
+        p: tsconfigPath,
+        project: tsconfigPath,
+      };
+    }
+
+    return {};
   } catch (catched) {
     const err = catched instanceof Error ? catched : new Error('unknown error raised');
 

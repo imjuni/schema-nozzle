@@ -14,11 +14,7 @@ import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import isValidateConfig from '@configs/isValidateConfig';
 import preLoadConfig from '@configs/preLoadConfig';
 import withDefaultOption from '@configs/withDefaultOption';
-import logger from '@tools/logger';
 import yargs, { CommandModule } from 'yargs';
-
-const log = logger();
-log.level = 'debug';
 
 const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
   command: 'add',
