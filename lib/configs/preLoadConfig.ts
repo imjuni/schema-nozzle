@@ -32,6 +32,18 @@ export default function preLoadConfig() {
         ? findUp.sync([argv.project, argv.p])
         : findUp.sync(tsconfigFileName);
 
+    if (configFilePath != null && tsconfigPath != null) {
+      const configObj = getConfigObject(configFilePath);
+
+      return {
+        ...configObj,
+        p: tsconfigPath,
+        project: tsconfigPath,
+        c: configFilePath,
+        config: configFilePath,
+      };
+    }
+
     if (configFilePath != null && tsconfigPath == null) {
       const configObj = getConfigObject(configFilePath);
       return { ...configObj, c: configFilePath, config: configFilePath };
