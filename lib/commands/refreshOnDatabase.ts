@@ -3,6 +3,7 @@ import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
 import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveScheams from '@databases/saveScheams';
 import createJSONSchema from '@modules/createJSONSchema';
@@ -33,12 +34,14 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
       };
     });
 
+    const generatorOption = await readGeneratorOption(option);
+
     spinner.start('Start schema generation!');
 
     const schemas = targetTypes.map((targetType) => {
       const schema = createJSONSchema({
         option,
-        schemaConfig: undefined,
+        schemaConfig: generatorOption,
         filePath: targetType.filePath,
         typeName: targetType.typeName,
       });

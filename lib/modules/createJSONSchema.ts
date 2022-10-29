@@ -4,13 +4,13 @@ import ICreatedJSONSchema from '@modules/interfaces/ICreatedJSONSchema';
 import { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
 import { fail, pass, PassFailEither } from 'my-only-either';
-import * as TSJ from 'ts-json-schema-generator';
+import * as tjsg from 'ts-json-schema-generator';
 
 interface ICreateJSONSchemaArgs {
   option: IBaseOption;
   filePath: string;
   typeName: string;
-  schemaConfig?: TSJ.Config;
+  schemaConfig?: tjsg.Config;
 }
 
 export default function createJSONSchema({
@@ -20,7 +20,7 @@ export default function createJSONSchema({
   typeName,
 }: ICreateJSONSchemaArgs): PassFailEither<Error, ICreatedJSONSchema> {
   try {
-    const generatorOption: TSJ.Config = {
+    const generatorOption: tjsg.Config = {
       path: filePath,
       type: typeName,
       tsconfig: option.project,
@@ -37,7 +37,7 @@ export default function createJSONSchema({
       additionalProperties: schemaConfig?.additionalProperties ?? false,
     };
 
-    const generator = TSJ.createGenerator(generatorOption);
+    const generator = tjsg.createGenerator(generatorOption);
 
     const schema: JSONSchema7 = generator.createSchema(typeName);
 

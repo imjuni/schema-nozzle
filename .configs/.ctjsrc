@@ -1,0 +1,7 @@
+{
+  "project": "./examples/tsconfig.json",
+  "multiple": true,
+  "generator-option": {
+    "additionalProperties": true
+  }
+}

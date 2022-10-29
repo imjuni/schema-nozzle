@@ -37,8 +37,8 @@ export default function preLoadConfig() {
 
       return {
         ...configObj,
-        p: tsconfigPath,
-        project: tsconfigPath,
+        p: configObj.p ?? configObj.project ?? tsconfigPath,
+        project: configObj.p ?? configObj.project ?? tsconfigPath,
         c: configFilePath,
         config: configFilePath,
       };

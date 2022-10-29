@@ -3,6 +3,7 @@ import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveScheams from '@databases/saveScheams';
 import createJSONSchema from '@modules/createJSONSchema';
@@ -46,11 +47,12 @@ export default async function addOnDatabase(nullableOption: IAddSchemaOption, is
     spinner.start('Start schema generation!');
 
     const db = await openDatabase(resolvedPaths);
+    const generatorOption = await readGeneratorOption(option);
 
     const schemas = types.pass.map((targetType) => {
       const schema = createJSONSchema({
         option,
-        schemaConfig: undefined,
+        schemaConfig: generatorOption,
         filePath: targetType.filePath,
         typeName: targetType.typeName,
       });

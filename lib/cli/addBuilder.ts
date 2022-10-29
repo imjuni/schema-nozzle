@@ -14,6 +14,10 @@ export default function addBuilder(argv: Argv<{}>) {
       describe: 'use checkbox with multiple selections',
       type: 'boolean',
       default: false,
+    })
+    .option('generator-option', {
+      describe: 'ts-json-schema-generator option file path',
+      type: 'string',
     });
 
   return argv as Argv<IAddSchemaOption>;
