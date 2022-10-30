@@ -88,11 +88,9 @@ export default async function addOnDatabase(
     }
 
     WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
-
     await WorkerContainer.wait();
 
     const records = WorkerContainer.records.map((record) => mergeSchemaRecord(db, record));
-
     await saveScheams(option, db, ...records);
 
     spinner.stop({

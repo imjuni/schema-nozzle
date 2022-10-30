@@ -5,11 +5,12 @@ import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IFileWithType from '@modules/interfaces/IFileWithType';
 import { TFUZZY_SCORE_LIMIT } from '@modules/interfaces/TFUZZY_SCORE_LIMIT';
+import getRatioNumber from '@tools/getRatioNumber';
 import chalk from 'chalk';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
+import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
-import { bignumber } from 'mathjs';
 import { first } from 'my-easy-fp';
 import * as tsm from 'ts-morph';
 
@@ -66,6 +67,8 @@ export default async function getAddTypesFromPrompt({
     .map((choiceAbleType) => {
       return {
         name: choiceAbleType.identifier,
+        identifier: choiceAbleType.identifier,
+        filePath: choiceAbleType.filePath,
         value: choiceAbleType,
         disabled: false,
       };
@@ -94,8 +97,9 @@ export default async function getAddTypesFromPrompt({
     return [{ filePath: firstTypeItem.value.filePath, typeName: firstTypeItem.value.identifier }];
   }
 
-  if (isMultipleSelect) {
-    inquirer.registerPrompt('checkbox-plus', CheckboxPlusPrompt);
+  // single file select ui
+  if (isMultipleSelect === false) {
+    inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);
 
     const fuse = new Fuse(choiceAbleTypes, {
       includeScore: true,
@@ -103,23 +107,13 @@ export default async function getAddTypesFromPrompt({
     });
 
     const answer = await inquirer.prompt<
-      Omit<IPromptAnswerSelectType, 'typeName'> & { typeName: IChoiceTypeItem[] }
+      Omit<IPromptAnswerSelectType, 'typeName'> & { typeName: IChoiceTypeItem }
     >([
       {
-        type: 'checkbox-plus',
+        type: 'autocomplete',
         name: 'typeName',
         pageSize: 20,
-        highlight: true,
-        searchable: true,
-        default: choiceAbleTypes.map((choiceAbleType) => choiceAbleType.value),
         message: 'Select type(interface or type alias) for JSONSchema extraction: ',
-        validate(tsFilesAnswer: string[]) {
-          if (tsFilesAnswer.length === 0) {
-            return 'You must choose at least one type in source code files.';
-          }
-
-          return true;
-        },
         source: (_answersSoFar: any, input: string) => {
           const safeInput = input == null ? '' : input;
 
@@ -135,21 +129,11 @@ export default async function getAddTypesFromPrompt({
               .map((matched) => {
                 return {
                   ...matched,
-                  oneBased: bignumber(1)
-                    .sub(bignumber(matched.score ?? 0))
-                    .mul(100)
-                    .floor()
-                    .div(100)
-                    .toNumber(),
-                  percent: bignumber(1)
-                    .sub(bignumber(matched.score ?? 0))
-                    .mul(10000)
-                    .floor()
-                    .div(100)
-                    .toNumber(),
+                  oneBased: getRatioNumber(matched.score ?? 0),
+                  percent: getRatioNumber(matched.score ?? 0, 100),
                 };
               })
-              .filter((matched) => matched.percent > TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
+              .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
               .sort((l, r) => r.percent - l.percent)
               .map((matched) => matched.item);
 
@@ -159,20 +143,65 @@ export default async function getAddTypesFromPrompt({
       },
     ]);
 
-    return answer.typeName.map((typeName) => {
-      return { filePath: typeName.filePath, typeName: typeName.identifier };
-    });
+    return [{ filePath: answer.typeName.filePath, typeName: answer.typeName.identifier }];
   }
 
-  const answer = await inquirer.prompt<IPromptAnswerSelectType>([
+  // multiple, searchable checkbox ui
+  inquirer.registerPrompt('checkbox-plus', CheckboxPlusPrompt);
+
+  const fuse = new Fuse(choiceAbleTypes, {
+    includeScore: true,
+    keys: ['identifier', 'filePath'],
+  });
+
+  const answer = await inquirer.prompt<
+    Omit<IPromptAnswerSelectType, 'typeName'> & { typeName: IChoiceTypeItem[] }
+  >([
     {
-      type: 'list',
+      type: 'checkbox-plus',
       name: 'typeName',
       pageSize: 20,
+      highlight: true,
+      searchable: true,
+      default: choiceAbleTypes.map((choiceAbleType) => choiceAbleType.value),
       message: 'Select type(interface or type alias) for JSONSchema extraction: ',
-      choices: choiceAbleTypes,
+      validate(tsFilesAnswer: string[]) {
+        if (tsFilesAnswer.length === 0) {
+          return 'You must choose at least one type in source code files.';
+        }
+
+        return true;
+      },
+      source: (_answersSoFar: any, input: string) => {
+        const safeInput = input == null ? '' : input;
+
+        if (safeInput === '') {
+          return new Promise((resolve) => {
+            resolve(choiceAbleTypes);
+          });
+        }
+
+        return new Promise((resolve) => {
+          const fused = fuse
+            .search(safeInput)
+            .map((matched) => {
+              return {
+                ...matched,
+                oneBased: getRatioNumber(matched.score ?? 0),
+                percent: getRatioNumber(matched.score ?? 0, 100),
+              };
+            })
+            .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
+            .sort((l, r) => r.percent - l.percent)
+            .map((matched) => matched.item);
+
+          resolve(fused);
+        });
+      },
     },
   ]);
 
-  return [{ filePath: answer.typeName.filePath, typeName: answer.typeName.identifier }];
+  return answer.typeName.map((typeName) => {
+    return { filePath: typeName.filePath, typeName: typeName.identifier };
+  });
 }

@@ -106,3 +106,4 @@ dist
 # Database
 db.json
 examples/db.json
+temp-commit-log.md

@@ -3,3 +3,9 @@ export default interface I18nDto {
   language: string;
   content: string;
 }
+
+export interface ILanguageDto {
+  id: string;
+  code: string;
+  content: string;
+}
