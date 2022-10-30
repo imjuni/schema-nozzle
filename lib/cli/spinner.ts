@@ -78,7 +78,6 @@ class Spinner {
   stop(display?: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
     if (this.#isStart === true && display != null) {
       this.#spinner[display.channel](display.message);
-      this.#spinner.stop();
       this.#isStart = false;
     } else if (this.#isStart === true) {
       this.#spinner.stop();

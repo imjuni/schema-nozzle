@@ -61,7 +61,7 @@ const truncateCmd: CommandModule<ITruncateSchemaOption, ITruncateSchemaOption> =
   builder: (argv) => truncateBuilder(builder(argv)),
   handler: async (argv) => {
     const option = await withDefaultOption(argv);
-    await truncateOnDatabase(option);
+    await truncateOnDatabase(option, true);
   },
 };
 

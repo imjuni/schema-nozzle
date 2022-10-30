@@ -26,6 +26,8 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
 
     spinner.start('Open database, ...');
     const db = await openDatabase(resolvedPaths);
+    spinner.update({ message: 'database open success', channel: 'succeed' });
+
     const targetTypes = Object.values(db).map((record) => {
       return {
         filePath: record.filePath,

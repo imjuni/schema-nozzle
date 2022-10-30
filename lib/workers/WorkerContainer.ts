@@ -41,7 +41,6 @@ class WorkerContainerClass {
 
       if (message.command === 'message') {
         spinner.update({ message: message.data, channel: 'succeed' });
-        // console.log(message.data);
       }
     });
 

@@ -12,7 +12,7 @@ import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecord from '@modules/mergeSchemaRecord';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
-import { isError, sleep } from 'my-easy-fp';
+import { isError } from 'my-easy-fp';
 
 export type TChaildToParentData =
   | { command: 'record'; data: IDatabaseRecord[] }
@@ -49,8 +49,6 @@ export default async function addOnDatabase(
       files: files.pass,
       types: targetTypes.pass.map((typeName) => typeName.typeName),
     };
-
-    await sleep(1000);
 
     spinner.start('Open database, ...');
 
@@ -90,8 +88,6 @@ export default async function addOnDatabase(
     }
 
     WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
-
-    sleep(20);
 
     await WorkerContainer.wait();
 
