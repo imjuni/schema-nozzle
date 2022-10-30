@@ -8,5 +8,6 @@ export default interface IDatabaseRecord {
   filePath: string;
   import: ISchemaImportInfo;
   export: ISchemaExportInfo;
+  dto: boolean;
   // type: TEXPORTED_TYPE;
 }

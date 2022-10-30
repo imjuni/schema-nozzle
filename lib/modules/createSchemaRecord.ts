@@ -14,6 +14,8 @@ import { TraversalCallback, TraversalCallbackContext, traverse } from 'object-tr
 import path from 'path';
 import * as tsm from 'ts-morph';
 
+const dtoDocCommentName = 'asDto';
+
 const traverseHandle: TraversalCallback = ({
   parent,
   key,
@@ -49,6 +51,9 @@ export default async function createSchemaRecord({
 
   const id = metadata.typeName;
   const stringified = fastSafeStringify({ ...targetSchema, definitions: undefined });
+  const isDto = (importMap[id].node.getSymbol()?.getJsDocTags() ?? []).some(
+    (tag) => tag.getName() === dtoDocCommentName && Boolean(tag.getText()) === true,
+  );
 
   // extract schema from definitions field
   if (metadata.schema.definitions != null) {
@@ -85,6 +90,8 @@ export default async function createSchemaRecord({
           throw new Error(`Cannot found import name: ${definitionId}`);
         }
 
+        // definitionId를 사용하는 import를 뒤져서, dto가 있으면 true를 넣어줘야 한다.
+
         const definitionRecord: IDatabaseRecord = {
           id: definitionId,
           filePath: path.relative(
@@ -97,6 +104,7 @@ export default async function createSchemaRecord({
           },
           export: exportValue,
           schema: definitionStringified,
+          dto: isDto,
         };
 
         return definitionRecord;
@@ -134,6 +142,7 @@ export default async function createSchemaRecord({
         name: id,
         to: [],
       },
+      dto: isDto,
       schema: stringified,
     };
 
@@ -151,6 +160,7 @@ export default async function createSchemaRecord({
       name: id,
       to: [],
     },
+    dto: isDto,
     schema: stringified,
   };
 

@@ -3,6 +3,11 @@ import IStudentDto from './IStudentDto';
 import IStudentEntity from './IStudentEntity';
 import TGenericExample from './TGenericExample';
 
+/**
+ * IProfessorDto
+ *
+ * @asDto true
+ */
 export default interface IProfessorDto {
   id: IStudentEntity['id'];
   nick: IStudentEntity['nick'];

@@ -1,6 +1,6 @@
 import * as tsm from 'ts-morph';
 
-type TA =
+type TExportedNodeKind =
   | {
       typeName: string;
       node: tsm.ClassDeclaration;
@@ -58,9 +58,9 @@ export default function getImportDeclarationMap({ project }: IGetImportDeclarati
       })),
     ])
     .flat()
-    .filter((node): node is TA => node.typeName != null);
+    .filter((node): node is TExportedNodeKind => node.typeName != null);
 
-  const declarationMap: Record<string, TA> = importDeclarations
+  const declarationMap: Record<string, TExportedNodeKind> = importDeclarations
     .filter((importDeclaration) => importDeclaration != null)
     .reduce((aggregation, declaration) => {
       return { ...aggregation, [declaration.typeName]: declaration };
