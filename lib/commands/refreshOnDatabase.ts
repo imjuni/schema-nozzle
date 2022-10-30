@@ -6,27 +6,26 @@ import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveScheams from '@databases/saveScheams';
-import createJSONSchema from '@modules/createJSONSchema';
-import createSchemaRecord from '@modules/createSchemaRecord';
 import mergeSchemaRecord from '@modules/mergeSchemaRecord';
-import { isError } from 'my-easy-fp';
-import { TPickIPass } from 'my-only-either';
+import TParentToChildData from '@workers/interfaces/TParentToChildData';
+import WorkerContainer from '@workers/WorkerContainer';
+import { isError, sleep } from 'my-easy-fp';
 
 export default async function refreshOnDatabase(option: IRefreshSchemaOption, isMessage?: boolean) {
   try {
     spinner.isEnable = isMessage ?? false;
+    spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(option);
-    const db = await openDatabase(resolvedPaths);
-
     const project = await getTsProject(resolvedPaths.project);
-
     if (project.type === 'fail') throw project.fail;
+    spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
 
     const diagnostics = getDiagnostics({ option, project: project.pass });
-
     if (diagnostics.type === 'fail') throw diagnostics.fail;
 
+    spinner.start('Open database, ...');
+    const db = await openDatabase(resolvedPaths);
     const targetTypes = Object.values(db).map((record) => {
       return {
         filePath: record.filePath,
@@ -35,44 +34,50 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
     });
 
     const generatorOption = await readGeneratorOption(option);
+    spinner.start('Schema generation start, ...');
 
-    spinner.start('Start schema generation!');
+    const jobs = targetTypes.map((typeInfo) => {
+      const payload: TParentToChildData = {
+        command: 'job',
+        data: {
+          fileWithTypes: typeInfo,
+          option,
+          resolvedPaths,
+          generatorOption,
+        },
+      };
 
-    const schemas = targetTypes.map((targetType) => {
-      const schema = createJSONSchema({
-        option,
-        schemaConfig: generatorOption,
-        filePath: targetType.filePath,
-        typeName: targetType.typeName,
-      });
-
-      spinner.update({ message: `generate schema: ${targetType.typeName}`, channel: 'info' });
-      return schema;
+      return payload;
     });
 
-    const records = (
-      await Promise.all(
-        schemas
-          .filter(
-            (schema): schema is TPickIPass<ReturnType<typeof createJSONSchema>> =>
-              schema.type === 'pass',
-          )
-          .map((schema) => schema.pass)
-          .map(async (schema) =>
-            createSchemaRecord({ project: project.pass, resolvedPaths, metadata: schema }),
-          ),
-      )
-    )
-      .map((schema) => [schema.record, ...(schema.definitions ?? [])])
-      .flat()
-      .map((schema) => mergeSchemaRecord(db, schema));
+    if (jobs.length > WorkerContainer.workers.length) {
+      jobs.forEach((job, index) => {
+        WorkerContainer.workers[index % WorkerContainer.workers.length].send(job);
+      });
+    } else {
+      WorkerContainer.workers.forEach((worker, index) => {
+        if (jobs.length > index) {
+          worker.send(jobs[index]);
+        } else {
+          worker.send({ command: 'end' });
+        }
+      });
+    }
+
+    WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
+
+    sleep(20);
+
+    await WorkerContainer.wait();
+
+    const records = WorkerContainer.records.map((record) => mergeSchemaRecord(db, record));
 
     await saveScheams(option, db, ...records);
 
     spinner.stop({
       message: `[${targetTypes
         .map((targetType) => `"${targetType.typeName}"`)
-        .join(', ')}] refresh complete`,
+        .join(', ')}] add complete`,
       channel: 'succeed',
     });
   } catch (catched) {

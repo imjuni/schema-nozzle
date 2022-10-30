@@ -14,6 +14,11 @@ import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import isValidateConfig from '@configs/isValidateConfig';
 import preLoadConfig from '@configs/preLoadConfig';
 import withDefaultOption from '@configs/withDefaultOption';
+import worker from '@workers/worker';
+import WorkerContainer from '@workers/WorkerContainer';
+import cluster from 'cluster';
+import { populate } from 'my-easy-fp';
+import os from 'os';
 import yargs, { CommandModule } from 'yargs';
 
 const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
@@ -60,20 +65,29 @@ const truncateCmd: CommandModule<ITruncateSchemaOption, ITruncateSchemaOption> =
   },
 };
 
-const parser = yargs(process.argv.slice(2));
+if (cluster.isMaster ?? cluster.isPrimary) {
+  const parser = yargs(process.argv.slice(2));
 
-parser
-  .command(addCmd as CommandModule<{}, IAddSchemaOption>)
-  .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
-  .command(refreshCmd as CommandModule<{}, IRefreshSchemaOption>)
-  .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
-  .check(isValidateConfig)
-  .recommendCommands()
-  .demandCommand()
-  .config(preLoadConfig())
-  .strict(true)
-  .help();
+  parser
+    .command(addCmd as CommandModule<{}, IAddSchemaOption>)
+    .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
+    .command(refreshCmd as CommandModule<{}, IRefreshSchemaOption>)
+    .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
+    .check(isValidateConfig)
+    .recommendCommands()
+    .demandCommand()
+    .config(preLoadConfig())
+    .help();
 
-(async () => {
-  parser.parse();
-})();
+  populate(os.cpus().length).forEach(() => {
+    WorkerContainer.add(cluster.fork());
+  });
+
+  (async () => {
+    parser.parse();
+  })();
+}
+
+if (cluster.isWorker) {
+  worker();
+}

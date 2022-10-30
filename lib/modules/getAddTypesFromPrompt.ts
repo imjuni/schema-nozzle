@@ -111,6 +111,7 @@ export default async function getAddTypesFromPrompt({
         pageSize: 20,
         highlight: true,
         searchable: true,
+        default: choiceAbleTypes.map((choiceAbleType) => choiceAbleType.value),
         message: 'Select type(interface or type alias) for JSONSchema extraction: ',
         validate(tsFilesAnswer: string[]) {
           if (tsFilesAnswer.length === 0) {

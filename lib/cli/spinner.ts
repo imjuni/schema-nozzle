@@ -63,10 +63,15 @@ class Spinner {
     return 'cyan';
   }
 
-  update(display: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
+  update(display: { message: string; channel?: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
     if (this.#isEnable) {
-      this.#spinner.color = Spinner.getColor(display.channel);
-      this.#spinner.text = display.message;
+      if (display.channel != null) {
+        this.#spinner[display.channel](display.message);
+      } else {
+        setImmediate(() => {
+          this.#spinner.text = display.message;
+        });
+      }
     }
   }
 

@@ -11,6 +11,9 @@ export default async function readGeneratorOption(
 ): Promise<tjsg.Config> {
   const generatorOptionFilePath =
     'generator-option' in option ? option['generator-option'] : option.generatorOption;
+  if (generatorOptionFilePath == null) {
+    return {};
+  }
 
   if (typeof generatorOptionFilePath === 'object') {
     return generatorOptionFilePath;

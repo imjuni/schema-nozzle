@@ -14,7 +14,8 @@
     "dd": "deps-diff md -d prod -d dev --title-list-type '*' --deps-list-type '*' --content-list-type '*'",
     "prepublishOnly": "node prepublish.js",
     "pub": "just --config ./.configs/just.config.ts pub",
-    "pub:prod": "just --config ./.configs/just.config.ts pub:prod"
+    "pub:prod": "just --config ./.configs/just.config.ts pub:prod",
+    "unpub": "just --config ./.configs/just.config.ts unpub"
   },
   "main": "dist/cli.js",
   "types": "dist/cli.d.ts",
@@ -34,6 +35,7 @@
   "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
   "dependencies": {
     "chalk": "^4.1.2",
+    "dayjs": "^1.11.6",
     "fast-copy": "^3.0.0",
     "fast-glob": "^3.2.12",
     "fast-safe-stringify": "^2.1.1",
