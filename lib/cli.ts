@@ -1,6 +1,7 @@
 import addBuilder from '@cli/addBuilder';
 import builder from '@cli/builder';
 import deleteBuilder from '@cli/deleteBuilder';
+import { TCOMMAND_LIST } from '@cli/interfaces/TCOMMAND_LIST';
 import refreshBuilder from '@cli/refreshBuilder';
 import truncateBuilder from '@cli/truncateBuilder';
 import addOnDatabase from '@commands/addOnDatabase';
@@ -22,8 +23,8 @@ import os from 'os';
 import yargs, { CommandModule } from 'yargs';
 
 const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
-  command: 'add',
-  aliases: 'a',
+  command: TCOMMAND_LIST.ADD,
+  aliases: TCOMMAND_LIST.ADD_ALIAS,
   describe: 'add or update json-schema to database file',
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
@@ -33,8 +34,8 @@ const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
 };
 
 const deleteCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
-  command: 'del',
-  aliases: 'd',
+  command: TCOMMAND_LIST.DEL,
+  aliases: TCOMMAND_LIST.DEL_ALIAS,
   describe: 'delete json-schema from database file',
   builder: (argv) => deleteBuilder(builder(argv)),
   handler: async (argv) => {
@@ -44,8 +45,8 @@ const deleteCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
 };
 
 const refreshCmd: CommandModule<IRefreshSchemaOption, IRefreshSchemaOption> = {
-  command: 'refresh',
-  aliases: 'r',
+  command: TCOMMAND_LIST.REFRESH,
+  aliases: TCOMMAND_LIST.REFRESH_ALIAS,
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
@@ -55,8 +56,8 @@ const refreshCmd: CommandModule<IRefreshSchemaOption, IRefreshSchemaOption> = {
 };
 
 const truncateCmd: CommandModule<ITruncateSchemaOption, ITruncateSchemaOption> = {
-  command: 'truncate',
-  aliases: 't',
+  command: TCOMMAND_LIST.TRUNCATE,
+  aliases: TCOMMAND_LIST.TRUNCATE_ALIAS,
   describe: 'reset database file',
   builder: (argv) => truncateBuilder(builder(argv)),
   handler: async (argv) => {
@@ -75,16 +76,20 @@ if (cluster.isMaster ?? cluster.isPrimary) {
     .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
     .check(isValidateConfig)
     .recommendCommands()
-    .demandCommand()
+    .demandCommand(1, 1)
     .config(preLoadConfig())
     .help();
 
-  populate(os.cpus().length).forEach(() => {
-    WorkerContainer.add(cluster.fork());
-  });
-
   (async () => {
-    parser.parse();
+    try {
+      parser.parse();
+
+      populate(os.cpus().length).forEach(() => {
+        WorkerContainer.add(cluster.fork());
+      });
+    } catch {
+      WorkerContainer.workers.forEach((eachWorker) => eachWorker.send('end'));
+    }
   })();
 }
 
