@@ -17,7 +17,12 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(option);
-    const project = await getTsProject(resolvedPaths.project);
+    const project = await getTsProject({
+      tsConfigFilePath: resolvedPaths.project,
+      skipAddingFilesFromTsConfig: false,
+      skipFileDependencyResolution: true,
+      skipLoadingLibFiles: true,
+    });
     if (project.type === 'fail') throw project.fail;
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
 

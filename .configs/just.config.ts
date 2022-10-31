@@ -64,7 +64,7 @@ task('lint', async () => {
 
 task('+build', async () => {
   const cmd = 'tsc';
-  const option = '--incremental --project tsconfig.json';
+  const option = '--incremental --project tsconfig.json --tsBuildInfoFile .tsbuildinfo';
 
   await execa(cmd, splitArgs(option), {
     env: {

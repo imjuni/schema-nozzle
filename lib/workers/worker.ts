@@ -17,6 +17,10 @@ export default async function worker() {
   let generatorOption: AsyncReturnType<typeof readGeneratorOption>;
   let option: IAddSchemaOption | IRefreshSchemaOption;
 
+  process.on('SIGTERM', () => {
+    process.exit();
+  });
+
   process.on('message', async (payload: TParentToChildData) => {
     if (payload.command === 'job') {
       typeInfos.push(payload.data.fileWithTypes);
@@ -26,12 +30,17 @@ export default async function worker() {
     }
 
     if (payload.command === 'end') {
-      process.exit(1);
+      process.exit();
     }
 
     if (payload.command === 'start') {
       try {
-        const project = await getTsProject(resolvedPaths.project);
+        const project = await getTsProject({
+          tsConfigFilePath: resolvedPaths.project,
+          skipAddingFilesFromTsConfig: false,
+          skipFileDependencyResolution: true,
+          skipLoadingLibFiles: true,
+        });
 
         if (project.type === 'fail') process.exit(1);
 
@@ -64,7 +73,7 @@ export default async function worker() {
           process.exit(1);
         }
       } catch (catched) {
-        const err = isError(catched) ?? new Error('unk');
+        const err = isError(catched) ?? new Error('unknown error raised');
         console.log(err.message);
         console.log(err.stack);
       }

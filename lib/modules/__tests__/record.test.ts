@@ -24,7 +24,9 @@ test('T001-create-schema-record', async () => {
   };
   const resolvedPaths = getResolvedPaths(nullableOption);
 
-  const project = await getTsProject(resolvedPaths.project);
+  const project = await getTsProject({
+    tsConfigFilePath: resolvedPaths.project,
+  });
   if (project.type === 'fail') throw project.fail;
   const files = await getAddFiles({
     resolvedPaths,

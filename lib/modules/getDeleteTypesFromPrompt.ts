@@ -37,7 +37,9 @@ export default async function getDeleteTypesFromPrompt({
     });
 
   if (choiceAbleTypes.length <= 0) {
-    throw new Error('Cannot found interface or type-alias on typescript source file');
+    throw new Error(
+      'Cannot found interface or type-alias on typescript source file: Database is empty',
+    );
   }
 
   if (isMultipleSelect === false) {

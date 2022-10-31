@@ -7,7 +7,6 @@ import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
 import deleteSchemaRecord from '@modules/deleteSchemaRecord';
 import getDeleteTypes from '@modules/getDeleteTypes';
-import WorkerContainer from '@workers/WorkerContainer';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 
@@ -20,7 +19,12 @@ export default async function deleteOnDatabase(
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);
-    const project = await getTsProject(resolvedPaths.project);
+    const project = await getTsProject({
+      tsConfigFilePath: resolvedPaths.project,
+      skipAddingFilesFromTsConfig: false,
+      skipFileDependencyResolution: true,
+      skipLoadingLibFiles: true,
+    });
     if (project.type === 'fail') throw project.fail;
 
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
@@ -41,9 +45,18 @@ export default async function deleteOnDatabase(
 
     const option: IDeleteSchemaOption = { ...nullableOption, types: targetTypes.pass };
 
-    WorkerContainer.workers.forEach((worker) => {
-      worker.send({ command: 'end' });
-    });
+    if (targetTypes.pass.length === Object.keys(db).length) {
+      await saveDatabase(option, {});
+
+      spinner.stop({
+        message: `[${targetTypes.pass
+          .map((targetType) => `"${targetType}"`)
+          .join(', ')}] delete complete`,
+        channel: 'succeed',
+      });
+
+      return;
+    }
 
     const newDb = targetTypes.pass.reduce((aggregation, typeName) => {
       const schemas = deleteSchemaRecord(aggregation, typeName);

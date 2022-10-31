@@ -15,9 +15,11 @@ export const addCmdOption: IAddSchemaOption = {
   discriminator: 'add-schema',
   files: [],
   multiple: false,
+  generatorOption: {},
 };
 
 export const deleteCmdOption: IDeleteSchemaOption = {
   ...baseOption,
   discriminator: 'delete-schema',
+  multiple: false,
 };

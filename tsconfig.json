@@ -20,6 +20,7 @@
   "compilerOptions": {
     /* Basic Options */
     "lib": ["es2021", "DOM"],
+    "composite": true,
     "declaration": true /* Generates corresponding '.d.ts' file. */,
     // "declarationDir": "./dist/typings",
     "declarationMap": true /* Generates corresponding '.d.ts' file. */,

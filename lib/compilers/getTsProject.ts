@@ -4,15 +4,14 @@ import { fail, pass, PassFailEither } from 'my-only-either';
 import * as tsm from 'ts-morph';
 
 export default async function getTsProject(
-  projectPath: string,
+  option: Omit<tsm.ProjectOptions, 'tsConfigFilePath'> & { tsConfigFilePath: string },
 ): Promise<PassFailEither<Error, tsm.Project>> {
   try {
-    if ((await exists(projectPath)) === false) {
-      return fail(new Error(`Could not found project path: ${projectPath}`));
+    if ((await exists(option.tsConfigFilePath)) === false) {
+      return fail(new Error(`Could not found project path: ${option.tsConfigFilePath}`));
     }
 
-    // Exclude exclude file in .ctiignore file: more exclude progress
-    const project = new tsm.Project({ tsConfigFilePath: projectPath });
+    const project = new tsm.Project(option);
 
     return pass(project);
   } catch (catched) {

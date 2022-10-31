@@ -27,7 +27,12 @@ export default async function addOnDatabase(
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);
-    const project = await getTsProject(resolvedPaths.project);
+    const project = await getTsProject({
+      tsConfigFilePath: resolvedPaths.project,
+      skipAddingFilesFromTsConfig: false,
+      skipFileDependencyResolution: true,
+      skipLoadingLibFiles: true,
+    });
     if (project.type === 'fail') throw project.fail;
 
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });

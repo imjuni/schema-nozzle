@@ -28,6 +28,10 @@ const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
   describe: 'add or update json-schema to database file',
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
+    populate(os.cpus().length).forEach(() => {
+      WorkerContainer.add(cluster.fork());
+    });
+
     const option = await withDefaultOption(argv);
     await addOnDatabase(option, true);
   },
@@ -50,6 +54,10 @@ const refreshCmd: CommandModule<IRefreshSchemaOption, IRefreshSchemaOption> = {
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
+    populate(os.cpus().length).forEach(() => {
+      WorkerContainer.add(cluster.fork());
+    });
+
     const option = await withDefaultOption(argv);
     await refreshOnDatabase(option, true);
   },
@@ -82,13 +90,10 @@ if (cluster.isMaster ?? cluster.isPrimary) {
 
   (async () => {
     try {
-      parser.parse();
-
-      populate(os.cpus().length).forEach(() => {
-        WorkerContainer.add(cluster.fork());
-      });
+      const handle = parser.parse();
+      await handle;
     } catch {
-      WorkerContainer.workers.forEach((eachWorker) => eachWorker.send('end'));
+      process.exit(1);
     }
   })();
 }
