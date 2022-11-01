@@ -5,8 +5,8 @@ import getResolvedPaths from '@configs/getResolvedPaths';
 import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
-import saveScheams from '@databases/saveScheams';
-import mergeSchemaRecord from '@modules/mergeSchemaRecord';
+import saveDatabase from '@databases/saveDatabase';
+import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
 import { isError, sleep } from 'my-easy-fp';
@@ -77,9 +77,9 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
 
     await WorkerContainer.wait();
 
-    const records = WorkerContainer.records.map((record) => mergeSchemaRecord(db, record));
+    const newDb = mergeSchemaRecords(db, WorkerContainer.records);
 
-    await saveScheams(option, db, ...records);
+    await saveDatabase(option, newDb);
 
     spinner.stop({
       message: `[${targetTypes

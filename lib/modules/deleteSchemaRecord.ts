@@ -1,6 +1,6 @@
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import { TDatabase } from '@modules/interfaces/TDatabase';
-import mergeSchemaRecord from '@modules/mergeSchemaRecord';
+import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 
 export default function deleteSchemaRecord(db: TDatabase, typeName: string) {
   if (db[typeName] == null) {
@@ -56,12 +56,15 @@ export default function deleteSchemaRecord(db: TDatabase, typeName: string) {
   );
 
   // stage 03. cycle reference schema update
-  const mergedCycleRefrenceRecords = cycleRefrenceRecords.map((cycleRefrenceRecord) =>
-    mergeSchemaRecord(
-      { [cycleRefrenceRecord.id]: importUpdatedRecordMap[cycleRefrenceRecord.id] },
-      exportUpdatedRecordMap[cycleRefrenceRecord.id],
-    ),
-  );
+  const mergedCycleRefrenceRecords = cycleRefrenceRecords
+    .map((cycleRefrenceRecord) =>
+      mergeSchemaRecords(
+        { [cycleRefrenceRecord.id]: importUpdatedRecordMap[cycleRefrenceRecord.id] },
+        [exportUpdatedRecordMap[cycleRefrenceRecord.id]],
+      ),
+    )
+    .map((mergedDb) => Object.values(mergedDb))
+    .flat();
 
   const mergedCycleRefrenceRecordMap = mergedCycleRefrenceRecords.reduce(
     (aggregation, mergedCycleRefrenceRecord) => {

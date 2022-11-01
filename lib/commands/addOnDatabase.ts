@@ -5,11 +5,11 @@ import getResolvedPaths from '@configs/getResolvedPaths';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
-import saveScheams from '@databases/saveScheams';
+import saveDatabase from '@databases/saveDatabase';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecord from '@modules/mergeSchemaRecord';
+import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
 import { isError } from 'my-easy-fp';
@@ -95,8 +95,9 @@ export default async function addOnDatabase(
     WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
     await WorkerContainer.wait();
 
-    const records = WorkerContainer.records.map((record) => mergeSchemaRecord(db, record));
-    await saveScheams(option, db, ...records);
+    const newDb = mergeSchemaRecords(db, WorkerContainer.records);
+
+    await saveDatabase(option, newDb);
 
     spinner.stop({
       message: `[${targetTypes.pass

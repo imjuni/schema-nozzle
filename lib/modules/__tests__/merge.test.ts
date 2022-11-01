@@ -7,7 +7,7 @@ import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
 import getTargetTypes from '@modules/getTargetTypes';
-import mergeSchemaRecord from '@modules/mergeSchemaRecord';
+import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import fs from 'fs';
 import 'jest';
 import { parse } from 'jsonc-parser';
@@ -71,8 +71,9 @@ test('T001-create-schema-record', async () => {
     )
   )
     .map((schema) => [schema.record, ...(schema.definitions ?? [])])
-    .flat()
-    .map((schema) => mergeSchemaRecord(db, schema));
+    .flat();
+
+  mergeSchemaRecords(db, records);
 
   expect(records).toEqual(expectation);
 });
