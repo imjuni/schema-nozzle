@@ -8,15 +8,10 @@ import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
 import { isError } from 'my-easy-fp';
-
-export type TChaildToParentData =
-  | { command: 'record'; data: IDatabaseRecord[] }
-  | { command: 'message'; data: string };
 
 export default async function addOnDatabase(
   nullableOption: IAddSchemaOption,

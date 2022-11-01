@@ -9,7 +9,9 @@ import saveDatabase from '@databases/saveDatabase';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
-import { isError, sleep } from 'my-easy-fp';
+import { isError } from 'my-easy-fp';
+import { getDirname } from 'my-node-fp';
+import path from 'path';
 
 export default async function refreshOnDatabase(option: IRefreshSchemaOption, isMessage?: boolean) {
   try {
@@ -33,14 +35,16 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
     const db = await openDatabase(resolvedPaths);
     spinner.update({ message: 'database open success', channel: 'succeed' });
 
+    const basePath = await getDirname(resolvedPaths.project);
     const targetTypes = Object.values(db).map((record) => {
       return {
-        filePath: record.filePath,
+        filePath: path.join(basePath, record.filePath),
         typeName: record.id,
       };
     });
 
     const generatorOption = await readGeneratorOption(option);
+
     spinner.start('Schema generation start, ...');
 
     const jobs = targetTypes.map((typeInfo) => {
@@ -72,8 +76,6 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
     }
 
     WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
-
-    sleep(20);
 
     await WorkerContainer.wait();
 

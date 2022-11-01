@@ -66,7 +66,7 @@ test('T001-create-schema-record', async () => {
         )
         .map((schema) => schema.pass)
         .map(async (schema) =>
-          createSchemaRecord({ project: project.pass, resolvedPaths, metadata: schema }),
+          createSchemaRecord({ option, project: project.pass, resolvedPaths, metadata: schema }),
         ),
     )
   )

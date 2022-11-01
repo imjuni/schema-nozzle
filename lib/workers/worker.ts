@@ -9,6 +9,8 @@ import IFileWithType from '@modules/interfaces/IFileWithType';
 import TChildToParentData from '@workers/interfaces/TChildToParentData';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import { isError } from 'my-easy-fp';
+import { getDirname } from 'my-node-fp';
+import path from 'path';
 import { AsyncReturnType } from 'type-fest';
 
 export default async function worker() {
@@ -35,6 +37,7 @@ export default async function worker() {
 
     if (payload.command === 'start') {
       try {
+        const basePath = await getDirname(resolvedPaths.project);
         const project = await getTsProject({
           tsConfigFilePath: resolvedPaths.project,
           skipAddingFilesFromTsConfig: false,
@@ -55,6 +58,7 @@ export default async function worker() {
           if (schema.type === 'pass') {
             // eslint-disable-next-line
             const record = await createSchemaRecord({
+              option,
               project: project.pass,
               resolvedPaths,
               metadata: schema.pass,
@@ -64,9 +68,20 @@ export default async function worker() {
             const postMessage: TChildToParentData = { command: 'record', data: records };
             const message: TChildToParentData = {
               command: 'message',
-              data: `Success: ${schema.pass.typeName} - ${schema.pass.filePath}`,
+              data: `Success: ${schema.pass.typeName} - ${path.relative(
+                basePath,
+                schema.pass.filePath,
+              )}`,
             };
             process.send?.(postMessage);
+            process.send?.(message);
+          } else {
+            const message: TChildToParentData = {
+              command: 'message',
+              data: `Error: ${typeInfos[i].typeName} - ${schema.fail.message}`,
+              channel: 'fail',
+            };
+
             process.send?.(message);
           }
 

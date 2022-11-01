@@ -1,4 +1,5 @@
 import IBaseOption from '@configs/interfaces/IBaseOption';
+import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 import * as tjsg from 'ts-json-schema-generator';
 
 export default interface IAddSchemaOption extends IBaseOption {
@@ -12,4 +13,12 @@ export default interface IAddSchemaOption extends IBaseOption {
 
   /** ts-json-schema-generator option file path */
   generatorOption: string | tjsg.Config;
+
+  /**
+   * json-schema save format
+   * * json: json object
+   * * string: plain string
+   * * base64: plain string > base64
+   * */
+  format: TOUTPUT_FORMAT;
 }

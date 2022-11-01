@@ -1,6 +1,6 @@
 import spinner from '@cli/spinner';
-import type { TChaildToParentData } from '@commands/addOnDatabase';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import TChildToParentData from '@workers/interfaces/TChildToParentData';
 import { Worker } from 'cluster';
 import dayjs from 'dayjs';
 
@@ -34,13 +34,13 @@ class WorkerContainerClass {
       this.#finished -= 1;
     });
 
-    worker.on('message', (message: TChaildToParentData) => {
+    worker.on('message', (message: TChildToParentData) => {
       if (message.command === 'record') {
         this.#records.push(...message.data);
       }
 
       if (message.command === 'message') {
-        spinner.update({ message: message.data, channel: 'succeed' });
+        spinner.update({ message: message.data, channel: message.channel ?? 'succeed' });
       }
     });
 

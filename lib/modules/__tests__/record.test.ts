@@ -28,16 +28,19 @@ test('T001-create-schema-record', async () => {
     tsConfigFilePath: resolvedPaths.project,
   });
   if (project.type === 'fail') throw project.fail;
+
   const files = await getAddFiles({
     resolvedPaths,
     option: { ...nullableOption, files: ['IProfessorDto.ts'] },
   });
   if (files.type === 'fail') throw files.fail;
+
   const types = await getAddTypes({
     project: project.pass,
     option: { ...nullableOption, files: files.pass, types: ['IProfessorDto'] },
   });
   if (types.type === 'fail') throw types.fail;
+
   const option: IAddSchemaOption = {
     ...nullableOption,
     files: files.pass,
@@ -62,7 +65,7 @@ test('T001-create-schema-record', async () => {
       )
       .map((schema) => schema.pass)
       .map(async (schema) =>
-        createSchemaRecord({ project: project.pass, resolvedPaths, metadata: schema }),
+        createSchemaRecord({ option, project: project.pass, resolvedPaths, metadata: schema }),
       ),
   );
 

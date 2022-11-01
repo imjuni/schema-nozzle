@@ -1,4 +1,5 @@
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 import { Argv } from 'yargs';
 
 export default function addBuilder(argv: Argv<{}>) {
@@ -18,6 +19,12 @@ export default function addBuilder(argv: Argv<{}>) {
     .option('generator-option', {
       describe: 'ts-json-schema-generator option file path',
       type: 'string',
+    })
+    .option('format', {
+      describe: 'json-schema save format',
+      type: 'string',
+      choices: [TOUTPUT_FORMAT.JSON, TOUTPUT_FORMAT.STRING, TOUTPUT_FORMAT.BASE64],
+      default: TOUTPUT_FORMAT.JSON,
     });
 
   return argv as Argv<IAddSchemaOption>;

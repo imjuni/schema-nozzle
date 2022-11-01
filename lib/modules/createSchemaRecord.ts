@@ -1,11 +1,13 @@
+import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import createJSONSchema from '@modules/createJSONSchema';
+import getFormattedSchema from '@modules/getFormattedSchema';
 import getImportDeclarationMap from '@modules/getImportDeclaration';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
 import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
 import fastCopy from 'fast-copy';
-import fastSafeStringify from 'fast-safe-stringify';
 import { JSONSchema7 } from 'json-schema';
 import { settify } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
@@ -30,12 +32,14 @@ const traverseHandle: TraversalCallback = ({
 };
 
 interface ICreateSchemaRecordArgs {
+  option: IAddSchemaOption | IRefreshSchemaOption;
   resolvedPaths: IResolvedPaths;
   project: tsm.Project;
   metadata: TPickPass<ReturnType<typeof createJSONSchema>>;
 }
 
 export default async function createSchemaRecord({
+  option,
   resolvedPaths,
   project,
   metadata,
@@ -50,7 +54,11 @@ export default async function createSchemaRecord({
   traverse(targetSchema, traverseHandle);
 
   const id = metadata.typeName;
-  const stringified = fastSafeStringify({ ...targetSchema, definitions: undefined });
+  const stringified = getFormattedSchema(option.format, {
+    ...targetSchema,
+    definitions: undefined,
+  });
+
   const isDto = (importMap[id].node.getSymbol()?.getJsDocTags() ?? []).some(
     (tag) => tag.getName() === dtoDocCommentName && Boolean(tag.getText()) === true,
   );
@@ -72,7 +80,7 @@ export default async function createSchemaRecord({
 
         traverse(definitionSchema, traverseHandle);
 
-        const definitionStringified = fastSafeStringify(definitionSchema);
+        const definitionStringified = getFormattedSchema(option.format, definitionSchema);
         const exportValue: ISchemaExportInfo =
           definitionId !== id
             ? {

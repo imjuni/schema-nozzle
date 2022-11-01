@@ -1,6 +1,7 @@
 {
   "project": "./examples/tsconfig.json",
   "multiple": true,
+  "format": "string",
   "generator-option": {
     "additionalProperties": true
   }
