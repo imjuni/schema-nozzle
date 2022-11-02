@@ -95,7 +95,8 @@ export default async function worker() {
           }),
         );
 
-        process.exit(1);
+        const killmeUpload: TChildToParentData = { command: 'kill-me' };
+        process.send?.(killmeUpload);
       } catch (catched) {
         const err = isError(catched) ?? new Error('unknown error raised');
         console.log(err.message);

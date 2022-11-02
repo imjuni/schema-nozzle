@@ -10,23 +10,16 @@ class WorkerContainerClass {
 
   #finished: number;
 
-  #jobCount: number;
-
   #records: IDatabaseRecord[];
 
   constructor() {
     this.#workers = [];
     this.#finished = 0;
-    this.#jobCount = 0;
     this.#records = [];
   }
 
   get finished() {
     return this.#finished;
-  }
-
-  get jobCount() {
-    return this.#jobCount;
   }
 
   get records() {
@@ -41,11 +34,14 @@ class WorkerContainerClass {
     worker.on('message', (message: TChildToParentData) => {
       if (message.command === 'record') {
         this.#records.push(...message.data);
-        this.#jobCount -= 1;
       }
 
       if (message.command === 'message') {
         spinner.update({ message: message.data, channel: message.channel ?? 'succeed' });
+      }
+
+      if (message.command === 'kill-me') {
+        worker.send({ command: 'end' });
       }
     });
 
@@ -54,7 +50,6 @@ class WorkerContainerClass {
   }
 
   send(...jobs: TParentToChildData[]) {
-    this.#jobCount = jobs.length;
     jobs.forEach((job, index) => this.#workers[index % this.#workers.length].send(job));
     this.#workers.forEach((worker) => worker.send({ command: 'start' }));
   }
@@ -64,7 +59,7 @@ class WorkerContainerClass {
       const startAt = dayjs();
 
       const intervalHandle = setInterval(() => {
-        if (this.#finished === 0 && this.#jobCount === 0) {
+        if (this.#finished === 0) {
           clearInterval(intervalHandle);
           resolve(this.#workers.length);
         }
@@ -74,7 +69,7 @@ class WorkerContainerClass {
         // timeout, wait 30 second
         if (currentAt.diff(startAt, 'second') > 30) {
           clearInterval(intervalHandle);
-          resolve(this.#finished + this.#jobCount);
+          resolve(this.#finished);
         }
       }, 300);
     });

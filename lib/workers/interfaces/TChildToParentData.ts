@@ -3,6 +3,7 @@ import ora from 'ora';
 
 type TChildToParentData =
   | { command: 'record'; data: IDatabaseRecord[] }
+  | { command: 'kill-me' }
   | {
       command: 'message';
       data: string;
