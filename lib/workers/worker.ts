@@ -37,6 +37,10 @@ export default async function worker() {
 
     if (payload.command === 'start') {
       try {
+        if (typeInfos.length <= 0) {
+          process.exit();
+        }
+
         const basePath = await getDirname(resolvedPaths.project);
         const project = await getTsProject({
           tsConfigFilePath: resolvedPaths.project,
@@ -47,46 +51,51 @@ export default async function worker() {
 
         if (project.type === 'fail') process.exit(1);
 
-        for (let i = 0; i < typeInfos.length; i += 1) {
-          const schema = createJSONSchema({
-            option,
-            schemaConfig: generatorOption,
-            filePath: typeInfos[i].filePath,
-            typeName: typeInfos[i].typeName,
-          });
+        await Promise.all(
+          typeInfos.map(async (typeInfo) => {
+            const schema = createJSONSchema({
+              option,
+              schemaConfig: generatorOption,
+              filePath: typeInfo.filePath,
+              typeName: typeInfo.typeName,
+            });
 
-          if (schema.type === 'pass') {
-            // eslint-disable-next-line
+            if (schema.type === 'fail') {
+              const message: TChildToParentData = {
+                command: 'message',
+                data: `Error: ${typeInfo.typeName} - ${schema.fail.message}`,
+                channel: 'fail',
+              };
+
+              process.send?.(message);
+
+              return;
+            }
+
             const record = await createSchemaRecord({
               option,
               project: project.pass,
               resolvedPaths,
               metadata: schema.pass,
             });
+
             const records = [record.record, ...(record.definitions ?? [])];
 
-            const postMessage: TChildToParentData = { command: 'record', data: records };
-            const message: TChildToParentData = {
+            const recordsUpload: TChildToParentData = { command: 'record', data: records };
+            const messageUpload: TChildToParentData = {
               command: 'message',
               data: `Success: ${schema.pass.typeName} - ${path.relative(
                 basePath,
                 schema.pass.filePath,
               )}`,
             };
-            process.send?.(postMessage);
-            process.send?.(message);
-          } else {
-            const message: TChildToParentData = {
-              command: 'message',
-              data: `Error: ${typeInfos[i].typeName} - ${schema.fail.message}`,
-              channel: 'fail',
-            };
 
-            process.send?.(message);
-          }
+            process.send?.(recordsUpload);
+            process.send?.(messageUpload);
+          }),
+        );
 
-          process.exit(1);
-        }
+        process.exit(1);
       } catch (catched) {
         const err = isError(catched) ?? new Error('unknown error raised');
         console.log(err.message);

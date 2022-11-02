@@ -73,25 +73,10 @@ export default async function addOnDatabase(
       return payload;
     });
 
-    if (jobs.length > WorkerContainer.workers.length) {
-      jobs.forEach((job, index) => {
-        WorkerContainer.workers[index % WorkerContainer.workers.length].send(job);
-      });
-    } else {
-      WorkerContainer.workers.forEach((worker, index) => {
-        if (jobs.length > index) {
-          worker.send(jobs[index]);
-        } else {
-          worker.send({ command: 'end' });
-        }
-      });
-    }
-
-    WorkerContainer.workers.forEach((worker) => worker.send({ command: 'start' }));
+    WorkerContainer.send(...jobs);
     await WorkerContainer.wait();
 
     const newDb = mergeSchemaRecords(db, WorkerContainer.records);
-
     await saveDatabase(option, newDb);
 
     spinner.stop({
