@@ -7,29 +7,66 @@ import getImportDeclarationMap from '@modules/getImportDeclaration';
 import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
 import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
+import { TJSDOC_EXTENDS } from '@modules/interfaces/TJSDOC_EXTENDS';
 import fastCopy from 'fast-copy';
 import { JSONSchema7 } from 'json-schema';
-import { settify } from 'my-easy-fp';
+import { first, settify } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import { TPickPass } from 'my-only-either';
 import { TraversalCallback, TraversalCallbackContext, traverse } from 'object-traversal';
 import path from 'path';
 import * as tsm from 'ts-morph';
 
-const dtoDocCommentName = 'asDto';
-
 const traverseHandle: TraversalCallback = ({
   parent,
   key,
   value,
 }: TraversalCallbackContext): any => {
-  if (parent != null && key != null && key === '$ref') {
-    // eslint-disable-next-line no-param-reassign
-    parent[key] = `${value.replace('#/definitions/', '')}`;
+  const next = parent;
+  if (next != null && key != null && key === '$ref') {
+    next[key] = `${value.replace('#/definitions/', '')}`;
   }
 
-  return parent;
+  return next;
 };
+
+function getJsDocTags(
+  importMap: ReturnType<typeof getImportDeclarationMap>,
+  id: string,
+): boolean | string | string[] {
+  try {
+    const dtos = (importMap[id].node.getSymbol()?.getJsDocTags() ?? [])
+      .filter(
+        (tag) =>
+          tag.getName() === TJSDOC_EXTENDS.AS_DTO || tag.getName() === TJSDOC_EXTENDS.AS_DTO_ALIAS,
+      )
+      .map((tag) => first(tag.getText()));
+
+    if (dtos == null || dtos.length <= 0) {
+      return false;
+    }
+
+    const tags = dtos.map((dto) => {
+      if (dto.text === 'false' || dto.text === 'true') {
+        return Boolean(dto);
+      }
+
+      return dto.text;
+    });
+
+    if (tags.length === 1 && typeof first(tags) === 'string') {
+      return first(tags);
+    }
+
+    if (tags.length === 1 && typeof first(tags) === 'boolean') {
+      return first(tags);
+    }
+
+    return tags.filter((tag): tag is string => typeof tag !== 'boolean');
+  } catch {
+    return false;
+  }
+}
 
 interface ICreateSchemaRecordArgs {
   option: IAddSchemaOption | IRefreshSchemaOption;
@@ -59,9 +96,7 @@ export default async function createSchemaRecord({
     definitions: undefined,
   });
 
-  const isDto = (importMap[id].node.getSymbol()?.getJsDocTags() ?? []).some(
-    (tag) => tag.getName() === dtoDocCommentName && Boolean(tag.getText()) === true,
-  );
+  const dtoTag = getJsDocTags(importMap, id);
 
   // extract schema from definitions field
   if (metadata.schema.definitions != null) {
@@ -73,6 +108,7 @@ export default async function createSchemaRecord({
       )
       .map((definition) => {
         const definitionId = definition.key;
+        const importDeclaration = importMap[definition.key];
         const definitionSchema: JSONSchema7 = {
           $schema: metadata.schema.$schema,
           ...definition.value,
@@ -92,27 +128,23 @@ export default async function createSchemaRecord({
                 to: [],
               };
 
-        const importDeclaration = importMap[definitionId];
-
-        if (importDeclaration == null) {
-          throw new Error(`Cannot found import name: ${definitionId}`);
-        }
-
         // definitionId를 사용하는 import를 뒤져서, dto가 있으면 true를 넣어줘야 한다.
-
         const definitionRecord: IDatabaseRecord = {
           id: definitionId,
-          filePath: path.relative(
-            basePath,
-            importDeclaration.node.getSourceFile().getFilePath().toString(),
-          ),
+          filePath:
+            importDeclaration != null
+              ? path.relative(
+                  basePath,
+                  importDeclaration.node.getSourceFile().getFilePath().toString(),
+                )
+              : undefined,
           import: {
             name: definitionId,
             from: [],
           },
           export: exportValue,
           schema: definitionStringified,
-          dto: isDto,
+          dto: dtoTag,
         };
 
         return definitionRecord;
@@ -150,7 +182,7 @@ export default async function createSchemaRecord({
         name: id,
         to: [],
       },
-      dto: isDto,
+      dto: dtoTag,
       schema: stringified,
     };
 
@@ -168,7 +200,7 @@ export default async function createSchemaRecord({
       name: id,
       to: [],
     },
-    dto: isDto,
+    dto: dtoTag,
     schema: stringified,
   };
 

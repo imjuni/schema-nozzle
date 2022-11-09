@@ -6,8 +6,8 @@ import { JSONSchema7 } from 'json-schema';
 export default interface IDatabaseRecord {
   id: string;
   schema: string | JSONSchema7;
-  filePath: string;
+  filePath?: string;
   import: ISchemaImportInfo;
   export: ISchemaExportInfo;
-  dto: boolean;
+  dto: boolean | string | string[];
 }

@@ -4,9 +4,11 @@ import deleteBuilder from '@cli/deleteBuilder';
 import { TCOMMAND_LIST } from '@cli/interfaces/TCOMMAND_LIST';
 import refreshBuilder from '@cli/refreshBuilder';
 import truncateBuilder from '@cli/truncateBuilder';
-import addOnDatabase from '@commands/addOnDatabase';
+import addOnDatabaseCluster from '@commands/addOnDatabaseCluster';
+import addOnDatabaseSync from '@commands/addOnDatabaseSync';
 import deleteOnDatabase from '@commands/deleteOnDatabase';
-import refreshOnDatabase from '@commands/refreshOnDatabase';
+import refreshOnDatabaseCluster from '@commands/refreshOnDatabaseCluster';
+import refreshOnDatabaseSync from '@commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '@commands/truncateOnDatabase';
 import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
@@ -28,12 +30,17 @@ const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
   describe: 'add or update json-schema to database file',
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
-    populate(os.cpus().length).forEach(() => {
-      WorkerContainer.add(cluster.fork());
-    });
-
     const option = await withDefaultOption(argv);
-    await addOnDatabase(option, true);
+
+    if (process.env.SYNC_MODE === 'true') {
+      await addOnDatabaseSync(option, true);
+    } else {
+      populate(os.cpus().length).forEach(() => {
+        WorkerContainer.add(cluster.fork());
+      });
+
+      await addOnDatabaseCluster(option, true);
+    }
   },
 };
 
@@ -54,12 +61,17 @@ const refreshCmd: CommandModule<IRefreshSchemaOption, IRefreshSchemaOption> = {
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
-    populate(os.cpus().length).forEach(() => {
-      WorkerContainer.add(cluster.fork());
-    });
-
     const option = await withDefaultOption(argv);
-    await refreshOnDatabase(option, true);
+
+    if (process.env.SYNC_MODE === 'true') {
+      await refreshOnDatabaseSync(option, true);
+    } else {
+      populate(os.cpus().length).forEach(() => {
+        WorkerContainer.add(cluster.fork());
+      });
+
+      await refreshOnDatabaseCluster(option, true);
+    }
   },
 };
 
@@ -74,7 +86,7 @@ const truncateCmd: CommandModule<ITruncateSchemaOption, ITruncateSchemaOption> =
   },
 };
 
-if (cluster.isMaster ?? cluster.isPrimary) {
+if (process.env.SYNC_MODE === 'true') {
   const parser = yargs(process.argv.slice(2));
 
   parser
@@ -96,8 +108,32 @@ if (cluster.isMaster ?? cluster.isPrimary) {
       process.exit(1);
     }
   })();
-}
+} else {
+  if (cluster.isMaster ?? cluster.isPrimary) {
+    const parser = yargs(process.argv.slice(2));
 
-if (cluster.isWorker) {
-  worker();
+    parser
+      .command(addCmd as CommandModule<{}, IAddSchemaOption>)
+      .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
+      .command(refreshCmd as CommandModule<{}, IRefreshSchemaOption>)
+      .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
+      .check(isValidateConfig)
+      .recommendCommands()
+      .demandCommand(1, 1)
+      .config(preLoadConfig())
+      .help();
+
+    (async () => {
+      try {
+        const handle = parser.parse();
+        await handle;
+      } catch {
+        process.exit(1);
+      }
+    })();
+  }
+
+  if (cluster.isWorker) {
+    worker();
+  }
 }

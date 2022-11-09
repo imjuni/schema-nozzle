@@ -37,8 +37,11 @@ export default async function worker() {
 
     if (payload.command === 'start') {
       try {
+        const killmeUpload: TChildToParentData = { command: 'kill-me' };
+
         if (typeInfos.length <= 0) {
-          process.exit();
+          process.send?.(killmeUpload);
+          return;
         }
 
         const basePath = await getDirname(resolvedPaths.project);
@@ -49,7 +52,10 @@ export default async function worker() {
           skipLoadingLibFiles: true,
         });
 
-        if (project.type === 'fail') process.exit(1);
+        if (project.type === 'fail') {
+          process.send?.(killmeUpload);
+          return;
+        }
 
         await Promise.all(
           typeInfos.map(async (typeInfo) => {
@@ -68,7 +74,6 @@ export default async function worker() {
               };
 
               process.send?.(message);
-
               return;
             }
 
@@ -95,7 +100,6 @@ export default async function worker() {
           }),
         );
 
-        const killmeUpload: TChildToParentData = { command: 'kill-me' };
         process.send?.(killmeUpload);
       } catch (catched) {
         const err = isError(catched) ?? new Error('unknown error raised');

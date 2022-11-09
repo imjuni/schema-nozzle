@@ -6,14 +6,19 @@ import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
+import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import TParentToChildData from '@workers/interfaces/TParentToChildData';
 import WorkerContainer from '@workers/WorkerContainer';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
+import { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabase(option: IRefreshSchemaOption, isMessage?: boolean) {
+export default async function refreshOnDatabaseCluster(
+  option: IRefreshSchemaOption,
+  isMessage?: boolean,
+) {
   try {
     spinner.isEnable = isMessage ?? false;
     spinner.start('TypeScript source code compile, ...');
@@ -36,12 +41,16 @@ export default async function refreshOnDatabase(option: IRefreshSchemaOption, is
     spinner.update({ message: 'database open success', channel: 'succeed' });
 
     const basePath = await getDirname(resolvedPaths.project);
-    const targetTypes = Object.values(db).map((record) => {
-      return {
-        filePath: path.join(basePath, record.filePath),
-        typeName: record.id,
-      };
-    });
+    const targetTypes = Object.values(db)
+      .filter(
+        (record): record is SetRequired<IDatabaseRecord, 'filePath'> => record.filePath != null,
+      )
+      .map((record) => {
+        return {
+          filePath: path.join(basePath, record.filePath),
+          typeName: record.id,
+        };
+      });
 
     const generatorOption = await readGeneratorOption(option);
 

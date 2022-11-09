@@ -1,6 +1,6 @@
 {
   "name": "create-ts-json-schema",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "generate json-schema from typescript source code and management it",
   "scripts": {
     "clean": "just --config ./.configs/just.config.ts clean",
@@ -35,6 +35,7 @@
   "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
   "dependencies": {
     "chalk": "^4.1.2",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.11.6",
     "fast-copy": "^3.0.0",
     "fast-glob": "^3.2.12",
@@ -65,7 +66,9 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.0",
+    "@slack/web-api": "^6.8.0",
     "@tsconfig/node14": "^1.0.3",
+    "@types/crypto-js": "^4.1.1",
     "@types/inquirer": "^9.0.2",
     "@types/inquirer-autocomplete-prompt": "^3.0.0",
     "@types/jest": "^29.1.2",

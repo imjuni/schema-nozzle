@@ -6,6 +6,6 @@ export default interface I18nDto {
 
 export interface ILanguageDto {
   id: string;
-  code: string;
+  $code: string;
   content: string;
 }

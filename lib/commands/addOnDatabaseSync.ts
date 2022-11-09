@@ -6,14 +6,15 @@ import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
+import createJSONSchema from '@modules/createJSONSchema';
+import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
+import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
-import TParentToChildData from '@workers/interfaces/TParentToChildData';
-import WorkerContainer from '@workers/WorkerContainer';
 import { isError } from 'my-easy-fp';
 
-export default async function addOnDatabase(
+export default async function addOnDatabaseSync(
   nullableOption: IAddSchemaOption,
   isMessage?: boolean,
 ): Promise<void> {
@@ -56,27 +57,39 @@ export default async function addOnDatabase(
     const generatorOption = await readGeneratorOption(option);
 
     spinner.update({ message: 'database open success', channel: 'succeed' });
-
     spinner.start('Schema generation start, ...');
 
-    const jobs = targetTypes.pass.map((typeInfo) => {
-      const payload: TParentToChildData = {
-        command: 'job',
-        data: {
-          fileWithTypes: typeInfo,
-          option,
-          resolvedPaths,
-          generatorOption,
-        },
-      };
+    const newRecords = (
+      await Promise.all(
+        targetTypes.pass.map(async (targetType) => {
+          const schema = createJSONSchema({
+            option,
+            schemaConfig: generatorOption,
+            filePath: targetType.filePath,
+            typeName: targetType.typeName,
+          });
 
-      return payload;
-    });
+          if (schema.type === 'fail') {
+            return undefined;
+          }
 
-    WorkerContainer.send(...jobs);
-    await WorkerContainer.wait();
+          const record = await createSchemaRecord({
+            option,
+            project: project.pass,
+            resolvedPaths,
+            metadata: schema.pass,
+          });
 
-    const newDb = mergeSchemaRecords(db, WorkerContainer.records);
+          const records = [record.record, ...(record.definitions ?? [])];
+
+          return records;
+        }),
+      )
+    )
+      .flat()
+      .filter((record): record is IDatabaseRecord => record != null);
+
+    const newDb = mergeSchemaRecords(db, newRecords);
     await saveDatabase(option, newDb);
 
     spinner.stop({

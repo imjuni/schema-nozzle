@@ -31,7 +31,7 @@ export default async function getDeleteTypesFromPrompt({
       return {
         name: entry.value.id,
         identifier: entry.value.id,
-        filePath: entry.value.filePath,
+        filePath: entry.value.filePath ?? 'external module',
         value: entry.value.id,
       };
     });

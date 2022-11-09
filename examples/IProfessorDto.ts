@@ -6,7 +6,7 @@ import TGenericExample from './TGenericExample';
 /**
  * IProfessorDto
  *
- * @asDto true
+ * @asDto professor
  */
 export default interface IProfessorDto {
   id: IStudentEntity['id'];
