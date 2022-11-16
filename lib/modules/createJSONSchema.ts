@@ -25,7 +25,10 @@ export default function createJSONSchema({
       type: typeName,
       tsconfig: option.project,
       minify: schemaConfig?.minify ?? false,
-      schemaId: schemaConfig?.schemaId,
+      schemaId:
+        schemaConfig?.schemaId == null || schemaConfig?.schemaId === ''
+          ? typeName
+          : schemaConfig.schemaId,
       expose: schemaConfig?.expose ?? 'export',
       topRef: schemaConfig?.topRef ?? false,
       jsDoc: schemaConfig?.jsDoc ?? 'extended',

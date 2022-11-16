@@ -111,6 +111,7 @@ export default async function createSchemaRecord({
         const importDeclaration = importMap[definition.key];
         const definitionSchema: JSONSchema7 = {
           $schema: metadata.schema.$schema,
+          $id: definitionId,
           ...definition.value,
         };
 

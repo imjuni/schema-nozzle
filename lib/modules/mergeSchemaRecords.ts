@@ -15,12 +15,12 @@ export default function mergeSchemaRecords(db: TDatabase, records: IDatabaseReco
 
       nextRecord.import = {
         name: record.import.name,
-        from: settify([...prevRecord.import.from, ...prevRecord.import.from]),
+        from: settify([...prevRecord.import.from, ...nextRecord.import.from]),
       };
 
       nextRecord.export = {
         name: record.export.name,
-        to: settify([...prevRecord.export.to, ...record.export.to]),
+        to: settify([...prevRecord.export.to, ...nextRecord.export.to]),
       };
 
       return { ...aggregation, [nextRecord.id]: nextRecord };
