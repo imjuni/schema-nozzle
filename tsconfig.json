@@ -63,5 +63,5 @@
     "typeRoots": ["lib/@types", "node_modules/@types"]
   },
   "include": ["**/*"],
-  "exclude": ["examples/**", "dist/**", "**/.configs/**", "**/docs/**/*"]
+  "exclude": ["examples/**/*", "dist/**", "**/.configs/**", "**/docs/**/*"]
 }

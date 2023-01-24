@@ -29,8 +29,15 @@
     {
       "files": [
         ".vscode/launch.json",
-        ".vscode/settings.json",
-        "tsconfig.prod.json",
+        ".vscode/settings.json"
+      ],
+      "options": {
+        "parser": "json"
+      }
+    },
+    {
+      "files": [
+        "tsconfig.*.json",
         "tsconfig.json"
       ],
       "options": {

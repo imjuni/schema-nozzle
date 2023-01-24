@@ -5,11 +5,16 @@
   },
   "exclude": [
     "**/node_modules/**",
-    "**/example/**",
+    "examples/**/*",
+    "dist/**",
+    "**/.configs/**",
+    "**/docs/**/*",
     "**/__test__/**",
     "**/__tests__/**",
     "dist/**",
     "**/.configs/**",
-    "**/docs/**"
+    "**/docs/**",
+    "jest.config.cjs",
+    "prepublish.cjs"
   ]
 }

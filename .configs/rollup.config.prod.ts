@@ -1,4 +1,5 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
 import readPackage from 'read-pkg';
 import ts from 'rollup-plugin-ts';
 
@@ -19,7 +20,11 @@ export default [
         resolveOnly: (module) =>
           pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null,
       }),
-      ts({ tsconfig: 'tsconfig.prod.json' }),
+      ts({
+        transpiler: 'swc',
+        tsconfig: 'tsconfig.prod.json',
+      }),
+      terser(),
     ],
   },
 ];
