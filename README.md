@@ -6,9 +6,11 @@ automatically generate json-schema from TypeScript source code and management it
 
 ## What is create-ts-json-schema?
 
-create-ts-json-schema is tiny cli utility that automatically generate json-schema from TypeScript source code and management generated json-schema. If you use fastify.js that uses json-schema to validate request and reply. But managing a large number of json-schema takes a lot of effort. create-ts-json-schema help that work.
+create-ts-json-schema is tiny cli utility that automatically generate json-schema from TypeScript `interface` or `TypeAlias`.
 
-![demo](ctjs_demo.gif)
+## How it works?
+
+![demo](assets/ctjs_demo.gif)
 
 ## installation
 
