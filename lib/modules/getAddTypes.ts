@@ -1,11 +1,11 @@
 import getAllExportedTypes from '@compilers/getAllExportTypes';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import getAddTypesFromPrompt from '@modules/getAddTypesFromPrompt';
-import IFileWithType from '@modules/interfaces/IFileWithType';
+import type IFileWithType from '@modules/interfaces/IFileWithType';
 import { isError } from 'my-easy-fp';
-import { fail, pass, PassFailEither, TPickPass } from 'my-only-either';
-import * as tsm from 'ts-morph';
-import { LastArrayElement } from 'type-fest';
+import { fail, pass, type PassFailEither, type TPickPass } from 'my-only-either';
+import type * as tsm from 'ts-morph';
+import type { LastArrayElement } from 'type-fest';
 
 export default async function getAddTypes({
   project,

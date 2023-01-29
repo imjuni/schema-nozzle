@@ -1,6 +1,6 @@
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
-import { Argv } from 'yargs';
+import type { Argv } from 'yargs';
 
 export default function refreshBuilder(argv: Argv<{}>) {
   argv

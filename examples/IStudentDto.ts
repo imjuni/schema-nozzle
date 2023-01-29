@@ -1,5 +1,5 @@
-import I18nDto from './I18nDto';
-import IStudentEntity from './IStudentEntity';
+import type I18nDto from './I18nDto';
+import type IStudentEntity from './IStudentEntity';
 
 export default interface IStudentDto {
   id: IStudentEntity['id'];

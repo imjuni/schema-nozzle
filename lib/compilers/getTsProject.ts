@@ -1,6 +1,6 @@
 import { isError } from 'my-easy-fp';
 import { exists } from 'my-node-fp';
-import { fail, pass, PassFailEither } from 'my-only-either';
+import { fail, pass, type PassFailEither } from 'my-only-either';
 import * as tsm from 'ts-morph';
 
 export default async function getTsProject(

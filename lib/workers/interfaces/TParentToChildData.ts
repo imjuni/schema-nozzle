@@ -1,9 +1,9 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import readGeneratorOption from '@configs/readGeneratorOption';
-import IFileWithType from '@modules/interfaces/IFileWithType';
-import { AsyncReturnType } from 'type-fest';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type readGeneratorOption from '@configs/readGeneratorOption';
+import type IFileWithType from '@modules/interfaces/IFileWithType';
+import type { AsyncReturnType } from 'type-fest';
 
 type TParentToChildData =
   | {

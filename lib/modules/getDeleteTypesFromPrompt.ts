@@ -1,7 +1,7 @@
-import IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import { TNullableDatabase } from '@modules/interfaces/TDatabase';
-import { TFUZZY_SCORE_LIMIT } from '@modules/interfaces/TFUZZY_SCORE_LIMIT';
+import type IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
+import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type { TNullableDatabase } from '@modules/interfaces/TDatabase';
 import getRatioNumber from '@tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
@@ -77,7 +77,7 @@ export default async function getDeleteTypesFromPrompt({
                   percent: getRatioNumber(matched.score ?? 0, 100),
                 };
               })
-              .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.DELETE_TYPE_CHOICE_FUZZY)
+              .filter((matched) => matched.percent >= CE_FUZZY_SCORE_LIMIT.DELETE_TYPE_CHOICE_FUZZY)
               .sort((l, r) => r.percent - l.percent)
               .map((matched) => matched.item);
 
@@ -133,7 +133,7 @@ export default async function getDeleteTypesFromPrompt({
                 percent: getRatioNumber(matched.score ?? 0, 100),
               };
             })
-            .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.DELETE_TYPE_CHOICE_FUZZY)
+            .filter((matched) => matched.percent >= CE_FUZZY_SCORE_LIMIT.DELETE_TYPE_CHOICE_FUZZY)
             .sort((l, r) => r.percent - l.percent)
             .map((matched) => matched.item);
 

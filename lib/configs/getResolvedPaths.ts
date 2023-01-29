@@ -1,8 +1,8 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import { replaceSepToPosix, win32DriveLetterUpdown } from 'my-node-fp';
 import path from 'path';
 

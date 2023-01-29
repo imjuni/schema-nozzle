@@ -1,6 +1,6 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IBaseOption from '@configs/interfaces/IBaseOption';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IBaseOption from '@configs/interfaces/IBaseOption';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 
 export const baseOption: IBaseOption = {
@@ -8,6 +8,7 @@ export const baseOption: IBaseOption = {
   project: '.',
   types: [],
   skipError: true,
+  listFile: '',
   output: '.',
 };
 

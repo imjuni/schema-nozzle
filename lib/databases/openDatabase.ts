@@ -1,6 +1,6 @@
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import dbFileName from '@databases/interfaces/dbFileName';
-import { TDatabase } from '@modules/interfaces/TDatabase';
+import type { TDatabase } from '@modules/interfaces/TDatabase';
 import safeParse from '@tools/safeParse';
 import fs from 'fs';
 import { exists, isDirectory } from 'my-node-fp';

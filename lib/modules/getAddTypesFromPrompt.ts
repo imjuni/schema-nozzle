@@ -1,11 +1,12 @@
-import IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
+import type IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
 import getExportedName from '@compilers/getExportedName';
 import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IFileWithType from '@modules/interfaces/IFileWithType';
-import { TFUZZY_SCORE_LIMIT } from '@modules/interfaces/TFUZZY_SCORE_LIMIT';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import type IFileWithType from '@modules/interfaces/IFileWithType';
 import getRatioNumber from '@tools/getRatioNumber';
+import logger from '@tools/logger';
 import chalk from 'chalk';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
@@ -13,6 +14,8 @@ import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
 import { first } from 'my-easy-fp';
 import * as tsm from 'ts-morph';
+
+const log = logger();
 
 interface IChoiceTypeItem {
   filePath: string;
@@ -64,6 +67,12 @@ export default async function getAddTypesFromPrompt({
       return types;
     })
     .flat()
+    .filter(
+      (choiceAbleType) =>
+        choiceAbleType.exportedDeclaration.getKind() === tsm.SyntaxKind.TypeAliasDeclaration ||
+        choiceAbleType.exportedDeclaration.getKind() === tsm.SyntaxKind.InterfaceDeclaration ||
+        choiceAbleType.exportedDeclaration.getKind() === tsm.SyntaxKind.ClassDeclaration,
+    )
     .map((choiceAbleType) => {
       return {
         name: choiceAbleType.identifier,
@@ -84,7 +93,7 @@ export default async function getAddTypesFromPrompt({
 
   if (choiceAbleTypes.length === 1) {
     const autoSelectedIdentifier = first(choiceAbleTypes).value.identifier;
-    console.log(
+    log.info(
       `${chalk.green(
         '?',
       )} Select type(interface or type alias) for JSONSchema extraction:  ${chalk.cyan(
@@ -133,7 +142,7 @@ export default async function getAddTypesFromPrompt({
                   percent: getRatioNumber(matched.score ?? 0, 100),
                 };
               })
-              .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
+              .filter((matched) => matched.percent >= CE_FUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
               .sort((l, r) => r.percent - l.percent)
               .map((matched) => matched.item);
 
@@ -191,7 +200,7 @@ export default async function getAddTypesFromPrompt({
                 percent: getRatioNumber(matched.score ?? 0, 100),
               };
             })
-            .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
+            .filter((matched) => matched.percent >= CE_FUZZY_SCORE_LIMIT.TYPE_CHOICE_FUZZY)
             .sort((l, r) => r.percent - l.percent)
             .map((matched) => matched.item);
 

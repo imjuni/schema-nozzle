@@ -1,6 +1,6 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
-import { Argv } from 'yargs';
+import type { Argv } from 'yargs';
 
 export default function addBuilder(argv: Argv<{}>) {
   // have no alias option

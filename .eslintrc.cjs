@@ -9,19 +9,17 @@ module.exports = {
     'airbnb-base',
     'airbnb-typescript/base',
     'plugin:prettier/recommended',
+    'prettier',
     'plugin:import/errors',
     'plugin:import/warnings',
   ],
-  ignorePatterns: ['dist/*', '__test__/*', '__tests__/*'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.eslint.json',
+    project: 'tsconfig.eslint.json',
   },
+  ignorePatterns: ['coverage/**', 'dist/**', '__test__/**', '__tests__/**'],
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
-    '@typescript-eslint/indent': 'off',
-    'import/no-unresolved': 'off',
-    'prettier/prettier': 'error',
     'max-len': [
       'error',
       {
@@ -33,7 +31,6 @@ module.exports = {
         code: 120,
       },
     ],
-    'no-console': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
@@ -41,7 +38,15 @@ module.exports = {
         argsIgnorePattern: '^_.+$',
       },
     ],
-    'no-underscore-dangle': ['error', { allowAfterThis: true }],
+    'import/extensions': ['off'],
+    '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
   },
-  settings: {},
+  settings: {
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: 'tsconfig.json',
+      },
+    },
+  },
 };

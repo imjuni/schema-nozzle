@@ -1,4 +1,4 @@
-import TStreamType from '@cli/interfaces/TStreamType';
+import type TStreamType from '@cli/interfaces/TStreamType';
 import ora from 'ora';
 
 class Spinner {

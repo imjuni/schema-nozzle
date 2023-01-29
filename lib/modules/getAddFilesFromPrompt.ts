@@ -1,6 +1,6 @@
-import IPromptAnswerSelectFile from '@cli/interfaces/IPromptAnswerSelectFile';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import { TFUZZY_SCORE_LIMIT } from '@modules/interfaces/TFUZZY_SCORE_LIMIT';
+import type IPromptAnswerSelectFile from '@cli/interfaces/IPromptAnswerSelectFile';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
 import getRatioNumber from '@tools/getRatioNumber';
 import posixJoin from '@tools/posixJoin';
 import fastGlob from 'fast-glob';
@@ -65,7 +65,7 @@ export default async function getAddFilesFromPrompt(
                 percent: getRatioNumber(matched.score ?? 0, 100),
               };
             })
-            .filter((matched) => matched.percent > TFUZZY_SCORE_LIMIT.FILE_CHOICE_FUZZY)
+            .filter((matched) => matched.percent > CE_FUZZY_SCORE_LIMIT.FILE_CHOICE_FUZZY)
             .sort((l, r) => r.percent - l.percent)
             .map((matched) => matched.item);
         },
@@ -121,7 +121,7 @@ export default async function getAddFilesFromPrompt(
                 percent: getRatioNumber(matched.score ?? 0, 100),
               };
             })
-            .filter((matched) => matched.percent >= TFUZZY_SCORE_LIMIT.FILE_CHOICE_FUZZY)
+            .filter((matched) => matched.percent >= CE_FUZZY_SCORE_LIMIT.FILE_CHOICE_FUZZY)
             .sort((l, r) => r.percent - l.percent)
             .map((matched) => matched.item);
 

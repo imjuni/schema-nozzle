@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Block, KnownBlock, MessageAttachment } from '@slack/web-api';
+import type { Block, KnownBlock, MessageAttachment } from '@slack/web-api';
 
 export interface ISlackMessageBotProfile {
   /** application 식별용 고유값 */

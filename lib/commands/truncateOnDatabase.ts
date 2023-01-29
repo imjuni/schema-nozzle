@@ -1,7 +1,6 @@
 import spinner from '@cli/spinner';
-import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
+import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import saveDatabase from '@databases/saveDatabase';
-// import WorkerContainer from '@workers/WorkerContainer';
 import { isError } from 'my-easy-fp';
 
 export default async function truncateOnDatabase(

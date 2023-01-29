@@ -1,8 +1,8 @@
 import spinner from '@cli/spinner';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import TChildToParentData from '@workers/interfaces/TChildToParentData';
-import TParentToChildData from '@workers/interfaces/TParentToChildData';
-import { Worker } from 'cluster';
+import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type TChildToParentData from '@workers/interfaces/TChildToParentData';
+import type TParentToChildData from '@workers/interfaces/TParentToChildData';
+import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 
 class WorkerContainerClass {

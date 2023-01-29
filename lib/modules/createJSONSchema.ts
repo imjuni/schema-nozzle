@@ -1,9 +1,9 @@
-import IBaseOption from '@configs/interfaces/IBaseOption';
+import type IBaseOption from '@configs/interfaces/IBaseOption';
 import CreateJSONSchemaError from '@errors/CreateJsonSchemaError';
-import ICreatedJSONSchema from '@modules/interfaces/ICreatedJSONSchema';
-import { JSONSchema7 } from 'json-schema';
+import type ICreatedJSONSchema from '@modules/interfaces/ICreatedJSONSchema';
+import type { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
-import { fail, pass, PassFailEither } from 'my-only-either';
+import { fail, pass, type PassFailEither } from 'my-only-either';
 import * as tjsg from 'ts-json-schema-generator';
 
 interface ICreateJSONSchemaArgs {

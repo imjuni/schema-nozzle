@@ -1,3 +1,4 @@
+import { CE_DEFAULT_VALUE } from '@configs/interfaces/CE_DEFAULT_VALUE';
 import logger from '@tools/logger';
 import findUp from 'find-up';
 import fs from 'fs';
@@ -6,9 +7,6 @@ import minimist from 'minimist';
 import { existsSync, getDirnameSync } from 'my-node-fp';
 
 const log = logger();
-
-const configFileName = '.ctjsrc';
-const tsconfigFileName = 'tsconfig.json';
 
 function getConfigObject(configFilePath: string): any {
   if (existsSync(configFilePath) === false) {
@@ -26,11 +24,11 @@ export default function preLoadConfig() {
     const configFilePath =
       argv.config != null || argv.c != null
         ? findUp.sync([argv.config, argv.c])
-        : findUp.sync(configFileName);
+        : findUp.sync(CE_DEFAULT_VALUE.CONFIG_FILE_NAME);
     const tsconfigPath =
       argv.project != null || argv.p != null
         ? findUp.sync([argv.project, argv.p])
-        : findUp.sync(tsconfigFileName);
+        : findUp.sync(CE_DEFAULT_VALUE.TSCONFIG_FILE_NAME);
 
     if (configFilePath != null && tsconfigPath != null) {
       const configObj = getConfigObject(configFilePath);
@@ -50,7 +48,7 @@ export default function preLoadConfig() {
     }
 
     if (configFilePath == null && tsconfigPath != null) {
-      const alternativeConfigPath = findUp.sync(configFileName, {
+      const alternativeConfigPath = findUp.sync(CE_DEFAULT_VALUE.CONFIG_FILE_NAME, {
         cwd: getDirnameSync(tsconfigPath),
       });
 

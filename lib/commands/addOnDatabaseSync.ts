@@ -2,7 +2,7 @@ import spinner from '@cli/spinner';
 import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
@@ -10,7 +10,7 @@ import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import { isError } from 'my-easy-fp';
 

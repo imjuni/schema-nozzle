@@ -10,10 +10,10 @@ import deleteOnDatabase from '@commands/deleteOnDatabase';
 import refreshOnDatabaseCluster from '@commands/refreshOnDatabaseCluster';
 import refreshOnDatabaseSync from '@commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '@commands/truncateOnDatabase';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import isValidateConfig from '@configs/isValidateConfig';
 import preLoadConfig from '@configs/preLoadConfig';
 import withDefaultOption from '@configs/withDefaultOption';
@@ -22,7 +22,7 @@ import WorkerContainer from '@workers/WorkerContainer';
 import cluster from 'cluster';
 import { populate } from 'my-easy-fp';
 import os from 'os';
-import yargs, { CommandModule } from 'yargs';
+import yargs, { type CommandModule } from 'yargs';
 
 const addCmd: CommandModule<IAddSchemaOption, IAddSchemaOption> = {
   command: TCOMMAND_LIST.ADD,

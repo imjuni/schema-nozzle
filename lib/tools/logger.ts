@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import pino, { Logger } from 'pino';
+import pino, { type Logger } from 'pino';
 import pretty from 'pino-pretty';
 
 let log:
@@ -30,8 +30,6 @@ export default function logger() {
           switch (levelLabel) {
             case 'debug':
               return `${chalk.blueBright(pino.levels.labels[logLevel])}`;
-            case 'verbose':
-              return `${chalk.blue(pino.levels.labels[logLevel])}`;
             case 'info':
               return `${chalk.greenBright(pino.levels.labels[logLevel])}`;
             case 'warn':
