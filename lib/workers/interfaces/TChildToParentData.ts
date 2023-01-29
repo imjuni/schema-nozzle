@@ -1,5 +1,5 @@
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import ora from 'ora';
+import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type ora from 'ora';
 
 type TChildToParentData =
   | { command: 'record'; data: IDatabaseRecord[] }

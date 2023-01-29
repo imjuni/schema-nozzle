@@ -1,7 +1,7 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
 import { getDirname } from 'my-node-fp';
 
 export default async function withDefaultOption<

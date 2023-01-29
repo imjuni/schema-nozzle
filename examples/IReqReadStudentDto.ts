@@ -1,4 +1,4 @@
-import IStudentDto from './IStudentDto';
+import type IStudentDto from './IStudentDto';
 
 export default interface IReqReadStudentDto {
   Querystring: {

@@ -1,6 +1,6 @@
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import openDatabase from '@databases/openDatabase';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
@@ -11,13 +11,13 @@ import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import fs from 'fs';
 import 'jest';
 import { parse } from 'jsonc-parser';
-import { TPickIPass } from 'my-only-either';
+import type { TPickIPass } from 'my-only-either';
 import path from 'path';
 import * as env from './env';
 
 test('T001-create-schema-record', async () => {
   const expectation = parse(
-    (await fs.promises.readFile(path.join(__dirname, 'data', '002.json'))).toString(),
+    (await fs.promises.readFile(path.join(__dirname, 'data', '001.json'))).toString(),
   );
 
   const nullableOption = {

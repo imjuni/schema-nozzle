@@ -1,21 +1,21 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import createJSONSchema from '@modules/createJSONSchema';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type createJSONSchema from '@modules/createJSONSchema';
 import getFormattedSchema from '@modules/getFormattedSchema';
 import getImportDeclarationMap from '@modules/getImportDeclaration';
-import IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
-import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
+import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
 import { TJSDOC_EXTENDS } from '@modules/interfaces/TJSDOC_EXTENDS';
 import fastCopy from 'fast-copy';
-import { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from 'json-schema';
 import { first, settify } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
-import { TPickPass } from 'my-only-either';
-import { TraversalCallback, TraversalCallbackContext, traverse } from 'object-traversal';
+import type { TPickPass } from 'my-only-either';
+import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
 import path from 'path';
-import * as tsm from 'ts-morph';
+import type * as tsm from 'ts-morph';
 
 const traverseHandle: TraversalCallback = ({
   parent,

@@ -1,4 +1,4 @@
-import { Argv } from 'yargs';
+import type { Argv } from 'yargs';
 
 export default function builder(argv: Argv<{}>) {
   // have alias option
@@ -31,6 +31,11 @@ export default function builder(argv: Argv<{}>) {
       describe: 'skip compile error on source file',
       type: 'boolean',
       default: true,
+    })
+    .option('list-file', {
+      describe: 'target list filename',
+      type: 'string',
+      default: '',
     });
 
   return argv;

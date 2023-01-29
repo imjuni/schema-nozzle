@@ -1,7 +1,7 @@
-import I18nDto from './I18nDto';
-import IStudentDto from './IStudentDto';
-import IStudentEntity from './IStudentEntity';
-import TGenericExample from './TGenericExample';
+import type I18nDto from './I18nDto';
+import type IStudentDto from './IStudentDto';
+import type IStudentEntity from './IStudentEntity';
+import type TGenericExample from './TGenericExample';
 
 /**
  * IProfessorDto

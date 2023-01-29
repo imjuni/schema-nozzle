@@ -1,8 +1,8 @@
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
 import getAddFilesFromPrompt from '@modules/getAddFilesFromPrompt';
 import { isError } from 'my-easy-fp';
-import { fail, pass, PassFailEither } from 'my-only-either';
+import { fail, pass, type PassFailEither } from 'my-only-either';
 
 export default async function getAddFiles({
   resolvedPaths,

@@ -1,7 +1,6 @@
-// import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
-import ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
-import ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
-import { JSONSchema7 } from 'json-schema';
+import type ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
+import type { JSONSchema7 } from 'json-schema';
 
 export default interface IDatabaseRecord {
   id: string;

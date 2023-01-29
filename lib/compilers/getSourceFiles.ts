@@ -1,6 +1,6 @@
 import { isError } from 'my-easy-fp';
-import { fail, pass, PassFailEither } from 'my-only-either';
-import * as tsm from 'ts-morph';
+import { fail, pass, type PassFailEither } from 'my-only-either';
+import type * as tsm from 'ts-morph';
 
 interface ISourceFileLoaderParams {
   project: tsm.Project;

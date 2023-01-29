@@ -1,6 +1,6 @@
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
@@ -9,7 +9,7 @@ import getTargetTypes from '@modules/getTargetTypes';
 import fs from 'fs';
 import 'jest';
 import { parse } from 'jsonc-parser';
-import { TPickIPass } from 'my-only-either';
+import type { TPickIPass } from 'my-only-either';
 import path from 'path';
 import * as env from './env';
 

@@ -1,17 +1,20 @@
 import getTsProject from '@compilers/getTsProject';
-import IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
-import IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import readGeneratorOption from '@configs/readGeneratorOption';
+import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
+import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type readGeneratorOption from '@configs/readGeneratorOption';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
-import IFileWithType from '@modules/interfaces/IFileWithType';
-import TChildToParentData from '@workers/interfaces/TChildToParentData';
-import TParentToChildData from '@workers/interfaces/TParentToChildData';
+import type IFileWithType from '@modules/interfaces/IFileWithType';
+import logger from '@tools/logger';
+import type TChildToParentData from '@workers/interfaces/TChildToParentData';
+import type TParentToChildData from '@workers/interfaces/TParentToChildData';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
-import { AsyncReturnType } from 'type-fest';
+import type { AsyncReturnType } from 'type-fest';
+
+const log = logger();
 
 export default async function worker() {
   const typeInfos: IFileWithType[] = [];
@@ -102,9 +105,10 @@ export default async function worker() {
 
         process.send?.(killmeUpload);
       } catch (catched) {
-        const err = isError(catched) ?? new Error('unknown error raised');
-        console.log(err.message);
-        console.log(err.stack);
+        const err = isError(catched, new Error('unknown error raised'));
+
+        log.error(err.message);
+        log.error(err.stack);
       }
     }
   });

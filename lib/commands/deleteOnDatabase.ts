@@ -2,7 +2,7 @@ import spinner from '@cli/spinner';
 import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
 import deleteSchemaRecord from '@modules/deleteSchemaRecord';

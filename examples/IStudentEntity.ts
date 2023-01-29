@@ -1,4 +1,4 @@
-import { TMAJOR } from './TMAJOR';
+import type { TMAJOR } from './TMAJOR';
 
 export default interface IStudentEntity {
   id: string;

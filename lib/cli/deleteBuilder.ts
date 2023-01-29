@@ -1,5 +1,5 @@
-import IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import { Argv } from 'yargs';
+import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type { Argv } from 'yargs';
 
 export default function deleteBuilder(argv: Argv<{}>) {
   argv.option('multiple', {
