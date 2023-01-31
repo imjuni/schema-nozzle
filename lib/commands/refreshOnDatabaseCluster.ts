@@ -8,10 +8,12 @@ import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
 import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
-import type TParentToChildData from '@workers/interfaces/TParentToChildData';
+import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
 import WorkerContainer from '@workers/WorkerContainer';
-import { isError } from 'my-easy-fp';
+import cluster from 'cluster';
+import { isError, populate } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
+import os from 'os';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
@@ -20,6 +22,10 @@ export default async function refreshOnDatabaseCluster(
   isMessage?: boolean,
 ) {
   try {
+    populate(os.cpus().length).forEach(() => {
+      WorkerContainer.add(cluster.fork());
+    });
+
     spinner.isEnable = isMessage ?? false;
     spinner.start('TypeScript source code compile, ...');
 
@@ -57,7 +63,7 @@ export default async function refreshOnDatabaseCluster(
     spinner.start('Schema generation start, ...');
 
     const jobs = targetTypes.map((typeInfo) => {
-      const payload: TParentToChildData = {
+      const payload: TMasterToWorkerMessage = {
         command: 'job',
         data: {
           fileWithTypes: typeInfo,

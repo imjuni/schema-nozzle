@@ -2,23 +2,27 @@ import spinner from '@cli/spinner';
 import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
 import getAddFiles from '@modules/getAddFiles';
 import getAddTypes from '@modules/getAddTypes';
 import mergeSchemaRecords from '@modules/mergeSchemaRecords';
-import type TParentToChildData from '@workers/interfaces/TParentToChildData';
+import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
 import WorkerContainer from '@workers/WorkerContainer';
-import { isError } from 'my-easy-fp';
+import cluster from 'cluster';
+import { isError, populate } from 'my-easy-fp';
+import os from 'os';
 
 export default async function addOnDatabaseCluster(
-  nullableOption: IAddSchemaOption,
-  isMessage?: boolean,
+  nullableOption: TAddSchemaOption,
 ): Promise<void> {
   try {
-    spinner.isEnable = isMessage ?? false;
+    populate(os.cpus().length).forEach(() => {
+      WorkerContainer.add(cluster.fork());
+    });
+
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);
@@ -28,6 +32,7 @@ export default async function addOnDatabaseCluster(
       skipFileDependencyResolution: true,
       skipLoadingLibFiles: true,
     });
+
     if (project.type === 'fail') throw project.fail;
 
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
@@ -44,7 +49,7 @@ export default async function addOnDatabaseCluster(
     });
     if (targetTypes.type === 'fail') throw targetTypes.fail;
 
-    const option: IAddSchemaOption = {
+    const option: TAddSchemaOption = {
       ...nullableOption,
       files: files.pass,
       types: targetTypes.pass.map((typeName) => typeName.typeName),
@@ -60,7 +65,7 @@ export default async function addOnDatabaseCluster(
     spinner.start('Schema generation start, ...');
 
     const jobs = targetTypes.pass.map((typeInfo) => {
-      const payload: TParentToChildData = {
+      const payload: TMasterToWorkerMessage = {
         command: 'job',
         data: {
           fileWithTypes: typeInfo,

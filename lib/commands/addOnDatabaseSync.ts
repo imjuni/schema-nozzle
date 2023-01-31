@@ -2,7 +2,7 @@ import spinner from '@cli/spinner';
 import getDiagnostics from '@compilers/getDiagnostics';
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import readGeneratorOption from '@configs/readGeneratorOption';
 import openDatabase from '@databases/openDatabase';
 import saveDatabase from '@databases/saveDatabase';
@@ -15,7 +15,7 @@ import mergeSchemaRecords from '@modules/mergeSchemaRecords';
 import { isError } from 'my-easy-fp';
 
 export default async function addOnDatabaseSync(
-  nullableOption: IAddSchemaOption,
+  nullableOption: TAddSchemaOption,
   isMessage?: boolean,
 ): Promise<void> {
   try {
@@ -45,7 +45,7 @@ export default async function addOnDatabaseSync(
     });
     if (targetTypes.type === 'fail') throw targetTypes.fail;
 
-    const option: IAddSchemaOption = {
+    const option: TAddSchemaOption = {
       ...nullableOption,
       files: files.pass,
       types: targetTypes.pass.map((typeName) => typeName.typeName),

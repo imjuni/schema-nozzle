@@ -1,4 +1,4 @@
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 import type { Argv } from 'yargs';
 
@@ -27,5 +27,5 @@ export default function addBuilder(argv: Argv<{}>) {
       default: TOUTPUT_FORMAT.JSON,
     });
 
-  return argv as Argv<IAddSchemaOption>;
+  return argv as Argv<TAddSchemaOption>;
 }

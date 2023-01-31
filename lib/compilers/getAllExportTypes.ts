@@ -1,6 +1,6 @@
 import getExportedName from '@compilers/getExportedName';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import isSourceFileInclude from '@modules/isSourceFileInclude';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
@@ -9,7 +9,7 @@ import type * as tsm from 'ts-morph';
 /**
  * getExportTypes function params
  */
-interface IGetAllExportTypesParams<T extends IDeleteSchemaOption | IAddSchemaOption> {
+interface IGetAllExportTypesParams<T extends IDeleteSchemaOption | TAddSchemaOption> {
   project: tsm.Project;
   option: T;
 }
@@ -21,7 +21,7 @@ interface IGetExportTypesReturn {
   node: tsm.ExportedDeclarations;
 }
 
-export default function getAllExportedTypes<T extends IDeleteSchemaOption | IAddSchemaOption>({
+export default function getAllExportedTypes<T extends IDeleteSchemaOption | TAddSchemaOption>({
   project,
   option,
 }: IGetAllExportTypesParams<T>): PassFailEither<Error, IGetExportTypesReturn[]> {

@@ -1,6 +1,6 @@
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import type createJSONSchema from '@modules/createJSONSchema';
 import getFormattedSchema from '@modules/getFormattedSchema';
 import getImportDeclarationMap from '@modules/getImportDeclaration';
@@ -69,7 +69,7 @@ function getJsDocTags(
 }
 
 interface ICreateSchemaRecordArgs {
-  option: IAddSchemaOption | IRefreshSchemaOption;
+  option: TAddSchemaOption | IRefreshSchemaOption;
   resolvedPaths: IResolvedPaths;
   project: tsm.Project;
   metadata: TPickPass<ReturnType<typeof createJSONSchema>>;

@@ -1,4 +1,4 @@
-export const TCOMMAND_LIST = {
+export const CE_COMMAND_LIST = {
   ADD: 'add',
   DEL: 'del',
   REFRESH: 'refresh',
@@ -10,4 +10,4 @@ export const TCOMMAND_LIST = {
 } as const;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
-export type TCOMMAND_LIST = typeof TCOMMAND_LIST[keyof typeof TCOMMAND_LIST];
+export type CE_COMMAND_LIST = (typeof CE_COMMAND_LIST)[keyof typeof CE_COMMAND_LIST];

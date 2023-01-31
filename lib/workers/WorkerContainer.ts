@@ -1,19 +1,27 @@
 import spinner from '@cli/spinner';
 import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type TChildToParentData from '@workers/interfaces/TChildToParentData';
-import type TParentToChildData from '@workers/interfaces/TParentToChildData';
+import { CE_MASTER_ACTION } from '@workers/interfaces/CE_MASTER_ACTION';
+import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '@workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
+import { EventEmitter } from 'node:events';
 
-class WorkerContainerClass {
-  #workers: Worker[];
+class WorkerContainerClass extends EventEmitter {
+  #workers: Record<number, Worker>;
+
+  #deaded: Record<number, Worker>;
 
   #finished: number;
 
   #records: IDatabaseRecord[];
 
   constructor() {
-    this.#workers = [];
+    super();
+
+    this.#workers = {};
+    this.#deaded = {};
+
     this.#finished = 0;
     this.#records = [];
   }
@@ -31,7 +39,15 @@ class WorkerContainerClass {
       this.#finished -= 1;
     });
 
-    worker.on('message', (message: TChildToParentData) => {
+    worker.on('message', (message: TWorkerToMasterMessage) => {
+      if (message.command === CE_MASTER_ACTION.PROJECT_LOAD_PASS) {
+        this.#finished -= 1;
+      }
+
+      if (message.command === CE_MASTER_ACTION.PROJECT_LOAD_FAIL) {
+        this.#finished -= 1;
+      }
+
       if (message.command === 'record') {
         this.#records.push(...message.data);
       }
@@ -45,13 +61,32 @@ class WorkerContainerClass {
       }
     });
 
-    this.#workers.push(worker);
+    this.#workers[worker.id] = worker;
     this.#finished += 1;
   }
 
-  send(...jobs: TParentToChildData[]) {
-    jobs.forEach((job, index) => this.#workers[index % this.#workers.length].send(job));
-    this.#workers.forEach((worker) => worker.send({ command: 'start' }));
+  loadProject(
+    message:
+      | (Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.PROJECT_LOAD_PASS }> & {
+          id: number;
+        })
+      | (Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.PROJECT_LOAD_FAIL }> & {
+          id: number;
+        }),
+  ) {
+    if (message.command === CE_MASTER_ACTION.PROJECT_LOAD_FAIL) {
+      const tmp = this.#workers[message.id];
+      delete this.#workers[message.id];
+      this.#deaded[message.id] = tmp;
+    }
+
+    this.#finished -= 1;
+  }
+
+  send(...jobs: TMasterToWorkerMessage[]) {
+    jobs.forEach((job, index) =>
+      this.#workers[index % Object.keys(this.#workers).length].send(job),
+    );
   }
 
   wait(): Promise<number> {
@@ -61,7 +96,7 @@ class WorkerContainerClass {
       const intervalHandle = setInterval(() => {
         if (this.#finished === 0) {
           clearInterval(intervalHandle);
-          resolve(this.#workers.length);
+          resolve(Object.keys(this.#workers).length);
         }
 
         const currentAt = dayjs();

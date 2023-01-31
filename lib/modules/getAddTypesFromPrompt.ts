@@ -2,7 +2,7 @@ import type IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectTyp
 import getExportedName from '@compilers/getExportedName';
 import getExportedType from '@compilers/getExportedType';
 import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
 import type IFileWithType from '@modules/interfaces/IFileWithType';
 import getRatioNumber from '@tools/getRatioNumber';
@@ -26,7 +26,7 @@ interface IChoiceTypeItem {
 
 interface IGetTypesFromPromptArgs {
   project: tsm.Project;
-  option: IAddSchemaOption;
+  option: TAddSchemaOption;
   isMultipleSelect: boolean;
 }
 

@@ -1,8 +1,8 @@
-import { TCOMMAND_LIST } from '@cli/interfaces/TCOMMAND_LIST';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import { CE_COMMAND_LIST } from '@cli/interfaces/CE_COMMAND_LIST';
 import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
 import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import logger from 'lib/tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
@@ -10,18 +10,18 @@ import type { ArgumentsCamelCase } from 'yargs';
 
 const log = logger();
 const commands: string[] = [
-  TCOMMAND_LIST.ADD,
-  TCOMMAND_LIST.ADD_ALIAS,
-  TCOMMAND_LIST.DEL,
-  TCOMMAND_LIST.DEL_ALIAS,
-  TCOMMAND_LIST.REFRESH,
-  TCOMMAND_LIST.REFRESH_ALIAS,
-  TCOMMAND_LIST.TRUNCATE,
-  TCOMMAND_LIST.TRUNCATE_ALIAS,
+  CE_COMMAND_LIST.ADD,
+  CE_COMMAND_LIST.ADD_ALIAS,
+  CE_COMMAND_LIST.DEL,
+  CE_COMMAND_LIST.DEL_ALIAS,
+  CE_COMMAND_LIST.REFRESH,
+  CE_COMMAND_LIST.REFRESH_ALIAS,
+  CE_COMMAND_LIST.TRUNCATE,
+  CE_COMMAND_LIST.TRUNCATE_ALIAS,
 ];
 
 export default function isValidateConfig<
-  T extends IDeleteSchemaOption | IAddSchemaOption | ITruncateSchemaOption | IRefreshSchemaOption,
+  T extends IDeleteSchemaOption | TAddSchemaOption | ITruncateSchemaOption | IRefreshSchemaOption,
 >(argv: T) {
   const [command] = (argv as any as ArgumentsCamelCase<T>)._;
 
