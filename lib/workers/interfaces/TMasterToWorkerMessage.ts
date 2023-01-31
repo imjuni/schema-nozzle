@@ -1,21 +1,24 @@
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import type readGeneratorOption from '@configs/readGeneratorOption';
 import type IFileWithType from '@modules/interfaces/IFileWithType';
+import type { CE_WORKER_ACTION } from '@workers/interfaces/CE_WORKER_ACTION';
 import type { AsyncReturnType } from 'type-fest';
 
-type TParentToChildData =
+type TMasterToWorkerMessage =
   | {
       command: 'job';
       data: {
         resolvedPaths: IResolvedPaths;
         generatorOption: AsyncReturnType<typeof readGeneratorOption>;
-        option: IAddSchemaOption | IRefreshSchemaOption;
+        option: TAddSchemaOption | IRefreshSchemaOption;
         fileWithTypes: IFileWithType;
       };
     }
-  | { command: 'start' }
-  | { command: 'end' };
+  | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD; data: { project: string } }
+  | { command: typeof CE_WORKER_ACTION.NOOP; data: undefined }
+  | { command: 'start'; data: undefined }
+  | { command: 'end'; data: undefined };
 
-export default TParentToChildData;
+export default TMasterToWorkerMessage;

@@ -1,18 +1,18 @@
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import type IBaseOption from '@configs/interfaces/IBaseOption';
 import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 
 export const baseOption: IBaseOption = {
   config: undefined,
-  project: '.',
+  project: './tsconfig.json',
   types: [],
   skipError: true,
   listFile: '',
   output: '.',
 };
 
-export const addCmdOption: IAddSchemaOption = {
+export const addCmdOption: TAddSchemaOption = {
   ...baseOption,
   discriminator: 'add-schema',
   files: [],

@@ -2,7 +2,7 @@ import type IBaseOption from '@configs/interfaces/IBaseOption';
 import type { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
 import type * as tjsg from 'ts-json-schema-generator';
 
-export default interface IAddSchemaOption extends IBaseOption {
+export interface IAddSchemaOption {
   discriminator: 'add-schema';
 
   /** input filename */
@@ -22,3 +22,7 @@ export default interface IAddSchemaOption extends IBaseOption {
    * */
   format: TOUTPUT_FORMAT;
 }
+
+type TAddSchemaOption = IAddSchemaOption & IBaseOption;
+
+export default TAddSchemaOption;

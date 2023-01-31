@@ -1,6 +1,6 @@
 import getTsProject from '@compilers/getTsProject';
 import getResolvedPaths from '@configs/getResolvedPaths';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
 import getAddFiles from '@modules/getAddFiles';
@@ -41,7 +41,7 @@ test('T001-create-schema-record', async () => {
   });
   if (types.type === 'fail') throw types.fail;
 
-  const option: IAddSchemaOption = {
+  const option: TAddSchemaOption = {
     ...nullableOption,
     files: files.pass,
     types: types.pass.map((typeName) => typeName.typeName),

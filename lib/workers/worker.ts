@@ -1,14 +1,15 @@
 import getTsProject from '@compilers/getTsProject';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
 import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
 import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import type readGeneratorOption from '@configs/readGeneratorOption';
 import createJSONSchema from '@modules/createJSONSchema';
 import createSchemaRecord from '@modules/createSchemaRecord';
 import type IFileWithType from '@modules/interfaces/IFileWithType';
 import logger from '@tools/logger';
-import type TChildToParentData from '@workers/interfaces/TChildToParentData';
-import type TParentToChildData from '@workers/interfaces/TParentToChildData';
+import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '@workers/interfaces/TWorkerToMasterMessage';
+import NozzleEmitter from '@workers/NozzleEmitter';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
@@ -16,17 +17,19 @@ import type { AsyncReturnType } from 'type-fest';
 
 const log = logger();
 
-export default async function worker() {
+export default async function worker2() {
   const typeInfos: IFileWithType[] = [];
+  const emitter: NozzleEmitter = new NozzleEmitter();
+
   let resolvedPaths: IResolvedPaths;
   let generatorOption: AsyncReturnType<typeof readGeneratorOption>;
-  let option: IAddSchemaOption | IRefreshSchemaOption;
+  let option: TAddSchemaOption | IRefreshSchemaOption;
 
-  process.on('SIGTERM', () => {
-    process.exit();
-  });
+  process.on('SIGTERM', () => process.exit(0));
 
-  process.on('message', async (payload: TParentToChildData) => {
+  process.on('message', async (payload: TMasterToWorkerMessage) => {
+    emitter.emit(payload.command, payload.data);
+
     if (payload.command === 'job') {
       typeInfos.push(payload.data.fileWithTypes);
       generatorOption = payload.data.generatorOption;
@@ -40,7 +43,7 @@ export default async function worker() {
 
     if (payload.command === 'start') {
       try {
-        const killmeUpload: TChildToParentData = { command: 'kill-me' };
+        const killmeUpload: TWorkerToMasterMessage = { command: 'kill-me' };
 
         if (typeInfos.length <= 0) {
           process.send?.(killmeUpload);
@@ -70,7 +73,7 @@ export default async function worker() {
             });
 
             if (schema.type === 'fail') {
-              const message: TChildToParentData = {
+              const message: TWorkerToMasterMessage = {
                 command: 'message',
                 data: `Error: ${typeInfo.typeName} - ${schema.fail.message}`,
                 channel: 'fail',
@@ -89,8 +92,8 @@ export default async function worker() {
 
             const records = [record.record, ...(record.definitions ?? [])];
 
-            const recordsUpload: TChildToParentData = { command: 'record', data: records };
-            const messageUpload: TChildToParentData = {
+            const recordsUpload: TWorkerToMasterMessage = { command: 'record', data: records };
+            const messageUpload: TWorkerToMasterMessage = {
               command: 'message',
               data: `Success: ${schema.pass.typeName} - ${path.relative(
                 basePath,

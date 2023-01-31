@@ -1,5 +1,5 @@
 import getAllExportedTypes from '@compilers/getAllExportTypes';
-import type IAddSchemaOption from '@configs/interfaces/IAddSchemaOption';
+import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
 import getAddTypesFromPrompt from '@modules/getAddTypesFromPrompt';
 import type IFileWithType from '@modules/interfaces/IFileWithType';
 import { isError } from 'my-easy-fp';
@@ -12,7 +12,7 @@ export default async function getAddTypes({
   option,
 }: {
   project: tsm.Project;
-  option: IAddSchemaOption;
+  option: TAddSchemaOption;
 }): Promise<PassFailEither<Error, IFileWithType[]>> {
   try {
     if (option.types == null || option.types.length <= 0) {
