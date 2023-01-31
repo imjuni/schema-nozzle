@@ -1,7 +1,7 @@
-import getAllExportedTypes from '@compilers/getAllExportTypes';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import getAddTypesFromPrompt from '@modules/getAddTypesFromPrompt';
-import type IFileWithType from '@modules/interfaces/IFileWithType';
+import getAllExportedTypes from '#compilers/getAllExportTypes';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import getAddTypesFromPrompt from '#modules/getAddTypesFromPrompt';
+import type IFileWithType from '#modules/interfaces/IFileWithType';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither, type TPickPass } from 'my-only-either';
 import type * as tsm from 'ts-morph';

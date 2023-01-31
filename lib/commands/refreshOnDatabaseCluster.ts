@@ -1,15 +1,15 @@
-import spinner from '@cli/spinner';
-import getDiagnostics from '@compilers/getDiagnostics';
-import getTsProject from '@compilers/getTsProject';
-import getResolvedPaths from '@configs/getResolvedPaths';
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import readGeneratorOption from '@configs/readGeneratorOption';
-import openDatabase from '@databases/openDatabase';
-import saveDatabase from '@databases/saveDatabase';
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecords from '@modules/mergeSchemaRecords';
-import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
-import WorkerContainer from '@workers/WorkerContainer';
+import spinner from '#cli/spinner';
+import getDiagnostics from '#compilers/getDiagnostics';
+import getTsProject from '#compilers/getTsProject';
+import getResolvedPaths from '#configs/getResolvedPaths';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import readGeneratorOption from '#configs/readGeneratorOption';
+import openDatabase from '#databases/openDatabase';
+import saveDatabase from '#databases/saveDatabase';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import mergeSchemaRecords from '#modules/mergeSchemaRecords';
+import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import WorkerContainer from '#workers/WorkerContainer';
 import cluster from 'cluster';
 import { isError, populate } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
@@ -17,16 +17,12 @@ import os from 'os';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseCluster(
-  option: IRefreshSchemaOption,
-  isMessage?: boolean,
-) {
+export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOption) {
   try {
     populate(os.cpus().length).forEach(() => {
       WorkerContainer.add(cluster.fork());
     });
 
-    spinner.isEnable = isMessage ?? false;
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(option);

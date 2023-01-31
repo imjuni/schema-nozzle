@@ -1,8 +1,8 @@
-import type IPromptAnswerSelectFile from '@cli/interfaces/IPromptAnswerSelectFile';
-import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from '@tools/getRatioNumber';
-import posixJoin from '@tools/posixJoin';
+import type IPromptAnswerSelectFile from '#cli/interfaces/IPromptAnswerSelectFile';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import getRatioNumber from '#tools/getRatioNumber';
+import posixJoin from '#tools/posixJoin';
 import fastGlob from 'fast-glob';
 import { exists } from 'find-up';
 import Fuse from 'fuse.js';

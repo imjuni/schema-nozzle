@@ -1,6 +1,6 @@
-import * as env from '@modules/__tests__/env';
-import { CE_WORKER_ACTION } from '@workers/interfaces/CE_WORKER_ACTION';
-import NozzleEmitter from '@workers/NozzleEmitter';
+import * as env from '#modules/__tests__/env';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import NozzleEmitter from '#workers/NozzleEmitter';
 import 'jest';
 
 beforeEach(() => {

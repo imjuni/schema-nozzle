@@ -1,4 +1,4 @@
-import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 import fastSafeStringify from 'fast-safe-stringify';
 import type { JSONSchema7 } from 'json-schema';
 

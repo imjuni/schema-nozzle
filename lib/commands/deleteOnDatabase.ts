@@ -1,12 +1,12 @@
-import spinner from '@cli/spinner';
-import getDiagnostics from '@compilers/getDiagnostics';
-import getTsProject from '@compilers/getTsProject';
-import getResolvedPaths from '@configs/getResolvedPaths';
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import openDatabase from '@databases/openDatabase';
-import saveDatabase from '@databases/saveDatabase';
-import deleteSchemaRecord from '@modules/deleteSchemaRecord';
-import getDeleteTypes from '@modules/getDeleteTypes';
+import spinner from '#cli/spinner';
+import getDiagnostics from '#compilers/getDiagnostics';
+import getTsProject from '#compilers/getTsProject';
+import getResolvedPaths from '#configs/getResolvedPaths';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import openDatabase from '#databases/openDatabase';
+import saveDatabase from '#databases/saveDatabase';
+import deleteSchemaRecord from '#modules/deleteSchemaRecord';
+import getDeleteTypes from '#modules/getDeleteTypes';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 

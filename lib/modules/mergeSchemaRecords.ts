@@ -1,5 +1,5 @@
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type { TDatabase } from '@modules/interfaces/TDatabase';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type { TDatabase } from '#modules/interfaces/TDatabase';
 import fastCopy from 'fast-copy';
 import { settify } from 'my-easy-fp';
 

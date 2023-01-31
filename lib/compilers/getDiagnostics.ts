@@ -1,4 +1,4 @@
-import type IBaseOption from '@configs/interfaces/IBaseOption';
+import type IBaseOption from '#configs/interfaces/IBaseOption';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import type * as tsm from 'ts-morph';

@@ -1,8 +1,8 @@
-import spinner from '@cli/spinner';
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import { CE_MASTER_ACTION } from '@workers/interfaces/CE_MASTER_ACTION';
-import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '@workers/interfaces/TWorkerToMasterMessage';
+import spinner from '#cli/spinner';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
+import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 import { EventEmitter } from 'node:events';

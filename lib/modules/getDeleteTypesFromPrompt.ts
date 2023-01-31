@@ -1,8 +1,8 @@
-import type IPromptAnswerSelectType from '@cli/interfaces/IPromptAnswerSelectType';
-import { CE_FUZZY_SCORE_LIMIT } from '@modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type { TNullableDatabase } from '@modules/interfaces/TDatabase';
-import getRatioNumber from '@tools/getRatioNumber';
+import type IPromptAnswerSelectType from '#cli/interfaces/IPromptAnswerSelectType';
+import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type { TNullableDatabase } from '#modules/interfaces/TDatabase';
+import getRatioNumber from '#tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';

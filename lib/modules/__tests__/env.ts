@@ -1,7 +1,7 @@
-import type IBaseOption from '@configs/interfaces/IBaseOption';
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 
 export const baseOption: IBaseOption = {
   config: undefined,

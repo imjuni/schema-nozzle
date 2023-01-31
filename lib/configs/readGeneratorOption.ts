@@ -1,5 +1,5 @@
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import { exists } from 'my-node-fp';
@@ -7,7 +7,7 @@ import path from 'path';
 import type * as tjsg from 'ts-json-schema-generator';
 
 export default async function readGeneratorOption(
-  option: (TAddSchemaOption | IRefreshSchemaOption) & { 'generator-option'?: string | tjsg.Config },
+  option: (TAddSchemaOption | TRefreshSchemaOption) & { 'generator-option'?: string | tjsg.Config },
 ): Promise<tjsg.Config> {
   const generatorOptionFilePath =
     'generator-option' in option ? option['generator-option'] : option.generatorOption;

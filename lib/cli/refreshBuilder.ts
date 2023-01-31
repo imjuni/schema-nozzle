@@ -1,5 +1,5 @@
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function refreshBuilder(argv: Argv<{}>) {
@@ -15,5 +15,5 @@ export default function refreshBuilder(argv: Argv<{}>) {
       default: TOUTPUT_FORMAT.JSON,
     });
 
-  return argv as Argv<IRefreshSchemaOption>;
+  return argv as Argv<TRefreshSchemaOption>;
 }

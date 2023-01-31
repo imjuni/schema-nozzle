@@ -1,24 +1,24 @@
-import addBuilder from '@cli/addBuilder';
-import builder from '@cli/builder';
-import deleteBuilder from '@cli/deleteBuilder';
-import { CE_COMMAND_LIST } from '@cli/interfaces/CE_COMMAND_LIST';
-import refreshBuilder from '@cli/refreshBuilder';
-import spinner from '@cli/spinner';
-import truncateBuilder from '@cli/truncateBuilder';
-import addOnDatabaseCluster from '@commands/addOnDatabaseCluster';
-import addOnDatabaseSync from '@commands/addOnDatabaseSync';
-import deleteOnDatabase from '@commands/deleteOnDatabase';
-import refreshOnDatabaseCluster from '@commands/refreshOnDatabaseCluster';
-import refreshOnDatabaseSync from '@commands/refreshOnDatabaseSync';
-import truncateOnDatabase from '@commands/truncateOnDatabase';
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import isValidateConfig from '@configs/isValidateConfig';
-import preLoadConfig from '@configs/preLoadConfig';
-import withDefaultOption from '@configs/withDefaultOption';
-import worker2 from '@workers/worker';
+import addBuilder from '#cli/addBuilder';
+import builder from '#cli/builder';
+import deleteBuilder from '#cli/deleteBuilder';
+import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
+import refreshBuilder from '#cli/refreshBuilder';
+import spinner from '#cli/spinner';
+import truncateBuilder from '#cli/truncateBuilder';
+import addOnDatabaseCluster from '#commands/addOnDatabaseCluster';
+import addOnDatabaseSync from '#commands/addOnDatabaseSync';
+import deleteOnDatabase from '#commands/deleteOnDatabase';
+import refreshOnDatabaseCluster from '#commands/refreshOnDatabaseCluster';
+import refreshOnDatabaseSync from '#commands/refreshOnDatabaseSync';
+import truncateOnDatabase from '#commands/truncateOnDatabase';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type ITruncateSchemaOption from '#configs/interfaces/ITruncateSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import isValidateConfig from '#configs/isValidateConfig';
+import preLoadConfig from '#configs/preLoadConfig';
+import withDefaultOption from '#configs/withDefaultOption';
+import worker2 from '#workers/worker';
 import cluster from 'cluster';
 import yargs, { type CommandModule } from 'yargs';
 
@@ -49,18 +49,19 @@ const deleteCmd: CommandModule<IDeleteSchemaOption, IDeleteSchemaOption> = {
   },
 };
 
-const refreshCmd: CommandModule<IRefreshSchemaOption, IRefreshSchemaOption> = {
+const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   command: CE_COMMAND_LIST.REFRESH,
   aliases: CE_COMMAND_LIST.REFRESH_ALIAS,
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
     const option = await withDefaultOption(argv);
+    spinner.isEnable = true;
 
     if (process.env.SYNC_MODE === 'true') {
       await refreshOnDatabaseSync(option, true);
     } else {
-      await refreshOnDatabaseCluster(option, true);
+      await refreshOnDatabaseCluster(option);
     }
   },
 };
@@ -82,7 +83,7 @@ if (process.env.SYNC_MODE === 'true') {
   parser
     .command(addCmd as CommandModule<{}, TAddSchemaOption>)
     .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
-    .command(refreshCmd as CommandModule<{}, IRefreshSchemaOption>)
+    .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
     .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
     .check(isValidateConfig)
     .recommendCommands()
@@ -105,7 +106,7 @@ if (process.env.SYNC_MODE === 'true') {
     parser
       .command(addCmd as CommandModule<{}, TAddSchemaOption>)
       .command(deleteCmd as CommandModule<{}, IDeleteSchemaOption>)
-      .command(refreshCmd as CommandModule<{}, IRefreshSchemaOption>)
+      .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
       .command(truncateCmd as CommandModule<{}, ITruncateSchemaOption>)
       .check(isValidateConfig)
       .recommendCommands()

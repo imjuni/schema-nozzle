@@ -1,8 +1,8 @@
-import getTsProject from '@compilers/getTsProject';
-import { CE_MASTER_ACTION } from '@workers/interfaces/CE_MASTER_ACTION';
-import { CE_WORKER_ACTION } from '@workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '@workers/interfaces/TWorkerToMasterMessage';
+import getTsProject from '#compilers/getTsProject';
+import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import { EventEmitter } from 'node:events';
 import type * as tsm from 'ts-morph';
 

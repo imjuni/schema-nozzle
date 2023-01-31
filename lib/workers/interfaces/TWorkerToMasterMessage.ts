@@ -1,5 +1,5 @@
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type { CE_MASTER_ACTION } from '@workers/interfaces/CE_MASTER_ACTION';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type ora from 'ora';
 
 type TWorkerToMasterMessage =

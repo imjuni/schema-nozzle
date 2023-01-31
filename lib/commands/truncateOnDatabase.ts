@@ -1,6 +1,6 @@
-import spinner from '@cli/spinner';
-import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
-import saveDatabase from '@databases/saveDatabase';
+import spinner from '#cli/spinner';
+import type ITruncateSchemaOption from '#configs/interfaces/ITruncateSchemaOption';
+import saveDatabase from '#databases/saveDatabase';
 import { isError } from 'my-easy-fp';
 
 export default async function truncateOnDatabase(

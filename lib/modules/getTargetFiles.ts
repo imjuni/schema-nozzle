@@ -1,6 +1,6 @@
-import { CE_DEFAULT_VALUE } from '@configs/interfaces/CE_DEFAULT_VALUE';
-import type IBaseOption from '@configs/interfaces/IBaseOption';
-import getCwd from '@tools/getCwd';
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
+import type IBaseOption from '#configs/interfaces/IBaseOption';
+import getCwd from '#tools/getCwd';
 import fs from 'fs';
 import ignore from 'ignore';
 import { exists } from 'my-node-fp';

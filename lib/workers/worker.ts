@@ -1,15 +1,15 @@
-import getTsProject from '@compilers/getTsProject';
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import type readGeneratorOption from '@configs/readGeneratorOption';
-import createJSONSchema from '@modules/createJSONSchema';
-import createSchemaRecord from '@modules/createSchemaRecord';
-import type IFileWithType from '@modules/interfaces/IFileWithType';
-import logger from '@tools/logger';
-import type TMasterToWorkerMessage from '@workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '@workers/interfaces/TWorkerToMasterMessage';
-import NozzleEmitter from '@workers/NozzleEmitter';
+import getTsProject from '#compilers/getTsProject';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type readGeneratorOption from '#configs/readGeneratorOption';
+import createJSONSchema from '#modules/createJSONSchema';
+import createSchemaRecord from '#modules/createSchemaRecord';
+import type IFileWithType from '#modules/interfaces/IFileWithType';
+import logger from '#tools/logger';
+import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import NozzleEmitter from '#workers/NozzleEmitter';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
@@ -23,7 +23,7 @@ export default async function worker2() {
 
   let resolvedPaths: IResolvedPaths;
   let generatorOption: AsyncReturnType<typeof readGeneratorOption>;
-  let option: TAddSchemaOption | IRefreshSchemaOption;
+  let option: TAddSchemaOption | TRefreshSchemaOption;
 
   process.on('SIGTERM', () => process.exit(0));
 

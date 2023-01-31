@@ -1,22 +1,22 @@
-import spinner from '@cli/spinner';
-import getDiagnostics from '@compilers/getDiagnostics';
-import getTsProject from '@compilers/getTsProject';
-import getResolvedPaths from '@configs/getResolvedPaths';
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import readGeneratorOption from '@configs/readGeneratorOption';
-import openDatabase from '@databases/openDatabase';
-import saveDatabase from '@databases/saveDatabase';
-import createJSONSchema from '@modules/createJSONSchema';
-import createSchemaRecord from '@modules/createSchemaRecord';
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecords from '@modules/mergeSchemaRecords';
+import spinner from '#cli/spinner';
+import getDiagnostics from '#compilers/getDiagnostics';
+import getTsProject from '#compilers/getTsProject';
+import getResolvedPaths from '#configs/getResolvedPaths';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import readGeneratorOption from '#configs/readGeneratorOption';
+import openDatabase from '#databases/openDatabase';
+import saveDatabase from '#databases/saveDatabase';
+import createJSONSchema from '#modules/createJSONSchema';
+import createSchemaRecord from '#modules/createSchemaRecord';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import mergeSchemaRecords from '#modules/mergeSchemaRecords';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
 export default async function refreshOnDatabaseSync(
-  option: IRefreshSchemaOption,
+  option: TRefreshSchemaOption,
   isMessage?: boolean,
 ) {
   try {
