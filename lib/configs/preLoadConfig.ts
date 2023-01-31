@@ -1,5 +1,5 @@
-import { CE_DEFAULT_VALUE } from '@configs/interfaces/CE_DEFAULT_VALUE';
-import logger from '@tools/logger';
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
+import logger from '#tools/logger';
 import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';

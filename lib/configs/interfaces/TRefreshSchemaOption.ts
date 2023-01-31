@@ -1,8 +1,8 @@
-import type IBaseOption from '@configs/interfaces/IBaseOption';
-import type { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 import type * as tjsg from 'ts-json-schema-generator';
 
-export default interface IRefreshSchemaOption extends IBaseOption {
+interface IRefreshSchemaOption {
   discriminator: 'refresh-schema';
 
   /** ts-json-schema-generator option file path */
@@ -16,3 +16,7 @@ export default interface IRefreshSchemaOption extends IBaseOption {
    * */
   format: TOUTPUT_FORMAT;
 }
+
+type TRefreshSchemaOption = IRefreshSchemaOption & IBaseOption;
+
+export default TRefreshSchemaOption;

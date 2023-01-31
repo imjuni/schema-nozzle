@@ -1,4 +1,4 @@
-import { TEXPORTED_TYPE } from '@compilers/interfaces/TEXPORTED_TYPE';
+import { TEXPORTED_TYPE } from '#compilers/interfaces/TEXPORTED_TYPE';
 import * as tsm from 'ts-morph';
 
 export default function getExportedType(

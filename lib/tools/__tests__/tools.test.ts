@@ -1,8 +1,8 @@
-import getCwd from '@tools/getCwd';
-import getRatioNumber from '@tools/getRatioNumber';
-import logger from '@tools/logger';
-import posixJoin from '@tools/posixJoin';
-import safeParse from '@tools/safeParse';
+import getCwd from '#tools/getCwd';
+import getRatioNumber from '#tools/getRatioNumber';
+import logger from '#tools/logger';
+import posixJoin from '#tools/posixJoin';
+import safeParse from '#tools/safeParse';
 import 'jest';
 import path from 'path';
 

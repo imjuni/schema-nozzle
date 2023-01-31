@@ -1,11 +1,11 @@
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type ITruncateSchemaOption from '@configs/interfaces/ITruncateSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type ITruncateSchemaOption from '#configs/interfaces/ITruncateSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import { getDirname } from 'my-node-fp';
 
 export default async function withDefaultOption<
-  T extends TAddSchemaOption | IDeleteSchemaOption | ITruncateSchemaOption | IRefreshSchemaOption,
+  T extends TAddSchemaOption | IDeleteSchemaOption | ITruncateSchemaOption | TRefreshSchemaOption,
 >(option: T): Promise<T> {
   const next = { ...option };
 

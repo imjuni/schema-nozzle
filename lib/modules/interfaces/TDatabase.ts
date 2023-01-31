@@ -1,4 +1,4 @@
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 
 export type TDatabase = Record<string, IDatabaseRecord>;
 

@@ -1,6 +1,6 @@
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type { TDatabase } from '@modules/interfaces/TDatabase';
-import mergeSchemaRecords from '@modules/mergeSchemaRecords';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type { TDatabase } from '#modules/interfaces/TDatabase';
+import mergeSchemaRecords from '#modules/mergeSchemaRecords';
 
 export default function deleteSchemaRecord(db: TDatabase, typeName: string) {
   if (db[typeName] == null) {

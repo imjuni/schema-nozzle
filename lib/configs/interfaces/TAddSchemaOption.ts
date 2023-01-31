@@ -1,5 +1,5 @@
-import type IBaseOption from '@configs/interfaces/IBaseOption';
-import type { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 import type * as tjsg from 'ts-json-schema-generator';
 
 export interface IAddSchemaOption {

@@ -1,6 +1,6 @@
-import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import getAddFilesFromPrompt from '@modules/getAddFilesFromPrompt';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import getAddFilesFromPrompt from '#modules/getAddFilesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 

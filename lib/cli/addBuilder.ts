@@ -1,5 +1,5 @@
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import { TOUTPUT_FORMAT } from '@configs/interfaces/TOUTPUT_FORMAT';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 import type { Argv } from 'yargs';
 
 export default function addBuilder(argv: Argv<{}>) {

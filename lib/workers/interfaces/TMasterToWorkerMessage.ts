@@ -1,9 +1,9 @@
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import type readGeneratorOption from '@configs/readGeneratorOption';
-import type IFileWithType from '@modules/interfaces/IFileWithType';
-import type { CE_WORKER_ACTION } from '@workers/interfaces/CE_WORKER_ACTION';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type readGeneratorOption from '#configs/readGeneratorOption';
+import type IFileWithType from '#modules/interfaces/IFileWithType';
+import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { AsyncReturnType } from 'type-fest';
 
 type TMasterToWorkerMessage =
@@ -12,7 +12,7 @@ type TMasterToWorkerMessage =
       data: {
         resolvedPaths: IResolvedPaths;
         generatorOption: AsyncReturnType<typeof readGeneratorOption>;
-        option: TAddSchemaOption | IRefreshSchemaOption;
+        option: TAddSchemaOption | TRefreshSchemaOption;
         fileWithTypes: IFileWithType;
       };
     }

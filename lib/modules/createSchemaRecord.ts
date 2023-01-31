@@ -1,13 +1,13 @@
-import type IRefreshSchemaOption from '@configs/interfaces/IRefreshSchemaOption';
-import type IResolvedPaths from '@configs/interfaces/IResolvedPaths';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import type createJSONSchema from '@modules/createJSONSchema';
-import getFormattedSchema from '@modules/getFormattedSchema';
-import getImportDeclarationMap from '@modules/getImportDeclaration';
-import type IDatabaseRecord from '@modules/interfaces/IDatabaseRecord';
-import type ISchemaExportInfo from '@modules/interfaces/ISchemaExportInfo';
-import type ISchemaImportInfo from '@modules/interfaces/ISchemaImportInfo';
-import { TJSDOC_EXTENDS } from '@modules/interfaces/TJSDOC_EXTENDS';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type createJSONSchema from '#modules/createJSONSchema';
+import getFormattedSchema from '#modules/getFormattedSchema';
+import getImportDeclarationMap from '#modules/getImportDeclaration';
+import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type ISchemaExportInfo from '#modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from '#modules/interfaces/ISchemaImportInfo';
+import { TJSDOC_EXTENDS } from '#modules/interfaces/TJSDOC_EXTENDS';
 import fastCopy from 'fast-copy';
 import type { JSONSchema7 } from 'json-schema';
 import { first, settify } from 'my-easy-fp';
@@ -69,7 +69,7 @@ function getJsDocTags(
 }
 
 interface ICreateSchemaRecordArgs {
-  option: TAddSchemaOption | IRefreshSchemaOption;
+  option: TAddSchemaOption | TRefreshSchemaOption;
   resolvedPaths: IResolvedPaths;
   project: tsm.Project;
   metadata: TPickPass<ReturnType<typeof createJSONSchema>>;

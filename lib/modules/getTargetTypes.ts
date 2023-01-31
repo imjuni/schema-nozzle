@@ -1,8 +1,8 @@
-import getAllExportedTypes from '@compilers/getAllExportTypes';
-import getExportedType from '@compilers/getExportedType';
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import isSourceFileInclude from '@modules/isSourceFileInclude';
+import getAllExportedTypes from '#compilers/getAllExportTypes';
+import getExportedType from '#compilers/getExportedType';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import isSourceFileInclude from '#modules/isSourceFileInclude';
 import type * as tsm from 'ts-morph';
 
 interface IValidateFileType<T extends IDeleteSchemaOption | TAddSchemaOption> {

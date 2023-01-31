@@ -1,7 +1,7 @@
-import getExportedName from '@compilers/getExportedName';
-import type IDeleteSchemaOption from '@configs/interfaces/IDeleteSchemaOption';
-import type TAddSchemaOption from '@configs/interfaces/TAddSchemaOption';
-import isSourceFileInclude from '@modules/isSourceFileInclude';
+import getExportedName from '#compilers/getExportedName';
+import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import isSourceFileInclude from '#modules/isSourceFileInclude';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import type * as tsm from 'ts-morph';

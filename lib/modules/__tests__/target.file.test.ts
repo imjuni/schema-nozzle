@@ -1,6 +1,6 @@
-import { CE_DEFAULT_VALUE } from '@configs/interfaces/CE_DEFAULT_VALUE';
-import { getTargetFileContent, getTargetFilePath, getTargetFiles } from '@modules/getTargetFiles';
-import getCwd from '@tools/getCwd';
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
+import { getTargetFileContent, getTargetFilePath, getTargetFiles } from '#modules/getTargetFiles';
+import getCwd from '#tools/getCwd';
 import 'jest';
 import path from 'path';
 
