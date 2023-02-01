@@ -8,13 +8,14 @@ import { existsSync, getDirnameSync } from 'my-node-fp';
 
 const log = logger();
 
-function getConfigObject(configFilePath: string): any {
+function getConfigObject(configFilePath: string): Record<string, string> {
   if (existsSync(configFilePath) === false) {
     return {};
   }
 
   const configBuf = fs.readFileSync(configFilePath);
-  const configObj = parse(configBuf.toString());
+  const configObj = parse(configBuf.toString()) as Record<string, string>;
+
   return configObj;
 }
 

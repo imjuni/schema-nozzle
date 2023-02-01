@@ -1,8 +1,8 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import deleteSchemaRecord from '#modules/deleteSchemaRecord';
@@ -10,12 +10,8 @@ import getDeleteTypes from '#modules/getDeleteTypes';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 
-export default async function deleteOnDatabase(
-  nullableOption: IDeleteSchemaOption,
-  isMessage?: boolean,
-) {
+export default async function deleteOnDatabase(nullableOption: TDeleteSchemaOption) {
   try {
-    spinner.isEnable = isMessage ?? false;
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);
@@ -43,7 +39,7 @@ export default async function deleteOnDatabase(
       `Start [${targetTypes.pass.map((targetType) => `"${targetType}"`).join(', ')}] deletion...`,
     );
 
-    const option: IDeleteSchemaOption = { ...nullableOption, types: targetTypes.pass };
+    const option: TDeleteSchemaOption = { ...nullableOption, types: targetTypes.pass };
 
     if (targetTypes.pass.length === Object.keys(db).length) {
       await saveDatabase(option, {});

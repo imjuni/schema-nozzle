@@ -1,4 +1,4 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
@@ -6,23 +6,17 @@ import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption'
 import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
+import createJSONSchema from '#modules/createJSONSchema';
+import createSchemaRecord from '#modules/createSchemaRecord';
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '#modules/mergeSchemaRecords';
-import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import WorkerContainer from '#workers/WorkerContainer';
-import cluster from 'cluster';
-import { isError, populate } from 'my-easy-fp';
+import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
-import os from 'os';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOption) {
+export default async function refreshOnDatabaseSync(option: TRefreshSchemaOption) {
   try {
-    populate(os.cpus().length).forEach(() => {
-      WorkerContainer.add(cluster.fork());
-    });
-
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(option);
@@ -58,24 +52,37 @@ export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOpt
 
     spinner.start('Schema generation start, ...');
 
-    const jobs = targetTypes.map((typeInfo) => {
-      const payload: TMasterToWorkerMessage = {
-        command: 'job',
-        data: {
-          fileWithTypes: typeInfo,
-          option,
-          resolvedPaths,
-          generatorOption,
-        },
-      };
+    const newRecords = (
+      await Promise.all(
+        targetTypes.map(async (targetType) => {
+          const schema = createJSONSchema({
+            option,
+            schemaConfig: generatorOption,
+            filePath: targetType.filePath,
+            typeName: targetType.typeName,
+          });
 
-      return payload;
-    });
+          if (schema.type === 'fail') {
+            return undefined;
+          }
 
-    WorkerContainer.send(...jobs);
-    await WorkerContainer.wait();
+          const record = await createSchemaRecord({
+            option,
+            project: project.pass,
+            resolvedPaths,
+            metadata: schema.pass,
+          });
 
-    const newDb = mergeSchemaRecords(db, WorkerContainer.records);
+          const records = [record.record, ...(record.definitions ?? [])];
+
+          return records;
+        }),
+      )
+    )
+      .flat()
+      .filter((record): record is IDatabaseRecord => record != null);
+
+    const newDb = mergeSchemaRecords(db, newRecords);
     await saveDatabase(option, newDb);
 
     spinner.stop({

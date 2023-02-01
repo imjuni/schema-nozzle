@@ -1,7 +1,7 @@
 import type IPromptAnswerSelectType from '#cli/interfaces/IPromptAnswerSelectType';
 import getExportedName from '#compilers/getExportedName';
 import getExportedType from '#compilers/getExportedType';
-import { TEXPORTED_TYPE } from '#compilers/interfaces/TEXPORTED_TYPE';
+import { CE_EXPORTED_TYPE } from '#compilers/interfaces/CE_EXPORTED_TYPE';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
 import type IFileWithType from '#modules/interfaces/IFileWithType';
@@ -21,7 +21,7 @@ interface IChoiceTypeItem {
   filePath: string;
   identifier: string;
   exportedDeclaration: tsm.ExportedDeclarations;
-  type: TEXPORTED_TYPE;
+  type: CE_EXPORTED_TYPE;
 }
 
 interface IGetTypesFromPromptArgs {
@@ -30,16 +30,16 @@ interface IGetTypesFromPromptArgs {
   isMultipleSelect: boolean;
 }
 
-const weight: Record<TEXPORTED_TYPE, number> = {
-  [TEXPORTED_TYPE.CLASS]: 3,
-  [TEXPORTED_TYPE.VARIABLE]: Number.MAX_SAFE_INTEGER,
-  [TEXPORTED_TYPE.FUNCTION]: Number.MAX_SAFE_INTEGER,
-  [TEXPORTED_TYPE.ARROW_FUNCTION]: Number.MAX_SAFE_INTEGER,
-  [TEXPORTED_TYPE.INTERFACE]: 1,
-  [TEXPORTED_TYPE.TYPE_ALIAS]: 2,
-  [TEXPORTED_TYPE.ENUM]: 4,
-  [TEXPORTED_TYPE.MODULE]: Number.MAX_SAFE_INTEGER,
-  [TEXPORTED_TYPE.BINDING_ELEMENT]: Number.MAX_SAFE_INTEGER,
+const weight: Record<CE_EXPORTED_TYPE, number> = {
+  [CE_EXPORTED_TYPE.CLASS]: 3,
+  [CE_EXPORTED_TYPE.VARIABLE]: Number.MAX_SAFE_INTEGER,
+  [CE_EXPORTED_TYPE.FUNCTION]: Number.MAX_SAFE_INTEGER,
+  [CE_EXPORTED_TYPE.ARROW_FUNCTION]: Number.MAX_SAFE_INTEGER,
+  [CE_EXPORTED_TYPE.INTERFACE]: 1,
+  [CE_EXPORTED_TYPE.TYPE_ALIAS]: 2,
+  [CE_EXPORTED_TYPE.ENUM]: 4,
+  [CE_EXPORTED_TYPE.MODULE]: Number.MAX_SAFE_INTEGER,
+  [CE_EXPORTED_TYPE.BINDING_ELEMENT]: Number.MAX_SAFE_INTEGER,
 };
 
 export default async function getAddTypesFromPrompt({

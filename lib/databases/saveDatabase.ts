@@ -1,8 +1,8 @@
 import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
-import type ITruncateSchemaOption from '#configs/interfaces/ITruncateSchemaOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
 import fastSafeStringify from 'fast-safe-stringify';
 import fs from 'fs';
@@ -10,7 +10,7 @@ import { isDirectory } from 'my-node-fp';
 import path from 'path';
 
 export default async function saveDatabase(
-  option: TAddSchemaOption | IDeleteSchemaOption | ITruncateSchemaOption | TRefreshSchemaOption,
+  option: TAddSchemaOption | TDeleteSchemaOption | TTruncateSchemaOption | TRefreshSchemaOption,
   db: TDatabase,
 ) {
   const dbPath = (await isDirectory(option.output))

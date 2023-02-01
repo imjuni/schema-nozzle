@@ -4,4 +4,4 @@ export const TMAJOR = {
 } as const;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export type TMAJOR = typeof TMAJOR[keyof typeof TMAJOR];
+export type TMAJOR = (typeof TMAJOR)[keyof typeof TMAJOR];

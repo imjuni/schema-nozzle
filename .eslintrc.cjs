@@ -6,12 +6,13 @@ module.exports = {
   },
   extends: [
     'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'airbnb-base',
     'airbnb-typescript/base',
     'plugin:prettier/recommended',
-    'prettier',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -41,11 +42,19 @@ module.exports = {
     'import/extensions': ['off'],
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
   },
+  overrides: [
+    {
+      files: ['**/__tests__/*.ts'],
+      rules: {
+        '@typescript-eslint/no-unsafe-assignment': ['off'],
+      },
+    },
+  ],
   settings: {
     'import/resolver': {
       typescript: {
         alwaysTryTypes: true,
-        project: 'tsconfig.json',
+        project: 'tsconfig.eslint.json',
       },
     },
   },

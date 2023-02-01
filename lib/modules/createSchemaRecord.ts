@@ -4,10 +4,10 @@ import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption'
 import type createJSONSchema from '#modules/createJSONSchema';
 import getFormattedSchema from '#modules/getFormattedSchema';
 import getImportDeclarationMap from '#modules/getImportDeclaration';
+import { CE_JSDOC_EXTENDS } from '#modules/interfaces/CE_JSDOC_EXTENDS';
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import type ISchemaExportInfo from '#modules/interfaces/ISchemaExportInfo';
 import type ISchemaImportInfo from '#modules/interfaces/ISchemaImportInfo';
-import { TJSDOC_EXTENDS } from '#modules/interfaces/TJSDOC_EXTENDS';
 import fastCopy from 'fast-copy';
 import type { JSONSchema7 } from 'json-schema';
 import { first, settify } from 'my-easy-fp';
@@ -24,6 +24,7 @@ const traverseHandle: TraversalCallback = ({
 }: TraversalCallbackContext): any => {
   const next = parent;
   if (next != null && key != null && key === '$ref') {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
     next[key] = `${value.replace('#/definitions/', '')}`;
   }
 
@@ -38,7 +39,8 @@ function getJsDocTags(
     const dtos = (importMap[id].node.getSymbol()?.getJsDocTags() ?? [])
       .filter(
         (tag) =>
-          tag.getName() === TJSDOC_EXTENDS.AS_DTO || tag.getName() === TJSDOC_EXTENDS.AS_DTO_ALIAS,
+          tag.getName() === CE_JSDOC_EXTENDS.AS_DTO ||
+          tag.getName() === CE_JSDOC_EXTENDS.AS_DTO_ALIAS,
       )
       .map((tag) => first(tag.getText()));
 

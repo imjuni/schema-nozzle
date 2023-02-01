@@ -23,25 +23,26 @@ export default function logger() {
       translateTime: 'yy-mm-dd HH:MM:ss',
       ignore: 'pid,hostname',
       colorize: false,
+      sync: true,
       customPrettifiers: {
-        level: (logLevel: any) => {
-          const levelLabel = pino.levels.labels[logLevel].toLowerCase();
+        level: (loglevel: string | object) => {
+          const ll = Number.parseInt(loglevel.toString(), 10);
+          const levelLabel = pino.levels.labels[ll].toLowerCase();
 
           switch (levelLabel) {
             case 'debug':
-              return `${chalk.blueBright(pino.levels.labels[logLevel])}`;
+              return `${chalk.blueBright(pino.levels.labels[ll])}`;
             case 'info':
-              return `${chalk.greenBright(pino.levels.labels[logLevel])}`;
+              return `${chalk.greenBright(pino.levels.labels[ll])}`;
             case 'warn':
-              return `${chalk.yellowBright(pino.levels.labels[logLevel])}`;
+              return `${chalk.yellowBright(pino.levels.labels[ll])}`;
             case 'error':
-              return `${chalk.redBright(pino.levels.labels[logLevel])}`;
+              return `${chalk.redBright(pino.levels.labels[ll])}`;
             default:
-              return `${chalk.greenBright(pino.levels.labels[logLevel])}`;
+              return `${chalk.greenBright(pino.levels.labels[ll])}`;
           }
         },
       },
-      sync: true,
     });
 
     log = pino(

@@ -1,4 +1,4 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
@@ -7,7 +7,7 @@ import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 import { EventEmitter } from 'node:events';
 
-class WorkerContainerClass extends EventEmitter {
+class Workers extends EventEmitter {
   #workers: Record<number, Worker>;
 
   #deaded: Record<number, Worker>;
@@ -40,6 +40,10 @@ class WorkerContainerClass extends EventEmitter {
     });
 
     worker.on('message', (message: TWorkerToMasterMessage) => {
+      if (message.command === CE_MASTER_ACTION.TASK_COMPLETE) {
+        this.#finished -= 1;
+      }
+
       if (message.command === CE_MASTER_ACTION.PROJECT_LOAD_PASS) {
         this.#finished -= 1;
       }
@@ -89,6 +93,13 @@ class WorkerContainerClass extends EventEmitter {
     );
   }
 
+  sendAll(job: TMasterToWorkerMessage) {
+    Object.values(this.#workers).forEach((worker) => {
+      worker.send(job);
+      this.#finished += 1;
+    });
+  }
+
   wait(): Promise<number> {
     return new Promise<number>((resolve) => {
       const startAt = dayjs();
@@ -111,6 +122,6 @@ class WorkerContainerClass extends EventEmitter {
   }
 }
 
-const WorkerContainer = new WorkerContainerClass();
+const workers = new Workers();
 
-export default WorkerContainer;
+export default workers;

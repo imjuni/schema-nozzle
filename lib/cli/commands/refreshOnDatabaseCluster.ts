@@ -1,4 +1,4 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
@@ -6,30 +6,39 @@ import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption'
 import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
-import createJSONSchema from '#modules/createJSONSchema';
-import createSchemaRecord from '#modules/createSchemaRecord';
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '#modules/mergeSchemaRecords';
-import { isError } from 'my-easy-fp';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import workers from '#workers/workers';
+import cluster from 'cluster';
+import { isError, populate } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
+import os from 'os';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseSync(
-  option: TRefreshSchemaOption,
-  isMessage?: boolean,
-) {
+export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOption) {
   try {
-    spinner.isEnable = isMessage ?? false;
+    populate(os.cpus().length).forEach(() => {
+      workers.add(cluster.fork());
+    });
+
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(option);
+
+    workers.sendAll({
+      command: CE_WORKER_ACTION.PROJECT_LOAD,
+      data: { project: resolvedPaths.project },
+    });
+
+    await workers.wait();
+
     const project = await getTsProject({
       tsConfigFilePath: resolvedPaths.project,
-      skipAddingFilesFromTsConfig: false,
-      skipFileDependencyResolution: true,
-      skipLoadingLibFiles: true,
     });
+
     if (project.type === 'fail') throw project.fail;
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
 
@@ -56,37 +65,24 @@ export default async function refreshOnDatabaseSync(
 
     spinner.start('Schema generation start, ...');
 
-    const newRecords = (
-      await Promise.all(
-        targetTypes.map(async (targetType) => {
-          const schema = createJSONSchema({
-            option,
-            schemaConfig: generatorOption,
-            filePath: targetType.filePath,
-            typeName: targetType.typeName,
-          });
+    const jobs = targetTypes.map((typeInfo) => {
+      const payload: TMasterToWorkerMessage = {
+        command: 'job',
+        data: {
+          fileWithTypes: typeInfo,
+          option,
+          resolvedPaths,
+          generatorOption,
+        },
+      };
 
-          if (schema.type === 'fail') {
-            return undefined;
-          }
+      return payload;
+    });
 
-          const record = await createSchemaRecord({
-            option,
-            project: project.pass,
-            resolvedPaths,
-            metadata: schema.pass,
-          });
+    workers.send(...jobs);
+    await workers.wait();
 
-          const records = [record.record, ...(record.definitions ?? [])];
-
-          return records;
-        }),
-      )
-    )
-      .flat()
-      .filter((record): record is IDatabaseRecord => record != null);
-
-    const newDb = mergeSchemaRecords(db, newRecords);
+    const newDb = mergeSchemaRecords(db, workers.records);
     await saveDatabase(option, newDb);
 
     spinner.stop({

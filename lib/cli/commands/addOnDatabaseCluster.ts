@@ -1,4 +1,4 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
@@ -10,7 +10,7 @@ import getAddFiles from '#modules/getAddFiles';
 import getAddTypes from '#modules/getAddTypes';
 import mergeSchemaRecords from '#modules/mergeSchemaRecords';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import WorkerContainer from '#workers/WorkerContainer';
+import workers from '#workers/workers';
 import cluster from 'cluster';
 import { isError, populate } from 'my-easy-fp';
 import os from 'os';
@@ -20,7 +20,7 @@ export default async function addOnDatabaseCluster(
 ): Promise<void> {
   try {
     populate(os.cpus().length).forEach(() => {
-      WorkerContainer.add(cluster.fork());
+      workers.add(cluster.fork());
     });
 
     spinner.start('TypeScript source code compile, ...');
@@ -78,10 +78,10 @@ export default async function addOnDatabaseCluster(
       return payload;
     });
 
-    WorkerContainer.send(...jobs);
-    await WorkerContainer.wait();
+    workers.send(...jobs);
+    await workers.wait();
 
-    const newDb = mergeSchemaRecords(db, WorkerContainer.records);
+    const newDb = mergeSchemaRecords(db, workers.records);
     await saveDatabase(option, newDb);
 
     spinner.stop({

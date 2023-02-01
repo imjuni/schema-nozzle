@@ -17,6 +17,10 @@ type TMasterToWorkerMessage =
       };
     }
   | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD; data: { project: string } }
+  | {
+      command: typeof CE_WORKER_ACTION.PROJECT_DIAGOSTIC;
+      data: { option: TAddSchemaOption | TRefreshSchemaOption };
+    }
   | { command: typeof CE_WORKER_ACTION.NOOP; data: undefined }
   | { command: 'start'; data: undefined }
   | { command: 'end'; data: undefined };
