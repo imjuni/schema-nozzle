@@ -1,4 +1,4 @@
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import getDeleteTypesFromPrompt from '#modules/getDeleteTypesFromPrompt';
 import type { TNullableDatabase } from '#modules/interfaces/TDatabase';
 import { isError } from 'my-easy-fp';
@@ -9,7 +9,7 @@ export default async function getDeleteTypes({
   option,
 }: {
   db: TNullableDatabase;
-  option: IDeleteSchemaOption;
+  option: TDeleteSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
     if (option.types == null || option.types.length <= 0) {

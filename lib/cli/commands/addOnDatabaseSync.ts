@@ -1,4 +1,4 @@
-import spinner from '#cli/spinner';
+import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
@@ -14,12 +14,8 @@ import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import mergeSchemaRecords from '#modules/mergeSchemaRecords';
 import { isError } from 'my-easy-fp';
 
-export default async function addOnDatabaseSync(
-  nullableOption: TAddSchemaOption,
-  isMessage?: boolean,
-): Promise<void> {
+export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption): Promise<void> {
   try {
-    spinner.isEnable = isMessage ?? false;
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);

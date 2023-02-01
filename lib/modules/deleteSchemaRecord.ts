@@ -26,9 +26,12 @@ export default function deleteSchemaRecord(db: TDatabase, typeName: string) {
     });
 
   // TODO: compile json-schema and check delete id in definitions
-  const importUpdatedRecordMap = importUpdatedRecords.reduce((aggregation, updateExportRecord) => {
-    return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
-  }, {});
+  const importUpdatedRecordMap = importUpdatedRecords.reduce<Record<string, IDatabaseRecord>>(
+    (aggregation, updateExportRecord) => {
+      return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
+    },
+    {},
+  );
 
   // stage 02. exported schema information update
   const exportTos = record.export.to;
@@ -47,9 +50,12 @@ export default function deleteSchemaRecord(db: TDatabase, typeName: string) {
     });
 
   // TODO: compile json-schema and check delete id in definitions
-  const exportUpdatedRecordMap = exportUpdatedRecords.reduce((aggregation, updateExportRecord) => {
-    return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
-  }, {});
+  const exportUpdatedRecordMap = exportUpdatedRecords.reduce<Record<string, IDatabaseRecord>>(
+    (aggregation, updateExportRecord) => {
+      return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
+    },
+    {},
+  );
 
   const cycleRefrenceRecords = exportUpdatedRecords.filter(
     (exportUpdatedRecord) => importUpdatedRecordMap[exportUpdatedRecord.id] != null,

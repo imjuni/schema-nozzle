@@ -1,16 +1,16 @@
 import getAllExportedTypes from '#compilers/getAllExportTypes';
 import getExportedType from '#compilers/getExportedType';
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import isSourceFileInclude from '#modules/isSourceFileInclude';
 import type * as tsm from 'ts-morph';
 
-interface IValidateFileType<T extends IDeleteSchemaOption | TAddSchemaOption> {
+interface IValidateFileType<T extends TDeleteSchemaOption | TAddSchemaOption> {
   project: tsm.Project;
   option: T;
 }
 
-export default function getTargetTypes<T extends IDeleteSchemaOption | TAddSchemaOption>({
+export default function getTargetTypes<T extends TDeleteSchemaOption | TAddSchemaOption>({
   project,
   option,
 }: IValidateFileType<T>) {

@@ -1,4 +1,4 @@
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function deleteBuilder(argv: Argv<{}>) {
@@ -8,5 +8,5 @@ export default function deleteBuilder(argv: Argv<{}>) {
     default: false,
   });
 
-  return argv as Argv<IDeleteSchemaOption>;
+  return argv as Argv<TDeleteSchemaOption>;
 }

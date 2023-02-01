@@ -1,6 +1,6 @@
 import type IBaseOption from '#configs/interfaces/IBaseOption';
-import type IDeleteSchemaOption from '#configs/interfaces/IDeleteSchemaOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 
 export const baseOption: IBaseOption = {
@@ -21,7 +21,7 @@ export const addCmdOption: TAddSchemaOption = {
   format: TOUTPUT_FORMAT.JSON,
 };
 
-export const deleteCmdOption: IDeleteSchemaOption = {
+export const deleteCmdOption: TDeleteSchemaOption = {
   ...baseOption,
   discriminator: 'delete-schema',
   multiple: false,

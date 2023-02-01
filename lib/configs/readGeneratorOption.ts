@@ -26,7 +26,8 @@ export default async function readGeneratorOption(
 
     if ((await exists(filePath)) === true) {
       const configBuf = await fs.promises.readFile(filePath);
-      const config = parse(configBuf.toString());
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const config: tjsg.Config = parse(configBuf.toString());
       return config;
     }
 
