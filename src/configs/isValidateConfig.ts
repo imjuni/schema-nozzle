@@ -3,12 +3,13 @@ import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
-import logger from 'lib/tools/logger';
+import logger from '#tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
 import type { ArgumentsCamelCase } from 'yargs';
 
 const log = logger();
+
 const commands: string[] = [
   CE_COMMAND_LIST.ADD,
   CE_COMMAND_LIST.ADD_ALIAS,

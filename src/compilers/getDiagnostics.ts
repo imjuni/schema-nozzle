@@ -38,7 +38,7 @@ export default function getDiagnostics({
 
     return pass(true);
   } catch (catched) {
-    const err = isError(catched) ?? new Error('');
+    const err = isError(catched, new Error('unknown error raised'));
     return fail(err);
   }
 }

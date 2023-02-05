@@ -1,6 +1,5 @@
 export const CE_MASTER_ACTION = {
   PROJECT_LOAD_PASS: 'project-load-pass',
-  PROJECT_LOAD_FAIL: 'project-load-fail',
   TASK_COMPLETE: 'task-complete',
 } as const;
 

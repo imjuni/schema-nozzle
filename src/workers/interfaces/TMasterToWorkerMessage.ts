@@ -16,13 +16,22 @@ type TMasterToWorkerMessage =
         fileWithTypes: IFileWithType;
       };
     }
-  | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD; data: { project: string } }
+  | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }
+  | {
+      command: typeof CE_WORKER_ACTION.OPTION_LOAD;
+      data: { option: TAddSchemaOption | TRefreshSchemaOption; resolvedPaths: IResolvedPaths };
+    }
   | {
       command: typeof CE_WORKER_ACTION.PROJECT_DIAGOSTIC;
-      data: { option: TAddSchemaOption | TRefreshSchemaOption };
     }
-  | { command: typeof CE_WORKER_ACTION.NOOP; data: undefined }
+  | { command: typeof CE_WORKER_ACTION.NOOP }
+  | { command: typeof CE_WORKER_ACTION.TERMINATE }
   | { command: 'start'; data: undefined }
   | { command: 'end'; data: undefined };
+
+export type TPickMasterToWorkerMessage<T extends CE_WORKER_ACTION> = Extract<
+  TMasterToWorkerMessage,
+  { command: T }
+>;
 
 export default TMasterToWorkerMessage;

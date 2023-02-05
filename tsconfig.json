@@ -43,15 +43,15 @@
     // "moduleResolution": "Node16" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
     "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
     "paths": {
-      "#cli/*": ["lib/cli/*"],
-      "#compilers/*": ["lib/compilers/*"],
-      "#commands/*": ["lib/commands/*"],
-      "#configs/*": ["lib/configs/*"],
-      "#databases/*": ["lib/databases/*"],
-      "#errors/*": ["lib/errors/*"],
-      "#modules/*": ["lib/modules/*"],
-      "#tools/*": ["lib/tools/*"],
-      "#workers/*": ["lib/workers/*"]
+      "#cli/*": ["src/cli/*"],
+      "#compilers/*": ["src/compilers/*"],
+      "#commands/*": ["src/commands/*"],
+      "#configs/*": ["src/configs/*"],
+      "#databases/*": ["src/databases/*"],
+      "#errors/*": ["src/errors/*"],
+      "#modules/*": ["src/modules/*"],
+      "#tools/*": ["src/tools/*"],
+      "#workers/*": ["src/workers/*"]
     },
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "allowSyntheticDefaultImports": true,
@@ -60,7 +60,7 @@
     "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
     "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
     "pretty": true,
-    "typeRoots": ["lib/@types", "node_modules/@types"]
+    "typeRoots": ["src/@types", "node_modules/@types"]
   },
   "include": ["**/*"],
   "exclude": ["examples/**/*", "dist/**", "**/.configs/**", "**/docs/**/*"]
