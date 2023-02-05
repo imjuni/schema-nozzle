@@ -1,6 +1,4 @@
 import spinner from '#cli/display/spinner';
-import getDiagnostics from '#compilers/getDiagnostics';
-import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import readGeneratorOption from '#configs/readGeneratorOption';
@@ -12,7 +10,7 @@ import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import workers from '#workers/workers';
 import cluster from 'cluster';
-import { isError, populate } from 'my-easy-fp';
+import { atOrThrow, isError, populate } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import os from 'os';
 import path from 'path';
@@ -29,23 +27,28 @@ export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOpt
     const resolvedPaths = getResolvedPaths(option);
 
     workers.sendAll({
-      command: CE_WORKER_ACTION.PROJECT_LOAD,
-      data: { project: resolvedPaths.project },
+      command: CE_WORKER_ACTION.OPTION_LOAD,
+      data: { option, resolvedPaths },
     });
 
-    await workers.wait();
+    let reply = await workers.wait();
 
-    const project = await getTsProject({
-      tsConfigFilePath: resolvedPaths.project,
-    });
+    if (atOrThrow(reply.data, 0).result === 'fail') {
+      throw new Error('');
+    }
 
-    if (project.type === 'fail') throw project.fail;
     spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
 
-    const diagnostics = getDiagnostics({ option, project: project.pass });
-    if (diagnostics.type === 'fail') throw diagnostics.fail;
+    workers.send({ command: CE_WORKER_ACTION.PROJECT_DIAGOSTIC });
+
+    reply = await workers.wait();
+
+    if (atOrThrow(reply.data, 0).result === 'fail') {
+      throw new Error('');
+    }
 
     spinner.start('Open database, ...');
+
     const db = await openDatabase(resolvedPaths);
     spinner.update({ message: 'database open success', channel: 'succeed' });
 

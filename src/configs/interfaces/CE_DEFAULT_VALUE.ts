@@ -1,6 +1,6 @@
 export const CE_DEFAULT_VALUE = {
-  LIST_FILE: '.ctjsfiles',
-  CONFIG_FILE_NAME: '.ctjsrc',
+  LIST_FILE: '.nozzlefiles',
+  CONFIG_FILE_NAME: '.nozzlerc',
   TSCONFIG_FILE_NAME: 'tsconfig.json',
   DB_FILE_NAME: 'db.json',
 } as const;

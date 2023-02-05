@@ -7,7 +7,7 @@ const pkg = readPackage.sync();
 
 export default [
   {
-    input: 'lib/cli.ts',
+    input: 'src/cli.ts',
     output: [
       {
         format: 'cjs',

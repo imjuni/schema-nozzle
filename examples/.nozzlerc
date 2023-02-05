@@ -1,0 +1,4 @@
+{
+  "tsconfig": "./tsconfig.json",
+  "list-file": "./.nozzlefiles"
+}

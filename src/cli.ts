@@ -6,7 +6,7 @@ import truncateBuilder from '#cli/builders/truncateBuilder';
 import addOnDatabaseCluster from '#cli/commands/addOnDatabaseCluster';
 import addOnDatabaseSync from '#cli/commands/addOnDatabaseSync';
 import deleteOnDatabase from '#cli/commands/deleteOnDatabase';
-import refreshOnDatabaseCluster from '#cli/commands/refreshOnDatabaseCluster';
+import refreshOnDatabaseCluster2 from '#cli/commands/refreshOnDatabaseCluster2';
 import refreshOnDatabaseSync from '#cli/commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '#cli/commands/truncateOnDatabase';
 import spinner from '#cli/display/spinner';
@@ -63,12 +63,14 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   handler: async (argv) => {
     spinner.isEnable = true;
 
+    log.level = 'trace';
+
     const option = await withDefaultOption(argv);
 
     if (process.env.SYNC_MODE === 'true') {
       await refreshOnDatabaseSync(option);
     } else {
-      await refreshOnDatabaseCluster(option);
+      await refreshOnDatabaseCluster2(option);
     }
   },
 };

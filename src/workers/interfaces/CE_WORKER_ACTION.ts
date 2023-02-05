@@ -3,6 +3,7 @@ export const CE_WORKER_ACTION = {
   OPTION_LOAD: 'option-load',
   SUMMARY_TARGET: 'summary-target',
   PROJECT_DIAGOSTIC: 'project-diagostic',
+  TERMINATE: 'terminate',
   NOOP: 'noop',
 } as const;
 
