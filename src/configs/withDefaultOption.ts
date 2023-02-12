@@ -9,7 +9,7 @@ export default async function withDefaultOption<
 >(option: T): Promise<T> {
   const next = { ...option };
 
-  if (next.output == null || next.output === '') {
+  if (next.output === '') {
     next.output = await getDirname(option.project);
   }
 

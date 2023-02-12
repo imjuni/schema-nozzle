@@ -1,26 +1,30 @@
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
-import type { TDatabase } from '#modules/interfaces/TDatabase';
+import type { TDatabase, TNullableDatabase } from '#modules/interfaces/TDatabase';
 import fastCopy from 'fast-copy';
 import { settify } from 'my-easy-fp';
 
-export default function mergeSchemaRecords(db: TDatabase, records: IDatabaseRecord[]): TDatabase {
-  const newDb = records.reduce((aggregation, record) => {
+export default function mergeSchemaRecords(
+  db: TNullableDatabase,
+  records: IDatabaseRecord[],
+): TDatabase {
+  const newDb = records.reduce<TNullableDatabase>((aggregation, record) => {
     try {
-      if (aggregation[record.id] == null) {
+      const prevRecord = aggregation[record.id];
+
+      if (prevRecord == null) {
         return { ...aggregation, [record.id]: record };
       }
 
-      const prevRecord = aggregation[record.id];
       const nextRecord = fastCopy(record);
 
-      nextRecord.import = {
-        name: record.import.name,
-        from: settify([...prevRecord.import.from, ...nextRecord.import.from]),
+      nextRecord.dependency.import = {
+        name: record.dependency.import.name,
+        from: settify([...prevRecord.dependency.import.from, ...nextRecord.dependency.import.from]),
       };
 
-      nextRecord.export = {
-        name: record.export.name,
-        to: settify([...prevRecord.export.to, ...nextRecord.export.to]),
+      nextRecord.dependency.export = {
+        name: record.dependency.export.name,
+        to: settify([...prevRecord.dependency.export.to, ...nextRecord.dependency.export.to]),
       };
 
       return { ...aggregation, [nextRecord.id]: nextRecord };
@@ -29,5 +33,5 @@ export default function mergeSchemaRecords(db: TDatabase, records: IDatabaseReco
     }
   }, fastCopy(db));
 
-  return newDb;
+  return newDb as TDatabase;
 }

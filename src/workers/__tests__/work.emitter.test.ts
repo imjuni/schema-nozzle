@@ -4,6 +4,7 @@ import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import NozzleEmitter from '#workers/NozzleEmitter';
 import 'jest';
+import path from 'path';
 
 const compilerOptions = {
   lib: ['lib.es2021.d.ts', 'lib.dom.d.ts'],
@@ -42,17 +43,23 @@ const compilerOptions = {
   pretty: true,
 };
 
-let reply: unknown;
+const originPath = process.env.INIT_CWD!;
+const data: {
+  resolvedPaths: ReturnType<typeof getResolvedPaths>;
+} = {} as any;
 
 beforeEach(() => {
-  jest.spyOn(process, 'exit').mockImplementation((code?: number | undefined) => {
-    console.log(code);
+  process.env.INIT_CWD = path.join(originPath, 'examples');
+  data.resolvedPaths = getResolvedPaths({
+    project: path.join(originPath, 'examples', 'tsconfig.json'),
+    output: path.join(originPath, 'examples'),
+  });
+
+  jest.spyOn(process, 'exit').mockImplementation((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  jest.spyOn(process, 'send').mockImplementation((data: unknown) => {
-    reply = data;
-    console.log('process.send: ', reply);
+  jest.spyOn(process, 'send').mockImplementation((_data: unknown) => {
     return true;
   });
 });
@@ -60,26 +67,26 @@ beforeEach(() => {
 describe('WorkEmitter', () => {
   test('pass', async () => {
     const w = new NozzleEmitter();
-    const resolvedPaths = getResolvedPaths(env.baseOption);
 
     w.emit(CE_WORKER_ACTION.OPTION_LOAD, {
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option: env.addCmdOption, resolvedPaths },
+      data: { option: env.addCmdOption, resolvedPaths: data.resolvedPaths },
     } satisfies Exclude<TMasterToWorkerMessage, typeof CE_WORKER_ACTION.OPTION_LOAD>);
   });
 
   test('pass', async () => {
     const w = new NozzleEmitter();
     w.option = { ...env.addCmdOption };
+    w.resolvedPaths = data.resolvedPaths;
 
     await w.loadProject();
-    console.log(w.project?.compilerOptions.get());
     expect(w.project?.compilerOptions.get()).toMatchObject(compilerOptions);
   });
 
   test('pass - 2', async () => {
     const w = new NozzleEmitter();
     w.option = { ...env.addCmdOption };
+    w.resolvedPaths = data.resolvedPaths;
 
     w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
   });
@@ -87,6 +94,7 @@ describe('WorkEmitter', () => {
   test('fail', async () => {
     try {
       const w = new NozzleEmitter();
+      w.resolvedPaths = data.resolvedPaths;
       w.option = { ...env.addCmdOption };
       w.option.project = '';
 
@@ -99,6 +107,7 @@ describe('WorkEmitter', () => {
   test('fail - 2', async () => {
     try {
       const w = new NozzleEmitter();
+      w.resolvedPaths = data.resolvedPaths;
       w.option = { ...env.addCmdOption };
       w.option.project = '';
 
@@ -144,11 +153,12 @@ describe('WorkEmitter', () => {
 
   test('working', () => {
     const w = new NozzleEmitter();
-    w.working({ command: CE_WORKER_ACTION.NOOP, data: undefined });
+    w.working({ command: CE_WORKER_ACTION.NOOP });
   });
 
   test('diagonostic', async () => {
     const w = new NozzleEmitter();
+    w.resolvedPaths = data.resolvedPaths;
     w.option = { ...env.addCmdOption };
 
     await w.loadProject();
@@ -158,6 +168,7 @@ describe('WorkEmitter', () => {
   test('diagonostic - fail', async () => {
     const w = new NozzleEmitter();
     w.option = { ...env.addCmdOption };
+    w.resolvedPaths = data.resolvedPaths;
     w.option.project = '';
 
     w.emit(CE_WORKER_ACTION.PROJECT_DIAGOSTIC);
@@ -168,7 +179,7 @@ describe('WorkEmitter', () => {
       const w = new NozzleEmitter();
       w.option = { ...env.addCmdOption };
 
-      jest.spyOn(w, 'diagonostic').mockImplementation(async () => {
+      jest.spyOn(w, 'diagonostic').mockImplementationOnce(async () => {
         throw new Error('mock error raised');
       });
 

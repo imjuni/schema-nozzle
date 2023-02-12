@@ -31,6 +31,6 @@
     "emitDecoratorMetadata": true,
     "pretty": true
   },
-  "include": ["**/*"],
+  "include": ["**/*.ts"],
   "exclude": ["dist/**", "**/.configs/**", "**/docs/**/*"]
 }

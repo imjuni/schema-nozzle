@@ -15,5 +15,5 @@ export default interface IBaseOption {
   skipError: boolean;
 
   /** target list filename */
-  listFile: string;
+  listFile?: string;
 }

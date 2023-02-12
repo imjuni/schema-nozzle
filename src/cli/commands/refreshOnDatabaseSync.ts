@@ -2,8 +2,8 @@ import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
@@ -48,19 +48,18 @@ export default async function refreshOnDatabaseSync(option: TRefreshSchemaOption
         };
       });
 
-    const generatorOption = await readGeneratorOption(option);
+    const generatorOption = await getSchemaGeneratorOption(option);
 
     spinner.start('Schema generation start, ...');
 
     const newRecords = (
       await Promise.all(
         targetTypes.map(async (targetType) => {
-          const schema = createJSONSchema({
-            option,
-            schemaConfig: generatorOption,
-            filePath: targetType.filePath,
-            typeName: targetType.typeName,
-          });
+          const schema = createJSONSchema(
+            targetType.filePath,
+            targetType.typeName,
+            generatorOption,
+          );
 
           if (schema.type === 'fail') {
             return undefined;
@@ -70,7 +69,7 @@ export default async function refreshOnDatabaseSync(option: TRefreshSchemaOption
             option,
             project: project.pass,
             resolvedPaths,
-            metadata: schema.pass,
+            schema: schema.pass,
           });
 
           const records = [record.record, ...(record.definitions ?? [])];

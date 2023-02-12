@@ -1,71 +1,66 @@
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type IBaseOption from '#configs/interfaces/IBaseOption';
+import getExportedFiles from '#compilers/getExportedFiles';
 import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
-import getCwd from '#tools/getCwd';
-import fs from 'fs';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import getSchemaFileContent from '#modules/getSchemaFileContent';
+import getSchemaListFilePath from '#modules/getSchemaListFilePath';
+import isSourceFileInclude from '#modules/isSourceFileInclude';
+import getRelativeCwd from '#tools/getRelativeCwd';
 import ignore from 'ignore';
-import { exists, startSepRemove } from 'my-node-fp';
-import path from 'path';
 import type * as tsm from 'ts-morph';
-import type { SetOptional } from 'type-fest';
 
-export async function getSchemaListFilePath(filename?: string) {
-  if (filename != null && (await exists(path.resolve(filename)))) {
-    return path.resolve(filename);
+function getFilePaths(
+  filePaths: string[],
+  option:
+    | Pick<TAddSchemaOption, 'discriminator' | 'listFile' | 'files'>
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile'>,
+) {
+  if (option.discriminator === 'add-schema') {
+    return option.files.length > 0 ? option.files : filePaths;
   }
 
-  const defaultValue = path.resolve(path.join(getCwd(process.env), CE_DEFAULT_VALUE.LIST_FILE));
-  if (await exists(defaultValue)) {
-    return defaultValue;
-  }
-
-  return undefined;
+  return filePaths;
 }
 
-export async function getSchemaFileContent(filePath: string) {
-  return (await fs.promises.readFile(filePath))
-    .toString()
-    .split('\n')
-    .map((line) => line.trim());
-}
+export default async function summarySchemaFiles(
+  project: tsm.Project,
+  option:
+    | Pick<TAddSchemaOption, 'discriminator' | 'listFile' | 'files'>
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile'>,
+  resolvedPaths: IResolvedPaths,
+) {
+  const filePaths = getExportedFiles(project);
 
-export function addProjectFile(cwd: string, project?: tsm.Project): string[] {
-  if (project == null) {
-    return [];
+  // stage 01. filter target file by option.files
+  const targetFiles = getFilePaths(filePaths, option);
+  const optionFilesApplied = filePaths
+    .filter((filePath) => isSourceFileInclude(targetFiles, filePath))
+    .map((filePath) => ({
+      origin: filePath,
+      refined: getRelativeCwd(resolvedPaths.cwd, filePath),
+    }));
+
+  // stage 02. create ignore filter
+  const schemaFileListFilePath = await getSchemaListFilePath({
+    filePath: option.listFile,
+    resolvedPaths,
+  });
+
+  // stage 03. cannot found target script file summary
+  if (schemaFileListFilePath == null) {
+    const filter = ignore().add(optionFilesApplied.map((filePath) => filePath.refined));
+    return { filePaths: optionFilesApplied, filter };
   }
 
-  const filePaths = project
-    .getSourceFiles()
-    .map((sourceFile) => sourceFile.getFilePath().replace(cwd, ''));
+  // stage 04. target script file summary found apply it
 
-  return filePaths.map((filePath) => startSepRemove(filePath));
-}
+  // create filter using by schema file summary
+  const listFileFilter = ignore().add(await getSchemaFileContent(schemaFileListFilePath));
+  const filteredFilePaths = optionFilesApplied.filter((filePath) =>
+    listFileFilter.ignores(filePath.refined),
+  );
 
-export default async function summarySchemaFiles({
-  option,
-  resolvedPaths,
-  project,
-}: {
-  option?: SetOptional<Pick<IBaseOption, 'listFile'>, 'listFile'>;
-  resolvedPaths: IResolvedPaths;
-  project?: tsm.Project;
-}) {
-  const ig = ignore();
-
-  if (option == null) {
-    ig.add(addProjectFile(resolvedPaths.cwd, project));
-    return ig;
-  }
-
-  const filePath = await getSchemaListFilePath(option.listFile);
-
-  if (filePath == null) {
-    ig.add(addProjectFile(resolvedPaths.cwd, project));
-    return ig;
-  }
-
-  const lines = await getSchemaFileContent(filePath);
-  ig.add(lines);
-
-  return ig;
+  // create filePaths using by scheam file summary filter
+  const filter = ignore().add(filteredFilePaths.map((filePath) => filePath.refined));
+  return { filePaths: filteredFilePaths, filter };
 }

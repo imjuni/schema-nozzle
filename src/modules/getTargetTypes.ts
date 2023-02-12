@@ -1,5 +1,5 @@
-import getAllExportedTypes from '#compilers/getAllExportTypes';
 import getExportedType from '#compilers/getExportedType';
+import getExportedTypes from '#compilers/getExportedTypes';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import isSourceFileInclude from '#modules/isSourceFileInclude';
@@ -28,7 +28,7 @@ export default function getTargetTypes<T extends TDeleteSchemaOption | TAddSchem
     return true;
   });
 
-  const allExportedTypes = getAllExportedTypes({ project, option });
+  const allExportedTypes = getExportedTypes({ project, option });
 
   if (allExportedTypes.type === 'fail') {
     throw allExportedTypes.fail;

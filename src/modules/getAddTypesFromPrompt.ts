@@ -123,7 +123,7 @@ export default async function getAddTypesFromPrompt({
         name: 'typeName',
         pageSize: 20,
         message: 'Select type(interface or type alias) for JSONSchema extraction: ',
-        source: (_answersSoFar: any, input: string) => {
+        source: (_answersSoFar: any, input?: string) => {
           const safeInput = input == null ? '' : input;
 
           if (safeInput === '') {
@@ -181,7 +181,7 @@ export default async function getAddTypesFromPrompt({
 
         return true;
       },
-      source: (_answersSoFar: any, input: string) => {
+      source: (_answersSoFar: any, input?: string) => {
         const safeInput = input == null ? '' : input;
 
         if (safeInput === '') {

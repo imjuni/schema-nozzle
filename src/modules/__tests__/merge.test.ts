@@ -51,7 +51,7 @@ test('T001-create-schema-record', async () => {
   const schemas = targetTypes.exportedTypes.map((targetType) =>
     createJSONSchema({
       option: nullableOption,
-      schemaConfig: undefined,
+      generatorOption: undefined,
       filePath: targetType.filePath,
       typeName: targetType.identifier,
     }),
@@ -66,7 +66,7 @@ test('T001-create-schema-record', async () => {
         )
         .map((schema) => schema.pass)
         .map(async (schema) =>
-          createSchemaRecord({ option, project: project.pass, resolvedPaths, metadata: schema }),
+          createSchemaRecord({ option, project: project.pass, resolvedPaths, schema: schema }),
         ),
     )
   )

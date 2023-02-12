@@ -1,0 +1,25 @@
+{
+  "record": {
+    "id": "CE_MAJOR",
+    "filePath": "CE_MAJOR.ts",
+    "dependency": {
+      "import": {
+        "name": "CE_MAJOR",
+        "from": []
+      },
+      "export": {
+        "name": "CE_MAJOR",
+        "to": []
+      }
+    },
+    "schema": {
+      "$id": "CE_MAJOR",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "string",
+      "enum": [
+        "computer science",
+        "electrical"
+      ]
+    }
+  }
+}

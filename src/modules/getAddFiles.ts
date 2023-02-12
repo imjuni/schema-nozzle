@@ -12,7 +12,7 @@ export default async function getAddFiles({
   option: TAddSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
-    if (option.files == null || option.files.length <= 0) {
+    if (option.files.length <= 0) {
       const files = await getAddFilesFromPrompt(resolvedPaths, option.multiple);
       return pass(files);
     }

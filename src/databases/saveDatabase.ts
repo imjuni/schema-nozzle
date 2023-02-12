@@ -4,10 +4,13 @@ import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
+import logger from '#tools/logger';
 import fastSafeStringify from 'fast-safe-stringify';
 import fs from 'fs';
 import { isDirectory } from 'my-node-fp';
 import path from 'path';
+
+const log = logger();
 
 export default async function saveDatabase(
   option: TAddSchemaOption | TDeleteSchemaOption | TTruncateSchemaOption | TRefreshSchemaOption,
@@ -17,6 +20,8 @@ export default async function saveDatabase(
     ? path.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
     : option.output;
 
+  log.trace(`SaveDatabase: ${dbPath}`);
+
   const sortedDb = Object.values(db)
     .sort((l, r) => l.id.localeCompare(r.id))
     .reduce((aggregation, record) => {
@@ -25,5 +30,5 @@ export default async function saveDatabase(
 
   await fs.promises.writeFile(dbPath, fastSafeStringify(sortedDb, undefined, 2));
 
-  return db.pass;
+  return db;
 }
