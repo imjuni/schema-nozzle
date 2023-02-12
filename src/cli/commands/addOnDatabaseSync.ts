@@ -2,8 +2,8 @@ import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
@@ -50,7 +50,7 @@ export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption
     spinner.start('Open database, ...');
 
     const db = await openDatabase(resolvedPaths);
-    const generatorOption = await readGeneratorOption(option);
+    const generatorOption = await getSchemaGeneratorOption(option);
 
     spinner.update({ message: 'database open success', channel: 'succeed' });
     spinner.start('Schema generation start, ...');
@@ -59,8 +59,7 @@ export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption
       await Promise.all(
         targetTypes.pass.map(async (targetType) => {
           const schema = createJSONSchema({
-            option,
-            schemaConfig: generatorOption,
+            generatorOption,
             filePath: targetType.filePath,
             typeName: targetType.typeName,
           });
@@ -73,7 +72,7 @@ export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption
             option,
             project: project.pass,
             resolvedPaths,
-            metadata: schema.pass,
+            schema: schema.pass,
           });
 
           const records = [record.record, ...(record.definitions ?? [])];

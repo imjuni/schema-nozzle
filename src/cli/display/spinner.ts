@@ -1,45 +1,40 @@
-import type TStreamType from '#cli/interfaces/TStreamType';
+import { CE_STREAM_TYPE } from '#cli/interfaces/CE_STREAM_TYPE';
 import ora from 'ora';
 
 class Spinner {
   #spinner: ora.Ora;
 
-  #stream: TStreamType;
+  #stream: CE_STREAM_TYPE;
 
   accessor isEnable: boolean;
 
-  accessor isStart: boolean;
-
-  constructor(stream?: TStreamType) {
+  constructor(stream?: CE_STREAM_TYPE) {
     this.#spinner = ora({ text: '', stream: process.stdout });
     this.isEnable = false;
-    this.#stream = stream ?? 'stdout';
-    this.isStart = false;
+    this.#stream = stream ?? CE_STREAM_TYPE.STDOUT;
   }
 
-  set stream(value: TStreamType) {
-    if (value === 'stderr' && this.#stream === 'stdout') {
+  set stream(value: CE_STREAM_TYPE) {
+    if (value === this.#stream) {
       this.#spinner.stop();
-      this.isStart = false;
-      this.#spinner = ora({ text: this.#spinner.text, stream: process.stderr });
-
-      this.#stream = 'stderr';
-    } else if (value === 'stdout' && this.#stream === 'stderr') {
+      this.#spinner = ora({ text: this.#spinner.text });
+    } else {
       this.#spinner.stop();
-      this.isStart = false;
-      this.#spinner = ora({ text: this.#spinner.text, stream: process.stdout });
-
-      this.#stream = 'stdout';
+      this.#spinner = ora({
+        text: this.#spinner.text,
+        stream: value === CE_STREAM_TYPE.STDOUT ? process.stdout : process.stderr,
+      });
+      this.#stream = value;
     }
   }
 
   start(message?: string) {
-    if (this.isEnable && message != null) {
+    if (this.isEnable === false) return;
+
+    if (message != null) {
       this.#spinner.start(message);
-      this.isStart = true;
-    } else if (this.isEnable) {
+    } else {
       this.#spinner.start();
-      this.isStart = true;
     }
   }
 
@@ -56,24 +51,24 @@ class Spinner {
   }
 
   update(display: { message: string; channel?: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
-    if (this.isEnable) {
-      if (display.channel != null) {
-        this.#spinner[display.channel](display.message);
-      } else {
-        setImmediate(() => {
-          this.#spinner.text = display.message;
-        });
-      }
+    if (this.isEnable === false) return;
+
+    if (display.channel != null) {
+      this.#spinner[display.channel](display.message);
+    } else {
+      setImmediate(() => {
+        this.#spinner.text = display.message;
+      });
     }
   }
 
   stop(display?: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
-    if (this.isStart === true && display != null) {
+    if (this.isEnable === false) return;
+
+    if (display != null) {
       this.#spinner[display.channel](display.message);
-      this.isStart = false;
-    } else if (this.isStart === true) {
+    } else {
       this.#spinner.stop();
-      this.isStart = false;
     }
   }
 }

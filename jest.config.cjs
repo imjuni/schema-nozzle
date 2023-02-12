@@ -5,7 +5,7 @@ const { parse } = require('jsonc-parser');
 const fs = require('fs');
 
 // https://kulshekhar.github.io/ts-jest/docs/getting-started/paths-mapping/#jest-config-with-helper
-// ctix tsconfig.json file have comment line so need jsonc-parser
+// schema-nozzle tsconfig.json file have comment line so need jsonc-parser
 const tsconfig = parse(fs.readFileSync('./tsconfig.json').toString());
 
 module.exports = {

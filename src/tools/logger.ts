@@ -60,7 +60,7 @@ export default function logger() {
       stream,
     );
 
-    log.level = 'info';
+    log.level = process.env.LOG_LEVEL ?? 'info';
   }
 
   return log;

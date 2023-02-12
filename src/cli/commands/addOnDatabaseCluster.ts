@@ -2,8 +2,8 @@ import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import getAddFiles from '#modules/getAddFiles';
@@ -58,7 +58,7 @@ export default async function addOnDatabaseCluster(
     spinner.start('Open database, ...');
 
     const db = await openDatabase(resolvedPaths);
-    const generatorOption = await readGeneratorOption(option);
+    const generatorOption = await getSchemaGeneratorOption(option);
 
     spinner.update({ message: 'database open success', channel: 'succeed' });
 

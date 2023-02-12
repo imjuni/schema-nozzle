@@ -1,10 +1,17 @@
 import getCwd from '#tools/getCwd';
 import getRatioNumber from '#tools/getRatioNumber';
+import getRelativeCwd from '#tools/getRelativeCwd';
 import logger from '#tools/logger';
 import posixJoin from '#tools/posixJoin';
 import safeParse from '#tools/safeParse';
 import 'jest';
 import path from 'path';
+
+describe('getRativeCwd', () => {
+  test('default', () => {
+    expect(getRelativeCwd('/a/b/c', '/a/b/c/d/test.ts')).toEqual('d/test.ts');
+  });
+});
 
 describe('posixJoin', () => {
   test('join path', () => {

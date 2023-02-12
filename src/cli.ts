@@ -63,8 +63,6 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   handler: async (argv) => {
     spinner.isEnable = true;
 
-    log.level = 'trace';
-
     const option = await withDefaultOption(argv);
 
     if (process.env.SYNC_MODE === 'true') {

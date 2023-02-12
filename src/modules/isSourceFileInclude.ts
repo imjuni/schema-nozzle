@@ -1,7 +1,7 @@
 import path from 'path';
 
 export default function isSourceFileInclude(files: string[], file: string): boolean {
-  if (files.includes(file) === true) {
+  if (files.includes(file)) {
     return true;
   }
 

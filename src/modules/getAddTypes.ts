@@ -1,9 +1,9 @@
-import getAllExportedTypes from '#compilers/getAllExportTypes';
+import getExportedTypes from '#compilers/getExportedTypes';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import getAddTypesFromPrompt from '#modules/getAddTypesFromPrompt';
 import type IFileWithType from '#modules/interfaces/IFileWithType';
 import { isError } from 'my-easy-fp';
-import { fail, pass, type PassFailEither, type TPickPass } from 'my-only-either';
+import { fail, pass, type PassFailEither } from 'my-only-either';
 import type * as tsm from 'ts-morph';
 import type { LastArrayElement } from 'type-fest';
 
@@ -15,7 +15,7 @@ export default async function getAddTypes({
   option: TAddSchemaOption;
 }): Promise<PassFailEither<Error, IFileWithType[]>> {
   try {
-    if (option.types == null || option.types.length <= 0) {
+    if (option.types.length <= 0) {
       const types = await getAddTypesFromPrompt({
         project,
         option,
@@ -24,14 +24,10 @@ export default async function getAddTypes({
       return pass(types);
     }
 
-    const allExportedTypes = getAllExportedTypes({ project, option });
+    const exportedTypes = getExportedTypes(project);
 
-    if (allExportedTypes.type === 'fail') {
-      throw allExportedTypes.fail;
-    }
-
-    const exportedTypeMap = allExportedTypes.pass.reduce<
-      Record<string, LastArrayElement<TPickPass<ReturnType<typeof getAllExportedTypes>>>>
+    const exportedTypeMap = exportedTypes.reduce<
+      Record<string, LastArrayElement<ReturnType<typeof getExportedTypes>>>
     >((aggregation, exportedType) => {
       return { ...aggregation, [exportedType.identifier]: exportedType };
     }, {});

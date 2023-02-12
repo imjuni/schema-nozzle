@@ -1,56 +1,41 @@
-import type IBaseOption from '#configs/interfaces/IBaseOption';
 import CreateJSONSchemaError from '#errors/CreateJsonSchemaError';
-import type ICreatedJSONSchema from '#modules/interfaces/ICreatedJSONSchema';
+import logger from '#tools/logger';
 import type { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import * as tjsg from 'ts-json-schema-generator';
 
-interface ICreateJSONSchemaArgs {
-  option: IBaseOption;
-  filePath: string;
-  typeName: string;
-  schemaConfig?: tjsg.Config;
-}
+const log = logger();
 
-export default function createJSONSchema({
-  option,
-  schemaConfig,
-  filePath,
-  typeName,
-}: ICreateJSONSchemaArgs): PassFailEither<Error, ICreatedJSONSchema> {
+export default function createJSONSchema(
+  filePath: string,
+  exportedType: string,
+  generatorOption: tjsg.Config,
+): PassFailEither<Error, { filePath: string; exportedType: string; schema: JSONSchema7 }> {
   try {
-    const generatorOption: tjsg.Config = {
+    const option: tjsg.Config = {
+      ...generatorOption,
       path: filePath,
-      type: typeName,
-      tsconfig: option.project,
-      minify: schemaConfig?.minify ?? false,
+      type: exportedType,
       schemaId:
-        schemaConfig?.schemaId == null || schemaConfig?.schemaId === ''
-          ? typeName
-          : schemaConfig.schemaId,
-      expose: schemaConfig?.expose ?? 'export',
-      topRef: schemaConfig?.topRef ?? false,
-      jsDoc: schemaConfig?.jsDoc ?? 'extended',
-      sortProps: schemaConfig?.sortProps ?? true,
-      strictTuples: schemaConfig?.strictTuples ?? true,
-      skipTypeCheck: schemaConfig?.skipTypeCheck ?? option.skipError,
-      encodeRefs: schemaConfig?.encodeRefs ?? true,
-      extraTags: schemaConfig?.extraTags,
-      additionalProperties: schemaConfig?.additionalProperties ?? false,
+        generatorOption.schemaId == null || generatorOption.schemaId === ''
+          ? exportedType
+          : generatorOption.schemaId,
     };
 
-    const generator = tjsg.createGenerator(generatorOption);
+    const generator = tjsg.createGenerator(option);
 
-    const schema: JSONSchema7 = generator.createSchema(typeName);
+    const schema: JSONSchema7 = generator.createSchema(exportedType);
 
     return pass({
       filePath,
-      typeName,
+      exportedType,
       schema,
     });
-  } catch (catched) {
-    const err = isError(catched) ?? new Error('unknown error raised');
-    return fail(new CreateJSONSchemaError(filePath, typeName, err.message));
+  } catch (caught) {
+    const err = isError(caught, new Error('unknown error raised'));
+    log.trace(`createJSONSchema: ${err.message}`);
+    log.trace(`createJSONSchema: ${err.stack ?? ''}`);
+    return fail(new CreateJSONSchemaError(filePath, exportedType, err.message));
   }
 }

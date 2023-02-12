@@ -1,9 +1,9 @@
-import type { TMAJOR } from './TMAJOR';
+import type { CE_MAJOR } from './CE_MAJOR';
 
 export default interface IProfessorEntity {
   id: string;
   name: string;
   age: number;
   joinAt: Date;
-  major: TMAJOR;
+  major: CE_MAJOR;
 }

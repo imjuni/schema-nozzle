@@ -15,7 +15,7 @@ import path from 'path';
 const globPaths = ['**/*.ts', '**/*.mts', '**/*.cts', '**/*.tsx'];
 
 async function getFilePath(filePath: string, cwd: string): Promise<string> {
-  if ((await exists(path.resolve(filePath))) === true) {
+  if (await exists(path.resolve(filePath))) {
     return replaceSepToPosix(win32DriveLetterUpdown(path.resolve(filePath), 'upper'));
   }
 

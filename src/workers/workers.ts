@@ -1,35 +1,33 @@
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
 import logger from '#tools/logger';
-import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
+import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import type IWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
+import fastCopy from 'fast-copy';
 import { EventEmitter } from 'node:events';
 
 const log = logger();
 
 class Workers extends EventEmitter {
-  #workers: Record<number, Worker>;
-
-  #deaded: Record<number, Worker>;
+  #workers: Worker[];
 
   #finished: number;
 
   #records: IDatabaseRecord[];
 
-  #reply: Array<
-    Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>['data']
-  >;
+  #reply: Extract<
+    IWorkerToMasterMessage,
+    { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
+  >['data'][];
 
   constructor() {
     super();
 
-    this.#workers = {};
-    this.#deaded = {};
-
-    this.#finished = 0;
+    this.#workers = [];
     this.#records = [];
+    this.#finished = 0;
 
     this.#reply = [];
   }
@@ -42,38 +40,45 @@ class Workers extends EventEmitter {
     return this.#records;
   }
 
-  add(worker: Worker) {
-    worker.on('exit', () => {
+  inc() {
+    this.#finished += 1;
+  }
+
+  dec() {
+    if (this.#finished - 1 >= 0) {
       this.#finished -= 1;
+    } else {
+      log.trace(`invalid #finished: ${this.#finished}`);
+      this.#finished = 0;
+    }
+  }
+
+  add(worker: Worker) {
+    worker.on('message', (message: IWorkerToMasterMessage) => {
+      log.trace(`received: ${this.finished} ${message.command}>${message.data.command}`);
+      this.#reply.push(message.data);
+      this.dec();
     });
 
-    worker.on('message', (message: TWorkerToMasterMessage) => {
-      log.trace(`received: ${this.finished} ${message.command}> ${JSON.stringify(message)}`);
-
-      if (message.command === CE_MASTER_ACTION.TASK_COMPLETE) {
-        this.#reply.push(message.data);
-        this.#finished -= 1;
-      }
-    });
-
-    this.#workers[worker.id] = worker;
-    // this.#finished += 1;
+    this.#workers.push(worker);
   }
 
   send(...jobs: TMasterToWorkerMessage[]) {
     this.#reply = [];
 
-    jobs.forEach((job, index) =>
-      this.#workers[index % Object.keys(this.#workers).length].send(job),
-    );
+    jobs.forEach((job, index) => {
+      this.#workers[index % Object.keys(this.#workers).length].send(job);
+      this.inc();
+      log.trace(`start worker: ${this.#finished}`);
+    });
   }
 
   sendAll(job: TMasterToWorkerMessage) {
     this.#reply = [];
 
-    Object.values(this.#workers).forEach((worker, index, arr) => {
+    this.#workers.forEach((worker, index, arr) => {
       worker.send(job);
-      this.#finished += 1;
+      this.inc();
       log.trace(`sendAll[${this.#finished}][${index}/${arr.length}]: ${worker.id}`);
     });
   }
@@ -81,17 +86,21 @@ class Workers extends EventEmitter {
   wait() {
     return new Promise<{
       cluster: number;
-      data: Array<
-        Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>['data']
-      >;
+      data: Extract<
+        IWorkerToMasterMessage,
+        { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
+      >['data'][];
     }>((resolve) => {
       const startAt = dayjs();
 
       const intervalHandle = setInterval(() => {
         if (this.#finished === 0) {
           clearInterval(intervalHandle);
-          log.trace(`reply: >> ${JSON.stringify(this.#reply)}`);
-          resolve({ cluster: this.#finished, data: this.#reply });
+
+          const result = fastCopy(this.#reply);
+          this.#reply = [];
+
+          resolve({ cluster: this.#finished, data: result });
         }
 
         const currentAt = dayjs();
@@ -99,7 +108,11 @@ class Workers extends EventEmitter {
         // timeout, wait 30 second
         if (currentAt.diff(startAt, 'second') > 30) {
           clearInterval(intervalHandle);
-          resolve({ cluster: this.#finished, data: this.#reply });
+
+          const result = fastCopy(this.#reply);
+          this.#reply = [];
+
+          resolve({ cluster: this.#finished, data: result });
         }
       }, 300);
     });

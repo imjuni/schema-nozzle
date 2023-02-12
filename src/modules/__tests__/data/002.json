@@ -1,148 +1,46 @@
 [
   {
-    "record": {
-      "id": "IProfessorDto",
-      "filePath": "IProfessorDto.ts",
-      "import": {
-        "name": "IProfessorDto",
-        "from": [
-          "I18nDto",
-          "TMAJOR"
-        ]
-      },
-      "export": {
-        "name": "IProfessorDto",
-        "to": []
-      },
-      "dto": "professor",
-      "schema": {
-        "$id": "IProfessorDto",
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "nick": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "I18nDto"
-          },
-          "age": {
-            "type": "number"
-          },
-          "major": {
-            "$ref": "TMAJOR"
-          },
-          "students": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "createAt": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "id": {
-                "type": "string"
-              },
-              "nick": {
-                "type": "string"
-              },
-              "name": {
-                "$ref": "I18nDto"
-              },
-              "age": {
-                "type": "number"
-              },
-              "major": {
-                "$ref": "TMAJOR"
-              }
-            },
-            "required": [
-              "age",
-              "createAt",
-              "id",
-              "major",
-              "name",
-              "nick"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "nick",
-          "name",
-          "age",
-          "major",
-          "students"
-        ],
-        "additionalProperties": false,
-        "description": "IProfessorDto"
-      }
-    },
-    "definitions": [
-      {
-        "id": "I18nDto",
-        "filePath": "I18nDto.ts",
-        "import": {
-          "name": "I18nDto",
-          "from": []
-        },
-        "export": {
-          "name": "I18nDto",
-          "to": [
-            "IProfessorDto"
-          ]
-        },
-        "schema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "$id": "I18nDto",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "language": {
-              "type": "string"
-            },
-            "content": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "id",
-            "language",
-            "content"
-          ],
-          "additionalProperties": false
-        },
-        "dto": "professor"
-      },
-      {
-        "id": "TMAJOR",
-        "filePath": "TMAJOR.ts",
-        "import": {
-          "name": "TMAJOR",
-          "from": []
-        },
-        "export": {
-          "name": "TMAJOR",
-          "to": [
-            "IProfessorDto"
-          ]
-        },
-        "schema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "$id": "TMAJOR",
-          "type": "string",
-          "enum": [
-            "computer science",
-            "electrical"
-          ]
-        },
-        "dto": "professor"
-      }
-    ]
+    "identifier": "I18nDto",
+    "filePath": "I18nDto.ts"
+  },
+  {
+    "identifier": "ILanguageDto",
+    "filePath": "I18nDto.ts"
+  },
+  {
+    "identifier": "IProfessorDto",
+    "filePath": "IProfessorDto.ts"
+  },
+  {
+    "identifier": "IProfessorEntity",
+    "filePath": "IProfessorEntity.ts"
+  },
+  {
+    "identifier": "IReqReadStudentDto",
+    "filePath": "IReqReadStudentDto.ts"
+  },
+  {
+    "identifier": "ISlackMessageBotProfile",
+    "filePath": "ISlackMessage.ts"
+  },
+  {
+    "identifier": "ISlackMessageBody",
+    "filePath": "ISlackMessage.ts"
+  },
+  {
+    "identifier": "IStudentDto",
+    "filePath": "IStudentDto.ts"
+  },
+  {
+    "identifier": "IStudentEntity",
+    "filePath": "IStudentEntity.ts"
+  },
+  {
+    "identifier": "TGenericExample",
+    "filePath": "TGenericExample.ts"
+  },
+  {
+    "identifier": "CE_MAJOR",
+    "filePath": "CE_MAJOR.ts"
   }
 ]

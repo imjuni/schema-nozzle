@@ -1,8 +1,8 @@
+import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import { TOUTPUT_FORMAT } from '#configs/interfaces/TOUTPUT_FORMAT';
 import type { Argv } from 'yargs';
 
-export default function addBuilder(argv: Argv<{}>) {
+export default function addBuilder(argv: Argv) {
   // have no alias option
   argv
     .option('files', {
@@ -19,12 +19,13 @@ export default function addBuilder(argv: Argv<{}>) {
     .option('generator-option', {
       describe: 'ts-json-schema-generator option file path',
       type: 'string',
+      default: undefined,
     })
     .option('format', {
       describe: 'json-schema save format',
       type: 'string',
-      choices: [TOUTPUT_FORMAT.JSON, TOUTPUT_FORMAT.STRING, TOUTPUT_FORMAT.BASE64],
-      default: TOUTPUT_FORMAT.JSON,
+      choices: [CE_OUTPUT_FORMAT.JSON, CE_OUTPUT_FORMAT.STRING, CE_OUTPUT_FORMAT.BASE64],
+      default: CE_OUTPUT_FORMAT.JSON,
     });
 
   return argv as Argv<TAddSchemaOption>;

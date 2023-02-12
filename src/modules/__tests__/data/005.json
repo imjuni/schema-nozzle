@@ -1,0 +1,2708 @@
+{
+  "record": {
+    "id": "ISlackMessageBody",
+    "filePath": "ISlackMessage.ts",
+    "dependency": {
+      "import": {
+        "name": "ISlackMessageBody",
+        "from": [
+          "MessageAttachment",
+          "KnownBlock",
+          "ImageBlock",
+          "PlainTextElement",
+          "ContextBlock",
+          "ImageElement",
+          "MrkdwnElement",
+          "ActionsBlock",
+          "Button",
+          "Confirm",
+          "Overflow",
+          "PlainTextOption",
+          "Datepicker",
+          "Timepicker",
+          "DateTimepicker",
+          "Select",
+          "UsersSelect",
+          "StaticSelect",
+          "ConversationsSelect",
+          "ChannelsSelect",
+          "ExternalSelect",
+          "RadioButtons",
+          "Option",
+          "MrkdwnOption",
+          "Checkboxes",
+          "Action",
+          "DividerBlock",
+          "SectionBlock",
+          "MultiSelect",
+          "MultiUsersSelect",
+          "MultiStaticSelect",
+          "MultiConversationsSelect",
+          "MultiChannelsSelect",
+          "MultiExternalSelect",
+          "InputBlock",
+          "PlainTextInput",
+          "DispatchActionConfig",
+          "URLInput",
+          "EmailInput",
+          "NumberInput",
+          "FileBlock",
+          "HeaderBlock",
+          "VideoBlock",
+          "Block",
+          "AttachmentAction",
+          "Confirmation",
+          "OptionField",
+          "MessageAttachmentPreview",
+          "ISlackMessageBotProfile"
+        ]
+      },
+      "export": {
+        "name": "ISlackMessageBody",
+        "to": []
+      }
+    },
+    "schema": {
+      "$id": "ISlackMessageBody",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "MessageAttachment"
+          }
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "KnownBlock"
+              },
+              {
+                "$ref": "Block"
+              }
+            ]
+          }
+        },
+        "bot_id": {
+          "type": "string"
+        },
+        "bot_profile": {
+          "$ref": "ISlackMessageBotProfile"
+        },
+        "team": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id",
+        "bot_profile",
+        "team",
+        "text",
+        "ts",
+        "type",
+        "user"
+      ]
+    }
+  },
+  "definitions": [
+    {
+      "id": "MessageAttachment",
+      "dependency": {
+        "import": {
+          "name": "MessageAttachment",
+          "from": []
+        },
+        "export": {
+          "name": "MessageAttachment",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MessageAttachment",
+        "type": "object",
+        "properties": {
+          "blocks": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "KnownBlock"
+                },
+                {
+                  "$ref": "Block"
+                }
+              ]
+            }
+          },
+          "fallback": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "pretext": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "author_link": {
+            "type": "string"
+          },
+          "author_icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "title_link": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "short": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "title",
+                "value"
+              ]
+            }
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "thumb_url": {
+            "type": "string"
+          },
+          "footer": {
+            "type": "string"
+          },
+          "footer_icon": {
+            "type": "string"
+          },
+          "ts": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "AttachmentAction"
+            }
+          },
+          "callback_id": {
+            "type": "string"
+          },
+          "mrkdwn_in": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pretext",
+                "text",
+                "fields"
+              ]
+            }
+          },
+          "app_unfurl_url": {
+            "type": "string"
+          },
+          "is_app_unfurl": {
+            "type": "boolean"
+          },
+          "app_id": {
+            "type": "string"
+          },
+          "bot_id": {
+            "type": "string"
+          },
+          "preview": {
+            "$ref": "MessageAttachmentPreview"
+          }
+        }
+      }
+    },
+    {
+      "id": "KnownBlock",
+      "dependency": {
+        "import": {
+          "name": "KnownBlock",
+          "from": []
+        },
+        "export": {
+          "name": "KnownBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "KnownBlock",
+        "anyOf": [
+          {
+            "$ref": "ImageBlock"
+          },
+          {
+            "$ref": "ContextBlock"
+          },
+          {
+            "$ref": "ActionsBlock"
+          },
+          {
+            "$ref": "DividerBlock"
+          },
+          {
+            "$ref": "SectionBlock"
+          },
+          {
+            "$ref": "InputBlock"
+          },
+          {
+            "$ref": "FileBlock"
+          },
+          {
+            "$ref": "HeaderBlock"
+          },
+          {
+            "$ref": "VideoBlock"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ImageBlock",
+      "dependency": {
+        "import": {
+          "name": "ImageBlock",
+          "from": []
+        },
+        "export": {
+          "name": "ImageBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ImageBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "alt_text": {
+            "type": "string"
+          },
+          "title": {
+            "$ref": "PlainTextElement"
+          }
+        },
+        "required": [
+          "alt_text",
+          "image_url",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "PlainTextElement",
+      "dependency": {
+        "import": {
+          "name": "PlainTextElement",
+          "from": []
+        },
+        "export": {
+          "name": "PlainTextElement",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "PlainTextElement",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "plain_text"
+          },
+          "text": {
+            "type": "string"
+          },
+          "emoji": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "ContextBlock",
+      "dependency": {
+        "import": {
+          "name": "ContextBlock",
+          "from": []
+        },
+        "export": {
+          "name": "ContextBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ContextBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "context"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "ImageElement"
+                },
+                {
+                  "$ref": "PlainTextElement"
+                },
+                {
+                  "$ref": "MrkdwnElement"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "elements",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "ImageElement",
+      "dependency": {
+        "import": {
+          "name": "ImageElement",
+          "from": []
+        },
+        "export": {
+          "name": "ImageElement",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ImageElement",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "alt_text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "image_url",
+          "alt_text"
+        ]
+      }
+    },
+    {
+      "id": "MrkdwnElement",
+      "dependency": {
+        "import": {
+          "name": "MrkdwnElement",
+          "from": []
+        },
+        "export": {
+          "name": "MrkdwnElement",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MrkdwnElement",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "mrkdwn"
+          },
+          "text": {
+            "type": "string"
+          },
+          "verbatim": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "ActionsBlock",
+      "dependency": {
+        "import": {
+          "name": "ActionsBlock",
+          "from": []
+        },
+        "export": {
+          "name": "ActionsBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ActionsBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "actions"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "Button"
+                },
+                {
+                  "$ref": "Overflow"
+                },
+                {
+                  "$ref": "Datepicker"
+                },
+                {
+                  "$ref": "Timepicker"
+                },
+                {
+                  "$ref": "DateTimepicker"
+                },
+                {
+                  "$ref": "Select"
+                },
+                {
+                  "$ref": "RadioButtons"
+                },
+                {
+                  "$ref": "Checkboxes"
+                },
+                {
+                  "$ref": "Action"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "elements",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Button",
+      "dependency": {
+        "import": {
+          "name": "Button",
+          "from": []
+        },
+        "export": {
+          "name": "Button",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Button",
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "button"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "text": {
+            "$ref": "PlainTextElement"
+          },
+          "value": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "danger",
+              "primary"
+            ]
+          },
+          "accessibility_label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Confirm",
+      "dependency": {
+        "import": {
+          "name": "Confirm",
+          "from": []
+        },
+        "export": {
+          "name": "Confirm",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Confirm",
+        "type": "object",
+        "properties": {
+          "title": {
+            "$ref": "PlainTextElement"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "$ref": "PlainTextElement"
+              },
+              {
+                "$ref": "MrkdwnElement"
+              }
+            ]
+          },
+          "confirm": {
+            "$ref": "PlainTextElement"
+          },
+          "deny": {
+            "$ref": "PlainTextElement"
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "danger"
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "Overflow",
+      "dependency": {
+        "import": {
+          "name": "Overflow",
+          "from": []
+        },
+        "export": {
+          "name": "Overflow",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Overflow",
+        "type": "object",
+        "properties": {
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "overflow"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "PlainTextOption"
+            }
+          }
+        },
+        "required": [
+          "options",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "PlainTextOption",
+      "dependency": {
+        "import": {
+          "name": "PlainTextOption",
+          "from": []
+        },
+        "export": {
+          "name": "PlainTextOption",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "PlainTextOption",
+        "type": "object",
+        "properties": {
+          "text": {
+            "$ref": "PlainTextElement"
+          },
+          "value": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "PlainTextElement"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "Datepicker",
+      "dependency": {
+        "import": {
+          "name": "Datepicker",
+          "from": []
+        },
+        "export": {
+          "name": "Datepicker",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Datepicker",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "datepicker"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_date": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Timepicker",
+      "dependency": {
+        "import": {
+          "name": "Timepicker",
+          "from": []
+        },
+        "export": {
+          "name": "Timepicker",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Timepicker",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "timepicker"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_time": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "DateTimepicker",
+      "dependency": {
+        "import": {
+          "name": "DateTimepicker",
+          "from": []
+        },
+        "export": {
+          "name": "DateTimepicker",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "DateTimepicker",
+        "type": "object",
+        "properties": {
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "datetimepicker"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_date_time": {
+            "type": "number",
+            "description": "The initial date and time that is selected when the element is loaded, represented as a UNIX\ntimestamp in seconds. This should be in the format of 10 digits, for example 1628633820 represents the date and\ntime August 10th, 2021 at 03:17pm PST."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "description": "An element that allows the selection of a time of day formatted as a UNIX timestamp. On desktop\nclients, this time picker will take the form of a dropdown list and the date picker will take the form of a dropdown\ncalendar. Both options will have free-text entry for precise choices. On mobile clients, the time picker and date\npicker will use native UIs.\n{@link https://api.slack.com/reference/block-kit/block-elements#datetimepicker}"
+      }
+    },
+    {
+      "id": "Select",
+      "dependency": {
+        "import": {
+          "name": "Select",
+          "from": []
+        },
+        "export": {
+          "name": "Select",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Select",
+        "anyOf": [
+          {
+            "$ref": "UsersSelect"
+          },
+          {
+            "$ref": "StaticSelect"
+          },
+          {
+            "$ref": "ConversationsSelect"
+          },
+          {
+            "$ref": "ChannelsSelect"
+          },
+          {
+            "$ref": "ExternalSelect"
+          }
+        ]
+      }
+    },
+    {
+      "id": "UsersSelect",
+      "dependency": {
+        "import": {
+          "name": "UsersSelect",
+          "from": []
+        },
+        "export": {
+          "name": "UsersSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "UsersSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "users_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_user": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "StaticSelect",
+      "dependency": {
+        "import": {
+          "name": "StaticSelect",
+          "from": []
+        },
+        "export": {
+          "name": "StaticSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "StaticSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "static_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_option": {
+            "$ref": "PlainTextOption"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "PlainTextOption"
+            }
+          },
+          "option_groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "$ref": "PlainTextElement"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "PlainTextOption"
+                  }
+                }
+              },
+              "required": [
+                "label",
+                "options"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "ConversationsSelect",
+      "dependency": {
+        "import": {
+          "name": "ConversationsSelect",
+          "from": []
+        },
+        "export": {
+          "name": "ConversationsSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ConversationsSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "conversations_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_conversation": {
+            "type": "string"
+          },
+          "response_url_enabled": {
+            "type": "boolean"
+          },
+          "default_to_current_conversation": {
+            "type": "boolean"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "include": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "im",
+                    "mpim",
+                    "private",
+                    "public"
+                  ]
+                }
+              },
+              "exclude_external_shared_channels": {
+                "type": "boolean"
+              },
+              "exclude_bot_users": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "ChannelsSelect",
+      "dependency": {
+        "import": {
+          "name": "ChannelsSelect",
+          "from": []
+        },
+        "export": {
+          "name": "ChannelsSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ChannelsSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "channels_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_channel": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "ExternalSelect",
+      "dependency": {
+        "import": {
+          "name": "ExternalSelect",
+          "from": []
+        },
+        "export": {
+          "name": "ExternalSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ExternalSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "external_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_option": {
+            "$ref": "PlainTextOption"
+          },
+          "min_query_length": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "RadioButtons",
+      "dependency": {
+        "import": {
+          "name": "RadioButtons",
+          "from": []
+        },
+        "export": {
+          "name": "RadioButtons",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "RadioButtons",
+        "type": "object",
+        "properties": {
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "radio_buttons"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_option": {
+            "$ref": "Option"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "Option"
+            }
+          }
+        },
+        "required": [
+          "options",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Option",
+      "dependency": {
+        "import": {
+          "name": "Option",
+          "from": []
+        },
+        "export": {
+          "name": "Option",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Option",
+        "anyOf": [
+          {
+            "$ref": "MrkdwnOption"
+          },
+          {
+            "$ref": "PlainTextOption"
+          }
+        ]
+      }
+    },
+    {
+      "id": "MrkdwnOption",
+      "dependency": {
+        "import": {
+          "name": "MrkdwnOption",
+          "from": []
+        },
+        "export": {
+          "name": "MrkdwnOption",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MrkdwnOption",
+        "type": "object",
+        "properties": {
+          "text": {
+            "$ref": "MrkdwnElement"
+          },
+          "value": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "PlainTextElement"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "Checkboxes",
+      "dependency": {
+        "import": {
+          "name": "Checkboxes",
+          "from": []
+        },
+        "export": {
+          "name": "Checkboxes",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Checkboxes",
+        "type": "object",
+        "properties": {
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "checkboxes"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_options": {
+            "type": "array",
+            "items": {
+              "$ref": "Option"
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "Option"
+            }
+          }
+        },
+        "required": [
+          "options",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Action",
+      "dependency": {
+        "import": {
+          "name": "Action",
+          "from": []
+        },
+        "export": {
+          "name": "Action",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Action",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "DividerBlock",
+      "dependency": {
+        "import": {
+          "name": "DividerBlock",
+          "from": []
+        },
+        "export": {
+          "name": "DividerBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "DividerBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "divider"
+          },
+          "block_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "SectionBlock",
+      "dependency": {
+        "import": {
+          "name": "SectionBlock",
+          "from": []
+        },
+        "export": {
+          "name": "SectionBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "SectionBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "section"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "$ref": "PlainTextElement"
+              },
+              {
+                "$ref": "MrkdwnElement"
+              }
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "PlainTextElement"
+                },
+                {
+                  "$ref": "MrkdwnElement"
+                }
+              ]
+            }
+          },
+          "accessory": {
+            "anyOf": [
+              {
+                "$ref": "Button"
+              },
+              {
+                "$ref": "Overflow"
+              },
+              {
+                "$ref": "Datepicker"
+              },
+              {
+                "$ref": "Timepicker"
+              },
+              {
+                "$ref": "Select"
+              },
+              {
+                "$ref": "MultiSelect"
+              },
+              {
+                "$ref": "Action"
+              },
+              {
+                "$ref": "ImageElement"
+              },
+              {
+                "$ref": "RadioButtons"
+              },
+              {
+                "$ref": "Checkboxes"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "MultiSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiSelect",
+        "anyOf": [
+          {
+            "$ref": "MultiUsersSelect"
+          },
+          {
+            "$ref": "MultiStaticSelect"
+          },
+          {
+            "$ref": "MultiConversationsSelect"
+          },
+          {
+            "$ref": "MultiChannelsSelect"
+          },
+          {
+            "$ref": "MultiExternalSelect"
+          }
+        ]
+      }
+    },
+    {
+      "id": "MultiUsersSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiUsersSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiUsersSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiUsersSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "multi_users_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_users": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_selected_items": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "MultiStaticSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiStaticSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiStaticSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiStaticSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "multi_static_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_options": {
+            "type": "array",
+            "items": {
+              "$ref": "PlainTextOption"
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "PlainTextOption"
+            }
+          },
+          "option_groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "$ref": "PlainTextElement"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "PlainTextOption"
+                  }
+                }
+              },
+              "required": [
+                "label",
+                "options"
+              ]
+            }
+          },
+          "max_selected_items": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "MultiConversationsSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiConversationsSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiConversationsSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiConversationsSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "multi_conversations_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_conversations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_selected_items": {
+            "type": "number"
+          },
+          "default_to_current_conversation": {
+            "type": "boolean"
+          },
+          "filter": {
+            "type": "object",
+            "properties": {
+              "include": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "im",
+                    "mpim",
+                    "private",
+                    "public"
+                  ]
+                }
+              },
+              "exclude_external_shared_channels": {
+                "type": "boolean"
+              },
+              "exclude_bot_users": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "MultiChannelsSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiChannelsSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiChannelsSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiChannelsSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "multi_channels_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_selected_items": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "MultiExternalSelect",
+      "dependency": {
+        "import": {
+          "name": "MultiExternalSelect",
+          "from": []
+        },
+        "export": {
+          "name": "MultiExternalSelect",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MultiExternalSelect",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "confirm": {
+            "$ref": "Confirm",
+            "description": "A {@see Confirm} object that defines an optional confirmation dialog after the element is interacted\nwith."
+          },
+          "type": {
+            "type": "string",
+            "const": "multi_external_select"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_options": {
+            "type": "array",
+            "items": {
+              "$ref": "PlainTextOption"
+            }
+          },
+          "min_query_length": {
+            "type": "number"
+          },
+          "max_selected_items": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "InputBlock",
+      "dependency": {
+        "import": {
+          "name": "InputBlock",
+          "from": []
+        },
+        "export": {
+          "name": "InputBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "InputBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "input"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "label": {
+            "$ref": "PlainTextElement"
+          },
+          "hint": {
+            "$ref": "PlainTextElement"
+          },
+          "optional": {
+            "type": "boolean"
+          },
+          "element": {
+            "anyOf": [
+              {
+                "$ref": "Select"
+              },
+              {
+                "$ref": "MultiSelect"
+              },
+              {
+                "$ref": "Datepicker"
+              },
+              {
+                "$ref": "Timepicker"
+              },
+              {
+                "$ref": "DateTimepicker"
+              },
+              {
+                "$ref": "PlainTextInput"
+              },
+              {
+                "$ref": "URLInput"
+              },
+              {
+                "$ref": "EmailInput"
+              },
+              {
+                "$ref": "NumberInput"
+              },
+              {
+                "$ref": "RadioButtons"
+              },
+              {
+                "$ref": "Checkboxes"
+              }
+            ]
+          },
+          "dispatch_action": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "element",
+          "label",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "PlainTextInput",
+      "dependency": {
+        "import": {
+          "name": "PlainTextInput",
+          "from": []
+        },
+        "export": {
+          "name": "PlainTextInput",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "PlainTextInput",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean"
+          },
+          "dispatch_action_config": {
+            "$ref": "DispatchActionConfig"
+          },
+          "type": {
+            "type": "string",
+            "const": "plain_text_input"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_value": {
+            "type": "string"
+          },
+          "multiline": {
+            "type": "boolean"
+          },
+          "min_length": {
+            "type": "number"
+          },
+          "max_length": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "DispatchActionConfig",
+      "dependency": {
+        "import": {
+          "name": "DispatchActionConfig",
+          "from": []
+        },
+        "export": {
+          "name": "DispatchActionConfig",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "DispatchActionConfig",
+        "type": "object",
+        "properties": {
+          "trigger_actions_on": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "on_enter_pressed",
+                "on_character_entered"
+              ]
+            },
+            "description": "An array of interaction types that you would like to receive a\n{@link https://api.slack.com/reference/interaction-payloads/block-actions `block_actions` payload} for. Should be\none or both of:\n`on_enter_pressed` — payload is dispatched when user presses the enter key while the input is in focus. Hint\ntext will appear underneath the input explaining to the user to press enter to submit.\n`on_character_entered` — payload is dispatched when a character is entered (or removed) in the input."
+          }
+        },
+        "description": "Determines when an input element will return a\n{@link https://api.slack.com/reference/interaction-payloads/block-actions `block_actions` interaction payload}."
+      }
+    },
+    {
+      "id": "URLInput",
+      "dependency": {
+        "import": {
+          "name": "URLInput",
+          "from": []
+        },
+        "export": {
+          "name": "URLInput",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "URLInput",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "dispatch_action_config": {
+            "$ref": "DispatchActionConfig",
+            "description": "A {@see DispatchActionConfig} object that determines when during text input the element returns a\n{@link https://api.slack.com/reference/interaction-payloads/block-actions `block_actions` payload}."
+          },
+          "type": {
+            "type": "string",
+            "const": "url_text_input"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_value": {
+            "type": "string",
+            "description": "The initial value in the URL input when it is loaded."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "description": "A URL input element, similar to the {@see PlainTextInput} element, creates a single line field where\na user can enter URL-encoded data.\n{@link https://api.slack.com/reference/block-kit/block-elements#url}"
+      }
+    },
+    {
+      "id": "EmailInput",
+      "dependency": {
+        "import": {
+          "name": "EmailInput",
+          "from": []
+        },
+        "export": {
+          "name": "EmailInput",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "EmailInput",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "dispatch_action_config": {
+            "$ref": "DispatchActionConfig",
+            "description": "A {@see DispatchActionConfig} object that determines when during text input the element returns a\n{@link https://api.slack.com/reference/interaction-payloads/block-actions `block_actions` payload}."
+          },
+          "type": {
+            "type": "string",
+            "const": "email_text_input"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "initial_value": {
+            "type": "string",
+            "description": "The initial value in the email input when it is loaded."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "description": "An email input element, similar to the {@see PlainTextInput} element, creates a single line field where\na user can enter an email address.\n{@link https://api.slack.com/reference/block-kit/block-elements#email}"
+      }
+    },
+    {
+      "id": "NumberInput",
+      "dependency": {
+        "import": {
+          "name": "NumberInput",
+          "from": []
+        },
+        "export": {
+          "name": "NumberInput",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "NumberInput",
+        "type": "object",
+        "properties": {
+          "placeholder": {
+            "$ref": "PlainTextElement",
+            "description": "A {@see PlainTextElement} object that defines the placeholder text shown on the element. Maximum\nlength for the `text` field in this object is 150 characters."
+          },
+          "focus_on_load": {
+            "type": "boolean",
+            "description": "Indicates whether the element will be set to auto focus within the\n{@link https://api.slack.com/reference/surfaces/views `view` object}. Only one element can be set to `true`.\nDefaults to `false`."
+          },
+          "dispatch_action_config": {
+            "$ref": "DispatchActionConfig",
+            "description": "A {@see DispatchActionConfig} object that determines when during text input the element returns a\n{@link https://api.slack.com/reference/interaction-payloads/block-actions `block_actions` payload}."
+          },
+          "type": {
+            "type": "string",
+            "const": "number_input"
+          },
+          "action_id": {
+            "type": "string",
+            "description": ": An identifier for this action. You can use this when you receive an interaction payload to\n{@link https://api.slack.com/interactivity/handling#payloads identify the source of the action}. Should be unique\namong all other `action_id`s in the containing block. Maximum length for this field is 255 characters."
+          },
+          "is_decimal_allowed": {
+            "type": "boolean",
+            "description": "Decimal numbers are allowed if this property is `true`, set the value to `false` otherwise."
+          },
+          "initial_value": {
+            "type": "string",
+            "description": "The initial value in the input when it is loaded."
+          },
+          "min_value": {
+            "type": "string",
+            "description": "The minimum value, cannot be greater than `max_value`."
+          },
+          "max_value": {
+            "type": "string",
+            "description": "The maximum value, cannot be less than `min_value`."
+          }
+        },
+        "required": [
+          "is_decimal_allowed",
+          "type"
+        ],
+        "description": "A number input element, similar to the {@see PlainTextInput} element, creates a single line field where\na user can a number. This input elements accepts floating point numbers, for example, 0.25, 5.5, and -10 are all\nvalid input values. Decimal numbers are only allowed when `is_decimal_allowed` is equal to `true`.\n{@link https://api.slack.com/reference/block-kit/block-elements#number}"
+      }
+    },
+    {
+      "id": "FileBlock",
+      "dependency": {
+        "import": {
+          "name": "FileBlock",
+          "from": []
+        },
+        "export": {
+          "name": "FileBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "FileBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "file"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "external_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "external_id",
+          "source",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "HeaderBlock",
+      "dependency": {
+        "import": {
+          "name": "HeaderBlock",
+          "from": []
+        },
+        "export": {
+          "name": "HeaderBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "HeaderBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "header"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "text": {
+            "$ref": "PlainTextElement"
+          }
+        },
+        "required": [
+          "text",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "VideoBlock",
+      "dependency": {
+        "import": {
+          "name": "VideoBlock",
+          "from": []
+        },
+        "export": {
+          "name": "VideoBlock",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "VideoBlock",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "video"
+          },
+          "block_id": {
+            "type": "string"
+          },
+          "video_url": {
+            "type": "string"
+          },
+          "thumbnail_url": {
+            "type": "string"
+          },
+          "alt_text": {
+            "type": "string"
+          },
+          "title": {
+            "$ref": "PlainTextElement"
+          },
+          "title_url": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "provider_name": {
+            "type": "string"
+          },
+          "provider_icon_url": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "PlainTextElement"
+          }
+        },
+        "required": [
+          "alt_text",
+          "thumbnail_url",
+          "title",
+          "type",
+          "video_url"
+        ]
+      }
+    },
+    {
+      "id": "Block",
+      "dependency": {
+        "import": {
+          "name": "Block",
+          "from": []
+        },
+        "export": {
+          "name": "Block",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Block",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "block_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "AttachmentAction",
+      "dependency": {
+        "import": {
+          "name": "AttachmentAction",
+          "from": []
+        },
+        "export": {
+          "name": "AttachmentAction",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "AttachmentAction",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "confirm": {
+            "$ref": "Confirmation"
+          },
+          "data_source": {
+            "type": "string",
+            "enum": [
+              "static",
+              "channels",
+              "conversations",
+              "users",
+              "external"
+            ]
+          },
+          "min_query_length": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "OptionField"
+            }
+          },
+          "option_groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "OptionField"
+                  }
+                }
+              },
+              "required": [
+                "text",
+                "options"
+              ]
+            }
+          },
+          "selected_options": {
+            "type": "array",
+            "items": {
+              "$ref": "OptionField"
+            }
+          },
+          "style": {
+            "type": "string",
+            "enum": [
+              "default",
+              "primary",
+              "danger"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "button",
+              "select"
+            ]
+          },
+          "value": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "Confirmation",
+      "dependency": {
+        "import": {
+          "name": "Confirmation",
+          "from": []
+        },
+        "export": {
+          "name": "Confirmation",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "Confirmation",
+        "type": "object",
+        "properties": {
+          "dismiss_text": {
+            "type": "string"
+          },
+          "ok_text": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "OptionField",
+      "dependency": {
+        "import": {
+          "name": "OptionField",
+          "from": []
+        },
+        "export": {
+          "name": "OptionField",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "OptionField",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "value"
+        ]
+      }
+    },
+    {
+      "id": "MessageAttachmentPreview",
+      "dependency": {
+        "import": {
+          "name": "MessageAttachmentPreview",
+          "from": []
+        },
+        "export": {
+          "name": "MessageAttachmentPreview",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "MessageAttachmentPreview",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "can_remove": {
+            "type": "boolean"
+          },
+          "title": {
+            "$ref": "PlainTextElement"
+          },
+          "subtitle": {
+            "$ref": "PlainTextElement"
+          },
+          "iconUrl": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "ISlackMessageBotProfile",
+      "filePath": "ISlackMessage.ts",
+      "dependency": {
+        "import": {
+          "name": "ISlackMessageBotProfile",
+          "from": []
+        },
+        "export": {
+          "name": "ISlackMessageBotProfile",
+          "to": [
+            "ISlackMessageBody"
+          ]
+        }
+      },
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "ISlackMessageBotProfile",
+        "type": "object",
+        "properties": {
+          "app_id": {
+            "type": "string",
+            "description": "application 식별용 고유값"
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "삭제 여부"
+          },
+          "icons": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "슬랙 메신져에서 노출되는 아이콘 링크, 크기별로 3개가 전달된다\n* image_36\n* image_48\n* image_72"
+          },
+          "id": {
+            "type": "string",
+            "description": "슬랙 시스템 내부 처리용 고유 아이디"
+          },
+          "name": {
+            "type": "string",
+            "description": "봇 이름"
+          },
+          "team_id": {
+            "type": "string",
+            "description": "팀 식별용 고유 값"
+          },
+          "updated": {
+            "type": "number",
+            "description": "마지막 수정일자"
+          }
+        },
+        "required": [
+          "app_id",
+          "deleted",
+          "icons",
+          "id",
+          "name",
+          "team_id",
+          "updated"
+        ]
+      }
+    }
+  ]
+}

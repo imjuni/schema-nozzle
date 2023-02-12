@@ -4,7 +4,6 @@ import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMess
 import NozzleEmitter from '#workers/NozzleEmitter';
 
 const log = logger();
-log.level = 'trace';
 
 export default async function worker2() {
   const emitter: NozzleEmitter = new NozzleEmitter();

@@ -1,33 +1,24 @@
 import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type readGeneratorOption from '#configs/readGeneratorOption';
-import type IFileWithType from '#modules/interfaces/IFileWithType';
 import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type { AsyncReturnType } from 'type-fest';
 
 type TMasterToWorkerMessage =
-  | {
-      command: 'job';
-      data: {
-        resolvedPaths: IResolvedPaths;
-        generatorOption: AsyncReturnType<typeof readGeneratorOption>;
-        option: TAddSchemaOption | TRefreshSchemaOption;
-        fileWithTypes: IFileWithType;
-      };
-    }
   | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }
   | {
       command: typeof CE_WORKER_ACTION.OPTION_LOAD;
       data: { option: TAddSchemaOption | TRefreshSchemaOption; resolvedPaths: IResolvedPaths };
     }
+  | { command: typeof CE_WORKER_ACTION.PROJECT_DIAGOSTIC }
+  | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }
+  | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+  | { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }
   | {
-      command: typeof CE_WORKER_ACTION.PROJECT_DIAGOSTIC;
+      command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;
+      data: { filePath: string; exportedType: string };
     }
   | { command: typeof CE_WORKER_ACTION.NOOP }
-  | { command: typeof CE_WORKER_ACTION.TERMINATE }
-  | { command: 'start'; data: undefined }
-  | { command: 'end'; data: undefined };
+  | { command: typeof CE_WORKER_ACTION.TERMINATE };
 
 export type TPickMasterToWorkerMessage<T extends CE_WORKER_ACTION> = Extract<
   TMasterToWorkerMessage,

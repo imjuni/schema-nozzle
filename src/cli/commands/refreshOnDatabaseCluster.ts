@@ -1,7 +1,7 @@
 import spinner from '#cli/display/spinner';
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import readGeneratorOption from '#configs/readGeneratorOption';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
@@ -64,7 +64,7 @@ export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOpt
         };
       });
 
-    const generatorOption = await readGeneratorOption(option);
+    const generatorOption = await getSchemaGeneratorOption(option);
 
     spinner.start('Schema generation start, ...');
 
