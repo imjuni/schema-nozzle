@@ -1,14 +1,14 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import getSchemaFileContent from '#modules/getSchemaFileContent';
-import * as fpm from '#modules/getSchemaListFilePath';
+import * as fpm from '#modules/getSchemaFilterFilePath';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import 'jest';
 import path from 'path';
 import * as tsm from 'ts-morph';
 
-const getSchemaListFilePath = fpm.default;
+const getSchemaFilterFilePath = fpm.default;
 
 const originPath = process.env.INIT_CWD!;
 const data: { project: tsm.Project; resolvedPaths: ReturnType<typeof getResolvedPaths> } =
@@ -35,20 +35,20 @@ describe('getSchemaListFilePath', () => {
       project: path.join(originPath, 'tsconfig.json'),
       output: originPath,
     });
-    const result = await getSchemaListFilePath({ resolvedPaths: data.resolvedPaths });
+    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
     expect(result).toBeUndefined();
   });
 
   test('resolved', async () => {
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE);
-    const result = await getSchemaListFilePath({ filePath: f, resolvedPaths: data.resolvedPaths });
+    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd, f);
     expect(result).toEqual(path.resolve(f));
   });
 
   test('default', async () => {
     process.env.INIT_CWD = path.resolve(path.join(process.env.INIT_CWD!, 'examples'));
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE);
-    const result = await getSchemaListFilePath({ resolvedPaths: data.resolvedPaths });
+    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
     expect(result).toEqual(path.resolve(f));
   });
 });
@@ -58,20 +58,17 @@ describe('getSchemaFileContent', () => {
     const lines = await getSchemaFileContent(
       path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.LIST_FILE),
     );
-    expect(lines).toMatchObject(['*.ts']);
+    expect(lines).toMatchObject(['*.ts', '!TGenericExample.ts']);
   });
 });
 
 describe('summarySchemaFiles', () => {
   test('files', async () => {
-    const filter = await summarySchemaFiles(
-      data.project,
-      {
-        discriminator: 'add-schema',
-        files: ['IProfessorEntity.ts'],
-      },
-      data.resolvedPaths,
-    );
+    const filter = await summarySchemaFiles(data.project, {
+      discriminator: 'add-schema',
+      files: ['IProfessorEntity.ts'],
+      cwd: data.resolvedPaths.cwd,
+    });
 
     expect(filter.filter.ignores('IProfessorEntity.ts')).toBeTruthy();
   });
@@ -79,22 +76,24 @@ describe('summarySchemaFiles', () => {
   test('empty list file', async () => {
     jest.spyOn(fpm, 'default').mockImplementationOnce(async () => undefined);
 
-    const filter = await summarySchemaFiles(
-      data.project,
-      { discriminator: 'refresh-schema', listFile: undefined },
-      data.resolvedPaths,
-    );
+    const filter = await summarySchemaFiles(data.project, {
+      discriminator: 'refresh-schema',
+      listFile: undefined,
+      files: [],
+      cwd: data.resolvedPaths.cwd,
+    });
 
     expect(filter.filter.ignores('I18nDto.ts')).toBeTruthy();
   });
 
   test('file hit test', async () => {
     const listFile = path.join(data.resolvedPaths.cwd, 'examples', CE_DEFAULT_VALUE.LIST_FILE);
-    const filter = await summarySchemaFiles(
-      data.project,
-      { discriminator: 'add-schema', files: [], listFile },
-      data.resolvedPaths,
-    );
+    const filter = await summarySchemaFiles(data.project, {
+      discriminator: 'add-schema',
+      files: [],
+      listFile,
+      cwd: data.resolvedPaths.cwd,
+    });
 
     expect(filter.filter.ignores('I18nDto.ts')).toBeTruthy();
   });
@@ -102,13 +101,17 @@ describe('summarySchemaFiles', () => {
 
 describe('summarySchemaTypes', () => {
   test('empty types', async () => {
-    const r = await summarySchemaTypes(
-      data.project,
-      { discriminator: 'add-schema', types: [] },
-      data.resolvedPaths,
-    );
+    const r = await summarySchemaTypes(data.project, {
+      discriminator: 'add-schema',
+      types: [],
+      cwd: data.resolvedPaths.cwd,
+    });
 
     expect(r).toMatchObject([
+      {
+        identifier: 'CE_MAJOR',
+        filePath: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
+      },
       {
         identifier: 'I18nDto',
         filePath: path.join(originPath, 'examples', 'I18nDto.ts'),
@@ -149,22 +152,15 @@ describe('summarySchemaTypes', () => {
         identifier: 'TGenericExample',
         filePath: path.join(originPath, 'examples', 'TGenericExample.ts'),
       },
-      {
-        identifier: 'TMAJOR',
-        filePath: path.join(originPath, 'examples', 'TMAJOR.ts'),
-      },
     ]);
   });
 
   test(' types', async () => {
-    const r = await summarySchemaTypes(
-      data.project,
-      {
-        discriminator: 'add-schema',
-        types: ['ILanguageDto', 'TGenericExample', 'IReqReadStudentDto'],
-      },
-      data.resolvedPaths,
-    );
+    const r = await summarySchemaTypes(data.project, {
+      discriminator: 'add-schema',
+      types: ['ILanguageDto', 'TGenericExample', 'IReqReadStudentDto'],
+      cwd: data.resolvedPaths.cwd,
+    });
 
     expect(r).toMatchObject([
       {

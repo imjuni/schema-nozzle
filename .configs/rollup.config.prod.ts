@@ -20,10 +20,7 @@ export default [
         resolveOnly: (module) =>
           pkg?.dependencies?.[module] == null && pkg?.devDependencies?.[module] == null,
       }),
-      ts({
-        transpiler: 'swc',
-        tsconfig: 'tsconfig.prod.json',
-      }),
+      ts({ tsconfig: 'tsconfig.prod.json' }),
       terser(),
     ],
   },

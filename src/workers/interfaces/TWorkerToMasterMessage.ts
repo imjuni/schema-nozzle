@@ -1,4 +1,4 @@
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type * as tjsg from 'ts-json-schema-generator';
@@ -32,14 +32,34 @@ export type TPassWorkerToMasterTaskComplete =
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;
       result: 'pass';
       id: number;
-      data: IDatabaseRecord[];
+      data: IDatabaseItem[];
+    };
+
+export type TPickPassWorkerToMasterTaskComplete<T> = Extract<
+  TPassWorkerToMasterTaskComplete,
+  { command: T }
+>;
+
+export type TFailData =
+  | {
+      kind: 'error';
+      message: string;
+      stack?: string;
+    }
+  | {
+      kind: 'json-schema-generate';
+      message: string;
+      stack?: string;
+      filePath: string;
+      exportedType: string;
     };
 
 export interface IFailWorkerToMasterTaskComplete {
   command: CE_WORKER_ACTION;
   result: 'fail';
   id: number;
-  error: Error;
+  // master/worker cannot send error class, send error message and stack
+  error: TFailData;
 }
 
 export function isPassTaskComplete(
@@ -54,7 +74,16 @@ export function isFailTaskComplete(
   return value.result === 'fail';
 }
 
-export default interface IWorkerToMasterMessage {
-  command: typeof CE_MASTER_ACTION.TASK_COMPLETE;
-  data: IFailWorkerToMasterTaskComplete | TPassWorkerToMasterTaskComplete;
-}
+type TWorkerToMasterMessage =
+  | {
+      command: typeof CE_MASTER_ACTION.TASK_COMPLETE;
+      data: IFailWorkerToMasterTaskComplete | TPassWorkerToMasterTaskComplete;
+    }
+  | {
+      command: typeof CE_MASTER_ACTION.PROGRESS_UPDATE;
+      data: {
+        schemaName: string;
+      };
+    };
+
+export default TWorkerToMasterMessage;

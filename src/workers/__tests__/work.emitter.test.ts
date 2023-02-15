@@ -15,8 +15,9 @@ const compilerOptions = {
   skipLibCheck: true,
   forceConsistentCasingInFileNames: true,
   moduleResolution: 2,
-  composite: true,
   declaration: true,
+  composite: true,
+  incremental: true,
   declarationMap: true,
   sourceMap: true,
   removeComments: true,
@@ -25,18 +26,6 @@ const compilerOptions = {
   noImplicitReturns: true,
   noFallthroughCasesInSwitch: true,
   isolatedModules: true,
-  allowJs: true,
-  paths: {
-    '#cli/*': ['src/cli/*'],
-    '#compilers/*': ['src/compilers/*'],
-    '#commands/*': ['src/commands/*'],
-    '#configs/*': ['src/configs/*'],
-    '#databases/*': ['src/databases/*'],
-    '#errors/*': ['src/errors/*'],
-    '#modules/*': ['src/modules/*'],
-    '#tools/*': ['src/tools/*'],
-    '#workers/*': ['src/workers/*'],
-  },
   allowSyntheticDefaultImports: true,
   experimentalDecorators: true,
   emitDecoratorMetadata: true,
@@ -74,10 +63,9 @@ describe('WorkEmitter', () => {
     } satisfies Exclude<TMasterToWorkerMessage, typeof CE_WORKER_ACTION.OPTION_LOAD>);
   });
 
-  test('pass', async () => {
+  test('load project - direct call', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption };
-    w.resolvedPaths = data.resolvedPaths;
+    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
 
     await w.loadProject();
     expect(w.project?.compilerOptions.get()).toMatchObject(compilerOptions);
@@ -85,8 +73,7 @@ describe('WorkEmitter', () => {
 
   test('pass - 2', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption };
-    w.resolvedPaths = data.resolvedPaths;
+    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
 
     w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
   });
@@ -94,8 +81,7 @@ describe('WorkEmitter', () => {
   test('fail', async () => {
     try {
       const w = new NozzleEmitter();
-      w.resolvedPaths = data.resolvedPaths;
-      w.option = { ...env.addCmdOption };
+      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
       w.option.project = '';
 
       await w.loadProject();
@@ -107,8 +93,7 @@ describe('WorkEmitter', () => {
   test('fail - 2', async () => {
     try {
       const w = new NozzleEmitter();
-      w.resolvedPaths = data.resolvedPaths;
-      w.option = { ...env.addCmdOption };
+      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
       w.option.project = '';
 
       w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
@@ -158,8 +143,7 @@ describe('WorkEmitter', () => {
 
   test('diagonostic', async () => {
     const w = new NozzleEmitter();
-    w.resolvedPaths = data.resolvedPaths;
-    w.option = { ...env.addCmdOption };
+    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
 
     await w.loadProject();
     await w.diagonostic();
@@ -167,11 +151,10 @@ describe('WorkEmitter', () => {
 
   test('diagonostic - fail', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption };
-    w.resolvedPaths = data.resolvedPaths;
+    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
     w.option.project = '';
 
-    w.emit(CE_WORKER_ACTION.PROJECT_DIAGOSTIC);
+    w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
   });
 
   test('diagonostic - exception', async () => {
@@ -188,7 +171,7 @@ describe('WorkEmitter', () => {
       w.option.skipError = false;
       w.project?.createSourceFile('t.ts', 'const a = "1"; a = 3');
 
-      w.emit(CE_WORKER_ACTION.PROJECT_DIAGOSTIC);
+      w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
     } catch (catched) {
       expect(catched).toBeDefined();
     }
@@ -204,7 +187,7 @@ describe('WorkEmitter', () => {
       w.option.skipError = false;
       w.project?.createSourceFile('t.ts', 'const a = "1"; a = 3');
 
-      w.emit(CE_WORKER_ACTION.PROJECT_DIAGOSTIC);
+      w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
     } catch (catched) {
       expect(catched).toBeDefined();
     }

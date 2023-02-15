@@ -1,5 +1,6 @@
 import type { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
 import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type * as tjsg from 'ts-json-schema-generator';
 
 export interface IAddSchemaOption {
@@ -14,6 +15,9 @@ export interface IAddSchemaOption {
   /** ts-json-schema-generator option file path */
   generatorOption?: string | tjsg.Config;
 
+  /** target list filename */
+  listFile?: string;
+
   /**
    * json-schema save format
    * * json: json object
@@ -23,6 +27,10 @@ export interface IAddSchemaOption {
   format: CE_OUTPUT_FORMAT;
 }
 
-type TAddSchemaOption = IAddSchemaOption & IBaseOption;
+export type TAddSchemaBaseOption = IAddSchemaOption & IBaseOption;
+
+type TAddSchemaOption = IAddSchemaOption &
+  IBaseOption &
+  IResolvedPaths & { generatorOptionObject: tjsg.Config };
 
 export default TAddSchemaOption;

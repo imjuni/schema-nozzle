@@ -1,11 +1,11 @@
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TDatabase, TNullableDatabase } from '#modules/interfaces/TDatabase';
 import fastCopy from 'fast-copy';
 import { settify } from 'my-easy-fp';
 
-export default function mergeSchemaRecords(
+export default function mergeDatabaseItems(
   db: TNullableDatabase,
-  records: IDatabaseRecord[],
+  records: IDatabaseItem[],
 ): TDatabase {
   const newDb = records.reduce<TNullableDatabase>((aggregation, record) => {
     try {

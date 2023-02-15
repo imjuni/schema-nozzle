@@ -1,25 +1,34 @@
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import getAddFilesFromPrompt from '#modules/getAddFilesFromPrompt';
+import getAddMultipleFilesFromPrompt from '#modules/getAddMultipleFilesFromPrompt';
+import getAddSingleFilesFromPrompt from '#modules/getAddSingleFilesFromPrompt';
+import getRelativeCwd from '#tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
+import path from 'path';
 
-export default async function getAddFiles({
-  resolvedPaths,
-  option,
-}: {
-  resolvedPaths: IResolvedPaths;
-  option: TAddSchemaOption;
-}): Promise<PassFailEither<Error, string[]>> {
+export default async function getAddFiles(
+  option: Pick<TAddSchemaOption, 'files' | 'multiple' | 'cwd'>,
+  schemaFiles: { origin: string; refined: string }[],
+): Promise<PassFailEither<Error, typeof schemaFiles>> {
   try {
     if (option.files.length <= 0) {
-      const files = await getAddFilesFromPrompt(resolvedPaths, option.multiple);
+      const files = option.multiple
+        ? await getAddMultipleFilesFromPrompt(schemaFiles)
+        : await getAddSingleFilesFromPrompt(schemaFiles);
+
       return pass(files);
     }
 
-    return pass(option.files);
-  } catch (catched) {
-    const err = isError(catched) ?? new Error('unknown error raised get typescript files');
+    return pass(
+      option.files
+        .map((filePath) => (path.isAbsolute(filePath) ? filePath : path.resolve(filePath)))
+        .map((filePath) => ({
+          origin: filePath,
+          refined: getRelativeCwd(option.cwd, filePath),
+        })),
+    );
+  } catch (caught) {
+    const err = isError(caught, new Error('unknown error raised get typescript files'));
     return fail(err);
   }
 }

@@ -1,5 +1,4 @@
 import getExportedTypes, { type IGetExportTypesReturnType } from '#compilers/getExportedTypes';
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import getRelativeCwd from '#tools/getRelativeCwd';
@@ -22,9 +21,8 @@ function applyOptionFilter(
 export default async function summarySchemaTypes(
   project: Project,
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'types'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'types'>,
-  resolvedPaths: IResolvedPaths,
+    | Pick<TAddSchemaOption, 'discriminator' | 'types' | 'cwd'>
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'types' | 'cwd'>,
   filter?: Ignore,
 ) {
   // stage01. Extract sll exported types
@@ -35,8 +33,7 @@ export default async function summarySchemaTypes(
 
   // stage03. apply file name filter
   const filteredExportedTypes = optionFilteredExportedTypes.filter(
-    (exportedType) =>
-      filter?.ignores(getRelativeCwd(resolvedPaths.cwd, exportedType.filePath)) ?? true,
+    (exportedType) => filter?.ignores(getRelativeCwd(option.cwd, exportedType.filePath)) ?? true,
   );
 
   // stage04. dedupe same item

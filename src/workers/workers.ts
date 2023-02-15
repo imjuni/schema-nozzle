@@ -1,8 +1,9 @@
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import progress from '#cli/display/progress';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import logger from '#tools/logger';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import type IWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
@@ -15,10 +16,10 @@ class Workers extends EventEmitter {
 
   #finished: number;
 
-  #records: IDatabaseRecord[];
+  #records: IDatabaseItem[];
 
   #reply: Extract<
-    IWorkerToMasterMessage,
+    TWorkerToMasterMessage,
     { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
   >['data'][];
 
@@ -54,10 +55,15 @@ class Workers extends EventEmitter {
   }
 
   add(worker: Worker) {
-    worker.on('message', (message: IWorkerToMasterMessage) => {
-      log.trace(`received: ${this.finished} ${message.command}>${message.data.command}`);
+    worker.on('message', (message: TWorkerToMasterMessage) => {
+      if (message.command === 'progress-update') {
+        progress.increment(message.data.schemaName);
+        return;
+      }
+
       this.#reply.push(message.data);
       this.dec();
+      log.trace(`received: ${this.finished} ${message.command}>${message.data.command}`);
     });
 
     this.#workers.push(worker);
@@ -66,10 +72,11 @@ class Workers extends EventEmitter {
   send(...jobs: TMasterToWorkerMessage[]) {
     this.#reply = [];
 
-    jobs.forEach((job, index) => {
-      this.#workers[index % Object.keys(this.#workers).length].send(job);
+    jobs.forEach((job, index, arr) => {
+      const pos = index % Object.keys(this.#workers).length;
+      this.#workers[pos].send(job);
       this.inc();
-      log.trace(`start worker: ${this.#finished}`);
+      log.trace(`send[${this.#finished}][${index}/${arr.length}]: ${this.#workers[pos].id}`);
     });
   }
 
@@ -87,7 +94,7 @@ class Workers extends EventEmitter {
     return new Promise<{
       cluster: number;
       data: Extract<
-        IWorkerToMasterMessage,
+        TWorkerToMasterMessage,
         { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
       >['data'][];
     }>((resolve) => {

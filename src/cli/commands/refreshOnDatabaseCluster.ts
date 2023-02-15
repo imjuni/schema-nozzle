@@ -1,22 +1,31 @@
+import progress from '#cli/display/progress';
 import spinner from '#cli/display/spinner';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
+import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecords from '#modules/mergeSchemaRecords';
+import SchemaNozzleError from '#errors/SchemaNozzleError';
+import logger from '#tools/logger';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
+import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
+import {
+  isFailTaskComplete,
+  isPassTaskComplete,
+  type TPassWorkerToMasterTaskComplete,
+  type TPickPassWorkerToMasterTaskComplete,
+} from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import cluster from 'cluster';
 import { atOrThrow, isError, populate } from 'my-easy-fp';
-import { getDirname } from 'my-node-fp';
 import os from 'os';
-import path from 'path';
-import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOption) {
+const log = logger();
+
+export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
     populate(os.cpus().length).forEach(() => {
       workers.add(cluster.fork());
@@ -24,79 +33,158 @@ export default async function refreshOnDatabaseCluster(option: TRefreshSchemaOpt
 
     spinner.start('TypeScript source code compile, ...');
 
-    const resolvedPaths = getResolvedPaths(option);
+    const resolvedPaths = getResolvedPaths(baseOption);
+    const option: TRefreshSchemaOption = {
+      ...baseOption,
+      ...resolvedPaths,
+      discriminator: 'refresh-schema',
+      files: [],
+      generatorOptionObject: {},
+    };
+
+    option.generatorOptionObject = await getSchemaGeneratorOption(option);
+
+    log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
+    log.trace(`${JSON.stringify(option)}`);
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option, resolvedPaths },
-    });
+      data: { option: { ...option, project: option.project }, resolvedPaths },
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
+
+    await workers.wait();
+
+    workers.sendAll({
+      command: CE_WORKER_ACTION.PROJECT_LOAD,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_LOAD>);
 
     let reply = await workers.wait();
 
-    if (atOrThrow(reply.data, 0).result === 'fail') {
-      throw new Error('');
+    log.trace(`reply::: ${JSON.stringify(reply)}`);
+
+    // master check project loading on worker
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+      throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
-
-    workers.send({ command: CE_WORKER_ACTION.PROJECT_DIAGOSTIC });
+    workers.send({
+      command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC>);
 
     reply = await workers.wait();
 
-    if (atOrThrow(reply.data, 0).result === 'fail') {
-      throw new Error('');
+    // master check project diagostic on worker
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+      throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.start('Open database, ...');
+    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
+    spinner.start('schema file select, ...');
+
+    workers.sendAll({
+      command: CE_WORKER_ACTION.LOAD_DATABASE,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.LOAD_DATABASE>);
+
+    reply = await workers.wait();
+
+    // master check project diagostic on worker
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+      throw new SchemaNozzleError(failReply.error);
+    }
+
+    spinner.update({ message: 'schema file select complete', channel: 'succeed' });
+    spinner.start('schema type select, ...');
+
+    workers.send({
+      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES>);
+
+    reply = await workers.wait();
+
+    // master check schema file summary
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+      throw new SchemaNozzleError(failReply.error);
+    }
+
+    workers.send({
+      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES>);
+
+    reply = await workers.wait();
+
+    // master check schema type summary
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+
+      const err = new Error(failReply.error.message);
+      err.stack = failReply.error.stack;
+      throw err;
+    }
+
+    const { data: exportedTypes } = atOrThrow(reply.data, 0) as TPickPassWorkerToMasterTaskComplete<
+      typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES
+    >;
+
+    workers.sendAll({
+      command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
+    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }>);
+
+    reply = await workers.wait();
+
+    spinner.update({ message: 'schema type select complete', channel: 'succeed' });
+    spinner.stop();
+
+    // master check generator option loading
+    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+      const failReplies = reply.data.filter(isFailTaskComplete);
+      const failReply = atOrThrow(failReplies, 0);
+      throw new SchemaNozzleError(failReply.error);
+    }
+
+    progress.start(exportedTypes.length, 0, '');
+
+    workers.send(
+      ...exportedTypes.map((exportedType) => {
+        return {
+          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
+          data: { exportedType: exportedType.identifier, filePath: exportedType.filePath },
+        } satisfies Extract<
+          TMasterToWorkerMessage,
+          { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+        >;
+      }),
+    );
+
+    reply = await workers.wait();
+
+    progress.stop();
+
+    const successes = reply.data.filter(isPassTaskComplete) as Extract<
+      TPassWorkerToMasterTaskComplete,
+      { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+    >[];
+
+    log.trace(`reply::: ${JSON.stringify(successes.map((items) => items.data).flat())}`);
 
     const db = await openDatabase(resolvedPaths);
-    spinner.update({ message: 'database open success', channel: 'succeed' });
+    const newDb = mergeDatabaseItems(db, successes.map((item) => item.data).flat());
 
-    const basePath = await getDirname(resolvedPaths.project);
-    const targetTypes = Object.values(db)
-      .filter(
-        (record): record is SetRequired<IDatabaseRecord, 'filePath'> => record.filePath != null,
-      )
-      .map((record) => {
-        return {
-          filePath: path.join(basePath, record.filePath),
-          typeName: record.id,
-        };
-      });
-
-    const generatorOption = await getSchemaGeneratorOption(option);
-
-    spinner.start('Schema generation start, ...');
-
-    const jobs = targetTypes.map((typeInfo) => {
-      const payload: TMasterToWorkerMessage = {
-        command: 'job',
-        data: {
-          fileWithTypes: typeInfo,
-          option,
-          resolvedPaths,
-          generatorOption,
-        },
-      };
-
-      return payload;
-    });
-
-    workers.send(...jobs);
-    await workers.wait();
-
-    const newDb = mergeSchemaRecords(db, workers.records);
     await saveDatabase(option, newDb);
 
-    spinner.stop({
-      message: `[${targetTypes
-        .map((targetType) => `"${targetType.typeName}"`)
-        .join(', ')}] add complete`,
-      channel: 'succeed',
-    });
-  } catch (catched) {
-    spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(catched) ?? new Error('Unknown error raised');
+    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+  } catch (caught) {
+    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+    const err = isError(caught, new Error('Unknown error raised'));
+    spinner.stop({ message: err.message, channel: 'fail' });
     throw err;
   }
 }

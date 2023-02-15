@@ -1,76 +1,94 @@
 import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
+import getExportedTypes from '#compilers/getExportedTypes';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
+import createDatabaseItem from '#databases/createDatabaseItem';
+import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
-import createSchemaRecord from '#modules/createSchemaRecord';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecords from '#modules/mergeSchemaRecords';
+import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
+import summarySchemaFiles from '#modules/summarySchemaFiles';
+import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseSync(option: TRefreshSchemaOption) {
+export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBaseOption) {
   try {
     spinner.start('TypeScript source code compile, ...');
 
-    const resolvedPaths = getResolvedPaths(option);
-    const project = await getTsProject({
-      tsConfigFilePath: resolvedPaths.project,
-      skipAddingFilesFromTsConfig: false,
-      skipFileDependencyResolution: true,
-      skipLoadingLibFiles: true,
-    });
-    if (project.type === 'fail') throw project.fail;
-    spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
+    const resolvedPaths = getResolvedPaths(baseOption);
+    const option: TRefreshSchemaOption = {
+      ...baseOption,
+      ...resolvedPaths,
+      discriminator: 'refresh-schema',
+      files: [],
+      generatorOptionObject: {},
+    };
 
+    option.generatorOptionObject = await getSchemaGeneratorOption(option);
+
+    const project = await getTsProject({ tsConfigFilePath: option.project });
+    if (project.type === 'fail') throw project.fail;
+
+    const projectExportedTypes = getExportedTypes(project.pass);
     const diagnostics = getDiagnostics({ option, project: project.pass });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
+    if (diagnostics.pass === false) throw new Error('project compile error');
 
-    spinner.start('Open database, ...');
-    const db = await openDatabase(resolvedPaths);
-    spinner.update({ message: 'database open success', channel: 'succeed' });
+    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
 
+    const db = await openDatabase(option);
     const basePath = await getDirname(resolvedPaths.project);
-    const targetTypes = Object.values(db)
-      .filter(
-        (record): record is SetRequired<IDatabaseRecord, 'filePath'> => record.filePath != null,
-      )
-      .map((record) => {
-        return {
-          filePath: path.join(basePath, record.filePath),
-          typeName: record.id,
-        };
-      });
 
-    const generatorOption = await getSchemaGeneratorOption(option);
+    const schemaFilterFilePath = await getSchemaFilterFilePath(option.cwd, option.listFile);
 
-    spinner.start('Schema generation start, ...');
+    if (schemaFilterFilePath == null) {
+      const exportedTypesInDb = Object.values(db)
+        .filter(
+          (record): record is SetRequired<IDatabaseItem, 'filePath'> => record.filePath != null,
+        )
+        .map((record) => {
+          return {
+            filePath: path.join(basePath, record.filePath),
+            identifier: record.id,
+          };
+        });
+
+      option.types = exportedTypesInDb.map((exportedType) => exportedType.identifier);
+      option.files = exportedTypesInDb.map((exportedType) => exportedType.filePath);
+    }
+
+    if (schemaFilterFilePath == null && option.files.length <= 0 && option.types.length <= 0) {
+      spinner.start();
+      spinner.update({ message: 'Cannot found .nozzlefiles and empty database', channel: 'fail' });
+      return;
+    }
+
+    const schemaFiles = await summarySchemaFiles(project.pass, option);
+    const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
     const newRecords = (
       await Promise.all(
-        targetTypes.map(async (targetType) => {
+        schemaTypes.map(async (targetType) => {
           const schema = createJSONSchema(
             targetType.filePath,
-            targetType.typeName,
-            generatorOption,
+            targetType.identifier,
+            option.generatorOptionObject,
           );
 
           if (schema.type === 'fail') {
             return undefined;
           }
 
-          const record = await createSchemaRecord({
-            option,
-            project: project.pass,
-            resolvedPaths,
-            schema: schema.pass,
-          });
+          const record = await createDatabaseItem(option, projectExportedTypes, schema.pass);
 
           const records = [record.record, ...(record.definitions ?? [])];
 
@@ -79,14 +97,14 @@ export default async function refreshOnDatabaseSync(option: TRefreshSchemaOption
       )
     )
       .flat()
-      .filter((record): record is IDatabaseRecord => record != null);
+      .filter((record): record is IDatabaseItem => record != null);
 
-    const newDb = mergeSchemaRecords(db, newRecords);
+    const newDb = mergeDatabaseItems(db, newRecords);
     await saveDatabase(option, newDb);
 
     spinner.stop({
-      message: `[${targetTypes
-        .map((targetType) => `"${targetType.typeName}"`)
+      message: `[${schemaTypes
+        .map((targetType) => `"${targetType.identifier}"`)
         .join(', ')}] add complete`,
       channel: 'succeed',
     });

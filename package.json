@@ -20,7 +20,7 @@
   "main": "dist/cli.js",
   "types": "dist/cli.d.ts",
   "bin": {
-    "ctjs": "dist/cli.js"
+    "nozzle": "dist/cli.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
   "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
   "dependencies": {
     "chalk": "^4.1.2",
+    "cli-progress": "^3.11.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "fast-copy": "^3.0.0",
@@ -71,9 +72,8 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.4.0",
     "@slack/web-api": "^6.8.0",
-    "@swc/cli": "^0.1.59",
-    "@swc/core": "^1.3.30",
     "@tsconfig/node14": "^1.0.3",
+    "@types/cli-progress": "^3.11.0",
     "@types/crypto-js": "^4.1.1",
     "@types/inquirer": "^9.0.2",
     "@types/inquirer-autocomplete-prompt": "^3.0.0",

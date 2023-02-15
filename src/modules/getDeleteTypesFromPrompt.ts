@@ -1,6 +1,6 @@
 import type IPromptAnswerSelectType from '#cli/interfaces/IPromptAnswerSelectType';
 import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TNullableDatabase } from '#modules/interfaces/TDatabase';
 import getRatioNumber from '#tools/getRatioNumber';
 import Fuse from 'fuse.js';
@@ -26,7 +26,7 @@ export default async function getDeleteTypesFromPrompt({
 }: IGetTypesFromPrompt): Promise<string[]> {
   const choiceAbleTypes: IChoiceTypeItem[] = Object.entries(db)
     .map(([key, value]) => ({ key, value }))
-    .filter((entry): entry is { key: string; value: IDatabaseRecord } => entry.value != null)
+    .filter((entry): entry is { key: string; value: IDatabaseItem } => entry.value != null)
     .map((entry) => {
       return {
         name: entry.value.id,
