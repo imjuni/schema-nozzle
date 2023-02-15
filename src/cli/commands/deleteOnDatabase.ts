@@ -3,16 +3,16 @@ import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
+import deleteDatabaseItem from '#databases/deleteDatabaseItem';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
-import deleteSchemaRecord from '#modules/deleteSchemaRecord';
 import getDeleteTypes from '#modules/getDeleteTypes';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 
 export default async function deleteOnDatabase(nullableOption: TDeleteSchemaOption) {
   try {
-    spinner.start('TypeScript source code compile, ...');
+    spinner.start('TypeScript project loading, ...');
 
     const resolvedPaths = getResolvedPaths(nullableOption);
     const project = await getTsProject({
@@ -23,7 +23,7 @@ export default async function deleteOnDatabase(nullableOption: TDeleteSchemaOpti
     });
     if (project.type === 'fail') throw project.fail;
 
-    spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
+    spinner.update({ message: 'TypeScript project load success', channel: 'succeed' });
 
     const diagnostics = getDiagnostics({ option: nullableOption, project: project.pass });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
@@ -55,7 +55,7 @@ export default async function deleteOnDatabase(nullableOption: TDeleteSchemaOpti
     }
 
     const newDb = targetTypes.pass.reduce((aggregation, typeName) => {
-      const schemas = deleteSchemaRecord(aggregation, typeName);
+      const schemas = deleteDatabaseItem(aggregation, typeName);
       spinner.update({ message: `delete schema: ${typeName}`, channel: 'succeed' });
       return schemas;
     }, fastCopy(db));

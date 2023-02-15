@@ -24,7 +24,7 @@ describe('getRatioNumber', () => {
   test('get percent', () => {
     const r01 = getRatioNumber(0.3);
     const r02 = getRatioNumber(0.3, 100);
-    // @ts-ignore
+    // @ts-expect-error
     const r03 = getRatioNumber(undefined, 100);
 
     expect(r01).toEqual(0.7);

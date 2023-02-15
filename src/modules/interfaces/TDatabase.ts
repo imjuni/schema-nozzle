@@ -1,5 +1,5 @@
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 
-export type TDatabase = Record<string, IDatabaseRecord>;
+export type TDatabase = Record<string, IDatabaseItem>;
 
-export type TNullableDatabase = Record<string, IDatabaseRecord | undefined>;
+export type TNullableDatabase = Record<string, IDatabaseItem | undefined>;

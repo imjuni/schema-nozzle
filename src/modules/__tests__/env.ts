@@ -9,7 +9,6 @@ export const baseOption: IBaseOption = {
   project: './tsconfig.json',
   types: [],
   skipError: true,
-  listFile: '',
   output: '.',
 };
 
@@ -19,7 +18,10 @@ export const addCmdOption: TAddSchemaOption = {
   files: [],
   multiple: false,
   generatorOption: {},
+  cwd: '',
+  listFile: '',
   format: CE_OUTPUT_FORMAT.JSON,
+  generatorOptionObject: {},
 };
 
 export const refreshCmdOption: TRefreshSchemaOption = {
@@ -27,6 +29,10 @@ export const refreshCmdOption: TRefreshSchemaOption = {
   discriminator: 'refresh-schema',
   generatorOption: {},
   format: CE_OUTPUT_FORMAT.JSON,
+  cwd: '',
+  listFile: '',
+  files: [],
+  generatorOptionObject: {},
 };
 
 export const deleteCmdOption: TDeleteSchemaOption = {

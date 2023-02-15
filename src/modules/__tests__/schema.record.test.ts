@@ -2,9 +2,9 @@ import type getExportedTypes from '#compilers/getExportedTypes';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
+import createDatabaseItem from '#databases/createDatabaseItem';
 import createJSONSchema from '#modules/createJSONSchema';
-import createSchemaRecord from '#modules/createSchemaRecord';
-import getData from '#tools/__tests__/getData';
+import getData from '#tools/__tests__/test-tools/getData';
 import 'jest';
 import 'jsonc-parser';
 import path from 'path';
@@ -50,70 +50,79 @@ beforeEach(async () => {
 
 describe('createSchemaRecord', () => {
   test('without definitions', async () => {
-    const schemaEither = createJSONSchema(
+    const schema = createJSONSchema(
       path.join(originPath, 'examples', 'CE_MAJOR.ts'),
       'CE_MAJOR',
       data.generatorOption,
     );
 
-    if (schemaEither.type !== 'pass') {
+    if (schema.type !== 'pass') {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createSchemaRecord(
-      { discriminator: 'add-schema', format: CE_OUTPUT_FORMAT.JSON },
-      data.resolvedPaths,
+    const reply = await createDatabaseItem(
+      {
+        discriminator: 'add-schema',
+        format: CE_OUTPUT_FORMAT.JSON,
+        project: data.resolvedPaths.project,
+      },
       data.exportedTypes,
-      schemaEither.pass,
+      schema.pass,
     );
     expect(reply).toMatchObject(
-      await getData<ReturnType<typeof createSchemaRecord>>(path.join(__dirname, 'data/006.json')),
+      await getData<ReturnType<typeof createDatabaseItem>>(path.join(__dirname, 'data/006.json')),
     );
   });
 
   test('with definitions', async () => {
-    const schemaEither = createJSONSchema(
+    const schema = createJSONSchema(
       path.join(originPath, 'examples', 'IStudentDto.ts'),
       'IStudentDto',
       data.generatorOption,
     );
 
-    if (schemaEither.type !== 'pass') {
+    if (schema.type !== 'pass') {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createSchemaRecord(
-      { discriminator: 'add-schema', format: CE_OUTPUT_FORMAT.JSON },
-      data.resolvedPaths,
+    const reply = await createDatabaseItem(
+      {
+        discriminator: 'add-schema',
+        format: CE_OUTPUT_FORMAT.JSON,
+        project: data.resolvedPaths.project,
+      },
       data.exportedTypes,
-      schemaEither.pass,
+      schema.pass,
     );
 
     expect(reply).toMatchObject(
-      await getData<ReturnType<typeof createSchemaRecord>>(path.join(__dirname, 'data/003.json')),
+      await getData<ReturnType<typeof createDatabaseItem>>(path.join(__dirname, 'data/003.json')),
     );
   });
 
   test('import', async () => {
-    const schemaEither = createJSONSchema(
+    const schema = createJSONSchema(
       path.join(originPath, 'examples', 'ISlackMessage.ts'),
       'ISlackMessageBody',
       data.generatorOption,
     );
 
-    if (schemaEither.type !== 'pass') {
+    if (schema.type !== 'pass') {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createSchemaRecord(
-      { discriminator: 'add-schema', format: CE_OUTPUT_FORMAT.JSON },
-      data.resolvedPaths,
+    const reply = await createDatabaseItem(
+      {
+        discriminator: 'add-schema',
+        format: CE_OUTPUT_FORMAT.JSON,
+        project: data.resolvedPaths.project,
+      },
       data.exportedTypes,
-      schemaEither.pass,
+      schema.pass,
     );
 
     expect(reply).toMatchObject(
-      await getData<ReturnType<typeof createSchemaRecord>>(path.join(__dirname, 'data/005.json')),
+      await getData<ReturnType<typeof createDatabaseItem>>(path.join(__dirname, 'data/005.json')),
     );
   });
 });

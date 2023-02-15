@@ -1,6 +1,6 @@
 export const CE_MASTER_ACTION = {
-  PROJECT_LOAD_PASS: 'project-load-pass',
   TASK_COMPLETE: 'task-complete',
+  PROGRESS_UPDATE: 'progress-update',
 } as const;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention

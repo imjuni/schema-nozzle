@@ -1,10 +1,9 @@
 import type getExportedTypes from '#compilers/getExportedTypes';
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type createJSONSchema from '#modules/createJSONSchema';
 import getFormattedSchema from '#modules/getFormattedSchema';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type ISchemaExportInfo from '#modules/interfaces/ISchemaExportInfo';
 import type ISchemaImportInfo from '#modules/interfaces/ISchemaImportInfo';
 import logger from '#tools/logger';
@@ -35,18 +34,17 @@ const traverseHandle: TraversalCallback = ({
 
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
-export default async function createSchemaRecord(
+export default async function createDatabaseItem(
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'format'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'format'>,
-  resolvedPaths: IResolvedPaths,
+    | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project'>
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof createJSONSchema>>,
 ): Promise<{
-  record: IDatabaseRecord;
-  definitions?: IDatabaseRecord[];
+  record: IDatabaseItem;
+  definitions?: IDatabaseItem[];
 }> {
-  const basePath = await getDirname(resolvedPaths.project);
+  const basePath = await getDirname(option.project);
   const targetSchema = fastCopy(schema.schema);
   const importedMap = exportedTypes.reduce<
     Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
@@ -63,7 +61,7 @@ export default async function createSchemaRecord(
   });
 
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
-    const record: IDatabaseRecord = {
+    const record: IDatabaseItem = {
       id,
       filePath: path.relative(basePath, schema.filePath),
       dependency: {
@@ -99,7 +97,7 @@ export default async function createSchemaRecord(
       const definitionStringified = getFormattedSchema(option.format, definitionSchema);
       const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
 
-      const definitionRecord: IDatabaseRecord = {
+      const definitionRecord: IDatabaseItem = {
         id: definitionId,
         filePath:
           // slack처럼 외부 모듈을 설치해서 json-schema를 추출하려고 하는 경우,
@@ -144,7 +142,7 @@ export default async function createSchemaRecord(
     from: settify(duplicableImportValue.from),
   };
 
-  const record: IDatabaseRecord = {
+  const record: IDatabaseItem = {
     id,
     filePath: path.relative(basePath, schema.filePath),
     dependency: {

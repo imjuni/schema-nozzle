@@ -1,12 +1,12 @@
-# create-ts-json-schema
+# schema-nozzle
 
-[![Download Status](https://img.shields.io/npm/dw/create-ts-json-schema.svg)](https://npmcharts.com/compare/create-ts-json-schema?minimal=true) [![Github Star](https://img.shields.io/github/stars/imjuni/create-ts-json-schema.svg?style=popout)](https://github.com/imjuni/create-ts-json-schema) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/create-ts-json-schema.svg)](https://github.com/imjuni/create-ts-json-schema/issues) [![NPM version](https://img.shields.io/npm/v/create-ts-json-schema.svg)](https://www.npmjs.com/package/create-ts-json-schema) [![License](https://img.shields.io/npm/l/create-ts-json-schema.svg)](https://github.com/imjuni/create-ts-json-schema/blob/master/LICENSE)
+[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg)](https://npmcharts.com/compare/schema-nozzle?minimal=true) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=popout)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg)](https://www.npmjs.com/package/schema-nozzle) [![License](https://img.shields.io/npm/l/schema-nozzle.svg)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE)
 
 automatically generate json-schema from TypeScript source code and management it!
 
-## What is create-ts-json-schema?
+## What is schema-nozzle?
 
-create-ts-json-schema is tiny cli utility that automatically generate json-schema from TypeScript `interface` or `TypeAlias`.
+schema-nozzle is tiny cli utility that automatically generate json-schema from TypeScript `interface` or `TypeAlias`, `class`, `enum`.
 
 ## How it works?
 
@@ -15,22 +15,23 @@ create-ts-json-schema is tiny cli utility that automatically generate json-schem
 ## installation
 
 ```bash
-npm install create-ts-json-schema --save-dev
+npm install schema-nozzle --save-dev
 ```
 
 ## Usage
 
 ```bash
 # generate json-schema and create database (if exist)
-ctjs add
+nozzle add
 
 # delete json-schema from database
-ctjs del
+nozzle del
 
 # truncate database
-ctjs truncate
+nozzle truncate
 
 # regenerate all json-schema in database
+nozzle refresh
 ```
 
 ## Fastify.js

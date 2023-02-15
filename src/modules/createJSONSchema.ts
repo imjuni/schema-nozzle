@@ -34,8 +34,10 @@ export default function createJSONSchema(
     });
   } catch (caught) {
     const err = isError(caught, new Error('unknown error raised'));
+
     log.trace(`createJSONSchema: ${err.message}`);
     log.trace(`createJSONSchema: ${err.stack ?? ''}`);
+
     return fail(new CreateJSONSchemaError(filePath, exportedType, err.message));
   }
 }

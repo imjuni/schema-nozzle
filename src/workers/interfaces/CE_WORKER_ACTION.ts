@@ -1,8 +1,10 @@
 export const CE_WORKER_ACTION = {
-  PROJECT_LOAD: 'project-load',
   OPTION_LOAD: 'option-load',
-  PROJECT_DIAGOSTIC: 'project-diagostic',
+  PROJECT_LOAD: 'project-load',
+  PROJECT_DIAGONOSTIC: 'project-diagostic',
   SUMMARY_SCHEMA_FILES: 'summary-schema-files',
+  LOAD_DATABASE: 'load-database',
+  SCHEMA_FILE_FILTER_UPDATE: 'schema-file-filter-update',
   SUMMARY_SCHEMA_TYPES: 'summary-schema-types',
   GENERATOR_OPTION_LOAD: 'generator-option-load',
   CREATE_JSON_SCHEMA: 'create-json-schema',

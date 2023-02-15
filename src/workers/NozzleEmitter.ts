@@ -1,12 +1,13 @@
 import getDiagnostics from '#compilers/getDiagnostics';
 import getTsProject from '#compilers/getTsProject';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import createDatabaseItem from '#databases/createDatabaseItem';
+import openDatabase from '#databases/openDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
-import createSchemaRecord from '#modules/createSchemaRecord';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
+import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import logger from '#tools/logger';
@@ -14,13 +15,16 @@ import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
-import type IWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import ignore, { type Ignore } from 'ignore';
 import type { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
+import { getDirname } from 'my-node-fp';
 import { EventEmitter } from 'node:events';
+import path from 'path';
 import type * as tjsg from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
+import type { SetRequired } from 'type-fest';
 
 const log = logger();
 
@@ -28,8 +32,6 @@ export default class NozzleEmitter extends EventEmitter {
   accessor project: tsm.Project | undefined;
 
   accessor option: TAddSchemaOption | TRefreshSchemaOption | undefined;
-
-  accessor resolvedPaths: IResolvedPaths | undefined;
 
   accessor id: number = 0;
 
@@ -43,7 +45,7 @@ export default class NozzleEmitter extends EventEmitter {
 
   accessor schemaes: { filePath: string; exportedType: string; schema: JSONSchema7 }[];
 
-  accessor schemaRecords: IDatabaseRecord[];
+  accessor schemaRecords: IDatabaseItem[];
 
   constructor(args?: { ee: ConstructorParameters<typeof EventEmitter>[0] }) {
     super(args?.ee);
@@ -77,8 +79,16 @@ export default class NozzleEmitter extends EventEmitter {
       });
     });
 
-    this.on(CE_WORKER_ACTION.PROJECT_DIAGOSTIC, () => {
+    this.on(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC, () => {
       this.diagonostic().catch((catched) => {
+        const err = isError(catched, new Error('unknown error raised'));
+        log.error(err.message);
+        log.error(err.stack);
+      });
+    });
+
+    this.on(CE_WORKER_ACTION.LOAD_DATABASE, () => {
+      this.loadDatabase().catch((catched) => {
         const err = isError(catched, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
@@ -130,56 +140,67 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   check(command: CE_WORKER_ACTION, message: string) {
-    if (this.option == null || this.resolvedPaths == null || this.project == null) {
+    if (this.option == null || this.project == null) {
       // send message to master process
+      const err = new Error(message);
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: { command, id: this.id, result: 'fail', error: new Error(message) },
-      } satisfies IWorkerToMasterMessage);
+        data: {
+          command,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: err.message,
+            stack: err.stack,
+          },
+        },
+      } satisfies TWorkerToMasterMessage);
 
       process.exit(1);
     }
 
-    return { option: this.option, resolvedPaths: this.resolvedPaths, project: this.project };
+    return { option: this.option, project: this.project };
   }
 
   loadOption(payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>['data']) {
     this.option = payload.option;
-    this.resolvedPaths = payload.resolvedPaths;
 
     process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,
       data: { id: this.id, result: 'pass', command: CE_WORKER_ACTION.OPTION_LOAD },
-    } satisfies Extract<IWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+    } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
   }
 
   async diagonostic() {
     const { option, project } = this.check(
-      CE_WORKER_ACTION.PROJECT_DIAGOSTIC,
-      'project compile fail',
+      CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
+      'project compile error: diagonostic fail',
     );
 
     const diagnostics = getDiagnostics({ option, project });
 
     if (diagnostics.type === 'fail') {
+      const err = new Error('project compile error: diagonostic fail');
+
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
           id: this.id,
           result: 'fail',
-          command: CE_WORKER_ACTION.PROJECT_DIAGOSTIC,
-          error: new Error('project compile fail'),
+          command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
+          error: { kind: 'error', message: err.message, stack: err.stack },
         },
-      } satisfies Extract<IWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+      } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
     } else {
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
           id: this.id,
           result: 'pass',
-          command: CE_WORKER_ACTION.PROJECT_DIAGOSTIC,
+          command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
         },
-      } satisfies Extract<IWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+      } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
     }
   }
 
@@ -188,15 +209,16 @@ export default class NozzleEmitter extends EventEmitter {
 
     if (projectPath == null) {
       // send message to master process
+      const err = new Error(`project load fail: undefined`);
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
           command: CE_WORKER_ACTION.PROJECT_LOAD,
           id: this.id,
           result: 'fail',
-          error: new Error('project load fail: empty project path'),
+          error: { kind: 'error', message: err.message, stack: err.stack },
         },
-      } satisfies IWorkerToMasterMessage);
+      } satisfies TWorkerToMasterMessage);
 
       process.exit(1);
     }
@@ -211,9 +233,9 @@ export default class NozzleEmitter extends EventEmitter {
           command: CE_WORKER_ACTION.PROJECT_LOAD,
           id: this.id,
           result: 'fail',
-          error: new Error('project load fail: empty project path'),
+          error: { kind: 'error', message: project.fail.message, stack: project.fail.stack },
         },
-      } satisfies IWorkerToMasterMessage);
+      } satisfies TWorkerToMasterMessage);
 
       process.exit(1);
     }
@@ -227,20 +249,16 @@ export default class NozzleEmitter extends EventEmitter {
         id: this.id,
         result: 'pass',
       },
-    } satisfies IWorkerToMasterMessage);
+    } satisfies TWorkerToMasterMessage);
   }
 
   async summarySchemaFiles() {
-    const { option, resolvedPaths, project } = this.check(
+    const { option, project } = this.check(
       CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
       'summary schema files fail',
     );
 
-    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(
-      project,
-      option,
-      resolvedPaths,
-    );
+    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(project, option);
 
     this.filter = schemaFileFilter;
     this.files = filePaths;
@@ -256,16 +274,16 @@ export default class NozzleEmitter extends EventEmitter {
         result: 'pass',
         data: filePaths,
       },
-    } satisfies IWorkerToMasterMessage);
+    } satisfies TWorkerToMasterMessage);
   }
 
   async summarySchemaTypes() {
-    const { option, resolvedPaths, project } = this.check(
+    const { option, project } = this.check(
       CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
       'summary schema types fail',
     );
 
-    const exportedTypes = await summarySchemaTypes(project, option, resolvedPaths, this.filter);
+    const exportedTypes = await summarySchemaTypes(project, option, this.filter);
 
     this.types = exportedTypes;
 
@@ -278,7 +296,7 @@ export default class NozzleEmitter extends EventEmitter {
         result: 'pass',
         data: exportedTypes,
       },
-    } satisfies IWorkerToMasterMessage);
+    } satisfies TWorkerToMasterMessage);
   }
 
   async generatorOptionLoad() {
@@ -298,13 +316,64 @@ export default class NozzleEmitter extends EventEmitter {
         result: 'pass',
         data: this.generatorOption,
       },
-    } satisfies IWorkerToMasterMessage);
+    } satisfies TWorkerToMasterMessage);
+  }
+
+  async loadDatabase() {
+    const { option } = this.check(
+      CE_WORKER_ACTION.LOAD_DATABASE,
+      'ts-json-schema-generator project load fail',
+    );
+
+    const db = await openDatabase(option);
+    const basePath = await getDirname(option.project);
+    const schemaFilterFilePath = await getSchemaFilterFilePath(option.cwd, option.listFile);
+
+    if (schemaFilterFilePath == null) {
+      const exportedTypesInDb = Object.values(db)
+        .filter(
+          (record): record is SetRequired<IDatabaseItem, 'filePath'> => record.filePath != null,
+        )
+        .map((record) => {
+          return {
+            filePath: path.join(basePath, record.filePath),
+            identifier: record.id,
+          };
+        });
+
+      option.types = exportedTypesInDb.map((exportedType) => exportedType.identifier);
+      option.files = exportedTypesInDb.map((exportedType) => exportedType.filePath);
+    }
+
+    if (schemaFilterFilePath == null && option.files.length <= 0 && option.types.length <= 0) {
+      // send message to master process
+      const err = new Error('Cannot found .nozzlefiles and empty database');
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.LOAD_DATABASE,
+          id: this.id,
+          result: 'fail',
+          error: { kind: 'error', message: err.message, stack: err.stack },
+        },
+      } satisfies TWorkerToMasterMessage);
+    } else {
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.LOAD_DATABASE,
+          id: this.id,
+          result: 'pass',
+        },
+      } satisfies TWorkerToMasterMessage);
+    }
   }
 
   async createJsonSchema(
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'],
   ) {
-    const { resolvedPaths, option } = this.check(
+    const { option } = this.check(
       CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
       'ts-json-schema-generator project load fail',
     );
@@ -318,26 +387,34 @@ export default class NozzleEmitter extends EventEmitter {
     if (jsonSchema.type === 'fail') {
       // send message to master process
       process.send?.({
+        command: CE_MASTER_ACTION.PROGRESS_UPDATE,
+        data: {
+          schemaName: payload.exportedType,
+        },
+      } satisfies TWorkerToMasterMessage);
+
+      process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
           command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
           id: this.id,
           result: 'fail',
-          error: jsonSchema.fail,
+          error: {
+            kind: 'json-schema-generate',
+            message: jsonSchema.fail.message,
+            stack: jsonSchema.fail.stack,
+            exportedType: payload.exportedType,
+            filePath: payload.filePath,
+          },
         },
-      } satisfies IWorkerToMasterMessage);
+      } satisfies TWorkerToMasterMessage);
 
       return;
     }
 
     this.schemaes.push(jsonSchema.pass);
 
-    const schemaRecord = await createSchemaRecord(
-      option,
-      resolvedPaths,
-      this.types,
-      jsonSchema.pass,
-    );
+    const schemaRecord = await createDatabaseItem(option, this.types, jsonSchema.pass);
 
     this.schemaRecords.push(schemaRecord.record);
 
@@ -350,6 +427,13 @@ export default class NozzleEmitter extends EventEmitter {
 
     // send message to master process
     process.send?.({
+      command: CE_MASTER_ACTION.PROGRESS_UPDATE,
+      data: {
+        schemaName: payload.exportedType,
+      },
+    } satisfies TWorkerToMasterMessage);
+
+    process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,
       data: {
         command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
@@ -357,6 +441,6 @@ export default class NozzleEmitter extends EventEmitter {
         result: 'pass',
         data: records,
       },
-    } satisfies IWorkerToMasterMessage);
+    } satisfies TWorkerToMasterMessage);
   }
 }

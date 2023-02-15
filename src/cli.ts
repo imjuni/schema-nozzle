@@ -6,7 +6,7 @@ import truncateBuilder from '#cli/builders/truncateBuilder';
 import addOnDatabaseCluster from '#cli/commands/addOnDatabaseCluster';
 import addOnDatabaseSync from '#cli/commands/addOnDatabaseSync';
 import deleteOnDatabase from '#cli/commands/deleteOnDatabase';
-import refreshOnDatabaseCluster2 from '#cli/commands/refreshOnDatabaseCluster2';
+import refreshOnDatabaseCluster from '#cli/commands/refreshOnDatabaseCluster';
 import refreshOnDatabaseSync from '#cli/commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '#cli/commands/truncateOnDatabase';
 import spinner from '#cli/display/spinner';
@@ -68,7 +68,7 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
     if (process.env.SYNC_MODE === 'true') {
       await refreshOnDatabaseSync(option);
     } else {
-      await refreshOnDatabaseCluster2(option);
+      await refreshOnDatabaseCluster(option);
     }
   },
 };
@@ -112,6 +112,7 @@ if (process.env.SYNC_MODE === 'true') {
     process.exit(1);
   });
 } else {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (cluster.isMaster ?? cluster.isPrimary) {
     const parser = yargs(process.argv.slice(2));
 

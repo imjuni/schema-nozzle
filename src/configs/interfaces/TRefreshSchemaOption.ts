@@ -1,5 +1,6 @@
 import type { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
 import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type * as tjsg from 'ts-json-schema-generator';
 
 interface IRefreshSchemaOption {
@@ -10,13 +11,21 @@ interface IRefreshSchemaOption {
 
   /**
    * json-schema save format
+   *
    * * json: json object
    * * string: plain string
    * * base64: plain string > base64
    * */
   format: CE_OUTPUT_FORMAT;
+
+  /** target list filename */
+  listFile?: string;
 }
 
-type TRefreshSchemaOption = IRefreshSchemaOption & IBaseOption;
+export type TRefreshSchemaBaseOption = IRefreshSchemaOption & IBaseOption;
+
+type TRefreshSchemaOption = IRefreshSchemaOption &
+  IBaseOption &
+  IResolvedPaths & { generatorOptionObject: tjsg.Config; files: string[] };
 
 export default TRefreshSchemaOption;

@@ -38,7 +38,7 @@ export default function isValidateConfig<
     throw new Error(`Cannot found project: ${resolvedProject}`);
   }
 
-  if ('files' in argv && argv.files != null && argv.files.length > 0) {
+  if ('files' in argv && argv.files.length > 0) {
     const files = argv.files.map((file) => ({ file, exists: existsSync(file) }));
     const notExistFiles = files.filter((file) => file.exists === false);
     log.error(`Cannot found files: ${notExistFiles.map((file) => file.file).join(', ')}`);

@@ -1,80 +1,73 @@
 import spinner from '#cli/display/spinner';
 import getDiagnostics from '#compilers/getDiagnostics';
+import getExportedTypes from '#compilers/getExportedTypes';
 import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type { TAddSchemaBaseOption } from '#configs/interfaces/TAddSchemaOption';
+import createDatabaseItem from '#databases/createDatabaseItem';
+import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
-import createSchemaRecord from '#modules/createSchemaRecord';
 import getAddFiles from '#modules/getAddFiles';
 import getAddTypes from '#modules/getAddTypes';
-import type IDatabaseRecord from '#modules/interfaces/IDatabaseRecord';
-import mergeSchemaRecords from '#modules/mergeSchemaRecords';
+import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
+import summarySchemaFiles from '#modules/summarySchemaFiles';
+import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { isError } from 'my-easy-fp';
 
-export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption): Promise<void> {
+export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
     spinner.start('TypeScript source code compile, ...');
 
-    const resolvedPaths = getResolvedPaths(nullableOption);
-    const project = await getTsProject({
-      tsConfigFilePath: resolvedPaths.project,
-      skipAddingFilesFromTsConfig: false,
-      skipFileDependencyResolution: true,
-      skipLoadingLibFiles: true,
-    });
-    if (project.type === 'fail') throw project.fail;
-
-    spinner.update({ message: 'TypeScript source code compile success', channel: 'succeed' });
-
-    const files = await getAddFiles({ resolvedPaths, option: nullableOption });
-    if (files.type === 'fail') throw files.fail;
-
-    const diagnostics = getDiagnostics({ option: nullableOption, project: project.pass });
-    if (diagnostics.type === 'fail') throw diagnostics.fail;
-
-    const targetTypes = await getAddTypes({
-      project: project.pass,
-      option: { ...nullableOption, files: files.pass },
-    });
-    if (targetTypes.type === 'fail') throw targetTypes.fail;
-
+    const resolvedPaths = getResolvedPaths(baseOption);
     const option: TAddSchemaOption = {
-      ...nullableOption,
-      files: files.pass,
-      types: targetTypes.pass.map((typeName) => typeName.typeName),
+      ...baseOption,
+      ...resolvedPaths,
+      discriminator: 'add-schema',
+      generatorOptionObject: {},
     };
 
-    spinner.start('Open database, ...');
+    option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
-    const db = await openDatabase(resolvedPaths);
-    const generatorOption = await getSchemaGeneratorOption(option);
+    const project = await getTsProject({ tsConfigFilePath: resolvedPaths.project });
+    if (project.type === 'fail') throw project.fail;
 
-    spinner.update({ message: 'database open success', channel: 'succeed' });
-    spinner.start('Schema generation start, ...');
+    const projectExportedTypes = getExportedTypes(project.pass);
+    const diagnostics = getDiagnostics({ option, project: project.pass });
+    if (diagnostics.type === 'fail') throw diagnostics.fail;
+    if (diagnostics.pass === false) throw new Error('project compile error');
+
+    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
+
+    const summariedSchemaFiles = await summarySchemaFiles(project.pass, option);
+    const selectedFiles = await getAddFiles(option, summariedSchemaFiles.filePaths);
+    if (selectedFiles.type === 'fail') throw selectedFiles.fail;
+    option.files = selectedFiles.pass.map((file) => file.origin);
+    const schemaFiles = await summarySchemaFiles(project.pass, option);
+
+    const summariedSchemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
+    const selectedTypes = await getAddTypes(option, summariedSchemaTypes);
+    if (selectedTypes.type === 'fail') throw selectedTypes.fail;
+    option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
+    const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
     const newRecords = (
       await Promise.all(
-        targetTypes.pass.map(async (targetType) => {
-          const schema = createJSONSchema({
-            generatorOption,
-            filePath: targetType.filePath,
-            typeName: targetType.typeName,
-          });
+        schemaTypes.map(async (selectedType) => {
+          const schema = createJSONSchema(
+            selectedType.filePath,
+            selectedType.identifier,
+            option.generatorOptionObject,
+          );
 
           if (schema.type === 'fail') {
             return undefined;
           }
 
-          const record = await createSchemaRecord({
-            option,
-            project: project.pass,
-            resolvedPaths,
-            schema: schema.pass,
-          });
-
+          const record = await createDatabaseItem(option, projectExportedTypes, schema.pass);
           const records = [record.record, ...(record.definitions ?? [])];
 
           return records;
@@ -82,14 +75,15 @@ export default async function addOnDatabaseSync(nullableOption: TAddSchemaOption
       )
     )
       .flat()
-      .filter((record): record is IDatabaseRecord => record != null);
+      .filter((record): record is IDatabaseItem => record != null);
 
-    const newDb = mergeSchemaRecords(db, newRecords);
+    const db = await openDatabase(option);
+    const newDb = mergeDatabaseItems(db, newRecords);
     await saveDatabase(option, newDb);
 
     spinner.stop({
-      message: `[${targetTypes.pass
-        .map((targetType) => `"${targetType.typeName}"`)
+      message: `[${selectedTypes.pass
+        .map((targetType) => `"${targetType.identifier}"`)
         .join(', ')}] add complete`,
       channel: 'succeed',
     });

@@ -29,6 +29,7 @@ describe('getExportedFiles', () => {
     );
 
     expect(refinedFiles).toMatchObject([
+      'CE_MAJOR.ts',
       'I18nDto.ts',
       'IProfessorDto.ts',
       'IProfessorEntity.ts',
@@ -37,7 +38,6 @@ describe('getExportedFiles', () => {
       'IStudentDto.ts',
       'IStudentEntity.ts',
       'TGenericExample.ts',
-      'TMAJOR.ts',
     ]);
   });
 });
@@ -47,6 +47,7 @@ describe('getExportedTypes', () => {
     const types = getExportedTypes(data.project);
 
     expect(types.map((type) => type.identifier)).toMatchObject([
+      'CE_MAJOR',
       'I18nDto',
       'ILanguageDto',
       'IProfessorDto',
@@ -57,7 +58,6 @@ describe('getExportedTypes', () => {
       'IStudentDto',
       'IStudentEntity',
       'TGenericExample',
-      'TMAJOR',
     ]);
   });
 });

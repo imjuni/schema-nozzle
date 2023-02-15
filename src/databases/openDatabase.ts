@@ -1,15 +1,24 @@
 import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
 import safeParse from '#tools/safeParse';
 import fs from 'fs';
 import { exists, isDirectory } from 'my-node-fp';
 import path from 'path';
 
-export default async function openDatabase(resolvedPaths: IResolvedPaths) {
-  const dbPath = (await isDirectory(resolvedPaths.output))
-    ? path.join(resolvedPaths.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
-    : resolvedPaths.output;
+export default async function openDatabase(
+  option:
+    | Pick<TAddSchemaOption, 'output'>
+    | Pick<TRefreshSchemaOption, 'output'>
+    | Pick<TDeleteSchemaOption, 'output'>
+    | Pick<TTruncateSchemaOption, 'output'>,
+) {
+  const dbPath = (await isDirectory(option.output))
+    ? path.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
+    : option.output;
 
   const rawDb = (await exists(dbPath)) ? (await fs.promises.readFile(dbPath)).toString() : '{}';
 
