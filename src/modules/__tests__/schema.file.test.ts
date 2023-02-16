@@ -129,7 +129,11 @@ describe('summarySchemaTypes', () => {
         filePath: path.join(originPath, 'examples', 'IProfessorEntity.ts'),
       },
       {
-        identifier: 'IReqReadStudentDto',
+        identifier: 'IReqReadStudentQuerystring',
+        filePath: path.join(originPath, 'examples', 'IReqReadStudentDto.ts'),
+      },
+      {
+        identifier: 'IReqReadStudentParam',
         filePath: path.join(originPath, 'examples', 'IReqReadStudentDto.ts'),
       },
       {
@@ -155,10 +159,15 @@ describe('summarySchemaTypes', () => {
     ]);
   });
 
-  test(' types', async () => {
+  test('types', async () => {
     const r = await summarySchemaTypes(data.project, {
       discriminator: 'add-schema',
-      types: ['ILanguageDto', 'TGenericExample', 'IReqReadStudentDto'],
+      types: [
+        'ILanguageDto',
+        'TGenericExample',
+        'IReqReadStudentQuerystring',
+        'IReqReadStudentParam',
+      ],
       cwd: data.resolvedPaths.cwd,
     });
 
@@ -168,7 +177,11 @@ describe('summarySchemaTypes', () => {
         filePath: path.join(originPath, 'examples', 'I18nDto.ts'),
       },
       {
-        identifier: 'IReqReadStudentDto',
+        identifier: 'IReqReadStudentQuerystring',
+        filePath: path.join(originPath, 'examples', 'IReqReadStudentDto.ts'),
+      },
+      {
+        identifier: 'IReqReadStudentParam',
         filePath: path.join(originPath, 'examples', 'IReqReadStudentDto.ts'),
       },
       {

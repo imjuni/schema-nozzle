@@ -6,7 +6,7 @@ import type TGenericExample from './TGenericExample';
 /**
  * IProfessorDto
  *
- * @asDto professor
+ * @nozzleTag professor
  */
 export default interface IProfessorDto {
   id: IStudentEntity['id'];

@@ -38,7 +38,7 @@
     "cli-progress": "^3.11.2",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
-    "fast-copy": "^3.0.0",
+    "fast-copy": "^2.1.4",
     "fast-glob": "^3.2.12",
     "fast-safe-stringify": "^2.1.1",
     "find-up": "^5.0.0",

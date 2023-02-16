@@ -21,7 +21,12 @@ export default function getExportedName(exportedDeclarationNode: tsm.ExportedDec
     const name = arrowFunctionNode.getSymbolOrThrow().getEscapedName();
 
     if (name === '__function') {
-      throw new Error('cannot generate JSONSchema using by anonymous arrow function');
+      throw new Error(
+        `JSONSchema cannot generate from anonymous arrow function: ${arrowFunctionNode
+          .getSourceFile()
+          .getFilePath()
+          .toString()} ${arrowFunctionNode.getText()}`,
+      );
     }
   }
 
@@ -33,7 +38,12 @@ export default function getExportedName(exportedDeclarationNode: tsm.ExportedDec
     const name = functionDeclarationNode.getName();
 
     if (name == null) {
-      throw new Error('cannot generate JSONSchema using by anonymous function');
+      throw new Error(
+        `JSONSchema cannot generate from anonymous function: ${functionDeclarationNode
+          .getSourceFile()
+          .getFilePath()
+          .toString()} ${functionDeclarationNode.getText()}`,
+      );
     }
 
     return functionDeclarationNode.getNameOrThrow().toString();
@@ -68,11 +78,21 @@ export default function getExportedName(exportedDeclarationNode: tsm.ExportedDec
   }
 
   if (exportedDeclarationNode.asKind(tsm.SyntaxKind.ArrayLiteralExpression) != null) {
-    throw new Error('cannot generate JSONSchema using by array literal');
+    throw new Error(
+      `JSONSchema cannot generate from array literal: ${exportedDeclarationNode
+        .getSourceFile()
+        .getFilePath()
+        .toString()} ${exportedDeclarationNode.getText()}`,
+    );
   }
 
   if (exportedDeclarationNode.asKind(tsm.SyntaxKind.ObjectLiteralExpression) != null) {
-    throw new Error('cannot generate JSONSchema using by object literal');
+    throw new Error(
+      `JSONSchema cannot generate object literal: ${exportedDeclarationNode
+        .getSourceFile()
+        .getFilePath()
+        .toString()} ${exportedDeclarationNode.getText()}`,
+    );
   }
 
   if (exportedDeclarationNode.asKind(tsm.SyntaxKind.BindingElement) != null) {
@@ -81,6 +101,9 @@ export default function getExportedName(exportedDeclarationNode: tsm.ExportedDec
   }
 
   throw new Error(
-    `Cannot support type: (${exportedDeclarationNode.getKind()}) ${exportedDeclarationNode.getText()}`,
+    `Cannot support type: ${exportedDeclarationNode
+      .getSourceFile()
+      .getFilePath()
+      .toString()} (${exportedDeclarationNode.getKind()}) ${exportedDeclarationNode.getText()}`,
   );
 }
