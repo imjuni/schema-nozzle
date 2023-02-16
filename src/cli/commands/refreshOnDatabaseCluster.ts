@@ -27,9 +27,7 @@ const log = logger();
 
 export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
-    populate(os.cpus().length).forEach(() => {
-      workers.add(cluster.fork());
-    });
+    populate(os.cpus().length).forEach(() => workers.add(cluster.fork()));
 
     spinner.start('TypeScript source code compile, ...');
 
@@ -140,7 +138,10 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
 
     reply = await workers.wait();
 
-    spinner.update({ message: 'schema type select complete', channel: 'succeed' });
+    spinner.update({
+      message: `${exportedTypes.length} schema type select complete`,
+      channel: 'succeed',
+    });
     spinner.stop();
 
     // master check generator option loading

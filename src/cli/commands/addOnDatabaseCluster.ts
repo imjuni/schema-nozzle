@@ -29,9 +29,7 @@ export default async function addOnDatabaseCluster(
   baseOption: TAddSchemaBaseOption,
 ): Promise<void> {
   try {
-    populate(os.cpus().length).forEach(() => {
-      workers.add(cluster.fork());
-    });
+    populate(os.cpus().length).forEach(() => workers.add(cluster.fork()));
 
     spinner.start('TypeScript project loading, ...');
 
