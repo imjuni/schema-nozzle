@@ -1,4 +1,5 @@
 import getExportedName from '#compilers/getExportedName';
+import getJsDocTags from '#compilers/getJsDocTags';
 import { CE_JSDOC_EXTENDS } from '#modules/interfaces/CE_JSDOC_EXTENDS';
 import * as tsm from 'ts-morph';
 
@@ -7,42 +8,6 @@ export interface IGetExportTypesReturnType {
   filePath: string;
   identifier: string;
   node: tsm.ExportedDeclarations;
-}
-
-function getJsDocTags(exportedDeclaration: tsm.ExportedDeclarations): tsm.JSDocTag[] {
-  if (exportedDeclaration.getKind() === tsm.SyntaxKind.TypeAliasDeclaration) {
-    return exportedDeclaration
-      .asKindOrThrow(tsm.SyntaxKind.TypeAliasDeclaration)
-      .getJsDocs()
-      .flat()
-      .map((docs) => docs.getTags())
-      .flat();
-  }
-
-  if (exportedDeclaration.getKind() === tsm.SyntaxKind.InterfaceDeclaration) {
-    return exportedDeclaration
-      .asKindOrThrow(tsm.SyntaxKind.InterfaceDeclaration)
-      .getJsDocs()
-      .flat()
-      .map((docs) => docs.getTags())
-      .flat();
-  }
-
-  if (exportedDeclaration.getKind() === tsm.SyntaxKind.ClassDeclaration) {
-    return exportedDeclaration
-      .asKindOrThrow(tsm.SyntaxKind.ClassDeclaration)
-      .getJsDocs()
-      .flat()
-      .map((docs) => docs.getTags())
-      .flat();
-  }
-
-  return exportedDeclaration
-    .asKindOrThrow(tsm.SyntaxKind.EnumDeclaration)
-    .getJsDocs()
-    .flat()
-    .map((docs) => docs.getTags())
-    .flat();
 }
 
 export default function getExportedTypes(project: tsm.Project): IGetExportTypesReturnType[] {
