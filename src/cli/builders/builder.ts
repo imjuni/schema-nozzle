@@ -1,3 +1,4 @@
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import type { Argv } from 'yargs';
 
 export default function builder(argv: Argv) {
@@ -36,6 +37,11 @@ export default function builder(argv: Argv) {
       describe: 'target list filename',
       type: 'string',
       default: undefined,
+    })
+    .option('generator-timeout', {
+      describe: 'ts-json-schema-generator timeout: default 90 seconds',
+      type: 'number',
+      default: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
     });
 
   return argv;

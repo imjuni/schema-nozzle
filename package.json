@@ -1,6 +1,6 @@
 {
   "name": "schema-nozzle",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "generate json-schema from typescript source code and management it",
   "scripts": {
     "clean": "just --config ./.configs/just.config.ts clean",

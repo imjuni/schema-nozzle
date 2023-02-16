@@ -2,7 +2,6 @@ import progress from '#cli/display/progress';
 import spinner from '#cli/display/spinner';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
 import mergeDatabaseItems from '#databases/mergeDatabaseItems';
@@ -166,7 +165,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       }),
     );
 
-    reply = await workers.wait(CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3);
+    reply = await workers.wait(option.generatorTimeout);
 
     progress.stop();
 
