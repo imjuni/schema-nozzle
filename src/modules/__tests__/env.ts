@@ -1,3 +1,4 @@
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
 import type IBaseOption from '#configs/interfaces/IBaseOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
@@ -10,6 +11,7 @@ export const baseOption: IBaseOption = {
   types: [],
   skipError: true,
   output: '.',
+  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const addCmdOption: TAddSchemaOption = {

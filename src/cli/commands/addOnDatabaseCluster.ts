@@ -181,7 +181,7 @@ export default async function addOnDatabaseCluster(
       }),
     );
 
-    reply = await workers.wait();
+    reply = await workers.wait(option.generatorTimeout);
 
     progress.stop();
 
