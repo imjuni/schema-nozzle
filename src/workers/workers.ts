@@ -1,4 +1,5 @@
 import progress from '#cli/display/progress';
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import logger from '#tools/logger';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
@@ -90,7 +91,7 @@ class Workers extends EventEmitter {
     });
   }
 
-  wait() {
+  wait(waitSecond?: number) {
     return new Promise<{
       cluster: number;
       data: Extract<
@@ -113,7 +114,10 @@ class Workers extends EventEmitter {
         const currentAt = dayjs();
 
         // timeout, wait 30 second
-        if (currentAt.diff(startAt, 'second') > 30) {
+        if (
+          currentAt.diff(startAt, 'second') >
+          (waitSecond ?? CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND)
+        ) {
           clearInterval(intervalHandle);
 
           const result = fastCopy(this.#reply);
@@ -121,7 +125,7 @@ class Workers extends EventEmitter {
 
           resolve({ cluster: this.#finished, data: result });
         }
-      }, 300);
+      }, 200);
     });
   }
 }
