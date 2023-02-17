@@ -48,7 +48,7 @@ beforeEach(async () => {
   }));
 });
 
-describe('createSchemaRecord', () => {
+describe('createDatabaseItem', () => {
   test('without definitions', async () => {
     const schema = createJSONSchema(
       path.join(originPath, 'examples', 'CE_MAJOR.ts'),
@@ -60,7 +60,7 @@ describe('createSchemaRecord', () => {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createDatabaseItem(
+    const reply = createDatabaseItem(
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,
@@ -85,7 +85,7 @@ describe('createSchemaRecord', () => {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createDatabaseItem(
+    const reply = createDatabaseItem(
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,
@@ -111,7 +111,7 @@ describe('createSchemaRecord', () => {
       throw new Error('schema generation fail');
     }
 
-    const reply = await createDatabaseItem(
+    const reply = createDatabaseItem(
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,

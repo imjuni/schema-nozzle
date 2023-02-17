@@ -8,6 +8,7 @@ export const CE_WORKER_ACTION = {
   SUMMARY_SCHEMA_TYPES: 'summary-schema-types',
   GENERATOR_OPTION_LOAD: 'generator-option-load',
   CREATE_JSON_SCHEMA: 'create-json-schema',
+  CREATE_JSON_SCHEMA_BULK: 'create-json-schema-bulk',
   TERMINATE: 'terminate',
   NOOP: 'noop',
 } as const;

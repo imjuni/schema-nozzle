@@ -33,7 +33,12 @@ export default async function getSchemaGeneratorOption(
   }
 
   if (typeof option.generatorOption === 'object') {
-    return option.generatorOption;
+    return {
+      ...defaultGeneratorOption,
+      tsconfig: option.project,
+      skipTypeCheck: option.skipError,
+      ...option.generatorOption,
+    };
   }
 
   const filePath = path.isAbsolute(option.generatorOption)

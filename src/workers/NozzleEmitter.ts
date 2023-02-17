@@ -16,10 +16,17 @@ import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import type {
+  TFailData,
+  TPickPassWorkerToMasterTaskComplete,
+} from '#workers/interfaces/TWorkerToMasterMessage';
+import dayjs from 'dayjs';
+import fastCopy from 'fast-copy';
 import ignore, { type Ignore } from 'ignore';
 import type { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
+import { isPass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
 import type * as tjsg from 'ts-json-schema-generator';
@@ -45,7 +52,7 @@ export default class NozzleEmitter extends EventEmitter {
 
   accessor schemaes: { filePath: string; exportedType: string; schema: JSONSchema7 }[];
 
-  accessor schemaRecords: IDatabaseItem[];
+  accessor databaseItems: IDatabaseItem[];
 
   constructor(args?: { ee: ConstructorParameters<typeof EventEmitter>[0] }) {
     super(args?.ee);
@@ -56,7 +63,7 @@ export default class NozzleEmitter extends EventEmitter {
     this.types = [];
     this.generatorOption = {};
     this.schemaes = [];
-    this.schemaRecords = [];
+    this.databaseItems = [];
 
     process.on('SIGTERM', NozzleEmitter.terminate);
 
@@ -123,6 +130,21 @@ export default class NozzleEmitter extends EventEmitter {
       CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
       (payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data']) => {
         this.createJsonSchema(payload).catch((catched) => {
+          const err = isError(catched, new Error('unknown error raised'));
+          log.error(err.message);
+          log.error(err.stack);
+        });
+      },
+    );
+
+    this.on(
+      CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
+      (
+        payload: TPickMasterToWorkerMessage<
+          typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
+        >['data'],
+      ) => {
+        this.createJsonSchemaBulk(payload).catch((catched) => {
           const err = isError(catched, new Error('unknown error raised'));
           log.error(err.message);
           log.error(err.stack);
@@ -412,18 +434,17 @@ export default class NozzleEmitter extends EventEmitter {
       return;
     }
 
+    const schemaRecord = createDatabaseItem(option, this.types, jsonSchema.pass);
+
     this.schemaes.push(jsonSchema.pass);
-
-    const schemaRecord = await createDatabaseItem(option, this.types, jsonSchema.pass);
-
-    this.schemaRecords.push(schemaRecord.record);
+    this.databaseItems.push(schemaRecord.item);
 
     const records =
       schemaRecord.definitions != null && schemaRecord.definitions.length > 0
-        ? [schemaRecord.record, ...schemaRecord.definitions]
-        : [schemaRecord.record];
+        ? [schemaRecord.item, ...schemaRecord.definitions]
+        : [schemaRecord.item];
 
-    this.schemaRecords.push(...records);
+    this.databaseItems.push(...records);
 
     // send message to master process
     process.send?.({
@@ -441,6 +462,92 @@ export default class NozzleEmitter extends EventEmitter {
         result: 'pass',
         data: records,
       },
+    } satisfies TWorkerToMasterMessage);
+  }
+
+  async createJsonSchemaBulk(
+    payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK>['data'],
+  ) {
+    const { option } = this.check(
+      CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
+      'ts-json-schema-generator project load fail',
+    );
+
+    const startAt = dayjs();
+    const schemas: ReturnType<typeof createJSONSchema>[] = [];
+    const items: IDatabaseItem[] = [];
+    const errors: Extract<TFailData, { kind: 'json-schema-generate' }>[] = [];
+    const exportedTypes = fastCopy(payload);
+
+    await new Promise<void>((resolve) => {
+      const intervalHandle = setInterval(() => {
+        const exportedType = exportedTypes.shift();
+        const currentAt = dayjs();
+
+        // timeout, wait 30 second
+        if (exportedType == null || currentAt.diff(startAt, 'second') > option.generatorTimeout) {
+          clearInterval(intervalHandle);
+          resolve();
+          return;
+        }
+
+        const jsonSchema = createJSONSchema(
+          exportedType.filePath,
+          exportedType.exportedType,
+          this.generatorOption,
+        );
+
+        if (isPass(jsonSchema)) {
+          this.schemaes.push(jsonSchema.pass);
+
+          const databaseItem = createDatabaseItem(option, this.types, jsonSchema.pass);
+
+          const definitionItems =
+            databaseItem.definitions != null && databaseItem.definitions.length > 0
+              ? [databaseItem.item, ...databaseItem.definitions]
+              : [databaseItem.item];
+
+          this.databaseItems.push(databaseItem.item);
+          items.push(databaseItem.item);
+
+          this.databaseItems.push(...definitionItems);
+          items.push(...definitionItems);
+        } else {
+          errors.push({
+            kind: 'json-schema-generate',
+            message: jsonSchema.fail.message,
+            stack: jsonSchema.fail.stack,
+            exportedType: exportedType.exportedType,
+            filePath: exportedType.filePath,
+          });
+        }
+
+        // send message to master process
+        process.send?.({
+          command: CE_MASTER_ACTION.PROGRESS_UPDATE,
+          data: {
+            schemaName: exportedType.exportedType,
+          },
+        } satisfies TWorkerToMasterMessage);
+
+        schemas.push(jsonSchema);
+      }, 20);
+    });
+
+    // send message to master process
+    process.send?.({
+      command: CE_MASTER_ACTION.TASK_COMPLETE,
+      data: {
+        command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
+        id: this.id,
+        result: 'pass',
+        data: {
+          pass: items,
+          fail: errors,
+        },
+      } satisfies TPickPassWorkerToMasterTaskComplete<
+        typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
+      >,
     } satisfies TWorkerToMasterMessage);
   }
 }

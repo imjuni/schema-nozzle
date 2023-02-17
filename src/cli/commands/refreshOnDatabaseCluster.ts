@@ -8,9 +8,9 @@ import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import SchemaNozzleError from '#errors/SchemaNozzleError';
+import createJSONSchemaCommand from '#modules/createJSONSchemaCommand';
 import logger from '#tools/logger';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import {
   isFailTaskComplete,
@@ -27,7 +27,8 @@ const log = logger();
 
 export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
-    populate(os.cpus().length).forEach(() => workers.add(cluster.fork()));
+    const workerSize = os.cpus().length;
+    populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
     spinner.start('TypeScript source code compile, ...');
 
@@ -134,7 +135,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
 
     workers.sendAll({
       command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }>);
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD>);
 
     reply = await workers.wait();
 
@@ -151,35 +152,38 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       throw new SchemaNozzleError(failReply.error);
     }
 
-    progress.start(exportedTypes.length, 0, '');
+    const generationCommands = createJSONSchemaCommand(workerSize, exportedTypes);
 
-    workers.send(
-      ...exportedTypes.map((exportedType) => {
-        return {
-          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
-          data: { exportedType: exportedType.identifier, filePath: exportedType.filePath },
-        } satisfies Extract<
-          TMasterToWorkerMessage,
-          { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
-        >;
-      }),
-    );
+    progress.start(exportedTypes.length, 0, '');
+    workers.send(...generationCommands);
 
     reply = await workers.wait(option.generatorTimeout);
 
     progress.stop();
 
-    const successes = reply.data.filter(isPassTaskComplete) as Extract<
-      TPassWorkerToMasterTaskComplete,
-      { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
-    >[];
+    const passes = reply.data.filter(isPassTaskComplete);
 
-    log.trace(`reply::: ${JSON.stringify(successes.map((items) => items.data).flat())}`);
+    if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
+      const pass = passes as Extract<
+        TPassWorkerToMasterTaskComplete,
+        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK }
+      >[];
+      const db = await openDatabase(resolvedPaths);
+      const newDb = mergeDatabaseItems(db, pass.map((item) => item.data.pass).flat());
 
-    const db = await openDatabase(resolvedPaths);
-    const newDb = mergeDatabaseItems(db, successes.map((item) => item.data).flat());
+      await saveDatabase(option, newDb);
+    } else {
+      log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
-    await saveDatabase(option, newDb);
+      const items = passes as Extract<
+        TPassWorkerToMasterTaskComplete,
+        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+      >[];
+      const db = await openDatabase(resolvedPaths);
+      const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());
+
+      await saveDatabase(option, newDb);
+    }
 
     workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
   } catch (caught) {
