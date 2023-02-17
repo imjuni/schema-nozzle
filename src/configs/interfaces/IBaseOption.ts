@@ -13,7 +13,4 @@ export default interface IBaseOption {
 
   /** skip compile error */
   skipError: boolean;
-
-  /** ts-json-schema-generator timeout: default 90 seconds */
-  generatorTimeout: number;
 }

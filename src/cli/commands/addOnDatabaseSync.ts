@@ -54,26 +54,23 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
     const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
-    const newRecords = (
-      await Promise.all(
-        schemaTypes.map(async (selectedType) => {
-          const schema = createJSONSchema(
-            selectedType.filePath,
-            selectedType.identifier,
-            option.generatorOptionObject,
-          );
+    const newRecords = schemaTypes
+      .map((selectedType) => {
+        const schema = createJSONSchema(
+          selectedType.filePath,
+          selectedType.identifier,
+          option.generatorOptionObject,
+        );
 
-          if (schema.type === 'fail') {
-            return undefined;
-          }
+        if (schema.type === 'fail') {
+          return undefined;
+        }
 
-          const record = createDatabaseItem(option, projectExportedTypes, schema.pass);
-          const records = [record.item, ...(record.definitions ?? [])];
+        const record = createDatabaseItem(option, projectExportedTypes, schema.pass);
+        const records = [record.item, ...(record.definitions ?? [])];
 
-          return records;
-        }),
-      )
-    )
+        return records;
+      })
       .flat()
       .filter((record): record is IDatabaseItem => record != null);
 
@@ -87,9 +84,9 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
         .join(', ')}] add complete`,
       channel: 'succeed',
     });
-  } catch (catched) {
+  } catch (caught) {
     spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(catched) ?? new Error('Unknown error raised');
+    const err = isError(caught) ?? new Error('Unknown error raised');
     throw err;
   }
 }

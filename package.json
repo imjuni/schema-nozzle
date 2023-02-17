@@ -10,7 +10,7 @@
     "lint": "just --config ./.configs/just.config.ts lint",
     "rollup:dev": "just --config ./.configs/just.config.ts rollup:dev",
     "rollup:prod": "just --config ./.configs/just.config.ts rollup:prod",
-    "test": "LOG_LEVEL=trace jest --coverage",
+    "test": "jest --coverage",
     "dd": "deps-diff md -d prod -d dev --title-list-type '*' --deps-list-type '*' --content-list-type '*'",
     "prepublishOnly": "node prepublish.cjs",
     "pub": "just --config ./.configs/just.config.ts pub",

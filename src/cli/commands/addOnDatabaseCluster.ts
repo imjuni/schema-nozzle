@@ -1,4 +1,5 @@
 import progress from '#cli/display/progress';
+import showFailMessage from '#cli/display/showFailMessage';
 import spinner from '#cli/display/spinner';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
@@ -29,7 +30,8 @@ export default async function addOnDatabaseCluster(
   baseOption: TAddSchemaBaseOption,
 ): Promise<void> {
   try {
-    populate(os.cpus().length).forEach(() => workers.add(cluster.fork()));
+    const workerSize = baseOption.maxWorkers ?? os.cpus().length;
+    populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
     spinner.start('TypeScript project loading, ...');
 
@@ -187,6 +189,8 @@ export default async function addOnDatabaseCluster(
 
     const passes = reply.data.filter(isPassTaskComplete);
 
+    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+
     if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
       const pass = passes as Extract<
         TPassWorkerToMasterTaskComplete,
@@ -209,7 +213,8 @@ export default async function addOnDatabaseCluster(
       await saveDatabase(option, newDb);
     }
 
-    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+    const fails = reply.data.filter(isFailTaskComplete);
+    showFailMessage(fails.map((fail) => fail.error));
   } catch (caught) {
     const err = isError(caught) ?? new Error('Unknown error raised');
     spinner.stop({ message: err.message, channel: 'fail' });

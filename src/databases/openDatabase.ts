@@ -5,7 +5,7 @@ import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption'
 import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
 import safeParse from '#tools/safeParse';
-import fs from 'fs';
+import fs from 'fs/promises';
 import { exists, isDirectory } from 'my-node-fp';
 import path from 'path';
 
@@ -20,7 +20,7 @@ export default async function openDatabase(
     ? path.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
     : option.output;
 
-  const rawDb = (await exists(dbPath)) ? (await fs.promises.readFile(dbPath)).toString() : '{}';
+  const rawDb = (await exists(dbPath)) ? (await fs.readFile(dbPath)).toString() : '{}';
 
   const db = safeParse<TDatabase>(rawDb);
 

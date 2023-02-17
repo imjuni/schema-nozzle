@@ -5,6 +5,7 @@ import logger from '#tools/logger';
 import posixJoin from '#tools/posixJoin';
 import safeParse from '#tools/safeParse';
 import 'jest';
+import * as jscp from 'jsonc-parser';
 import path from 'path';
 
 describe('getRativeCwd', () => {
@@ -63,9 +64,27 @@ describe('safeParse', () => {
 
     expect(r02.fail).toMatchObject({});
   });
+
+  test('exception -2', () => {
+    jest.spyOn(jscp, 'parse').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const r = safeParse('{}');
+    if (r.type === 'pass') throw new Error('invalid');
+    expect(r.fail).toBeInstanceOf(Error);
+  });
 });
 
 describe('logger', () => {
+  test('level - process.env undefined', () => {
+    process.env = {};
+    process.env.LOG_LEVEL = undefined;
+
+    const log = logger();
+    expect(log.level).toEqual('info');
+  });
+
   test('log', () => {
     const log = logger();
 
@@ -86,6 +105,12 @@ describe('logger', () => {
     log.info('info');
     log.error('error');
     log.fatal('fatal');
+  });
+
+  test('level - process.env', () => {
+    process.env.LOG_LEVEL = 'verbose';
+    const log = logger();
+    expect(log.level).toEqual('verbose');
   });
 });
 

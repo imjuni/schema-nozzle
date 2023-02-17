@@ -25,8 +25,8 @@ export default async function getAddTypes(
     }, {});
 
     return pass(option.types.map((exportedType) => exportedTypeMap[exportedType]));
-  } catch (catched) {
-    const err = isError(catched) ?? new Error('unknown error raised get typescript files');
+  } catch (caught) {
+    const err = isError(caught, new Error('unknown error raised get typescript files'));
     return fail(err);
   }
 }

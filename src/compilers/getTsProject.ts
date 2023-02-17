@@ -14,8 +14,8 @@ export default async function getTsProject(
     const project = new tsm.Project(option);
 
     return pass(project);
-  } catch (catched) {
-    const err = isError(catched) ?? new Error('raised unknown error get typescript project');
+  } catch (caught) {
+    const err = isError(caught, new Error('raised unknown error get typescript project'));
     return fail(err);
   }
 }

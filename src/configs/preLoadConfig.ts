@@ -5,6 +5,7 @@ import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import minimist from 'minimist';
+import { isError } from 'my-easy-fp';
 import { existsSync, getDirnameSync } from 'my-node-fp';
 
 const log = logger();
@@ -69,8 +70,8 @@ export default function preLoadConfig() {
     }
 
     return {};
-  } catch (catched) {
-    const err = catched instanceof Error ? catched : new Error('unknown error raised');
+  } catch (caught) {
+    const err = isError(caught, new Error('unknown error raised'));
 
     log.error(err);
     log.error(err.stack);

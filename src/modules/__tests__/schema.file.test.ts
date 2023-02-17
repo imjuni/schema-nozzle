@@ -58,7 +58,7 @@ describe('getSchemaFileContent', () => {
     const lines = await getSchemaFileContent(
       path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.LIST_FILE),
     );
-    expect(lines).toMatchObject(['*.ts', '!TGenericExample.ts']);
+    expect(lines).toMatchObject(['*.ts']);
   });
 });
 

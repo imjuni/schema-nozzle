@@ -11,7 +11,6 @@ export const baseOption: IBaseOption = {
   types: [],
   skipError: true,
   output: '.',
-  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const addCmdOption: TAddSchemaOption = {
@@ -24,6 +23,7 @@ export const addCmdOption: TAddSchemaOption = {
   listFile: '',
   format: CE_OUTPUT_FORMAT.JSON,
   generatorOptionObject: {},
+  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const refreshCmdOption: TRefreshSchemaOption = {
@@ -35,6 +35,7 @@ export const refreshCmdOption: TRefreshSchemaOption = {
   listFile: '',
   files: [],
   generatorOptionObject: {},
+  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const deleteCmdOption: TDeleteSchemaOption = {
