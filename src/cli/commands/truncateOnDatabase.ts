@@ -13,9 +13,9 @@ export default async function truncateOnDatabase(option: TTruncateSchemaOption) 
       message: 'truncate complete',
       channel: 'succeed',
     });
-  } catch (catched) {
+  } catch (caught) {
     spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(catched) ?? new Error('Unknown error raised');
+    const err = isError(caught) ?? new Error('Unknown error raised');
     throw err;
   }
 }

@@ -3,7 +3,7 @@ import { exists } from 'my-node-fp';
 import path from 'path';
 
 export default async function getSchemaFilterFilePath(cwd: string, filePath?: string) {
-  if (filePath != null && (await exists(path.resolve(filePath)))) {
+  if (filePath != null && filePath !== '' && (await exists(path.resolve(filePath)))) {
     return path.resolve(filePath);
   }
 

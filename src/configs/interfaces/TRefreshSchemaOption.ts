@@ -6,9 +6,6 @@ import type * as tjsg from 'ts-json-schema-generator';
 interface IRefreshSchemaOption {
   discriminator: 'refresh-schema';
 
-  /** ts-json-schema-generator option file path */
-  generatorOption?: string | tjsg.Config;
-
   /**
    * json-schema save format
    *
@@ -20,6 +17,15 @@ interface IRefreshSchemaOption {
 
   /** target list filename */
   listFile?: string;
+
+  /** max worker count */
+  maxWorkers?: number;
+
+  /** ts-json-schema-generator option file path */
+  generatorOption?: string | tjsg.Config;
+
+  /** ts-json-schema-generator timeout: default 90 seconds */
+  generatorTimeout: number;
 }
 
 export type TRefreshSchemaBaseOption = IRefreshSchemaOption & IBaseOption;

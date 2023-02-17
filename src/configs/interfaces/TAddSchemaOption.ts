@@ -12,9 +12,6 @@ export interface IAddSchemaOption {
   /** use checkbox with multiple selections */
   multiple: boolean;
 
-  /** ts-json-schema-generator option file path */
-  generatorOption?: string | tjsg.Config;
-
   /** target list filename */
   listFile?: string;
 
@@ -25,6 +22,15 @@ export interface IAddSchemaOption {
    * * base64: plain string > base64
    * */
   format: CE_OUTPUT_FORMAT;
+
+  /** max worker count */
+  maxWorkers?: number;
+
+  /** ts-json-schema-generator option file path */
+  generatorOption?: string | tjsg.Config;
+
+  /** ts-json-schema-generator timeout: default 90 seconds */
+  generatorTimeout: number;
 }
 
 export type TAddSchemaBaseOption = IAddSchemaOption & IBaseOption;

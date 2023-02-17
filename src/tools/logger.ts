@@ -26,6 +26,7 @@ export default function logger() {
       sync: true,
       customPrettifiers: {
         level: (loglevel: string | object) => {
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           const ll = Number.parseInt(loglevel.toString(), 10);
           const levelLabel = pino.levels.labels[ll].toLowerCase();
 

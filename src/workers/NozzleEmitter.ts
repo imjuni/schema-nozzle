@@ -79,48 +79,48 @@ export default class NozzleEmitter extends EventEmitter {
     });
 
     this.on(CE_WORKER_ACTION.PROJECT_LOAD, () => {
-      this.loadProject().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.loadProject().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
     });
 
     this.on(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC, () => {
-      this.diagonostic().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.diagonostic().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
     });
 
     this.on(CE_WORKER_ACTION.LOAD_DATABASE, () => {
-      this.loadDatabase().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.loadDatabase().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
     });
 
     this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES, () => {
-      this.summarySchemaFiles().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.workerSummarySchemaFiles().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
     });
 
     this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES, () => {
-      this.summarySchemaTypes().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.workerSummarySchemaTypes().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
     });
 
     this.on(CE_WORKER_ACTION.GENERATOR_OPTION_LOAD, () => {
-      this.generatorOptionLoad().catch((catched) => {
-        const err = isError(catched, new Error('unknown error raised'));
+      this.generatorOptionLoad().catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
         log.error(err.message);
         log.error(err.stack);
       });
@@ -129,8 +129,8 @@ export default class NozzleEmitter extends EventEmitter {
     this.on(
       CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
       (payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data']) => {
-        this.createJsonSchema(payload).catch((catched) => {
-          const err = isError(catched, new Error('unknown error raised'));
+        this.createJsonSchema(payload).catch((caught) => {
+          const err = isError(caught, new Error('unknown error raised'));
           log.error(err.message);
           log.error(err.stack);
         });
@@ -144,8 +144,8 @@ export default class NozzleEmitter extends EventEmitter {
           typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
         >['data'],
       ) => {
-        this.createJsonSchemaBulk(payload).catch((catched) => {
-          const err = isError(catched, new Error('unknown error raised'));
+        this.createJsonSchemaBulk(payload).catch((caught) => {
+          const err = isError(caught, new Error('unknown error raised'));
           log.error(err.message);
           log.error(err.stack);
         });
@@ -274,7 +274,7 @@ export default class NozzleEmitter extends EventEmitter {
     } satisfies TWorkerToMasterMessage);
   }
 
-  async summarySchemaFiles() {
+  async workerSummarySchemaFiles() {
     const { option, project } = this.check(
       CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
       'summary schema files fail',
@@ -299,7 +299,7 @@ export default class NozzleEmitter extends EventEmitter {
     } satisfies TWorkerToMasterMessage);
   }
 
-  async summarySchemaTypes() {
+  async workerSummarySchemaTypes() {
     const { option, project } = this.check(
       CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
       'summary schema types fail',

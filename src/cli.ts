@@ -104,8 +104,8 @@ if (process.env.SYNC_MODE === 'true') {
     await parser.argv;
   };
 
-  handler().catch((catched) => {
-    const err = isError(catched, new Error('unknown error raised'));
+  handler().catch((caught) => {
+    const err = isError(caught, new Error('unknown error raised'));
     log.error(err.message);
     log.error(err.stack);
 
@@ -131,8 +131,8 @@ if (process.env.SYNC_MODE === 'true') {
       await parser.argv;
     };
 
-    handler().catch((catched) => {
-      const err = isError(catched, new Error('unknown error raised'));
+    handler().catch((caught) => {
+      const err = isError(caught, new Error('unknown error raised'));
       log.error(err.message);
       log.error(err.stack);
 
@@ -141,8 +141,8 @@ if (process.env.SYNC_MODE === 'true') {
   }
 
   if (cluster.isWorker) {
-    worker2().catch((catched) => {
-      const err = isError(catched, new Error('unknown error raised'));
+    worker2().catch((caught) => {
+      const err = isError(caught, new Error('unknown error raised'));
       log.error(err.message);
       log.error(err.stack);
       process.exit(1);
