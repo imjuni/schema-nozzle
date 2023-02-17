@@ -33,6 +33,15 @@ export type TPassWorkerToMasterTaskComplete =
       result: 'pass';
       id: number;
       data: IDatabaseItem[];
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK;
+      result: 'pass';
+      id: number;
+      data: {
+        pass: IDatabaseItem[];
+        fail: Extract<TFailData, { kind: 'json-schema-generate' }>[];
+      };
     };
 
 export type TPickPassWorkerToMasterTaskComplete<T> = Extract<

@@ -67,8 +67,8 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
             return undefined;
           }
 
-          const record = await createDatabaseItem(option, projectExportedTypes, schema.pass);
-          const records = [record.record, ...(record.definitions ?? [])];
+          const record = createDatabaseItem(option, projectExportedTypes, schema.pass);
+          const records = [record.item, ...(record.definitions ?? [])];
 
           return records;
         }),

@@ -185,17 +185,29 @@ export default async function addOnDatabaseCluster(
 
     progress.stop();
 
-    const successes = reply.data.filter(isPassTaskComplete) as Extract<
-      TPassWorkerToMasterTaskComplete,
-      { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
-    >[];
+    const passes = reply.data.filter(isPassTaskComplete);
 
-    log.trace(`reply::: ${JSON.stringify(successes.map((items) => items.data).flat())}`);
+    if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
+      const pass = passes as Extract<
+        TPassWorkerToMasterTaskComplete,
+        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK }
+      >[];
+      const db = await openDatabase(resolvedPaths);
+      const newDb = mergeDatabaseItems(db, pass.map((item) => item.data.pass).flat());
 
-    const db = await openDatabase(resolvedPaths);
-    const newDb = mergeDatabaseItems(db, successes.map((item) => item.data).flat());
+      await saveDatabase(option, newDb);
+    } else {
+      log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
-    await saveDatabase(option, newDb);
+      const items = passes as Extract<
+        TPassWorkerToMasterTaskComplete,
+        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+      >[];
+      const db = await openDatabase(resolvedPaths);
+      const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());
+
+      await saveDatabase(option, newDb);
+    }
 
     workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
   } catch (caught) {

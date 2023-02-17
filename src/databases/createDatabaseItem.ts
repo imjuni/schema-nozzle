@@ -10,7 +10,7 @@ import logger from '#tools/logger';
 import fastCopy from 'fast-copy';
 import type { JSONSchema7 } from 'json-schema';
 import { settify } from 'my-easy-fp';
-import { getDirname } from 'my-node-fp';
+import { getDirnameSync } from 'my-node-fp';
 import type { TPickPass } from 'my-only-either';
 import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
 import path from 'path';
@@ -34,17 +34,17 @@ const traverseHandle: TraversalCallback = ({
 
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
-export default async function createDatabaseItem(
+export default function createDatabaseItem(
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project'>
     | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof createJSONSchema>>,
-): Promise<{
-  record: IDatabaseItem;
+): {
+  item: IDatabaseItem;
   definitions?: IDatabaseItem[];
-}> {
-  const basePath = await getDirname(option.project);
+} {
+  const basePath = getDirnameSync(option.project);
   const targetSchema = fastCopy(schema.schema);
   const importedMap = exportedTypes.reduce<
     Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
@@ -71,7 +71,7 @@ export default async function createDatabaseItem(
       schema: stringified,
     };
 
-    return { record };
+    return { item: record };
   }
 
   // extract schema from definitions field
@@ -152,5 +152,5 @@ export default async function createDatabaseItem(
     schema: stringified,
   };
 
-  return { record, definitions };
+  return { item: record, definitions };
 }

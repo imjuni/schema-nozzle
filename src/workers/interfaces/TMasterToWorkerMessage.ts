@@ -22,6 +22,10 @@ type TMasterToWorkerMessage =
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;
       data: { filePath: string; exportedType: string };
     }
+  | {
+      command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK;
+      data: { filePath: string; exportedType: string }[];
+    }
   | { command: typeof CE_WORKER_ACTION.NOOP }
   | { command: typeof CE_WORKER_ACTION.TERMINATE };
 
