@@ -28,7 +28,7 @@ const log = logger();
 
 export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
-    const workerSize = baseOption.maxWorkers ?? os.cpus().length;
+    const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
     populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
     spinner.start('TypeScript source code compile, ...');
