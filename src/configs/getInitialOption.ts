@@ -25,7 +25,7 @@ export default function getInitialOption(output: string, project: string, listFi
   "multiple": true,
 
   // schema file listing filename
-  "list-file": "${listFile}"
+  "list-file": "${listFile}",
 
   // ts-json-schema-generator option
   "generatorOption": {

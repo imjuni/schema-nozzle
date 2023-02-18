@@ -1,7 +1,9 @@
 # schema-nozzle
 
+---
+
 ![ts](https://flat.badgen.net/badge/Built%20With/TypeScript/blue)
-[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE) [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/main/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle)
+[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE) [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle)
 
 `schema-nozzle` generates json-schema in the **TypeScript** `interface`, `type alias`, `class` and `enum`.
 
@@ -13,13 +15,12 @@ Why `schema-nozzle`?
 
 Strict JSON data validations are need many effort. You can reduce effort using `schema-nozzle` and Feel free 🤩!
 
-## Table of Contents
-
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
 - [How it works?](#how-it-works)
 - [Example using fastify.js](#example-using-fastifyjs)
+- [Roadmaps](#roadmaps)
 - [License](#license)
 
 ## Getting Started
@@ -86,6 +87,14 @@ SN --> DB[db.json]
 A complete example of using schema-nozzle to create a swagger.io document and use json-schema to process input-output value verification can be found at [Ma-eum](https://github.com/imjuni/maeum). See the example of how DTO type declaration handles swagger.io document creation, json-schema creation, and typedoc document creation all at once!
 
 - fastify with schema-nozzle [example](/docs/fastify.md)
+
+## Roadmaps
+
+- [ ] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
+- [ ] add watch command: watch `.nozzlefiles` list and add/del schema
+- [ ] add more test
+- [ ] tag support each schema
+- [ ] load, get, set interface for schema store
 
 ## License
 
