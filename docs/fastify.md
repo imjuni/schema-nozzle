@@ -1,10 +1,7 @@
 # Fastify.js example
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
 - [Create new project using fastify-cli](#create-new-project-using-fastify-cli)
-- [schema-nozzle setup](#schema-nozzle-setup)
+- [`schema-nozzle` setup](#schema-nozzle-setup)
 - [Load json-schema to fastify](#load-json-schema-to-fastify)
 - [Add new DTO interface](#add-new-dto-interface)
 - [Add new route and API](#add-new-route-and-api)

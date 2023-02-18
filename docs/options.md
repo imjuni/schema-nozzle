@@ -1,5 +1,11 @@
 # Options
 
+- [command list](#command-list)
+- [`add`, `a` command options](#add-a-command-options)
+- [`del`, `d` command options](#del-d-command-options)
+- [`refresh`, `r` command options](#refresh-r-command-options)
+- [`truncate`, `t` command options](#truncate-t-command-options)
+
 ## command list
 
 | command  | alias | description                                 |
