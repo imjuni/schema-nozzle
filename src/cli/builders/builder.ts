@@ -33,7 +33,7 @@ export default function builder(argv: Argv) {
       default: true,
     })
     .option('list-file', {
-      describe: 'target list filename',
+      describe: 'schema file listing filename',
       type: 'string',
       default: undefined,
     });

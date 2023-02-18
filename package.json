@@ -1,7 +1,10 @@
 {
   "name": "schema-nozzle",
   "version": "0.16.0",
-  "description": "generate json-schema from typescript source code and management it",
+  "description": "json-schema generate from typescript interface and type alias, class, enum",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "clean": "just --config ./.configs/just.config.ts clean",
     "build": "just --config ./.configs/just.config.ts build",
@@ -24,19 +27,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/imjuni/create-ts-json-schema.git"
+    "url": "git+https://github.com/imjuni/schema-nozzle.git"
   },
-  "keywords": [],
+  "keywords": [
+    "schema",
+    "json-schema",
+    "jsonschema",
+    "cli",
+    "typescript",
+    "ts",
+    "json"
+  ],
   "author": "ByungJoon Lee",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/imjuni/create-ts-json-schema/issues"
+    "url": "https://github.com/imjuni/schema-nozzle/issues"
   },
-  "homepage": "https://github.com/imjuni/create-ts-json-schema#readme",
+  "homepage": "https://github.com/imjuni/schema-nozzle#readme",
   "dependencies": {
     "chalk": "^4.1.2",
     "cli-progress": "^3.11.2",
-    "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "fast-copy": "^2.1.4",
     "fast-glob": "^3.2.12",
@@ -47,7 +57,6 @@
     "inquirer": "^8.2.5",
     "inquirer-autocomplete-prompt": "^2.0.0",
     "inquirer-ts-checkbox-plus-prompt": "^1.0.1",
-    "is-relative": "^1.0.0",
     "jsonc-parser": "^3.2.0",
     "mathjs": "^11.5.0",
     "minimist": "^1.2.7",
@@ -61,11 +70,8 @@
     "prettier": "^2.8.3",
     "ts-json-schema-generator": "^1.2.0",
     "ts-morph": "^17.0.1",
-    "tsimportlib": "0.0.3",
     "tslib": "^2.5.0",
     "type-fest": "^3.5.3",
-    "url-join": "^5.0.0",
-    "url-naong": "^1.0.0",
     "yargs": "^17.6.2"
   },
   "devDependencies": {
@@ -74,10 +80,8 @@
     "@slack/web-api": "^6.8.0",
     "@tsconfig/node14": "^1.0.3",
     "@types/cli-progress": "^3.11.0",
-    "@types/crypto-js": "^4.1.1",
     "@types/inquirer": "^9.0.2",
     "@types/inquirer-autocomplete-prompt": "^3.0.0",
-    "@types/is-relative": "^1.0.0",
     "@types/jest": "^29.1.2",
     "@types/minimist": "^1.2.2",
     "@types/node": "^18.11.0",

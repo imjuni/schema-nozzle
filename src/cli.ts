@@ -6,11 +6,13 @@ import truncateBuilder from '#cli/builders/truncateBuilder';
 import addOnDatabaseCluster from '#cli/commands/addOnDatabaseCluster';
 import addOnDatabaseSync from '#cli/commands/addOnDatabaseSync';
 import deleteOnDatabase from '#cli/commands/deleteOnDatabase';
+import initNozzle from '#cli/commands/initNozzle';
 import refreshOnDatabaseCluster from '#cli/commands/refreshOnDatabaseCluster';
 import refreshOnDatabaseSync from '#cli/commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '#cli/commands/truncateOnDatabase';
 import spinner from '#cli/display/spinner';
 import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
+import type IInitOption from '#configs/interfaces/IInitOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
@@ -19,7 +21,7 @@ import isValidateConfig from '#configs/isValidateConfig';
 import preLoadConfig from '#configs/preLoadConfig';
 import withDefaultOption from '#configs/withDefaultOption';
 import logger from '#tools/logger';
-import worker2 from '#workers/worker';
+import worker from '#workers/worker';
 import cluster from 'cluster';
 import { isError } from 'my-easy-fp';
 import yargs, { type CommandModule } from 'yargs';
@@ -85,6 +87,17 @@ const truncateCmd: CommandModule<TTruncateSchemaOption, TTruncateSchemaOption> =
     await truncateOnDatabase(option);
   },
 };
+const initCmd: CommandModule<IInitOption, IInitOption> = {
+  command: CE_COMMAND_LIST.INIT,
+  aliases: CE_COMMAND_LIST.INIT_ALIAS,
+  describe: 'init schema-nozzle',
+  builder: (argv) => argv,
+  handler: async (argv) => {
+    spinner.isEnable = true;
+
+    await initNozzle(argv);
+  },
+};
 
 if (process.env.SYNC_MODE === 'true') {
   const parser = yargs(process.argv.slice(2));
@@ -94,6 +107,7 @@ if (process.env.SYNC_MODE === 'true') {
     .command(deleteCmd as CommandModule<{}, TDeleteSchemaOption>)
     .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
     .command(truncateCmd as CommandModule<{}, TTruncateSchemaOption>)
+    .command(initCmd as CommandModule<{}, IInitOption>)
     .check(isValidateConfig)
     .recommendCommands()
     .demandCommand(1, 1)
@@ -121,6 +135,7 @@ if (process.env.SYNC_MODE === 'true') {
       .command(deleteCmd as CommandModule<{}, TDeleteSchemaOption>)
       .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
       .command(truncateCmd as CommandModule<{}, TTruncateSchemaOption>)
+      .command(initCmd as CommandModule<{}, IInitOption>)
       .check(isValidateConfig)
       .recommendCommands()
       .demandCommand(1, 1)
@@ -141,7 +156,7 @@ if (process.env.SYNC_MODE === 'true') {
   }
 
   if (cluster.isWorker) {
-    worker2().catch((caught) => {
+    worker().catch((caught) => {
       const err = isError(caught, new Error('unknown error raised'));
       log.error(err.message);
       log.error(err.stack);

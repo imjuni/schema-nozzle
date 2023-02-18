@@ -35,7 +35,7 @@ describe('getSchemaGeneratorOption', () => {
       sortProps: true,
       strictTuples: true,
       encodeRefs: true,
-      additionalProperties: true,
+      additionalProperties: false,
     });
   });
 
