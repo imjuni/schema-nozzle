@@ -14,7 +14,7 @@ const defaultGeneratorOption: tjsg.Config = {
   sortProps: true,
   strictTuples: true,
   encodeRefs: true,
-  additionalProperties: true,
+  additionalProperties: false,
 };
 
 export default async function getSchemaGeneratorOption(

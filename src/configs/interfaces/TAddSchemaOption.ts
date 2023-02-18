@@ -12,7 +12,7 @@ export interface IAddSchemaOption {
   /** use checkbox with multiple selections */
   multiple: boolean;
 
-  /** target list filename */
+  /** schema file listing filename */
   listFile?: string;
 
   /**

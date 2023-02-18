@@ -62,6 +62,6 @@
     "pretty": true,
     "typeRoots": ["src/@types", "node_modules/@types"]
   },
-  "include": ["**/*"],
+  "include": ["**/*.ts"],
   "exclude": ["examples/**/*", "dist/**", "**/.configs/**", "**/docs/**/*"]
 }

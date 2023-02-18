@@ -8,7 +8,7 @@ export default interface IBaseOption {
   /** type name in input filename */
   types: string[];
 
-  /** database file directory */
+  /** database file directory or filename */
   output: string;
 
   /** skip compile error */

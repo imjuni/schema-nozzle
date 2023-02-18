@@ -1,4 +1,5 @@
 import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
+import type IInitOption from '#configs/interfaces/IInitOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
@@ -19,15 +20,30 @@ const commands: string[] = [
   CE_COMMAND_LIST.REFRESH_ALIAS,
   CE_COMMAND_LIST.TRUNCATE,
   CE_COMMAND_LIST.TRUNCATE_ALIAS,
+  CE_COMMAND_LIST.INIT,
+  CE_COMMAND_LIST.INIT_ALIAS,
 ];
 
 export default function isValidateConfig<
-  T extends TDeleteSchemaOption | TAddSchemaOption | TTruncateSchemaOption | TRefreshSchemaOption,
+  T extends
+    | TDeleteSchemaOption
+    | TAddSchemaOption
+    | TTruncateSchemaOption
+    | TRefreshSchemaOption
+    | IInitOption,
 >(argv: T) {
   const [command] = (argv as any as ArgumentsCamelCase<T>)._;
 
   if (commands.includes(`${command}`) === false) {
     throw new Error(`"${command}" is invalid command`);
+  }
+
+  if (command === CE_COMMAND_LIST.INIT || command === CE_COMMAND_LIST.INIT_ALIAS) {
+    return true;
+  }
+
+  if (argv.discriminator === 'init-nozzle') {
+    return true;
   }
 
   const { project } = argv;
