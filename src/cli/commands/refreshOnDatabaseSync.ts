@@ -75,7 +75,7 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
     const schemaFiles = await summarySchemaFiles(project.pass, option);
     const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
-    const newRecords = (
+    const items = (
       await Promise.all(
         schemaTypes.map(async (targetType) => {
           const schema = createJSONSchema(
@@ -88,18 +88,17 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
             return undefined;
           }
 
-          const record = createDatabaseItem(option, projectExportedTypes, schema.pass);
+          const item = createDatabaseItem(option, projectExportedTypes, schema.pass);
+          const withDependencies = [item.item, ...(item.definitions ?? [])];
 
-          const records = [record.item, ...(record.definitions ?? [])];
-
-          return records;
+          return withDependencies;
         }),
       )
     )
       .flat()
       .filter((record): record is IDatabaseItem => record != null);
 
-    const newDb = mergeDatabaseItems(db, newRecords);
+    const newDb = mergeDatabaseItems(db, items);
     await saveDatabase(option, newDb);
 
     spinner.stop({

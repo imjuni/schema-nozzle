@@ -54,7 +54,7 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
     const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
-    const newRecords = schemaTypes
+    const items = schemaTypes
       .map((selectedType) => {
         const schema = createJSONSchema(
           selectedType.filePath,
@@ -66,16 +66,16 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
           return undefined;
         }
 
-        const record = createDatabaseItem(option, projectExportedTypes, schema.pass);
-        const records = [record.item, ...(record.definitions ?? [])];
+        const item = createDatabaseItem(option, projectExportedTypes, schema.pass);
+        const withDependencies = [item.item, ...(item.definitions ?? [])];
 
-        return records;
+        return withDependencies;
       })
       .flat()
       .filter((record): record is IDatabaseItem => record != null);
 
     const db = await openDatabase(option);
-    const newDb = mergeDatabaseItems(db, newRecords);
+    const newDb = mergeDatabaseItems(db, items);
     await saveDatabase(option, newDb);
 
     spinner.stop({

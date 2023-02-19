@@ -1,6 +1,7 @@
 import getExportedFiles from '#compilers/getExportedFiles';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import getSchemaFileContent from '#modules/getSchemaFileContent';
 import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
 import isSourceFileInclude from '#modules/isSourceFileInclude';
@@ -12,7 +13,8 @@ function getFilePaths(
   filePaths: string[],
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'listFile' | 'files'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile' | 'files'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile' | 'files'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'listFile' | 'files'>,
 ) {
   return option.files.length > 0 ? option.files : filePaths;
 }
@@ -21,7 +23,8 @@ export default async function summarySchemaFiles(
   project: tsm.Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'listFile' | 'files' | 'cwd'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile' | 'files' | 'cwd'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'listFile' | 'files' | 'cwd'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'listFile' | 'files' | 'cwd'>,
 ) {
   const filePaths = getExportedFiles(project);
 

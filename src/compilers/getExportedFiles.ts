@@ -20,7 +20,8 @@ export default function getExportedFiles(project: tsm.Project): string[] {
           (exported) =>
             exported.exportedDeclaration.getKind() === tsm.SyntaxKind.TypeAliasDeclaration ||
             exported.exportedDeclaration.getKind() === tsm.SyntaxKind.InterfaceDeclaration ||
-            exported.exportedDeclaration.getKind() === tsm.SyntaxKind.ClassDeclaration,
+            exported.exportedDeclaration.getKind() === tsm.SyntaxKind.ClassDeclaration ||
+            exported.exportedDeclaration.getKind() === tsm.SyntaxKind.EnumDeclaration,
         )
         .map((exported) => exported.exportedDeclaration.getSourceFile().getFilePath());
 

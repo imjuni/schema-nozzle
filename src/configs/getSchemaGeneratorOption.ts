@@ -1,5 +1,6 @@
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import { exists } from 'my-node-fp';
@@ -20,7 +21,8 @@ const defaultGeneratorOption: tjsg.Config = {
 export default async function getSchemaGeneratorOption(
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>,
 ): Promise<tjsg.Config> {
   if (option.generatorOption == null) {
     const generatorOption: tjsg.Config = {

@@ -1,13 +1,17 @@
 import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 
 type TMasterToWorkerMessage =
   | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }
   | {
       command: typeof CE_WORKER_ACTION.OPTION_LOAD;
-      data: { option: TAddSchemaOption | TRefreshSchemaOption; resolvedPaths: IResolvedPaths };
+      data: {
+        option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption;
+        resolvedPaths: IResolvedPaths;
+      };
     }
   | { command: typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC }
   | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }

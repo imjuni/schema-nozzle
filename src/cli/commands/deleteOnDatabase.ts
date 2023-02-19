@@ -54,9 +54,9 @@ export default async function deleteOnDatabase(nullableOption: TDeleteSchemaOpti
       return;
     }
 
-    const newDb = targetTypes.pass.reduce((aggregation, typeName) => {
-      const schemas = deleteDatabaseItem(aggregation, typeName);
-      spinner.update({ message: `delete schema: ${typeName}`, channel: 'succeed' });
+    const newDb = targetTypes.pass.reduce((aggregation, identifier) => {
+      const schemas = deleteDatabaseItem(aggregation, identifier);
+      spinner.update({ message: `delete schema: ${identifier}`, channel: 'succeed' });
       return schemas;
     }, fastCopy(db));
 

@@ -1,8 +1,9 @@
 export const CE_DEFAULT_VALUE = {
-  LIST_FILE: '.nozzlefiles',
+  LIST_FILE_NAME: '.nozzlefiles',
   CONFIG_FILE_NAME: '.nozzlerc',
   TSCONFIG_FILE_NAME: 'tsconfig.json',
   DB_FILE_NAME: 'db.json',
+  WATCH_DEFAULT_GLOB: '**/*.ts',
   DEFAULT_TASK_WAIT_SECOND: 30,
 } as const;
 

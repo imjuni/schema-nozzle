@@ -40,14 +40,14 @@ describe('getSchemaListFilePath', () => {
   });
 
   test('resolved', async () => {
-    const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE);
+    const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd, f);
     expect(result).toEqual(path.resolve(f));
   });
 
   test('default', async () => {
     process.env.INIT_CWD = path.resolve(path.join(process.env.INIT_CWD!, 'examples'));
-    const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE);
+    const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
     expect(result).toEqual(path.resolve(f));
   });
@@ -56,7 +56,7 @@ describe('getSchemaListFilePath', () => {
 describe('getSchemaFileContent', () => {
   test('exist file', async () => {
     const lines = await getSchemaFileContent(
-      path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.LIST_FILE),
+      path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.LIST_FILE_NAME),
     );
     expect(lines).toMatchObject(['*.ts']);
   });
@@ -87,7 +87,7 @@ describe('summarySchemaFiles', () => {
   });
 
   test('file hit test', async () => {
-    const listFile = path.join(data.resolvedPaths.cwd, 'examples', CE_DEFAULT_VALUE.LIST_FILE);
+    const listFile = path.join(data.resolvedPaths.cwd, 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const filter = await summarySchemaFiles(data.project, {
       discriminator: 'add-schema',
       files: [],
