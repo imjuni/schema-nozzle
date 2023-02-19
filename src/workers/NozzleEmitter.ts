@@ -3,6 +3,7 @@ import getTsProject from '#compilers/getTsProject';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import createDatabaseItem from '#databases/createDatabaseItem';
 import openDatabase from '#databases/openDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
@@ -38,7 +39,7 @@ const log = logger();
 export default class NozzleEmitter extends EventEmitter {
   accessor project: tsm.Project | undefined;
 
-  accessor option: TAddSchemaOption | TRefreshSchemaOption | undefined;
+  accessor option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption | undefined;
 
   accessor id: number = 0;
 

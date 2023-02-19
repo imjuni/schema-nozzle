@@ -4,6 +4,7 @@ import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import logger from '#tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
@@ -22,6 +23,8 @@ const commands: string[] = [
   CE_COMMAND_LIST.TRUNCATE_ALIAS,
   CE_COMMAND_LIST.INIT,
   CE_COMMAND_LIST.INIT_ALIAS,
+  CE_COMMAND_LIST.WATCH,
+  CE_COMMAND_LIST.WATCH_ALIAS,
 ];
 
 export default function isValidateConfig<
@@ -30,6 +33,7 @@ export default function isValidateConfig<
     | TAddSchemaOption
     | TTruncateSchemaOption
     | TRefreshSchemaOption
+    | TWatchSchemaOption
     | IInitOption,
 >(argv: T) {
   const [command] = (argv as any as ArgumentsCamelCase<T>)._;

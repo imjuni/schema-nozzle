@@ -40,7 +40,7 @@ export default async function initNozzle(_option: IInitOption) {
   const projectRootDir = await getDirname(answer.tsconfigFilePath);
 
   const outputFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.DB_FILE_NAME);
-  const listFileFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.LIST_FILE);
+  const listFileFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.LIST_FILE_NAME);
   const configFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.CONFIG_FILE_NAME);
 
   await fs.writeFile(
@@ -53,13 +53,13 @@ export default async function initNozzle(_option: IInitOption) {
     channel: 'succeed',
   });
 
-  spinner.start(`create ${CE_DEFAULT_VALUE.LIST_FILE}, ...`);
+  spinner.start(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}, ...`);
 
   const nozzlefiles = tsconfig.include != null ? (tsconfig.include as string[]) : ['**/*.ts'];
   await fs.writeFile(listFileFilePath, `${nozzlefiles.join('\n')}\n`);
 
   spinner.update({
-    message: `create ${CE_DEFAULT_VALUE.LIST_FILE}: ${listFileFilePath}`,
+    message: `create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`,
     channel: 'succeed',
   });
 

@@ -13,10 +13,12 @@ Why `schema-nozzle`?
 
 Strict JSON data validations are need many effort. You can reduce effort using `schema-nozzle` and Feel free 🤩!
 
+## Table of Contents <!-- omit in toc -->
+
 - [Getting Started](#getting-started)
 - [Installation](#installation)
-- [Usage](#usage)
 - [How it works?](#how-it-works)
+- [Usage](#usage)
 - [Example using fastify.js](#example-using-fastifyjs)
 - [Roadmaps](#roadmaps)
 - [License](#license)
@@ -39,6 +41,25 @@ You can see this mechanics!
 ```bash
 npm install schema-nozzle
 ```
+
+## How it works?
+
+`schema-nozzle` using **TypeScript Compiler API**. So `schema-nozzle` exactly know `interface`, `type alias`, `class` and `enum`.
+
+```mermaid
+graph LR
+
+INP_TI[interface] --> SN[schema-nozzle]
+INP_TT[type alias] --> SN[schema-nozzle]
+INP_TC[class] --> SN[schema-nozzle]
+INP_TE[enum] --> SN[schema-nozzle]
+SN --> |exported| DB[db.json]
+SN --> |not exported| IG[ignored]
+```
+
+- `schema-nozzle` generate json-schema using [ts-json-schema-generator](https://github.com/vega/ts-json-schema-generator)
+- `.nozzlefiles` file follow [gitignore spec.](https://git-scm.com/docs/gitignore)
+- only generated exported `interface`, `type alias`, `class` and `enum`
 
 ## Usage
 
@@ -63,23 +84,6 @@ npx schema-nozzle truncate --help
 
 Also you can see detail option [here](/docs/options.md).
 
-## How it works?
-
-`schema-nozzle` using **TypeScript Compiler API**. So `schema-nozzle` exactly know `interface`, `type alias`, `class` and `enum`.
-
-```mermaid
-graph LR
-
-INP_TI[interface] --> SN[schema-nozzle]
-INP_TT[type alias] --> SN[schema-nozzle]
-INP_TC[class] --> SN[schema-nozzle]
-INP_TE[enum] --> SN[schema-nozzle]
-SN --> DB[db.json]
-```
-
-- `schema-nozzle` generate json-schema using [ts-json-schema-generator](https://github.com/vega/ts-json-schema-generator)
-- `.nozzlefiles` file follow [gitignore spec.](https://git-scm.com/docs/gitignore)
-
 ## Example using fastify.js
 
 A complete example of using schema-nozzle to create a swagger.io document and use json-schema to process input-output value verification can be found at [Ma-eum](https://github.com/imjuni/maeum). See the example of how DTO type declaration handles swagger.io document creation, json-schema creation, and typedoc document creation all at once!
@@ -93,6 +97,7 @@ A complete example of using schema-nozzle to create a swagger.io document and us
 - [ ] add more test
 - [ ] tag support each schema
 - [ ] load, get, set interface for schema store
+- [ ] documentation site
 
 ## License
 

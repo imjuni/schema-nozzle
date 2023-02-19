@@ -1,7 +1,7 @@
 import type IStudentDto from './IStudentDto';
 
 /**
- * @nozzleTags hi, hello, tag02
+ * @nozzleTags hi!!, hello, tag02
  */
 export interface IReqReadStudentQuerystring {
   name: IStudentDto['name'];

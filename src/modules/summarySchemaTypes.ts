@@ -1,6 +1,7 @@
 import getExportedTypes, { type IGetExportTypesReturnType } from '#compilers/getExportedTypes';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import getRelativeCwd from '#tools/getRelativeCwd';
 import { type Ignore } from 'ignore';
 import { type Project } from 'ts-morph';
@@ -9,7 +10,8 @@ function applyOptionFilter(
   exportedTypes: ReturnType<typeof getExportedTypes>,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'types'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'types'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'types'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'types'>,
 ) {
   if (option.types.length <= 0) {
     return exportedTypes;
@@ -22,7 +24,8 @@ export default async function summarySchemaTypes(
   project: Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'types' | 'cwd'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'types' | 'cwd'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'types' | 'cwd'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'types' | 'cwd'>,
   filter?: Ignore,
 ) {
   // stage01. Extract sll exported types

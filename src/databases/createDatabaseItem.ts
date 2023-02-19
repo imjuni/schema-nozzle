@@ -1,6 +1,7 @@
 import type getExportedTypes from '#compilers/getExportedTypes';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import type createJSONSchema from '#modules/createJSONSchema';
 import getFormattedSchema from '#modules/getFormattedSchema';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
@@ -37,7 +38,8 @@ type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 export default function createDatabaseItem(
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project'>,
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'format' | 'project'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof createJSONSchema>>,
 ): {

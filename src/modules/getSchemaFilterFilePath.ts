@@ -7,7 +7,7 @@ export default async function getSchemaFilterFilePath(cwd: string, filePath?: st
     return path.resolve(filePath);
   }
 
-  const defaultValue = path.resolve(path.join(cwd, CE_DEFAULT_VALUE.LIST_FILE));
+  const defaultValue = path.resolve(path.join(cwd, CE_DEFAULT_VALUE.LIST_FILE_NAME));
   if (await exists(defaultValue)) {
     return defaultValue;
   }
