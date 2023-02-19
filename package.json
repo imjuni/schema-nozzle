@@ -11,6 +11,7 @@
     "dev": "ts-node --project ./tsconfig.json src/cli.ts",
     "debug": "node --inspect-brk -r ts-node/register src/cli.ts",
     "lint": "just --config ./.configs/just.config.ts lint",
+    "lint-staged": "lint-staged",
     "rollup:dev": "just --config ./.configs/just.config.ts rollup:dev",
     "rollup:prod": "just --config ./.configs/just.config.ts rollup:prod",
     "test": "jest --coverage",
@@ -18,7 +19,8 @@
     "prepublishOnly": "node prepublish.cjs",
     "pub": "just --config ./.configs/just.config.ts pub",
     "pub:prod": "just --config ./.configs/just.config.ts pub:prod",
-    "unpub": "just --config ./.configs/just.config.ts unpub"
+    "unpub": "just --config ./.configs/just.config.ts unpub",
+    "prepare": "husky install"
   },
   "main": "dist/cli.js",
   "types": "dist/cli.d.ts",
@@ -102,8 +104,10 @@
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^4.2.1",
     "execa": "^5.1.1",
+    "husky": "^8.0.3",
     "jest": "^29.4.0",
     "just-task": "^1.7.0",
+    "lint-staged": "^13.1.2",
     "prettier-eslint": "^15.0.1",
     "prettier-plugin-organize-imports": "^3.2.2",
     "read-pkg": "^5.2.0",
@@ -113,5 +117,13 @@
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "cross-env NODE_ENV=production eslint --cache"
+    ],
+    "*.{js,jsx,ts,tsx},*.json,.{eslintrc.cjs,prettierrc}": [
+      "cross-env NODE_ENV=production prettier --ignore-path .eslintignore --parser json --write"
+    ]
   }
 }

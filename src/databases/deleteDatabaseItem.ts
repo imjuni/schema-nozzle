@@ -3,6 +3,7 @@ import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
 
 export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (db[identifier] == null) {
     return db;
   }
