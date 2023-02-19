@@ -12,7 +12,7 @@ export default async function getDeleteTypes({
   option: TDeleteSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
-    if (option.types == null || option.types.length <= 0) {
+    if (option.types.length <= 0) {
       const types = await getDeleteTypesFromPrompt({ db, isMultipleSelect: option.multiple });
       return pass(types);
     }
