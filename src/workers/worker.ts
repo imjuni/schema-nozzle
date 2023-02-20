@@ -2,6 +2,7 @@
 import logger from '#tools/logger';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import NozzleEmitter from '#workers/NozzleEmitter';
+import { isError } from 'my-easy-fp';
 
 const log = logger();
 
@@ -9,12 +10,19 @@ export default async function worker2() {
   const emitter: NozzleEmitter = new NozzleEmitter();
 
   process.on('message', async (payload: TMasterToWorkerMessage) => {
-    log.trace(`worker message-01: ${typeof payload}-${payload.command}`);
+    try {
+      log.trace(`worker message-01: ${typeof payload}-${payload.command}`);
 
-    if ('data' in payload) {
-      emitter.emit(payload.command, payload.data);
-    } else {
-      emitter.emit(payload.command);
+      if ('data' in payload) {
+        emitter.emit(payload.command, payload.data);
+      } else {
+        emitter.emit(payload.command);
+      }
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+
+      log.trace(err.message);
+      log.trace(err.stack);
     }
   });
 }

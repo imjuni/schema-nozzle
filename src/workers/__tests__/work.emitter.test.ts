@@ -76,7 +76,7 @@ describe('WorkEmitter - project', () => {
 
     w.emit(CE_WORKER_ACTION.OPTION_LOAD, {
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option: env.addCmdOption, resolvedPaths: data.resolvedPaths },
+      data: { option: { ...env.addCmdOption, ...data.resolvedPaths } },
     } satisfies Exclude<TMasterToWorkerMessage, typeof CE_WORKER_ACTION.OPTION_LOAD>);
   });
 
@@ -228,6 +228,16 @@ describe('WorkEmitter - schema', () => {
 
     jest.spyOn(w, 'workerSummarySchemaTypes').mockImplementationOnce(() => Promise.reject());
     w.emit(CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES);
+  });
+
+  test('summarySchemaFileType', async () => {
+    const w = new NozzleEmitter();
+    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+    w.project = data.project;
+    await w.workerSummarySchemaFileType();
+
+    jest.spyOn(w, 'workerSummarySchemaFileType').mockImplementationOnce(() => Promise.reject());
+    w.emit(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE);
   });
 
   test('loadDatabase', async () => {

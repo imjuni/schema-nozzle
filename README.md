@@ -18,6 +18,8 @@ Strict JSON data validations are need many effort. You can reduce effort using `
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [How it works?](#how-it-works)
+  - [TypeScript interface](#typescript-interface)
+  - [json-schema](#json-schema)
 - [Usage](#usage)
 - [Example using fastify.js](#example-using-fastifyjs)
 - [Roadmaps](#roadmaps)
@@ -61,6 +63,119 @@ SN --> |not exported| IG[ignored]
 - `.nozzlefiles` file follow [gitignore spec.](https://git-scm.com/docs/gitignore)
 - only generated exported `interface`, `type alias`, `class` and `enum`
 
+Here is real example,
+
+### TypeScript interface
+
+```ts
+export default interface I18nDto {
+  /** i18n resource id */
+  id: string;
+
+  /**
+   * iso639-1 language code
+   *
+   * @minLength 2
+   * @maxLength 5
+   * */
+  language: string;
+
+  /** i18n resource content */
+  content: string;
+
+  /**
+   * i18n resource use on
+   *
+   * @minItems 1
+   * @maxItems 10
+   * */
+  used?: string[];
+}
+```
+
+### json-schema
+
+```json
+{
+  "I18nDto": {
+    "id": "I18nDto",
+    "filePath": "I18nDto.ts",
+    "dependency": {
+      "import": {
+        "name": "I18nDto",
+        "from": []
+      },
+      "export": {
+        "name": "I18nDto",
+        "to": [
+          "IForeginStudentDto33",
+          "IForeginStudentDto",
+          "IReqReadStudentQuerystring",
+          "IStudentDto",
+          "IProfessorDto"
+        ]
+      }
+    },
+    "schema": {
+      "$id": "I18nDto",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "i18n resource id"
+        },
+        "language": {
+          "type": "string",
+          "description": "iso639-1 language code",
+          "minLength": 2,
+          "maxLength": 5
+        },
+        "content": {
+          "type": "string",
+          "description": "i18n resource content"
+        },
+        "used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "i18n resource use on",
+          "minItems": 1,
+          "maxItems": 10
+        }
+      },
+      "required": ["id", "language", "content"],
+      "additionalProperties": false
+    }
+  }
+}
+```
+
+You can use this schema like that,
+
+```ts
+// use ajv schema store
+import Ajv from 'ajv';
+
+const ajv = new Ajv();
+const db = JSON.parse((await fs.readFile('db.json')).toString());
+Object.values(db).forEach((item) => ajv.addSchema(item.schema));
+
+const validator = ajv.compile({ $ref: 'I18nDto' });
+```
+
+or
+
+```ts
+// don't use schema store
+import Ajv from 'ajv';
+
+const ajv = new Ajv();
+const db = JSON.parse((await fs.readFile('db.json')).toString());
+const validator = ajv.compile(db['I18nDto'].schema);
+```
+
 ## Usage
 
 You can see help from `--help` option.
@@ -80,6 +195,9 @@ npx schema-nozzle refresh --help
 
 # display help for truncate commands
 npx schema-nozzle truncate --help
+
+# display help for watch commands
+npx schema-nozzle watch --help
 ```
 
 Also you can see detail option [here](/docs/options.md).
@@ -93,7 +211,7 @@ A complete example of using schema-nozzle to create a swagger.io document and us
 ## Roadmaps
 
 - [ ] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
-- [ ] add watch command: watch `.nozzlefiles` list and add/del schema
+- [x] add watch command: watch `.nozzlefiles` list and add/del schema
 - [ ] add more test
 - [ ] tag support each schema
 - [ ] load, get, set interface for schema store

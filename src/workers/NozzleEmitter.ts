@@ -1,4 +1,5 @@
 import getDiagnostics from '#compilers/getDiagnostics';
+import getSoruceFileExportedTypes from '#compilers/getSoruceFileExportedTypes';
 import getTsProject from '#compilers/getTsProject';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
@@ -7,6 +8,7 @@ import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import createDatabaseItem from '#databases/createDatabaseItem';
 import openDatabase from '#databases/openDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
+import errorTrace from '#modules/errorTrace';
 import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
@@ -18,6 +20,7 @@ import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMess
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
 import type {
+  IFailWorkerToMasterTaskComplete,
   TFailData,
   TPickPassWorkerToMasterTaskComplete,
 } from '#workers/interfaces/TWorkerToMasterMessage';
@@ -80,61 +83,37 @@ export default class NozzleEmitter extends EventEmitter {
     });
 
     this.on(CE_WORKER_ACTION.PROJECT_LOAD, () => {
-      this.loadProject().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.loadProject().catch(errorTrace);
     });
 
     this.on(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC, () => {
-      this.diagonostic().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.diagonostic().catch(errorTrace);
     });
 
     this.on(CE_WORKER_ACTION.LOAD_DATABASE, () => {
-      this.loadDatabase().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.loadDatabase().catch(errorTrace);
     });
 
     this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES, () => {
-      this.workerSummarySchemaFiles().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.workerSummarySchemaFiles().catch(errorTrace);
     });
 
     this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES, () => {
-      this.workerSummarySchemaTypes().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.workerSummarySchemaTypes().catch(errorTrace);
+    });
+
+    this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE, () => {
+      this.workerSummarySchemaFileType().catch(errorTrace);
     });
 
     this.on(CE_WORKER_ACTION.GENERATOR_OPTION_LOAD, () => {
-      this.generatorOptionLoad().catch((caught) => {
-        const err = isError(caught, new Error('unknown error raised'));
-        log.error(err.message);
-        log.error(err.stack);
-      });
+      this.generatorOptionLoad().catch(errorTrace);
     });
 
     this.on(
       CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
       (payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data']) => {
-        this.createJsonSchema(payload).catch((caught) => {
-          const err = isError(caught, new Error('unknown error raised'));
-          log.error(err.message);
-          log.error(err.stack);
-        });
+        this.createJsonSchema(payload).catch(errorTrace);
       },
     );
 
@@ -145,11 +124,38 @@ export default class NozzleEmitter extends EventEmitter {
           typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
         >['data'],
       ) => {
-        this.createJsonSchemaBulk(payload).catch((caught) => {
-          const err = isError(caught, new Error('unknown error raised'));
-          log.error(err.message);
-          log.error(err.stack);
-        });
+        this.createJsonSchemaBulk(payload).catch(errorTrace);
+      },
+    );
+
+    this.on(
+      CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
+      (
+        payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD>['data'],
+      ) => {
+        this.watchSourceFileAdd(payload).catch(errorTrace);
+      },
+    );
+
+    this.on(
+      CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
+      (
+        payload: TPickMasterToWorkerMessage<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE
+        >['data'],
+      ) => {
+        this.watchSourceFileChange(payload).catch(errorTrace);
+      },
+    );
+
+    this.on(
+      CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
+      (
+        payload: TPickMasterToWorkerMessage<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK
+        >['data'],
+      ) => {
+        this.watchSourceFileUnlink(payload).catch(errorTrace);
       },
     );
   }
@@ -322,6 +328,35 @@ export default class NozzleEmitter extends EventEmitter {
     } satisfies TWorkerToMasterMessage);
   }
 
+  async workerSummarySchemaFileType() {
+    const { option, project } = this.check(
+      CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
+      'summary schema files, types fail',
+    );
+
+    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(project, option);
+
+    this.filter = schemaFileFilter;
+    this.files = filePaths;
+
+    log.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
+
+    const exportedTypes = await summarySchemaTypes(project, option, this.filter);
+
+    this.types = exportedTypes;
+
+    // send message to master process
+    process.send?.({
+      command: CE_MASTER_ACTION.TASK_COMPLETE,
+      data: {
+        command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
+        id: this.id,
+        result: 'pass',
+        data: exportedTypes,
+      },
+    } satisfies TWorkerToMasterMessage);
+  }
+
   async generatorOptionLoad() {
     const { option } = this.check(
       CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
@@ -329,6 +364,7 @@ export default class NozzleEmitter extends EventEmitter {
     );
 
     this.generatorOption = await getSchemaGeneratorOption(option);
+    option.generatorOptionObject = this.generatorOption;
 
     // send message to master process
     process.send?.({
@@ -404,7 +440,7 @@ export default class NozzleEmitter extends EventEmitter {
     const jsonSchema = createJSONSchema(
       payload.filePath,
       payload.exportedType,
-      this.generatorOption,
+      option.generatorOptionObject,
     );
 
     if (jsonSchema.type === 'fail') {
@@ -435,15 +471,15 @@ export default class NozzleEmitter extends EventEmitter {
       return;
     }
 
-    const schemaRecord = createDatabaseItem(option, this.types, jsonSchema.pass);
+    const item = createDatabaseItem(option, this.types, jsonSchema.pass);
 
     this.schemaes.push(jsonSchema.pass);
-    this.databaseItems.push(schemaRecord.item);
+    this.databaseItems.push(item.item);
 
     const records =
-      schemaRecord.definitions != null && schemaRecord.definitions.length > 0
-        ? [schemaRecord.item, ...schemaRecord.definitions]
-        : [schemaRecord.item];
+      item.definitions != null && item.definitions.length > 0
+        ? [item.item, ...item.definitions]
+        : [item.item];
 
     this.databaseItems.push(...records);
 
@@ -550,5 +586,157 @@ export default class NozzleEmitter extends EventEmitter {
         typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
       >,
     } satisfies TWorkerToMasterMessage);
+  }
+
+  async watchSourceFileAdd(
+    payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD>['data'],
+  ) {
+    const { option, project } = this.check(
+      CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
+      'ts-json-schema-generator project load fail',
+    );
+
+    try {
+      const sourceFile = project.addSourceFileAtPath(payload.filePath);
+      const exportedTypes = getSoruceFileExportedTypes(sourceFile);
+
+      option.files = [payload.filePath];
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
+          id: this.id,
+          result: 'pass',
+          data: exportedTypes.map((exportedType) => ({
+            filePath: exportedType.filePath,
+            identifier: exportedType.identifier,
+          })),
+        } satisfies TPickPassWorkerToMasterTaskComplete<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD
+        >,
+      } satisfies TWorkerToMasterMessage);
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: err.message,
+            stack: err.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+    }
+  }
+
+  async watchSourceFileChange(
+    payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE>['data'],
+  ) {
+    try {
+      const { option, project } = this.check(
+        CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
+        'ts-json-schema-generator project load fail',
+      );
+
+      const sourceFile = project.getSourceFile(payload.filePath);
+      option.files = [payload.filePath];
+
+      log.trace(`watch source-file: ${payload.filePath}`);
+
+      if (sourceFile == null) {
+        throw new Error(`Cannot found watch-file: ${payload.filePath}`);
+      }
+
+      await sourceFile.refreshFromFileSystem();
+      const exportedTypes = getSoruceFileExportedTypes(sourceFile);
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
+          id: this.id,
+          result: 'pass',
+          data: exportedTypes.map((exportedType) => ({
+            filePath: exportedType.filePath,
+            identifier: exportedType.identifier,
+          })),
+        } satisfies TPickPassWorkerToMasterTaskComplete<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE
+        >,
+      } satisfies TWorkerToMasterMessage);
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: err.message,
+            stack: err.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+    }
+  }
+
+  async watchSourceFileUnlink(
+    payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK>['data'],
+  ) {
+    try {
+      const { project } = this.check(
+        CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
+        'ts-json-schema-generator project load fail',
+      );
+
+      const sourceFile = project.getSourceFile(payload.filePath);
+
+      if (sourceFile == null) {
+        throw new Error(`Cannot found watch-file: ${payload.filePath}`);
+      }
+
+      const exportedTypes = getSoruceFileExportedTypes(sourceFile);
+      project.removeSourceFile(sourceFile);
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
+          id: this.id,
+          result: 'pass',
+          data: exportedTypes.map((exportedType) => ({
+            filePath: exportedType.filePath,
+            identifier: exportedType.identifier,
+          })),
+        } satisfies TPickPassWorkerToMasterTaskComplete<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK
+        >,
+      } satisfies TWorkerToMasterMessage);
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: err.message,
+            stack: err.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+    }
   }
 }

@@ -11,7 +11,7 @@ import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import minimist from 'minimist';
-import { atOrThrow, isError, toArray } from 'my-easy-fp';
+import { atOrThrow, atOrUndefined, isError, toArray } from 'my-easy-fp';
 import { existsSync, getDirnameSync } from 'my-node-fp';
 
 const log = logger();
@@ -66,6 +66,11 @@ export default function preLoadConfig() {
       argv.project != null || argv.p != null
         ? findUp.sync([argv.project, argv.p], { cwd })
         : findUp.sync(CE_DEFAULT_VALUE.TSCONFIG_FILE_NAME, { cwd });
+
+    if (atOrUndefined(toArray(argv._), 0)) {
+      return {};
+    }
+
     const discriminator = getDiscriminator(atOrThrow(toArray(argv._), 0));
 
     if (configFilePath != null) {
