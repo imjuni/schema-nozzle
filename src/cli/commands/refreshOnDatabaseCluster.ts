@@ -49,7 +49,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option: { ...option, project: option.project }, resolvedPaths },
+      data: { option },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
 
     await workers.wait();
@@ -102,8 +102,8 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
     spinner.start('schema type select, ...');
 
     workers.send({
-      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
-    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES>);
+      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE>);
 
     reply = await workers.wait();
 
@@ -114,31 +114,9 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       throw new SchemaNozzleError(failReply.error);
     }
 
-    workers.send({
-      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES>);
-
-    reply = await workers.wait();
-
-    // master check schema type summary
-    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
-      const failReplies = reply.data.filter(isFailTaskComplete);
-      const failReply = atOrThrow(failReplies, 0);
-
-      const err = new Error(failReply.error.message);
-      err.stack = failReply.error.stack;
-      throw err;
-    }
-
     const { data: exportedTypes } = atOrThrow(reply.data, 0) as TPickPassWorkerToMasterTaskComplete<
       typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES
     >;
-
-    workers.sendAll({
-      command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD>);
-
-    reply = await workers.wait();
 
     spinner.update({
       message: `${exportedTypes.length} schema type select complete`,
@@ -171,7 +149,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
         TPassWorkerToMasterTaskComplete,
         { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK }
       >[];
-      const db = await openDatabase(resolvedPaths);
+      const db = await openDatabase(option);
       const newDb = mergeDatabaseItems(db, pass.map((item) => item.data.pass).flat());
 
       await saveDatabase(option, newDb);
@@ -182,7 +160,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
         TPassWorkerToMasterTaskComplete,
         { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
       >[];
-      const db = await openDatabase(resolvedPaths);
+      const db = await openDatabase(option);
       const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());
 
       await saveDatabase(option, newDb);

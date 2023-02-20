@@ -1,7 +1,7 @@
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
+import type { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 
 type TMasterToWorkerMessage =
@@ -10,17 +10,15 @@ type TMasterToWorkerMessage =
       command: typeof CE_WORKER_ACTION.OPTION_LOAD;
       data: {
         option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption;
-        resolvedPaths: IResolvedPaths;
       };
     }
   | { command: typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC }
+  // schema file, exported type command
   | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }
-  | { command: typeof CE_WORKER_ACTION.LOAD_DATABASE }
-  | {
-      command: typeof CE_WORKER_ACTION.SCHEMA_FILE_FILTER_UPDATE;
-      data: { schemaFiles: { origin: string; refined: string }[] };
-    }
   | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+  | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE }
+  | { command: typeof CE_WORKER_ACTION.LOAD_DATABASE }
+  // schema command
   | { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }
   | {
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;
@@ -30,8 +28,22 @@ type TMasterToWorkerMessage =
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK;
       data: { filePath: string; exportedType: string }[];
     }
-  | { command: typeof CE_WORKER_ACTION.NOOP }
-  | { command: typeof CE_WORKER_ACTION.TERMINATE };
+  // watch command
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD;
+      data: { kind: CE_WATCH_EVENT; filePath: string };
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE;
+      data: { kind: CE_WATCH_EVENT; filePath: string };
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK;
+      data: { kind: CE_WATCH_EVENT; filePath: string };
+    }
+  // misc command
+  | { command: typeof CE_WORKER_ACTION.TERMINATE }
+  | { command: typeof CE_WORKER_ACTION.NOOP };
 
 export type TPickMasterToWorkerMessage<T extends CE_WORKER_ACTION> = Extract<
   TMasterToWorkerMessage,

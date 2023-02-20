@@ -17,6 +17,12 @@ export type TPassWorkerToMasterTaskComplete =
       data: { identifier: string; filePath: string }[];
     }
   | {
+      command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE;
+      result: 'pass';
+      id: number;
+      data: { identifier: string; filePath: string }[];
+    }
+  | {
       command: Exclude<CE_WORKER_ACTION, typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES>;
       result: 'pass';
       id: number;
@@ -42,6 +48,24 @@ export type TPassWorkerToMasterTaskComplete =
         pass: IDatabaseItem[];
         fail: Extract<TFailData, { kind: 'json-schema-generate' }>[];
       };
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD;
+      result: 'pass';
+      id: number;
+      data: { filePath: string; identifier: string }[];
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE;
+      result: 'pass';
+      id: number;
+      data: { filePath: string; identifier: string }[];
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK;
+      result: 'pass';
+      id: number;
+      data: { filePath: string; identifier: string }[];
     };
 
 export type TPickPassWorkerToMasterTaskComplete<T> = Extract<

@@ -18,6 +18,7 @@ import {
   isFailTaskComplete,
   isPassTaskComplete,
   type TPassWorkerToMasterTaskComplete,
+  type TPickPassWorkerToMasterTaskComplete,
 } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import cluster from 'cluster';
@@ -48,7 +49,7 @@ export default async function addOnDatabaseCluster(
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option: { ...option, project: resolvedPaths.project }, resolvedPaths },
+      data: { option: { ...option, project: resolvedPaths.project } },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     await workers.wait();
@@ -105,7 +106,7 @@ export default async function addOnDatabaseCluster(
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option, resolvedPaths },
+      data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     await workers.wait();
@@ -140,7 +141,7 @@ export default async function addOnDatabaseCluster(
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option, resolvedPaths },
+      data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     workers.sendAll({
@@ -151,7 +152,7 @@ export default async function addOnDatabaseCluster(
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option, resolvedPaths },
+      data: { option },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
 
     await workers.wait();
@@ -176,10 +177,7 @@ export default async function addOnDatabaseCluster(
         return {
           command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
           data: { exportedType: exportedType.identifier, filePath: exportedType.filePath },
-        } satisfies Extract<
-          TMasterToWorkerMessage,
-          { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
-        >;
+        } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>;
       }),
     );
 
@@ -203,9 +201,8 @@ export default async function addOnDatabaseCluster(
     } else {
       log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
-      const items = passes as Extract<
-        TPassWorkerToMasterTaskComplete,
-        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+      const items = passes as TPickPassWorkerToMasterTaskComplete<
+        typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA
       >[];
       const db = await openDatabase(resolvedPaths);
       const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());

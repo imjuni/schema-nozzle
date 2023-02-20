@@ -11,6 +11,7 @@ import initNozzle from '#cli/commands/initNozzle';
 import refreshOnDatabaseCluster from '#cli/commands/refreshOnDatabaseCluster';
 import refreshOnDatabaseSync from '#cli/commands/refreshOnDatabaseSync';
 import truncateOnDatabase from '#cli/commands/truncateOnDatabase';
+import watchNozzleCluster from '#cli/commands/watchNozzleCluster';
 import watchNozzleSync from '#cli/commands/watchNozzleSync';
 import spinner from '#cli/display/spinner';
 import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
@@ -110,8 +111,13 @@ const watchCmd: CommandModule<TWatchSchemaOption, TWatchSchemaOption> = {
   builder: (argv) => watchBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    const option = await withDefaultOption(argv);
 
-    await watchNozzleSync(argv);
+    if (process.env.SYNC_MODE === 'true') {
+      await watchNozzleSync(option);
+    } else {
+      await watchNozzleCluster(option);
+    }
   },
 };
 

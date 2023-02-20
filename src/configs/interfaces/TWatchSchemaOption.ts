@@ -18,6 +18,9 @@ interface IWatchSchemaOption {
   /** target list filename */
   listFile?: string;
 
+  /** max worker count */
+  maxWorkers?: number;
+
   /** watch debounce time: default 500ms */
   debounceTime: number;
 

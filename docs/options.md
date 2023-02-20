@@ -5,6 +5,7 @@
 - [`del`, `d` command options](#del-d-command-options)
 - [`refresh`, `r` command options](#refresh-r-command-options)
 - [`truncate`, `t` command options](#truncate-t-command-options)
+- [`watch`, `w` command options](#watch-w-command-options)
 
 ## command list
 
@@ -56,3 +57,14 @@
 | project | p     | tsconfig.json path      |
 | config  | c     | configuration file path |
 | output  | o     | database file path      |
+
+## `watch`, `w` command options
+
+| option        | alias | description                                             |
+| ------------- | ----- | ------------------------------------------------------- |
+| project       | p     | tsconfig.json path                                      |
+| config        | c     | configuration file path                                 |
+| output        | o     | database file path                                      |
+| skip-error    |       | skip compile error on source file                       |
+| format        |       | generated json-schema save format: json, string, base64 |
+| debounce-time |       | watch command debounce-time                             |
