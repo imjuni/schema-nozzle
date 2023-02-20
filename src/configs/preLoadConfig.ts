@@ -67,7 +67,7 @@ export default function preLoadConfig() {
         ? findUp.sync([argv.project, argv.p], { cwd })
         : findUp.sync(CE_DEFAULT_VALUE.TSCONFIG_FILE_NAME, { cwd });
 
-    if (atOrUndefined(toArray(argv._), 0)) {
+    if (atOrUndefined(toArray(argv._), 0) == null) {
       return {};
     }
 

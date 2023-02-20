@@ -1,7 +1,7 @@
 # schema-nozzle
 
 ![ts](https://flat.badgen.net/badge/Built%20With/TypeScript/blue)
-[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![schema-nozzle](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml/badge.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE) [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle)
+[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![schema-nozzle](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml/badge.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE) [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 `schema-nozzle` generates json-schema in the **TypeScript** `interface`, `type alias`, `class` and `enum`.
 
@@ -67,6 +67,8 @@ Here is real example,
 
 ### TypeScript interface
 
+This is input source file.
+
 ```ts
 export default interface I18nDto {
   /** i18n resource id */
@@ -94,6 +96,8 @@ export default interface I18nDto {
 ```
 
 ### json-schema
+
+This is output json-schema.
 
 ```json
 {
