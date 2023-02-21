@@ -54,6 +54,7 @@ export default function createDatabaseItem(
     return { ...aggregation, [exportedType.identifier]: exportedType };
   }, {});
 
+  targetSchema.$id = schema.exportedType;
   traverse(targetSchema, traverseHandle);
 
   const id = schema.exportedType;

@@ -144,26 +144,28 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
 
     workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
 
-    if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
-      const pass = passes as Extract<
-        TPassWorkerToMasterTaskComplete,
-        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK }
-      >[];
-      const db = await openDatabase(option);
-      const newDb = mergeDatabaseItems(db, pass.map((item) => item.data.pass).flat());
+    if (passes.length > 0) {
+      if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
+        const pass = passes as Extract<
+          TPassWorkerToMasterTaskComplete,
+          { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK }
+        >[];
+        const db = await openDatabase(option);
+        const newDb = mergeDatabaseItems(db, pass.map((item) => item.data.pass).flat());
 
-      await saveDatabase(option, newDb);
-    } else {
-      log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
+        await saveDatabase(option, newDb);
+      } else {
+        log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
-      const items = passes as Extract<
-        TPassWorkerToMasterTaskComplete,
-        { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
-      >[];
-      const db = await openDatabase(option);
-      const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());
+        const items = passes as Extract<
+          TPassWorkerToMasterTaskComplete,
+          { command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA }
+        >[];
+        const db = await openDatabase(option);
+        const newDb = mergeDatabaseItems(db, items.map((item) => item.data).flat());
 
-      await saveDatabase(option, newDb);
+        await saveDatabase(option, newDb);
+      }
     }
 
     const fails = reply.data.filter(isFailTaskComplete);

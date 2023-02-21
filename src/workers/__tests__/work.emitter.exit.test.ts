@@ -2,22 +2,16 @@ import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import NozzleEmitter from '#workers/NozzleEmitter';
 import 'jest';
 
-beforeAll(() => {
-  jest.spyOn(process, 'exit').mockImplementation((_code?: number | undefined) => {
-    throw new Error('Exit triggered');
-  });
-
-  jest.spyOn(process, 'send').mockImplementation((_data: unknown) => {
-    return true;
-  });
-});
-
 afterAll(() => {
   jest.clearAllMocks();
 });
 
 describe('WorkEmitter - terminate', () => {
   test('terminate', () => {
+    jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+      throw new Error('Exit triggered');
+    });
+
     try {
       NozzleEmitter.terminate(0);
     } catch (caught) {
@@ -26,6 +20,10 @@ describe('WorkEmitter - terminate', () => {
   });
 
   test('terminate - undefined', () => {
+    jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+      throw new Error('Exit triggered');
+    });
+
     try {
       NozzleEmitter.terminate();
     } catch (caught) {
@@ -34,6 +32,10 @@ describe('WorkEmitter - terminate', () => {
   });
 
   test('terminate - emit', () => {
+    jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+      throw new Error('Exit triggered');
+    });
+
     try {
       const w = new NozzleEmitter();
       w.emit(CE_WORKER_ACTION.TERMINATE);

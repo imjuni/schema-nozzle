@@ -1,7 +1,6 @@
 import getDiagnostics from '#compilers/getDiagnostics';
 import getSoruceFileExportedTypes from '#compilers/getSoruceFileExportedTypes';
 import getTsProject from '#compilers/getTsProject';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
@@ -28,12 +27,12 @@ import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import ignore, { type Ignore } from 'ignore';
 import type { JSONSchema7 } from 'json-schema';
-import { isError } from 'my-easy-fp';
+import { atOrThrow, isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import { isPass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
-import type * as tjsg from 'ts-json-schema-generator';
+import * as tjsg from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
 import type { SetRequired } from 'type-fest';
 
@@ -54,11 +53,16 @@ export default class NozzleEmitter extends EventEmitter {
 
   accessor generatorOption: tjsg.Config;
 
+  #generator: tjsg.SchemaGenerator | undefined;
+
   accessor schemaes: { filePath: string; exportedType: string; schema: JSONSchema7 }[];
 
   accessor databaseItems: IDatabaseItem[];
 
-  constructor(args?: { ee: ConstructorParameters<typeof EventEmitter>[0] }) {
+  constructor(args?: {
+    ee?: ConstructorParameters<typeof EventEmitter>[0];
+    generator?: tjsg.SchemaGenerator;
+  }) {
     super(args?.ee);
 
     this.project = undefined;
@@ -67,6 +71,7 @@ export default class NozzleEmitter extends EventEmitter {
     this.types = [];
     this.generatorOption = {};
     this.schemaes = [];
+    this.#generator = args?.generator;
     this.databaseItems = [];
 
     process.on('SIGTERM', NozzleEmitter.terminate);
@@ -104,10 +109,6 @@ export default class NozzleEmitter extends EventEmitter {
 
     this.on(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE, () => {
       this.workerSummarySchemaFileType().catch(errorTrace);
-    });
-
-    this.on(CE_WORKER_ACTION.GENERATOR_OPTION_LOAD, () => {
-      this.generatorOptionLoad().catch(errorTrace);
     });
 
     this.on(
@@ -357,27 +358,6 @@ export default class NozzleEmitter extends EventEmitter {
     } satisfies TWorkerToMasterMessage);
   }
 
-  async generatorOptionLoad() {
-    const { option } = this.check(
-      CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-      'ts-json-schema-generator option load fail',
-    );
-
-    this.generatorOption = await getSchemaGeneratorOption(option);
-    option.generatorOptionObject = this.generatorOption;
-
-    // send message to master process
-    process.send?.({
-      command: CE_MASTER_ACTION.TASK_COMPLETE,
-      data: {
-        command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-        id: this.id,
-        result: 'pass',
-        data: this.generatorOption,
-      },
-    } satisfies TWorkerToMasterMessage);
-  }
-
   async loadDatabase() {
     const { option } = this.check(
       CE_WORKER_ACTION.LOAD_DATABASE,
@@ -437,11 +417,24 @@ export default class NozzleEmitter extends EventEmitter {
       'ts-json-schema-generator project load fail',
     );
 
-    const jsonSchema = createJSONSchema(
-      payload.filePath,
-      payload.exportedType,
-      option.generatorOptionObject,
-    );
+    const generator =
+      this.#generator != null
+        ? this.#generator
+        : tjsg.createGenerator({
+            path: atOrThrow(payload, 0).filePath,
+            type: '*',
+            ...option.generatorOptionObject,
+          });
+
+    if (this.#generator == null) {
+      this.#generator = generator;
+    }
+
+    const jsonSchema = createJSONSchema({
+      filePath: payload.filePath,
+      exportedType: payload.exportedType,
+      generator: this.#generator,
+    });
 
     if (jsonSchema.type === 'fail') {
       // send message to master process
@@ -510,6 +503,19 @@ export default class NozzleEmitter extends EventEmitter {
       'ts-json-schema-generator project load fail',
     );
 
+    const generator =
+      this.#generator != null
+        ? this.#generator
+        : tjsg.createGenerator({
+            path: atOrThrow(payload, 0).filePath,
+            type: '*',
+            ...option.generatorOptionObject,
+          });
+
+    if (this.#generator == null) {
+      this.#generator = generator;
+    }
+
     const startAt = dayjs();
     const schemas: ReturnType<typeof createJSONSchema>[] = [];
     const items: IDatabaseItem[] = [];
@@ -528,11 +534,11 @@ export default class NozzleEmitter extends EventEmitter {
           return;
         }
 
-        const jsonSchema = createJSONSchema(
-          exportedType.filePath,
-          exportedType.exportedType,
-          this.generatorOption,
-        );
+        const jsonSchema = createJSONSchema({
+          filePath: exportedType.filePath,
+          exportedType: exportedType.exportedType,
+          generator,
+        });
 
         if (isPass(jsonSchema)) {
           this.schemaes.push(jsonSchema.pass);
@@ -602,6 +608,14 @@ export default class NozzleEmitter extends EventEmitter {
 
       option.files = [payload.filePath];
 
+      if (exportedTypes.length > 0) {
+        this.#generator = tjsg.createGenerator({
+          ...option.generatorOptionObject,
+          path: payload.filePath,
+          type: atOrThrow(exportedTypes, 0).identifier,
+        });
+      }
+
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
@@ -656,6 +670,14 @@ export default class NozzleEmitter extends EventEmitter {
       await sourceFile.refreshFromFileSystem();
       const exportedTypes = getSoruceFileExportedTypes(sourceFile);
 
+      if (exportedTypes.length > 0) {
+        this.#generator = tjsg.createGenerator({
+          ...option.generatorOptionObject,
+          path: payload.filePath,
+          type: atOrThrow(exportedTypes, 0).identifier,
+        });
+      }
+
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
         data: {
@@ -693,7 +715,7 @@ export default class NozzleEmitter extends EventEmitter {
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK>['data'],
   ) {
     try {
-      const { project } = this.check(
+      const { project, option } = this.check(
         CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
         'ts-json-schema-generator project load fail',
       );
@@ -706,6 +728,14 @@ export default class NozzleEmitter extends EventEmitter {
 
       const exportedTypes = getSoruceFileExportedTypes(sourceFile);
       project.removeSourceFile(sourceFile);
+
+      if (exportedTypes.length > 0) {
+        this.#generator = tjsg.createGenerator({
+          ...option.generatorOptionObject,
+          path: payload.filePath,
+          type: atOrThrow(exportedTypes, 0).identifier,
+        });
+      }
 
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,

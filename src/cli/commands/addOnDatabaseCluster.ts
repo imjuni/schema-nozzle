@@ -157,12 +157,6 @@ export default async function addOnDatabaseCluster(
 
     await workers.wait();
 
-    workers.sendAll({
-      command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }>);
-
-    reply = await workers.wait();
-
     // master check generator option loading
     if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
       const failReplies = reply.data.filter(isFailTaskComplete);
