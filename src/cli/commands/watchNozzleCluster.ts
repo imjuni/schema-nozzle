@@ -80,19 +80,6 @@ export default async function watchNozzleCluster(baseOption: TWatchSchemaBaseOpt
     throw new SchemaNozzleError(failReply.error);
   }
 
-  workers.sendAll({
-    command: CE_WORKER_ACTION.GENERATOR_OPTION_LOAD,
-  } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD>);
-
-  reply = await workers.wait();
-
-  // master check project diagostic on worker
-  if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
-    const failReplies = reply.data.filter(isFailTaskComplete);
-    const failReply = atOrThrow(failReplies, 0);
-    throw new SchemaNozzleError(failReply.error);
-  }
-
   spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
   spinner.update({ message: `Watch project: ${option.project}`, channel: 'info' });
   spinner.stop();

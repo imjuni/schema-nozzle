@@ -19,7 +19,6 @@ type TMasterToWorkerMessage =
   | { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE }
   | { command: typeof CE_WORKER_ACTION.LOAD_DATABASE }
   // schema command
-  | { command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD }
   | {
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;
       data: { filePath: string; exportedType: string };

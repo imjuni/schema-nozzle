@@ -8,6 +8,7 @@ import getData from '#tools/__tests__/test-tools/getData';
 import 'jest';
 import 'jsonc-parser';
 import path from 'path';
+import * as tjsg from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 import type { AsyncReturnType, LastArrayElement } from 'type-fest';
 
@@ -50,11 +51,11 @@ beforeEach(async () => {
 
 describe('createDatabaseItem', () => {
   test('without definitions', async () => {
-    const schema = createJSONSchema(
-      path.join(originPath, 'examples', 'CE_MAJOR.ts'),
-      'CE_MAJOR',
-      data.generatorOption,
-    );
+    const schema = createJSONSchema({
+      filePath: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
+      exportedType: 'CE_MAJOR',
+      option: data.generatorOption,
+    });
 
     if (schema.type !== 'pass') {
       throw new Error('schema generation fail');
@@ -75,11 +76,11 @@ describe('createDatabaseItem', () => {
   });
 
   test('with definitions', async () => {
-    const schema = createJSONSchema(
-      path.join(originPath, 'examples', 'IStudentDto.ts'),
-      'IStudentDto',
-      data.generatorOption,
-    );
+    const schema = createJSONSchema({
+      filePath: path.join(originPath, 'examples', 'IStudentDto.ts'),
+      exportedType: 'IStudentDto',
+      generator: tjsg.createGenerator(data.generatorOption),
+    });
 
     if (schema.type !== 'pass') {
       throw new Error('schema generation fail');
@@ -101,11 +102,11 @@ describe('createDatabaseItem', () => {
   });
 
   test('import', async () => {
-    const schema = createJSONSchema(
-      path.join(originPath, 'examples', 'ISlackMessage.ts'),
-      'ISlackMessageBody',
-      data.generatorOption,
-    );
+    const schema = createJSONSchema({
+      filePath: path.join(originPath, 'examples', 'ISlackMessage.ts'),
+      exportedType: 'ISlackMessageBody',
+      option: data.generatorOption,
+    });
 
     if (schema.type !== 'pass') {
       throw new Error('schema generation fail');

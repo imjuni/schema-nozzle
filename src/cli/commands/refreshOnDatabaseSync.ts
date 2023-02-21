@@ -18,6 +18,7 @@ import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
+import * as tjsg from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
 export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBaseOption) {
@@ -74,15 +75,16 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
 
     const schemaFiles = await summarySchemaFiles(project.pass, option);
     const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
+    const generator = tjsg.createGenerator(option.generatorOptionObject);
 
     const items = (
       await Promise.all(
         schemaTypes.map(async (targetType) => {
-          const schema = createJSONSchema(
-            targetType.filePath,
-            targetType.identifier,
-            option.generatorOptionObject,
-          );
+          const schema = createJSONSchema({
+            filePath: targetType.filePath,
+            exportedType: targetType.identifier,
+            generator,
+          });
 
           if (schema.type === 'fail') {
             return undefined;

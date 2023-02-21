@@ -1,7 +1,6 @@
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type * as tjsg from 'ts-json-schema-generator';
 
 export type TPassWorkerToMasterTaskComplete =
   | {
@@ -27,12 +26,6 @@ export type TPassWorkerToMasterTaskComplete =
       result: 'pass';
       id: number;
       data?: undefined;
-    }
-  | {
-      command: typeof CE_WORKER_ACTION.GENERATOR_OPTION_LOAD;
-      result: 'pass';
-      id: number;
-      data: tjsg.Config;
     }
   | {
       command: typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA;

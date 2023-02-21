@@ -3,11 +3,14 @@ import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import logger from '#tools/logger';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
+import type { IFailWorkerToMasterTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
+import { atOrUndefined } from 'my-easy-fp';
 import { EventEmitter } from 'node:events';
 
 const log = logger();
@@ -120,7 +123,21 @@ class Workers extends EventEmitter {
         ) {
           clearInterval(intervalHandle);
 
-          const result = fastCopy(this.#reply);
+          const err = new Error('exceeded generator-timeout option');
+          const result = [
+            {
+              command: atOrUndefined(this.#reply, 0)?.command ?? CE_WORKER_ACTION.NOOP,
+              result: 'fail',
+              id: atOrUndefined(this.#reply, 0)?.id ?? -1,
+              error: {
+                kind: 'error',
+                message: err.message,
+                stack: err.stack,
+              },
+            } satisfies IFailWorkerToMasterTaskComplete,
+            ...fastCopy(this.#reply),
+          ];
+
           this.#reply = [];
 
           resolve({ cluster: this.#finished, data: result });

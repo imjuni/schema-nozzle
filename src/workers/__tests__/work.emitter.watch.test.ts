@@ -1,4 +1,6 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
+import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import * as env from '#modules/__tests__/env';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
@@ -11,12 +13,18 @@ const originPath = process.env.INIT_CWD!;
 const data: {
   resolvedPaths: ReturnType<typeof getResolvedPaths>;
   project: tsm.Project;
+  option: TAddSchemaOption;
 } = {} as any;
 
-beforeAll(() => {
+beforeAll(async () => {
   data.project = new tsm.Project({
     tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
   });
+  data.option = {
+    ...env.addCmdOption,
+    ...data.resolvedPaths,
+  };
+  data.option.generatorOptionObject = await getSchemaGeneratorOption(data.option);
 });
 
 beforeEach(() => {
@@ -25,6 +33,11 @@ beforeEach(() => {
     project: path.join(originPath, 'examples', 'tsconfig.json'),
     output: path.join(originPath, 'examples'),
   });
+
+  data.option = {
+    ...data.option,
+    ...data.resolvedPaths,
+  };
 
   jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
@@ -42,24 +55,24 @@ afterEach(() => {
 describe('WorkEmitter - watch', () => {
   test('add', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+    w.loadOption({ option: data.option });
     w.project = data.project;
 
     await w.watchSourceFileAdd({
       kind: CE_WATCH_EVENT.ADD,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(w.option!.cwd, 'IStudentDto.ts'),
     });
 
     w.emit(CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD, {
       kind: CE_WATCH_EVENT.ADD,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(w.option!.cwd, 'IStudentDto.ts'),
     });
   });
 
   test('add - exception', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+      w.loadOption({ option: data.option });
       w.project = data.project;
 
       await w.watchSourceFileAdd({
@@ -73,24 +86,24 @@ describe('WorkEmitter - watch', () => {
 
   test('change', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+    w.loadOption({ option: data.option });
     w.project = data.project;
 
     await w.watchSourceFileChange({
       kind: CE_WATCH_EVENT.CHANGE,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(data.option.cwd, 'IStudentDto.ts'),
     });
 
     w.emit(CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE, {
       kind: CE_WATCH_EVENT.CHANGE,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(data.option.cwd, 'IStudentDto.ts'),
     });
   });
 
   test('change - not found', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+      w.loadOption({ option: data.option });
       w.project = data.project;
 
       await w.watchSourceFileChange({
@@ -105,7 +118,7 @@ describe('WorkEmitter - watch', () => {
   test('change - exception', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+      w.loadOption({ option: data.option });
       w.project = data.project;
 
       jest.spyOn(w.project, 'getSourceFile').mockImplementationOnce(() => {
@@ -123,24 +136,24 @@ describe('WorkEmitter - watch', () => {
 
   test('unlink', async () => {
     const w = new NozzleEmitter();
-    w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+    w.loadOption({ option: data.option });
     w.project = data.project;
 
     await w.watchSourceFileUnlink({
       kind: CE_WATCH_EVENT.UNLINK,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(data.option.cwd, 'IStudentDto.ts'),
     });
 
     w.emit(CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK, {
       kind: CE_WATCH_EVENT.UNLINK,
-      filePath: path.join(w.option.cwd, 'IStudentDto.ts'),
+      filePath: path.join(data.option.cwd, 'IStudentDto.ts'),
     });
   });
 
   test('unlink - not found', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+      w.loadOption({ option: data.option });
       w.project = data.project;
 
       await w.watchSourceFileUnlink({
@@ -155,7 +168,7 @@ describe('WorkEmitter - watch', () => {
   test('unlink - exception', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption, ...data.resolvedPaths };
+      w.loadOption({ option: data.option });
       w.project = data.project;
 
       jest.spyOn(w.project, 'getSourceFile').mockImplementationOnce(() => {

@@ -17,6 +17,7 @@ import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { isError } from 'my-easy-fp';
+import * as tjsg from 'ts-json-schema-generator';
 
 export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
@@ -54,13 +55,15 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
     const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
 
+    const generator = tjsg.createGenerator(option.generatorOptionObject);
+
     const items = schemaTypes
       .map((selectedType) => {
-        const schema = createJSONSchema(
-          selectedType.filePath,
-          selectedType.identifier,
-          option.generatorOptionObject,
-        );
+        const schema = createJSONSchema({
+          filePath: selectedType.filePath,
+          exportedType: selectedType.identifier,
+          generator,
+        });
 
         if (schema.type === 'fail') {
           return undefined;

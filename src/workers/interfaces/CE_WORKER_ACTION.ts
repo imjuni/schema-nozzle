@@ -8,7 +8,6 @@ export const CE_WORKER_ACTION = {
   SUMMARY_SCHEMA_FILE_TYPE: 'summary-schema-file-type',
   LOAD_DATABASE: 'load-database',
 
-  GENERATOR_OPTION_LOAD: 'generator-option-load',
   CREATE_JSON_SCHEMA: 'create-json-schema',
   CREATE_JSON_SCHEMA_BULK: 'create-json-schema-bulk',
 

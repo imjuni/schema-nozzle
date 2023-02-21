@@ -14,6 +14,7 @@ import summarySchemaTypes from '#modules/summarySchemaTypes';
 import logger from '#tools/logger';
 import fastCopy from 'fast-copy';
 import path from 'path';
+import * as tjsg from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
 import type { LastArrayElement } from 'type-fest';
 
@@ -29,6 +30,8 @@ export default class WatcherModule {
     'filePath' | 'identifier'
   >[];
 
+  #generator: tjsg.SchemaGenerator;
+
   constructor(args: {
     project: tsm.Project;
     option: TWatchSchemaOption;
@@ -40,6 +43,7 @@ export default class WatcherModule {
     this.#project = args.project;
     this.#option = args.option;
     this.#exportTypes = args.exportTypes;
+    this.#generator = tjsg.createGenerator(args.option.generatorOptionObject);
   }
 
   async add(event: IWatchEvent): Promise<IDatabaseItem[]> {
@@ -51,17 +55,19 @@ export default class WatcherModule {
     this.#project.addSourceFileAtPath(resolved);
     option.files = [resolved];
 
+    this.#generator = tjsg.createGenerator(this.#option.generatorOptionObject);
+
     const schemaFiles = await summarySchemaFiles(this.#project, option);
     const schemaTypes = await summarySchemaTypes(this.#project, option, schemaFiles.filter);
 
     const items = (
       await Promise.all(
         schemaTypes.map(async (targetType) => {
-          const schema = createJSONSchema(
-            targetType.filePath,
-            targetType.identifier,
-            option.generatorOptionObject,
-          );
+          const schema = createJSONSchema({
+            filePath: targetType.filePath,
+            exportedType: targetType.identifier,
+            generator: this.#generator,
+          });
 
           if (schema.type === 'fail') {
             return undefined;
@@ -95,8 +101,9 @@ export default class WatcherModule {
     }
 
     await sourceFile.refreshFromFileSystem();
-
     option.files = [resolved];
+
+    this.#generator = tjsg.createGenerator(this.#option.generatorOptionObject);
 
     const schemaFiles = await summarySchemaFiles(this.#project, option);
     const schemaTypes = await summarySchemaTypes(this.#project, option, schemaFiles.filter);
@@ -104,11 +111,11 @@ export default class WatcherModule {
     const items = (
       await Promise.all(
         schemaTypes.map(async (targetType) => {
-          const schema = createJSONSchema(
-            targetType.filePath,
-            targetType.identifier,
-            option.generatorOptionObject,
-          );
+          const schema = createJSONSchema({
+            filePath: targetType.filePath,
+            exportedType: targetType.identifier,
+            generator: this.#generator,
+          });
 
           if (schema.type === 'fail') {
             return undefined;
@@ -146,6 +153,7 @@ export default class WatcherModule {
 
     const exportedTypes = getSoruceFileExportedTypes(sourceFile);
     this.#project.removeSourceFile(sourceFile);
+    this.#generator = tjsg.createGenerator(this.#option.generatorOptionObject);
 
     log.trace(
       `delete: ${exportedTypes.length}, ${exportedTypes.map((item) => item.identifier).join(', ')}`,
