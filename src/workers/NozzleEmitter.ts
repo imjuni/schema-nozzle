@@ -29,7 +29,7 @@ import ignore, { type Ignore } from 'ignore';
 import type { JSONSchema7 } from 'json-schema';
 import { atOrThrow, isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
-import { isPass } from 'my-only-either';
+import { fail, isPass, pass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
@@ -200,6 +200,28 @@ export default class NozzleEmitter extends EventEmitter {
       command: CE_MASTER_ACTION.TASK_COMPLETE,
       data: { id: this.id, result: 'pass', command: CE_WORKER_ACTION.OPTION_LOAD },
     } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+  }
+
+  loadGenerator() {
+    if (this.option == null) {
+      return fail(new Error('empty option'));
+    }
+
+    try {
+      const generator =
+        this.#generator != null
+          ? this.#generator
+          : tjsg.createGenerator(this.option.generatorOptionObject);
+
+      if (this.#generator == null) {
+        this.#generator = generator;
+      }
+
+      return pass(generator);
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+      return fail(err);
+    }
   }
 
   async diagonostic() {
@@ -417,23 +439,31 @@ export default class NozzleEmitter extends EventEmitter {
       'ts-json-schema-generator project load fail',
     );
 
-    const generator =
-      this.#generator != null
-        ? this.#generator
-        : tjsg.createGenerator({
-            path: atOrThrow(payload, 0).filePath,
-            type: '*',
-            ...option.generatorOptionObject,
-          });
+    const generator = this.loadGenerator();
 
-    if (this.#generator == null) {
-      this.#generator = generator;
+    if (generator.type === 'fail') {
+      // send message to master process
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: generator.fail.message,
+            stack: generator.fail.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+
+      return;
     }
 
     const jsonSchema = createJSONSchema({
       filePath: payload.filePath,
       exportedType: payload.exportedType,
-      generator: this.#generator,
+      generator: generator.pass,
     });
 
     if (jsonSchema.type === 'fail') {
@@ -503,17 +533,25 @@ export default class NozzleEmitter extends EventEmitter {
       'ts-json-schema-generator project load fail',
     );
 
-    const generator =
-      this.#generator != null
-        ? this.#generator
-        : tjsg.createGenerator({
-            path: atOrThrow(payload, 0).filePath,
-            type: '*',
-            ...option.generatorOptionObject,
-          });
+    const generator = this.loadGenerator();
 
-    if (this.#generator == null) {
-      this.#generator = generator;
+    if (generator.type === 'fail') {
+      // send message to master process
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: generator.fail.message,
+            stack: generator.fail.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+
+      return;
     }
 
     const startAt = dayjs();
@@ -537,7 +575,7 @@ export default class NozzleEmitter extends EventEmitter {
         const jsonSchema = createJSONSchema({
           filePath: exportedType.filePath,
           exportedType: exportedType.exportedType,
-          generator,
+          generator: generator.pass,
         });
 
         if (isPass(jsonSchema)) {

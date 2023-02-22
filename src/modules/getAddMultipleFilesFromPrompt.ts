@@ -4,6 +4,7 @@ import logger from '#tools/logger';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
+import path from 'path';
 
 const log = logger();
 
@@ -14,14 +15,17 @@ export default async function getAddMultipleFilesFromPrompt(
     // multiple, searchable checkbox ui
     inquirer.registerPrompt('checkbox-plus', CheckboxPlusPrompt);
 
-    const promptItems = schemaFiles.map((schemaFile) => ({
-      name: `${schemaFile.refined} - ${schemaFile.origin}`,
-      value: schemaFile,
-    }));
+    const promptItems = schemaFiles.map((schemaFile) => {
+      const basename = path.basename(schemaFile.origin);
+      return {
+        name: `${basename} - ${schemaFile.refined}`,
+        value: { ...schemaFile, search: basename },
+      };
+    });
 
     const fuse = new Fuse(promptItems, {
       includeScore: true,
-      keys: ['value.origin', 'value.refiend'],
+      keys: ['value.search'],
     });
 
     const answer = await inquirer.prompt<{ schemaFiles: typeof schemaFiles }>([

@@ -2,6 +2,7 @@ import progress from '#cli/display/progress';
 import showFailMessage from '#cli/display/showFailMessage';
 import spinner from '#cli/display/spinner';
 import getResolvedPaths from '#configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type { TAddSchemaBaseOption } from '#configs/interfaces/TAddSchemaOption';
 import mergeDatabaseItems from '#databases/mergeDatabaseItems';
@@ -44,12 +45,14 @@ export default async function addOnDatabaseCluster(
       generatorOptionObject: {},
     };
 
+    option.generatorOptionObject = await getSchemaGeneratorOption(option);
+
     log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
     log.trace(`${JSON.stringify(option)}`);
 
     workers.sendAll({
       command: CE_WORKER_ACTION.OPTION_LOAD,
-      data: { option: { ...option, project: resolvedPaths.project } },
+      data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     await workers.wait();

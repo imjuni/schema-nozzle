@@ -21,6 +21,7 @@ Strict JSON data validations are need many effort. You can reduce effort using `
   - [TypeScript interface](#typescript-interface)
   - [json-schema](#json-schema)
 - [Usage](#usage)
+- [Performance](#performance)
 - [Example using fastify.js](#example-using-fastifyjs)
 - [Roadmaps](#roadmaps)
 - [License](#license)
@@ -206,6 +207,14 @@ npx schema-nozzle watch --help
 
 Also you can see detail option [here](/docs/options.md).
 
+## Performance
+
+0.19.0 version enhance performance. Now remove pain point from mass schema generation.
+
+![benchmark](assets/schema_nozzle_to_be_002.png)
+
+This image is result of 388 schema extraction using M1 macbook pro(16GB RAM, 1TB SSD, 10core). `schema-nozzle` spent only `6.14` second! 🙌 🙆
+
 ## Example using fastify.js
 
 A complete example of using schema-nozzle to create a swagger.io document and use json-schema to process input-output value verification can be found at [Ma-eum](https://github.com/imjuni/maeum). See the example of how DTO type declaration handles swagger.io document creation, json-schema creation, and typedoc document creation all at once!
@@ -214,12 +223,13 @@ A complete example of using schema-nozzle to create a swagger.io document and us
 
 ## Roadmaps
 
-- [ ] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
 - [x] add watch command: watch `.nozzlefiles` list and add/del schema
-- [ ] add more test
+- [ ] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
 - [ ] tag support each schema
 - [ ] load, get, set interface for schema store
 - [ ] documentation site
+- [ ] $id field enhance: enclude directory path like `#/greeting/hello/world`
+- [ ] add more test
 
 ## License
 
