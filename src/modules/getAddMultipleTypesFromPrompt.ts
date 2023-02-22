@@ -1,16 +1,21 @@
 import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
 import getRatioNumber from '#tools/getRatioNumber';
+import getRelativeCwd from '#tools/getRelativeCwd';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
 
 export default async function getAddMultipleTypesFromPrompt(
+  cwd: string,
   exportedTypes: { filePath: string; identifier: string }[],
 ): Promise<typeof exportedTypes> {
-  const promptItems = exportedTypes.map((exportedType) => ({
-    name: `${exportedType.identifier} - ${exportedType.filePath}`,
-    value: exportedType,
-  }));
+  const promptItems = exportedTypes.map((exportedType) => {
+    const relative = getRelativeCwd(cwd, exportedType.filePath);
+    return {
+      name: `${exportedType.identifier} - ${relative}`,
+      value: { ...exportedType, relative },
+    };
+  });
 
   // multiple, searchable checkbox ui
   inquirer.registerPrompt('checkbox-plus', CheckboxPlusPrompt);

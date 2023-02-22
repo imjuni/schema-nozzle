@@ -12,8 +12,8 @@ export default async function getAddTypes(
   try {
     if (option.types.length <= 0) {
       const types = option.multiple
-        ? await getAddMultipleTypesFromPrompt(exportedTypes)
-        : await getAddSingleTypesFromPrompt(exportedTypes);
+        ? await getAddMultipleTypesFromPrompt(option.cwd, exportedTypes)
+        : await getAddSingleTypesFromPrompt(option.cwd, exportedTypes);
 
       return pass(types);
     }

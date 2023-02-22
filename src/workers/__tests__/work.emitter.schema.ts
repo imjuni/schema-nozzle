@@ -9,6 +9,7 @@ import getData from '#tools/__tests__/test-tools/getData';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import NozzleEmitter from '#workers/NozzleEmitter';
+import fastCopy from 'fast-copy';
 import 'jest';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
@@ -26,24 +27,20 @@ beforeAll(async () => {
   data.project = new tsm.Project({
     tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
   });
-  data.option = {
-    ...env.addCmdOption,
-  };
-  data.option.generatorOptionObject = await getSchemaGeneratorOption(data.option);
-  data.generator = tjsg.createGenerator({
-    ...data.option.generatorOptionObject,
-    path: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
-    type: '*',
-  });
-});
 
-beforeEach(() => {
-  process.env.INIT_CWD = path.join(originPath, 'examples');
   data.resolvedPaths = getResolvedPaths({
     project: path.join(originPath, 'examples', 'tsconfig.json'),
     output: path.join(originPath, 'examples'),
   });
-  data.option = { ...data.option, ...data.resolvedPaths };
+
+  data.option = { ...env.addCmdOption, ...data.resolvedPaths };
+  data.option.generatorOptionObject = await getSchemaGeneratorOption(data.option);
+
+  data.generator = tjsg.createGenerator(data.option.generatorOptionObject);
+});
+
+beforeEach(() => {
+  process.env.INIT_CWD = path.join(originPath, 'examples');
 
   jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
@@ -58,7 +55,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('WorkEmitter - schema', () => {
+describe('WorkEmitter - summary', () => {
   test('summarySchemaFiles', async () => {
     const w = new NozzleEmitter();
     w.project = data.project;
@@ -126,6 +123,50 @@ describe('WorkEmitter - schema', () => {
     w.project = data.project;
     await w.loadDatabase();
   });
+});
+
+describe('WorkEmitter - create schema', () => {
+  test('loadGenerator - pass', async () => {
+    const w = new NozzleEmitter();
+    w.project = data.project;
+    w.loadOption({ option: data.option });
+
+    w.loadGenerator();
+  });
+
+  test('loadGenerator - fail', async () => {
+    const w = new NozzleEmitter();
+    w.project = data.project;
+    w.loadOption({ option: data.option });
+    w.option = undefined;
+
+    const r = w.loadGenerator();
+
+    expect(r.type).toEqual('fail');
+  });
+
+  test('loadGenerator - fail', async () => {
+    const w = new NozzleEmitter();
+    w.project = data.project;
+    w.loadOption({ option: data.option });
+    w.option = undefined;
+
+    const r = w.loadGenerator();
+
+    expect(r.type).toEqual('fail');
+  });
+
+  test('loadGenerator - createGenerator error', async () => {
+    const w = new NozzleEmitter();
+    const o = fastCopy(data.option);
+    w.project = data.project;
+    w.loadOption({ option: o });
+    w.option!.generatorOptionObject = {};
+
+    const r = w.loadGenerator();
+
+    expect(r.type).toEqual('fail');
+  });
 
   test('createJsonSchema - mapped access + call', async () => {
     const w = new NozzleEmitter();
@@ -149,15 +190,15 @@ describe('WorkEmitter - schema', () => {
     });
   });
 
-  test('createJsonSchema - with root type + emit', async () => {
+  test('createJsonSchema - empty definitions + emit', async () => {
     const w = new NozzleEmitter();
     w.project = data.project;
     w.loadOption({ option: data.option });
 
     const payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'] =
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
-        exportedType: 'IReqReadStudentQuerystring',
+        filePath: path.join(data.option.cwd, 'CE_MAJOR.ts'),
+        exportedType: 'CE_MAJOR',
       };
     w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
   });
@@ -177,13 +218,15 @@ describe('WorkEmitter - schema', () => {
     w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
   });
 
-  test('createJsonSchema without root type', async () => {
+  test('createJsonSchema create generator error', async () => {
     const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
+    const o = fastCopy(data.option);
+    w.loadOption({ option: o });
     w.project = data.project;
+    o.generatorOptionObject = {};
 
     await w.createJsonSchema({
-      filePath: path.join(w.option!.cwd, 'CE_MAJOR.ts'),
+      filePath: path.join(data.option.cwd, 'CE_MAJOR.ts'),
       exportedType: 'CE_MAJOR',
     });
   });
@@ -248,7 +291,31 @@ describe('WorkEmitter - schema', () => {
 
     await w.createJsonSchemaBulk([
       {
-        filePath: path.join(data.option.cwd, 'IProfessorDto_raise_fail.ts'),
+        // add cache logic, so wilful error raising what do pass invalid exportedType
+        filePath: path.join(data.option.cwd, 'IProfessorDto.ts'),
+        exportedType: 'IProfessorDto222',
+      },
+    ]);
+  });
+
+  test('createJsonSchemaBulk - call either fail', async () => {
+    const w = new NozzleEmitter();
+    const o = fastCopy(data.option);
+    w.loadOption({ option: o });
+    w.project = data.project;
+    o.generatorOptionObject = {};
+
+    await w.createJsonSchemaBulk([
+      {
+        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        exportedType: 'IReqReadStudentParam',
+      },
+      {
+        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        exportedType: 'IReqReadStudentQuerystring',
+      },
+      {
+        filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
         exportedType: 'IProfessorDto',
       },
     ]);
