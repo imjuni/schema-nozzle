@@ -39,16 +39,6 @@ beforeEach(() => {
     ...data.resolvedPaths,
   };
 
-  jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
-    throw new Error('Exit triggered');
-  });
-
-  jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
-    return true;
-  });
-});
-
-afterEach(() => {
   jest.clearAllMocks();
 });
 
@@ -71,6 +61,14 @@ describe('WorkEmitter - watch', () => {
 
   test('add - exception', async () => {
     try {
+      jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+        throw new Error('Exit triggered');
+      });
+
+      jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+        return true;
+      });
+
       const w = new NozzleEmitter();
       w.loadOption({ option: data.option });
       w.project = data.project;
@@ -102,6 +100,14 @@ describe('WorkEmitter - watch', () => {
 
   test('change - not found', async () => {
     try {
+      jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+        throw new Error('Exit triggered');
+      });
+
+      jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+        return true;
+      });
+
       const w = new NozzleEmitter();
       w.loadOption({ option: data.option });
       w.project = data.project;
@@ -120,6 +126,14 @@ describe('WorkEmitter - watch', () => {
       const w = new NozzleEmitter();
       w.loadOption({ option: data.option });
       w.project = data.project;
+
+      jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+        throw new Error('Exit triggered');
+      });
+
+      jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+        return true;
+      });
 
       jest.spyOn(w.project, 'getSourceFile').mockImplementationOnce(() => {
         throw new Error('error deliberate raise');
@@ -156,6 +170,14 @@ describe('WorkEmitter - watch', () => {
       w.loadOption({ option: data.option });
       w.project = data.project;
 
+      jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+        throw new Error('Exit triggered');
+      });
+
+      jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+        return true;
+      });
+
       await w.watchSourceFileUnlink({
         kind: CE_WATCH_EVENT.UNLINK,
         filePath: '',
@@ -170,6 +192,14 @@ describe('WorkEmitter - watch', () => {
       const w = new NozzleEmitter();
       w.loadOption({ option: data.option });
       w.project = data.project;
+
+      jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+        throw new Error('Exit triggered');
+      });
+
+      jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+        return true;
+      });
 
       jest.spyOn(w.project, 'getSourceFile').mockImplementationOnce(() => {
         throw new Error('error deliberate raise');

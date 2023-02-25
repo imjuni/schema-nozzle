@@ -15,7 +15,10 @@ const log = logger();
 
 export default async function initNozzle(_option: IInitOption) {
   const cwd = getCwd(process.env);
-  const tsconfigFilePaths = await fastGlob('**/tsconfig.json', { cwd, ignore: ['node_modules'] });
+  const tsconfigFilePaths = await fastGlob(['**/tsconfig.json', '**/tsconfig.*.json'], {
+    cwd,
+    ignore: ['node_modules'],
+  });
 
   log.trace('tsconfig file: %s', tsconfigFilePaths);
 

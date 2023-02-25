@@ -118,7 +118,7 @@ class Workers extends EventEmitter {
 
         // timeout, wait 30 second
         if (
-          currentAt.diff(startAt, 'second') >
+          currentAt.diff(startAt, 'seconds') >
           (waitSecond ?? CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND)
         ) {
           clearInterval(intervalHandle);

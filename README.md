@@ -1,7 +1,14 @@
 # schema-nozzle
 
 ![ts](https://flat.badgen.net/badge/Built%20With/TypeScript/blue)
-[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![schema-nozzle](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml/badge.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE) [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle)
+[![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle)
+[![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues)
+[![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle)
+[![schema-nozzle](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml/badge.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/actions/workflows/ci.yml)
+[![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE)
+[![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 `schema-nozzle` generates json-schema in the **TypeScript** `interface`, `type alias`, `class` and `enum`.
 
@@ -23,6 +30,7 @@ Strict JSON data validations are need many effort. You can reduce effort using `
 - [Usage](#usage)
 - [Performance](#performance)
 - [Example using fastify.js](#example-using-fastifyjs)
+- [Relate To](#relate-to)
 - [Roadmaps](#roadmaps)
 - [License](#license)
 
@@ -221,10 +229,17 @@ A complete example of using schema-nozzle to create a swagger.io document and us
 
 - fastify with schema-nozzle [example](/docs/fastify.md)
 
+## Relate To
+
+- [ts-json-schema-generator](https://github.com/vega/ts-json-schema-generator)
+  - json-schema generator
+- [ts-morph](https://github.com/dsherret/ts-morph)
+  - TypeScript Compiler API wrapper
+
 ## Roadmaps
 
 - [x] add watch command: watch `.nozzlefiles` list and add/del schema
-- [ ] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
+- [x] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
 - [ ] tag support each schema
 - [ ] load, get, set interface for schema store
 - [ ] documentation site

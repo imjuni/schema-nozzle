@@ -11,6 +11,7 @@ export const baseOption: IBaseOption = {
   types: [],
   skipError: true,
   output: '.',
+  cliLogo: false,
 };
 
 export const addCmdOption: TAddSchemaOption = {

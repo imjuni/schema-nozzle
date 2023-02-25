@@ -22,6 +22,7 @@ import {
   type TPickPassWorkerToMasterTaskComplete,
 } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
+import { showLogo } from '@maeum/cli-logo';
 import cluster from 'cluster';
 import { atOrThrow, isError, populate } from 'my-easy-fp';
 import os from 'os';
@@ -32,6 +33,19 @@ export default async function addOnDatabaseCluster(
   baseOption: TAddSchemaBaseOption,
 ): Promise<void> {
   try {
+    if (baseOption.cliLogo) {
+      await showLogo({
+        message: 'Schema Nozzle',
+        figlet: { font: 'ANSI Shadow', width: 80 },
+        color: 'cyan',
+      });
+    } else {
+      spinner.start('Schema Nozzle start');
+      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+      spinner.stop();
+    }
+
+    // slant, star wars, ansi shadow
     const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
     populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
@@ -61,7 +75,7 @@ export default async function addOnDatabaseCluster(
       command: CE_WORKER_ACTION.PROJECT_LOAD,
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }>);
 
-    let reply = await workers.wait();
+    let reply = await workers.wait(option.generatorTimeout);
 
     // master check project loading on worker
     if (reply.data.some((workerReply) => workerReply.result === 'fail')) {

@@ -55,6 +55,14 @@ module.exports = {
         'no-console': ['off'],
       },
     },
+    {
+      files: ['jest.config.cjs'],
+      rules: {
+        '@typescript-eslint/no-unsafe-assignment': ['off'],
+        '@typescript-eslint/no-unsafe-argument': ['off'],
+        '@typescript-eslint/no-unsafe-member-access': ['off'],
+      },
+    },
   ],
   settings: {
     'import/resolver': {

@@ -107,3 +107,4 @@ dist
 db.json
 examples/db.json
 temp-commit-log.md
+dist/
