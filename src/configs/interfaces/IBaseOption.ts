@@ -13,4 +13,7 @@ export default interface IBaseOption {
 
   /** skip compile error */
   skipError: boolean;
+
+  /** display cli logo */
+  cliLogo: boolean;
 }

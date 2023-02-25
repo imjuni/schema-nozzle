@@ -20,6 +20,7 @@ import {
   type TPickPassWorkerToMasterTaskComplete,
 } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
+import { showLogo } from '@maeum/cli-logo';
 import cluster from 'cluster';
 import { atOrThrow, isError, populate } from 'my-easy-fp';
 import os from 'os';
@@ -28,6 +29,18 @@ const log = logger();
 
 export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
+    if (baseOption.cliLogo) {
+      await showLogo({
+        message: 'Schema Nozzle',
+        figlet: { font: 'ANSI Shadow', width: 80 },
+        color: 'cyan',
+      });
+    } else {
+      spinner.start('Schema Nozzle start');
+      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+      spinner.stop();
+    }
+
     const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
     populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
@@ -58,7 +71,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       command: CE_WORKER_ACTION.PROJECT_LOAD,
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_LOAD>);
 
-    let reply = await workers.wait();
+    let reply = await workers.wait(option.generatorTimeout);
 
     log.trace(`reply::: ${JSON.stringify(reply)}`);
 

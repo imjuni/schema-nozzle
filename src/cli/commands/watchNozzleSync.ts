@@ -14,6 +14,7 @@ import type IWatchEvent from '#modules/interfaces/IWatchEvent';
 import type TUpdateEvent from '#modules/interfaces/TUpdateEvent';
 import WatcherModule from '#modules/WatcherModule';
 import logger from '#tools/logger';
+import { showLogo } from '@maeum/cli-logo';
 import chalk from 'chalk';
 import chokidar from 'chokidar';
 import { isError } from 'my-easy-fp';
@@ -22,6 +23,18 @@ import { debounceTime, Subject } from 'rxjs';
 const log = logger();
 
 export default async function watchNozzleSync(baseOption: TWatchSchemaBaseOption) {
+  if (baseOption.cliLogo) {
+    await showLogo({
+      message: 'Schema Nozzle',
+      figlet: { font: 'ANSI Shadow', width: 80 },
+      color: 'cyan',
+    });
+  } else {
+    spinner.start('Schema Nozzle start');
+    spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+    spinner.stop();
+  }
+
   spinner.start('TypeScript source code compile, ...');
 
   const resolvedPaths = getResolvedPaths(baseOption);

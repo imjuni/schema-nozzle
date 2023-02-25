@@ -41,12 +41,13 @@ describe('getTsProject', () => {
   });
 
   test('fail - exception', async () => {
-    jest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
+    const spy = jest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
       throw new Error('raise error');
     });
     const project = await getTsProject({
       tsConfigFilePath: path.join(originPath, 'examples', '2'),
     });
+    spy.mockRestore();
     expect(project.type).toEqual('fail');
   });
 });

@@ -16,11 +16,24 @@ import getAddTypes from '#modules/getAddTypes';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
+import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import * as tjsg from 'ts-json-schema-generator';
 
 export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
+    if (baseOption.cliLogo) {
+      await showLogo({
+        message: 'Schema Nozzle',
+        figlet: { font: 'ANSI Shadow', width: 80 },
+        color: 'cyan',
+      });
+    } else {
+      spinner.start('Schema Nozzle start');
+      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+      spinner.stop();
+    }
+
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(baseOption);

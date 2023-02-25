@@ -16,6 +16,7 @@ import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import { isFailTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
+import { showLogo } from '@maeum/cli-logo';
 import chalk from 'chalk';
 import chokidar from 'chokidar';
 import cluster from 'cluster';
@@ -26,6 +27,18 @@ import { debounceTime, Subject } from 'rxjs';
 const log = logger();
 
 export default async function watchNozzleCluster(baseOption: TWatchSchemaBaseOption) {
+  if (baseOption.cliLogo) {
+    await showLogo({
+      message: 'Schema Nozzle',
+      figlet: { font: 'ANSI Shadow', width: 80 },
+      color: 'cyan',
+    });
+  } else {
+    spinner.start('Schema Nozzle start');
+    spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+    spinner.stop();
+  }
+
   const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
   populate(workerSize).forEach(() => workers.add(cluster.fork()));
 

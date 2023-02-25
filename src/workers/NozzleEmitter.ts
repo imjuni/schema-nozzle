@@ -33,13 +33,13 @@ import { fail, isPass, pass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
-import type * as tsm from 'ts-morph';
+import type { Project } from 'ts-morph';
 import type { SetRequired } from 'type-fest';
 
 const log = logger();
 
 export default class NozzleEmitter extends EventEmitter {
-  accessor project: tsm.Project | undefined;
+  accessor project: Project | undefined;
 
   accessor option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption | undefined;
 
@@ -74,7 +74,9 @@ export default class NozzleEmitter extends EventEmitter {
     this.#generator = args?.generator;
     this.databaseItems = [];
 
-    process.on('SIGTERM', NozzleEmitter.terminate);
+    if (process.listeners('SIGTERM').length <= 0) {
+      process.on('SIGTERM', NozzleEmitter.terminate);
+    }
 
     this.on(
       CE_WORKER_ACTION.OPTION_LOAD,

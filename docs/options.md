@@ -28,6 +28,7 @@
 | types      |       | TypeScript type of source code. You can use interface, type alias, enum, class. |
 | files      |       | TypeScript source code file path                                                |
 | format     |       | generated json-schema save format: json, string, base64                         |
+| cli-logo   |       | display cli logo. help to find schema-nozzle message on ci log                  |
 
 ## `del`, `d` command options
 
@@ -39,32 +40,36 @@
 | skip-error |       | skip compile error on source file                                               |
 | types      |       | TypeScript type of source code. You can use interface, type alias, enum, class. |
 | files      |       | TypeScript source code file path                                                |
+| cli-logo   |       | display cli logo. help to find schema-nozzle message on ci log                  |
 
 ## `refresh`, `r` command options
 
-| option     | alias | description                                             |
-| ---------- | ----- | ------------------------------------------------------- |
-| project    | p     | tsconfig.json path                                      |
-| config     | c     | configuration file path                                 |
-| output     | o     | database file path                                      |
-| skip-error |       | skip compile error on source file                       |
-| format     |       | generated json-schema save format: json, string, base64 |
+| option     | alias | description                                                    |
+| ---------- | ----- | -------------------------------------------------------------- |
+| project    | p     | tsconfig.json path                                             |
+| config     | c     | configuration file path                                        |
+| output     | o     | database file path                                             |
+| skip-error |       | skip compile error on source file                              |
+| format     |       | generated json-schema save format: json, string, base64        |
+| cli-logo   |       | display cli logo. help to find schema-nozzle message on ci log |
 
 ## `truncate`, `t` command options
 
-| option  | alias | description             |
-| ------- | ----- | ----------------------- |
-| project | p     | tsconfig.json path      |
-| config  | c     | configuration file path |
-| output  | o     | database file path      |
+| option   | alias | description                                                    |
+| -------- | ----- | -------------------------------------------------------------- |
+| project  | p     | tsconfig.json path                                             |
+| config   | c     | configuration file path                                        |
+| output   | o     | database file path                                             |
+| cli-logo |       | display cli logo. help to find schema-nozzle message on ci log |
 
 ## `watch`, `w` command options
 
-| option        | alias | description                                             |
-| ------------- | ----- | ------------------------------------------------------- |
-| project       | p     | tsconfig.json path                                      |
-| config        | c     | configuration file path                                 |
-| output        | o     | database file path                                      |
-| skip-error    |       | skip compile error on source file                       |
-| format        |       | generated json-schema save format: json, string, base64 |
-| debounce-time |       | watch command debounce-time                             |
+| option        | alias | description                                                    |
+| ------------- | ----- | -------------------------------------------------------------- |
+| project       | p     | tsconfig.json path                                             |
+| config        | c     | configuration file path                                        |
+| output        | o     | database file path                                             |
+| skip-error    |       | skip compile error on source file                              |
+| format        |       | generated json-schema save format: json, string, base64        |
+| debounce-time |       | watch command debounce-time                                    |
+| cli-logo      |       | display cli logo. help to find schema-nozzle message on ci log |

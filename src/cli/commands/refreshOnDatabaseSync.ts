@@ -15,6 +15,7 @@ import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
+import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import path from 'path';
@@ -23,6 +24,18 @@ import type { SetRequired } from 'type-fest';
 
 export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBaseOption) {
   try {
+    if (baseOption.cliLogo) {
+      await showLogo({
+        message: 'Schema Nozzle',
+        figlet: { font: 'ANSI Shadow', width: 80 },
+        color: 'cyan',
+      });
+    } else {
+      spinner.start('Schema Nozzle start');
+      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+      spinner.stop();
+    }
+
     spinner.start('TypeScript source code compile, ...');
 
     const resolvedPaths = getResolvedPaths(baseOption);

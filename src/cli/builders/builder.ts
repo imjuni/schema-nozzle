@@ -21,8 +21,13 @@ export default function builder(argv: Argv) {
 
   // have no alias option
   argv
+    .option('cli-logo', {
+      describe: 'display cli logo',
+      type: 'boolean',
+      default: false,
+    })
     .option('types', {
-      describe: 'TypeScript type of source code. You can use interface, type alias, enum, class.',
+      describe: 'TypeScript type of source code. You can use interface, type alias, enum, class',
       type: 'string',
       default: [],
       array: true,
