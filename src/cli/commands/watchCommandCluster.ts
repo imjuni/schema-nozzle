@@ -1,28 +1,32 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import spinner from '#cli/display/spinner';
-import getDiagnostics from '#compilers/getDiagnostics';
-import getExportedTypes from '#compilers/getExportedTypes';
-import getTsProject from '#compilers/getTsProject';
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import type { TWatchSchemaBaseOption } from '#configs/interfaces/TWatchSchemaOption';
+import SchemaNozzleError from '#errors/SchemaNozzleError';
 import errorTrace from '#modules/errorTrace';
 import getWatchFiles from '#modules/getWatchFiles';
 import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import type IWatchEvent from '#modules/interfaces/IWatchEvent';
 import type TUpdateEvent from '#modules/interfaces/TUpdateEvent';
-import WatcherModule from '#modules/WatcherModule';
+import WatcherClusterModule from '#modules/WatcherClusterModule';
 import logger from '#tools/logger';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
+import { isFailTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
+import workers from '#workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import chalk from 'chalk';
 import chokidar from 'chokidar';
-import { isError } from 'my-easy-fp';
+import cluster from 'cluster';
+import { atOrThrow, isError, populate } from 'my-easy-fp';
+import os from 'os';
 import { debounceTime, Subject } from 'rxjs';
 
 const log = logger();
 
-export default async function watchNozzleSync(baseOption: TWatchSchemaBaseOption) {
+export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOption) {
   if (baseOption.cliLogo) {
     await showLogo({
       message: 'Schema Nozzle',
@@ -30,10 +34,11 @@ export default async function watchNozzleSync(baseOption: TWatchSchemaBaseOption
       color: 'cyan',
     });
   } else {
-    spinner.start('Schema Nozzle start');
-    spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-    spinner.stop();
+    spinner.start('Schema Nozzle start').update('Schema Nozzle start', 'info').stop();
   }
+
+  const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
+  populate(workerSize).forEach(() => workers.add(cluster.fork()));
 
   spinner.start('TypeScript source code compile, ...');
 
@@ -51,22 +56,48 @@ export default async function watchNozzleSync(baseOption: TWatchSchemaBaseOption
 
   log.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
 
-  const project = await getTsProject({ tsConfigFilePath: option.project });
-  if (project.type === 'fail') throw project.fail;
+  workers.broadcast({
+    command: CE_WORKER_ACTION.OPTION_LOAD,
+    data: { option: { ...option, project: option.project } },
+  } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
 
-  const projectExportedTypes = getExportedTypes(project.pass);
-  const diagnostics = getDiagnostics({ option, project: project.pass });
-  if (diagnostics.type === 'fail') throw diagnostics.fail;
-  if (diagnostics.pass === false) throw new Error('project compile error');
+  await workers.wait();
 
-  spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
-  spinner.update({ message: `Watch project: ${option.project}`, channel: 'info' });
+  workers.broadcast({
+    command: CE_WORKER_ACTION.PROJECT_LOAD,
+  } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_LOAD>);
 
-  const wm = new WatcherModule({
-    project: project.pass,
-    exportTypes: projectExportedTypes,
-    option,
-  });
+  let reply = await workers.wait();
+
+  log.trace(`reply::: ${JSON.stringify(reply)}`);
+
+  // master check project loading on worker
+  if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+    const failReplies = reply.data.filter(isFailTaskComplete);
+    const failReply = atOrThrow(failReplies, 0);
+    throw new SchemaNozzleError(failReply.error);
+  }
+
+  workers.send({
+    command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
+  } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC>);
+
+  reply = await workers.wait();
+
+  // master check project diagostic on worker
+  if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+    const failReplies = reply.data.filter(isFailTaskComplete);
+    const failReply = atOrThrow(failReplies, 0);
+    throw new SchemaNozzleError(failReply.error);
+  }
+
+  spinner.update('TypeScript project file loaded', 'succeed');
+  spinner
+    .start(`Watch project: ${option.project}`)
+    .update(`Watch project: ${option.project}`, 'info')
+    .stop();
+
+  const wm = new WatcherClusterModule({ option });
 
   const watchHandle = chokidar.watch(watchFiles, { cwd: option.cwd, ignoreInitial: true });
 
@@ -79,38 +110,23 @@ export default async function watchNozzleSync(baseOption: TWatchSchemaBaseOption
     if (event.kind === CE_WATCH_EVENT.UNLINK) {
       wm.deleteDatabase(event.exportedTypes)
         .then(() => {
-          spinner.update({
-            message: `delete exported type: ${event.exportedTypes.join(', ')}`,
-            channel: 'succeed',
-          });
-          spinner.stop();
+          spinner.stop(`delete exported type: ${event.exportedTypes.join(', ')}`, 'succeed');
         })
         .catch((caught) => {
           const err = isError(caught, new Error('unknown error raised'));
-          spinner.update({
-            message: `delete exported type: ${err.message}`,
-            channel: 'fail',
-          });
-          spinner.stop();
+          spinner.stop(`delete exported type: ${err.message}`, 'fail');
         });
     } else {
       wm.updateDatabase(event.items)
         .then(() => {
-          spinner.update({
-            message: `${event.kind} exported type: ${event.items
-              .map((item) => item.id)
-              .join(', ')}`,
-            channel: 'succeed',
-          });
-          spinner.stop();
+          spinner.stop(
+            `${event.kind} exported type: ${event.items.map((item) => item.id).join(', ')}`,
+            'succeed',
+          );
         })
         .catch((caught) => {
           const err = isError(caught, new Error('unknown error raised'));
-          spinner.update({
-            message: `${event.kind} exported type: ${err.message}`,
-            channel: 'fail',
-          });
-          spinner.stop();
+          spinner.stop(`${event.kind} exported type: ${err.message}`, 'fail');
         });
     }
   });

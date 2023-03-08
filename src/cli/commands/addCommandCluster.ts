@@ -29,9 +29,7 @@ import os from 'os';
 
 const log = logger();
 
-export default async function addOnDatabaseCluster(
-  baseOption: TAddSchemaBaseOption,
-): Promise<void> {
+export default async function addCommandCluster(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
     if (baseOption.cliLogo) {
       await showLogo({
@@ -41,8 +39,7 @@ export default async function addOnDatabaseCluster(
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     // slant, star wars, ansi shadow
@@ -64,14 +61,14 @@ export default async function addOnDatabaseCluster(
     log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
     log.trace(`${JSON.stringify(option)}`);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     await workers.wait();
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.PROJECT_LOAD,
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }>);
 
@@ -84,7 +81,7 @@ export default async function addOnDatabaseCluster(
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update({ message: 'TypeScript project load success', channel: 'succeed' });
+    spinner.update('TypeScript project load success', 'succeed');
 
     workers.send({
       command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
@@ -121,14 +118,14 @@ export default async function addOnDatabaseCluster(
     if (selectedSchemaFiles.type === 'fail') throw selectedSchemaFiles.fail;
     option.files = selectedSchemaFiles.pass.map((filePath) => filePath.origin);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
     await workers.wait();
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }>);
 
@@ -156,18 +153,18 @@ export default async function addOnDatabaseCluster(
     if (selectedTypes.type === 'fail') throw selectedTypes.fail;
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
 
     reply = await workers.wait();
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
@@ -198,7 +195,7 @@ export default async function addOnDatabaseCluster(
 
     const passes = reply.data.filter(isPassTaskComplete);
 
-    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+    workers.broadcast({ command: CE_WORKER_ACTION.TERMINATE });
 
     if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
       const pass = passes as Extract<
@@ -224,8 +221,8 @@ export default async function addOnDatabaseCluster(
     const fails = reply.data.filter(isFailTaskComplete);
     showFailMessage(fails.map((fail) => fail.error));
   } catch (caught) {
-    const err = isError(caught) ?? new Error('Unknown error raised');
-    spinner.stop({ message: err.message, channel: 'fail' });
+    const err = isError(caught, new Error('Unknown error raised'));
+    spinner.stop(err.message, 'fail');
     throw err;
   }
 }

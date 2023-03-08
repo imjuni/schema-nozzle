@@ -63,11 +63,13 @@ describe('safeParse', () => {
   });
 
   test('exception -2', () => {
-    jest.spyOn(jscp, 'parse').mockImplementationOnce(() => {
+    const spy = jest.spyOn(jscp, 'parse').mockImplementationOnce(() => {
       throw new Error();
     });
 
     const r = safeParse('{}');
+
+    spy.mockRestore();
     if (r.type === 'pass') throw new Error('invalid');
     expect(r.fail).toBeInstanceOf(Error);
   });

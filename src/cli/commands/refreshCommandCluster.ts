@@ -27,7 +27,7 @@ import os from 'os';
 
 const log = logger();
 
-export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchemaBaseOption) {
+export default async function refreshCommandCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
     if (baseOption.cliLogo) {
       await showLogo({
@@ -37,8 +37,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
@@ -60,14 +59,14 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
     log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
     log.trace(`${JSON.stringify(option)}`);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
 
     await workers.wait();
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.PROJECT_LOAD,
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.PROJECT_LOAD>);
 
@@ -95,10 +94,10 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
+    spinner.update('TypeScript project file loaded', 'succeed');
     spinner.start('schema file select, ...');
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.LOAD_DATABASE,
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.LOAD_DATABASE>);
 
@@ -111,7 +110,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update({ message: 'schema file select complete', channel: 'succeed' });
+    spinner.stop('schema file select complete', 'succeed');
     spinner.start('schema type select, ...');
 
     workers.send({
@@ -131,11 +130,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
       typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES
     >;
 
-    spinner.update({
-      message: `${exportedTypes.length} schema type select complete`,
-      channel: 'succeed',
-    });
-    spinner.stop();
+    spinner.stop(`${exportedTypes.length} schema type select complete`, 'succeed');
 
     // master check generator option loading
     if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
@@ -155,7 +150,7 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
 
     const passes = reply.data.filter(isPassTaskComplete);
 
-    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+    workers.broadcast({ command: CE_WORKER_ACTION.TERMINATE });
 
     if (passes.length > 0) {
       if (atOrThrow(passes, 0).command === CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK) {
@@ -184,9 +179,11 @@ export default async function refreshOnDatabaseCluster(baseOption: TRefreshSchem
     const fails = reply.data.filter(isFailTaskComplete);
     showFailMessage(fails.map((fail) => fail.error));
   } catch (caught) {
-    workers.sendAll({ command: CE_WORKER_ACTION.TERMINATE });
+    workers.broadcast({ command: CE_WORKER_ACTION.TERMINATE });
+
     const err = isError(caught, new Error('Unknown error raised'));
-    spinner.stop({ message: err.message, channel: 'fail' });
+    spinner.stop(err.message, 'fail');
+
     throw err;
   }
 }

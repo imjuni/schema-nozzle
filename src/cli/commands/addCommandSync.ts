@@ -20,7 +20,7 @@ import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import * as tjsg from 'ts-json-schema-generator';
 
-export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption): Promise<void> {
+export default async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
     if (baseOption.cliLogo) {
       await showLogo({
@@ -30,8 +30,7 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     spinner.start('TypeScript source code compile, ...');
@@ -54,7 +53,7 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
+    spinner.update('TypeScript project file loaded', 'succeed');
 
     const summariedSchemaFiles = await summarySchemaFiles(project.pass, option);
     const selectedFiles = await getAddFiles(option, summariedSchemaFiles.filePaths);
@@ -94,15 +93,15 @@ export default async function addOnDatabaseSync(baseOption: TAddSchemaBaseOption
     const newDb = mergeDatabaseItems(db, items);
     await saveDatabase(option, newDb);
 
-    spinner.stop({
-      message: `[${selectedTypes.pass
+    spinner.stop(
+      `[${selectedTypes.pass
         .map((targetType) => `"${targetType.identifier}"`)
         .join(', ')}] add complete`,
-      channel: 'succeed',
-    });
+      'succeed',
+    );
   } catch (caught) {
-    spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(caught) ?? new Error('Unknown error raised');
+    spinner.stop('Error occured...', 'fail');
+    const err = isError(caught, new Error('Unknown error raised'));
     throw err;
   }
 }

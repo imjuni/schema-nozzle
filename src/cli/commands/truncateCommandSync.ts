@@ -4,7 +4,7 @@ import saveDatabase from '#databases/saveDatabase';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 
-export default async function truncateOnDatabase(option: TTruncateSchemaOption) {
+export default async function truncateCommandSync(option: TTruncateSchemaOption) {
   try {
     if (option.cliLogo) {
       await showLogo({
@@ -14,7 +14,7 @@ export default async function truncateOnDatabase(option: TTruncateSchemaOption) 
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
+      spinner.update('Schema Nozzle start', 'info');
       spinner.stop();
     }
 
@@ -22,12 +22,9 @@ export default async function truncateOnDatabase(option: TTruncateSchemaOption) 
 
     await saveDatabase(option, {});
 
-    spinner.stop({
-      message: 'truncate complete',
-      channel: 'succeed',
-    });
+    spinner.stop('truncate complete', 'succeed');
   } catch (caught) {
-    spinner.stop({ message: 'Error occured...', channel: 'fail' });
+    spinner.stop('Error occured...', 'fail');
     const err = isError(caught) ?? new Error('Unknown error raised');
     throw err;
   }

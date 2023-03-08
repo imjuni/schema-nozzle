@@ -29,13 +29,15 @@ class Spinner {
   }
 
   start(message?: string) {
-    if (this.isEnable === false) return;
+    if (this.isEnable === false) return this;
 
     if (message != null) {
       this.#spinner.start(message);
     } else {
       this.#spinner.start();
     }
+
+    return this;
   }
 
   static getColor(channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'>): ora.Color {
@@ -50,26 +52,34 @@ class Spinner {
     return 'cyan';
   }
 
-  update(display: { message: string; channel?: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
-    if (this.isEnable === false) return;
+  update(message: string, channel?: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'>) {
+    if (this.isEnable === false) return this;
 
-    if (display.channel != null) {
-      this.#spinner[display.channel](display.message);
+    if (channel != null) {
+      this.#spinner[channel](message);
     } else {
       setImmediate(() => {
-        this.#spinner.text = display.message;
+        this.#spinner.text = message;
       });
     }
+
+    return this;
   }
 
-  stop(display?: { message: string; channel: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'> }) {
-    if (this.isEnable === false) return;
+  stop(message?: string, channel?: keyof Pick<ora.Ora, 'succeed' | 'fail' | 'info'>) {
+    if (this.isEnable === false) return this;
 
-    if (display != null) {
-      this.#spinner[display.channel](display.message);
+    if (message != null && channel != null) {
+      this.#spinner[channel](message);
+    } else if (message != null) {
+      setImmediate(() => {
+        this.#spinner.text = message;
+      });
     } else {
       this.#spinner.stop();
     }
+
+    return this;
   }
 }
 

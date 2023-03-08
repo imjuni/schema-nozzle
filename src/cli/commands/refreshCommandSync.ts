@@ -22,7 +22,7 @@ import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBaseOption) {
+export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseOption) {
   try {
     if (baseOption.cliLogo) {
       await showLogo({
@@ -32,8 +32,7 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     spinner.start('TypeScript source code compile, ...');
@@ -57,7 +56,7 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    spinner.update({ message: 'TypeScript project file loaded', channel: 'succeed' });
+    spinner.update('TypeScript project file loaded', 'succeed');
 
     const db = await openDatabase(option);
     const basePath = await getDirname(resolvedPaths.project);
@@ -82,7 +81,7 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
 
     if (schemaFilterFilePath == null && option.files.length <= 0 && option.types.length <= 0) {
       spinner.start();
-      spinner.update({ message: 'Cannot found .nozzlefiles and empty database', channel: 'fail' });
+      spinner.update('Cannot found .nozzlefiles and empty database', 'fail');
       return;
     }
 
@@ -116,15 +115,13 @@ export default async function refreshOnDatabaseSync(baseOption: TRefreshSchemaBa
     const newDb = mergeDatabaseItems(db, items);
     await saveDatabase(option, newDb);
 
-    spinner.stop({
-      message: `[${schemaTypes
-        .map((targetType) => `"${targetType.identifier}"`)
-        .join(', ')}] add complete`,
-      channel: 'succeed',
-    });
+    spinner.stop(
+      `[${schemaTypes.map((targetType) => `"${targetType.identifier}"`).join(', ')}] add complete`,
+      'succeed',
+    );
   } catch (caught) {
-    spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(caught) ?? new Error('Unknown error raised');
+    spinner.stop('Error occured...', 'fail');
+    const err = isError(caught, new Error('Unknown error raised'));
     throw err;
   }
 }
