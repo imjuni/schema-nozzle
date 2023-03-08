@@ -33,7 +33,7 @@ export default function builder(argv: Argv) {
       array: true,
     })
     .option('skip-error', {
-      describe: 'skip compile error on source file',
+      describe: 'skip compile error on project source file',
       type: 'boolean',
       default: true,
     })

@@ -53,7 +53,7 @@ export default class WatcherClusterModule {
     log.trace(`received: ${resolved}`);
     option.files = [resolved];
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
       data: { kind: CE_WATCH_EVENT.ADD, filePath: resolved },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD>);
@@ -67,7 +67,7 @@ export default class WatcherClusterModule {
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update({ message: `${chalk.greenBright('change')}: ${event.filePath} type analysis` });
+    spinner.update(`${chalk.greenBright('change')}: ${event.filePath} type analysis`);
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
@@ -86,11 +86,11 @@ export default class WatcherClusterModule {
       typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE
     >;
 
-    spinner.update({
-      message: `${chalk.greenBright('add')}: ${exportedTypes
+    spinner.update(
+      `${chalk.greenBright('add')}: ${exportedTypes
         .map((exportedType) => exportedType.identifier)
         .join(', ')} json schema generating, ...`,
-    });
+    );
 
     workers.send(
       ...exportedTypes.map((exportedType) => {
@@ -119,7 +119,7 @@ export default class WatcherClusterModule {
 
     option.files = [resolved];
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
       data: { kind: CE_WATCH_EVENT.CHANGE, filePath: resolved },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE>);
@@ -179,7 +179,7 @@ export default class WatcherClusterModule {
 
     log.trace(`received: ${resolved}`);
 
-    workers.sendAll({
+    workers.broadcast({
       command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
       data: { kind: CE_WATCH_EVENT.UNLINK, filePath: resolved },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK>);

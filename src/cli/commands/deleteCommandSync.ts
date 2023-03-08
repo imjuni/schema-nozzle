@@ -11,7 +11,7 @@ import { showLogo } from '@maeum/cli-logo';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 
-export default async function deleteOnDatabase(baseOption: TDeleteSchemaOption) {
+export default async function deleteCommandSync(baseOption: TDeleteSchemaOption) {
   try {
     if (baseOption.cliLogo) {
       await showLogo({
@@ -21,8 +21,7 @@ export default async function deleteOnDatabase(baseOption: TDeleteSchemaOption) 
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update({ message: 'Schema Nozzle start', channel: 'info' });
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     spinner.start('TypeScript project loading, ...');
@@ -36,14 +35,14 @@ export default async function deleteOnDatabase(baseOption: TDeleteSchemaOption) 
     });
     if (project.type === 'fail') throw project.fail;
 
-    spinner.update({ message: 'TypeScript project load success', channel: 'succeed' });
+    spinner.update('TypeScript project load success', 'succeed');
 
     const diagnostics = getDiagnostics({ option: baseOption, project: project.pass });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
 
     spinner.start('Open database, ...');
     const db = await openDatabase(resolvedPaths);
-    spinner.update({ message: 'database open success', channel: 'succeed' });
+    spinner.update('database open success', 'succeed');
 
     const targetTypes = await getDeleteTypes({ db, option: { ...baseOption } });
     if (targetTypes.type === 'fail') throw targetTypes.fail;
@@ -57,33 +56,29 @@ export default async function deleteOnDatabase(baseOption: TDeleteSchemaOption) 
     if (targetTypes.pass.length === Object.keys(db).length) {
       await saveDatabase(option, {});
 
-      spinner.stop({
-        message: `[${targetTypes.pass
-          .map((targetType) => `"${targetType}"`)
-          .join(', ')}] delete complete`,
-        channel: 'succeed',
-      });
+      spinner.stop(
+        `[${targetTypes.pass.map((targetType) => `"${targetType}"`).join(', ')}] delete complete`,
+        'succeed',
+      );
 
       return;
     }
 
     const newDb = targetTypes.pass.reduce((aggregation, identifier) => {
       const schemas = deleteDatabaseItem(aggregation, identifier);
-      spinner.update({ message: `delete schema: ${identifier}`, channel: 'succeed' });
+      spinner.update(`delete schema: ${identifier}`, 'succeed');
       return schemas;
     }, fastCopy(db));
 
     await saveDatabase(option, newDb);
 
-    spinner.stop({
-      message: `[${targetTypes.pass
-        .map((targetType) => `"${targetType}"`)
-        .join(', ')}] delete complete`,
-      channel: 'succeed',
-    });
+    spinner.stop(
+      `[${targetTypes.pass.map((targetType) => `"${targetType}"`).join(', ')}] delete complete`,
+      'succeed',
+    );
   } catch (caught) {
-    spinner.stop({ message: 'Error occured...', channel: 'fail' });
-    const err = isError(caught) ?? new Error('Unknown error raised');
+    spinner.stop('Error occured...', 'fail');
+    const err = isError(caught, new Error('Unknown error raised'));
     throw err;
   }
 }

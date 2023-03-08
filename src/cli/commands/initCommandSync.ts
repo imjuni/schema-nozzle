@@ -13,7 +13,7 @@ import path from 'path';
 
 const log = logger();
 
-export default async function initNozzle(_option: IInitOption) {
+export default async function initCommandSync(_option: IInitOption) {
   const cwd = getCwd(process.env);
   const tsconfigFilePaths = await fastGlob(['**/tsconfig.json', '**/tsconfig.*.json'], {
     cwd,
@@ -51,20 +51,14 @@ export default async function initNozzle(_option: IInitOption) {
     getInitialOption(outputFilePath, answer.tsconfigFilePath, listFileFilePath),
   );
 
-  spinner.update({
-    message: `create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}: ${configFilePath}`,
-    channel: 'succeed',
-  });
+  spinner.update(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}: ${configFilePath}`, 'succeed');
 
   spinner.start(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}, ...`);
 
   const nozzlefiles = tsconfig.include != null ? (tsconfig.include as string[]) : ['**/*.ts'];
   await fs.writeFile(listFileFilePath, `${nozzlefiles.join('\n')}\n`);
 
-  spinner.update({
-    message: `create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`,
-    channel: 'succeed',
-  });
+  spinner.update(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`, 'succeed');
 
   log.trace(answer.tsconfigFilePath);
 }

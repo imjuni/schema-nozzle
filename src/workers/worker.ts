@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import logger from '#tools/logger';
 import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
 import NozzleEmitter from '#workers/NozzleEmitter';
@@ -6,10 +5,10 @@ import { isError } from 'my-easy-fp';
 
 const log = logger();
 
-export default async function worker2() {
+export default async function worker() {
   const emitter: NozzleEmitter = new NozzleEmitter();
 
-  process.on('message', async (payload: TMasterToWorkerMessage) => {
+  process.on('message', (payload: TMasterToWorkerMessage) => {
     try {
       log.trace(`worker message-01: ${typeof payload}-${payload.command}`);
 

@@ -4,15 +4,15 @@ import deleteBuilder from '#cli/builders/deleteBuilder';
 import refreshBuilder from '#cli/builders/refreshBuilder';
 import truncateBuilder from '#cli/builders/truncateBuilder';
 import watchBuilder from '#cli/builders/watchBuilder';
-import addOnDatabaseCluster from '#cli/commands/addOnDatabaseCluster';
-import addOnDatabaseSync from '#cli/commands/addOnDatabaseSync';
-import deleteOnDatabase from '#cli/commands/deleteOnDatabase';
-import initNozzle from '#cli/commands/initNozzle';
-import refreshOnDatabaseCluster from '#cli/commands/refreshOnDatabaseCluster';
-import refreshOnDatabaseSync from '#cli/commands/refreshOnDatabaseSync';
-import truncateOnDatabase from '#cli/commands/truncateOnDatabase';
-import watchNozzleCluster from '#cli/commands/watchNozzleCluster';
-import watchNozzleSync from '#cli/commands/watchNozzleSync';
+import addCommandCluster from '#cli/commands/addCommandCluster';
+import addCommandSync from '#cli/commands/addCommandSync';
+import deleteCommandSync from '#cli/commands/deleteCommandSync';
+import initCommandSync from '#cli/commands/initCommandSync';
+import refreshCommandCluster from '#cli/commands/refreshCommandCluster';
+import refreshCommandSync from '#cli/commands/refreshCommandSync';
+import truncateCommandSync from '#cli/commands/truncateCommandSync';
+import watchCommandCluster from '#cli/commands/watchCommandCluster';
+import watchCommandSync from '#cli/commands/watchCommandSync';
 import spinner from '#cli/display/spinner';
 import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
 import type IInitOption from '#configs/interfaces/IInitOption';
@@ -41,9 +41,9 @@ const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
     spinner.isEnable = true;
 
     if (process.env.SYNC_MODE === 'true') {
-      await addOnDatabaseSync(argv);
+      await addCommandSync(argv);
     } else {
-      await addOnDatabaseCluster(argv);
+      await addCommandCluster(argv);
     }
   },
 };
@@ -57,7 +57,7 @@ const deleteCmd: CommandModule<TDeleteSchemaOption, TDeleteSchemaOption> = {
     spinner.isEnable = true;
 
     const option = await withDefaultOption(argv);
-    await deleteOnDatabase(option);
+    await deleteCommandSync(option);
   },
 };
 
@@ -72,9 +72,9 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
     const option = await withDefaultOption(argv);
 
     if (process.env.SYNC_MODE === 'true') {
-      await refreshOnDatabaseSync(option);
+      await refreshCommandSync(option);
     } else {
-      await refreshOnDatabaseCluster(option);
+      await refreshCommandCluster(option);
     }
   },
 };
@@ -88,7 +88,7 @@ const truncateCmd: CommandModule<TTruncateSchemaOption, TTruncateSchemaOption> =
     spinner.isEnable = true;
 
     const option = await withDefaultOption(argv);
-    await truncateOnDatabase(option);
+    await truncateCommandSync(option);
   },
 };
 
@@ -100,7 +100,7 @@ const initCmd: CommandModule<IInitOption, IInitOption> = {
   handler: async (argv) => {
     spinner.isEnable = true;
 
-    await initNozzle(argv);
+    await initCommandSync(argv);
   },
 };
 
@@ -114,9 +114,9 @@ const watchCmd: CommandModule<TWatchSchemaOption, TWatchSchemaOption> = {
     const option = await withDefaultOption(argv);
 
     if (process.env.SYNC_MODE === 'true') {
-      await watchNozzleSync(option);
+      await watchCommandSync(option);
     } else {
-      await watchNozzleCluster(option);
+      await watchCommandCluster(option);
     }
   },
 };

@@ -84,7 +84,7 @@ class Workers extends EventEmitter {
     });
   }
 
-  sendAll(job: TMasterToWorkerMessage) {
+  broadcast(job: TMasterToWorkerMessage) {
     this.#reply = [];
 
     this.#workers.forEach((worker, index, arr) => {
