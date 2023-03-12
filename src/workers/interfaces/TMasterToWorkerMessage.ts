@@ -40,6 +40,10 @@ type TMasterToWorkerMessage =
       command: typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK;
       data: { kind: CE_WATCH_EVENT; filePath: string };
     }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY;
+      data: { filePaths: string[] };
+    }
   // misc command
   | { command: typeof CE_WORKER_ACTION.TERMINATE }
   | { command: typeof CE_WORKER_ACTION.NOOP };

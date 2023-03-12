@@ -3,12 +3,12 @@ import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
 
 export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
+  const item = db[identifier];
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (db[identifier] == null) {
+  if (item == null) {
     return db;
   }
-
-  const item: IDatabaseItem = db[identifier];
 
   // stage 01. imported schema information update
   const importFroms = item.dependency.import.from;

@@ -51,14 +51,14 @@ export default async function initCommandSync(_option: IInitOption) {
     getInitialOption(outputFilePath, answer.tsconfigFilePath, listFileFilePath),
   );
 
-  spinner.update(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}: ${configFilePath}`, 'succeed');
+  spinner.stop(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}: ${configFilePath}`, 'succeed');
 
   spinner.start(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}, ...`);
 
   const nozzlefiles = tsconfig.include != null ? (tsconfig.include as string[]) : ['**/*.ts'];
   await fs.writeFile(listFileFilePath, `${nozzlefiles.join('\n')}\n`);
 
-  spinner.update(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`, 'succeed');
+  spinner.stop(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`, 'succeed');
 
   log.trace(answer.tsconfigFilePath);
 }

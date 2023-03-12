@@ -1,9 +1,6 @@
 import getDiagnostics from '#compilers/getDiagnostics';
 import getSoruceFileExportedTypes from '#compilers/getSoruceFileExportedTypes';
 import getTsProject from '#compilers/getTsProject';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import createDatabaseItem from '#databases/createDatabaseItem';
 import openDatabase from '#databases/openDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
@@ -23,25 +20,23 @@ import type {
   TFailData,
   TPickPassWorkerToMasterTaskComplete,
 } from '#workers/interfaces/TWorkerToMasterMessage';
+import NozzleContext from '#workers/NozzleContext';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import ignore, { type Ignore } from 'ignore';
 import type { JSONSchema7 } from 'json-schema';
-import { atOrThrow, isError } from 'my-easy-fp';
+import { isError } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
-import { fail, isPass, pass } from 'my-only-either';
+import { isPass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
-import type { Project } from 'ts-morph';
 import type { SetRequired } from 'type-fest';
 
 const log = logger();
 
 export default class NozzleEmitter extends EventEmitter {
-  accessor project: Project | undefined;
-
-  accessor option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption | undefined;
+  #context: NozzleContext;
 
   accessor id: number = 0;
 
@@ -51,28 +46,22 @@ export default class NozzleEmitter extends EventEmitter {
 
   accessor filter: Ignore;
 
-  accessor generatorOption: tjsg.Config;
-
-  #generator: tjsg.SchemaGenerator | undefined;
-
   accessor schemaes: { filePath: string; exportedType: string; schema: JSONSchema7 }[];
 
   accessor databaseItems: IDatabaseItem[];
 
   constructor(args?: {
     ee?: ConstructorParameters<typeof EventEmitter>[0];
-    generator?: tjsg.SchemaGenerator;
+    context?: NozzleContext;
   }) {
     super(args?.ee);
 
-    this.project = undefined;
     this.filter = ignore();
     this.files = [];
     this.types = [];
-    this.generatorOption = {};
     this.schemaes = [];
-    this.#generator = args?.generator;
     this.databaseItems = [];
+    this.#context = args?.context ?? new NozzleContext();
 
     if (process.listeners('SIGTERM').length <= 0) {
       process.on('SIGTERM', NozzleEmitter.terminate);
@@ -161,6 +150,17 @@ export default class NozzleEmitter extends EventEmitter {
         this.watchSourceFileUnlink(payload).catch(errorTrace);
       },
     );
+
+    this.on(
+      CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY,
+      (
+        payload: TPickMasterToWorkerMessage<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
+        >['data'],
+      ) => {
+        this.watchSourceEventFileSummary(payload).catch(errorTrace);
+      },
+    );
   }
 
   static terminate(this: void, code?: number) {
@@ -171,32 +171,13 @@ export default class NozzleEmitter extends EventEmitter {
     this.emit(payload.command);
   }
 
-  check(command: CE_WORKER_ACTION, message: string) {
-    if (this.option == null || this.project == null) {
-      // send message to master process
-      const err = new Error(message);
-      process.send?.({
-        command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: {
-          command,
-          id: this.id,
-          result: 'fail',
-          error: {
-            kind: 'error',
-            message: err.message,
-            stack: err.stack,
-          },
-        },
-      } satisfies TWorkerToMasterMessage);
-
-      process.exit(1);
-    }
-
-    return { option: this.option, project: this.project };
-  }
-
   loadOption(payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>['data']) {
-    this.option = payload.option;
+    this.#context.option = payload.option;
+    this.#context.generatorOption = payload.option.generatorOptionObject;
+    this.#context.generator = tjsg.createGenerator({
+      ...this.#context.generatorOption,
+      type: '*',
+    });
 
     process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -204,35 +185,11 @@ export default class NozzleEmitter extends EventEmitter {
     } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
   }
 
-  loadGenerator() {
-    if (this.option == null) {
-      return fail(new Error('empty option'));
-    }
-
-    try {
-      const generator =
-        this.#generator != null
-          ? this.#generator
-          : tjsg.createGenerator(this.option.generatorOptionObject);
-
-      if (this.#generator == null) {
-        this.#generator = generator;
-      }
-
-      return pass(generator);
-    } catch (caught) {
-      const err = isError(caught, new Error('unknown error raised'));
-      return fail(err);
-    }
-  }
-
   async diagonostic() {
-    const { option, project } = this.check(
-      CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
-      'project compile error: diagonostic fail',
-    );
-
-    const diagnostics = getDiagnostics({ option, project });
+    const diagnostics = getDiagnostics({
+      option: this.#context.option,
+      project: this.#context.project,
+    });
 
     if (diagnostics.type === 'fail') {
       const err = new Error('project compile error: diagonostic fail');
@@ -259,24 +216,7 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   async loadProject() {
-    const projectPath = this.option?.project;
-
-    if (projectPath == null) {
-      // send message to master process
-      const err = new Error(`project load fail: undefined`);
-      process.send?.({
-        command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: {
-          command: CE_WORKER_ACTION.PROJECT_LOAD,
-          id: this.id,
-          result: 'fail',
-          error: { kind: 'error', message: err.message, stack: err.stack },
-        },
-      } satisfies TWorkerToMasterMessage);
-
-      process.exit(1);
-    }
-
+    const projectPath = this.#context.option.project;
     const project = await getTsProject({ tsConfigFilePath: projectPath });
 
     if (project.type === 'fail') {
@@ -294,7 +234,7 @@ export default class NozzleEmitter extends EventEmitter {
       process.exit(1);
     }
 
-    this.project = project.pass;
+    this.#context.project = project.pass;
 
     process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -307,12 +247,10 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   async workerSummarySchemaFiles() {
-    const { option, project } = this.check(
-      CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
-      'summary schema files fail',
+    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(
+      this.#context.project,
+      this.#context.option,
     );
-
-    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(project, option);
 
     this.filter = schemaFileFilter;
     this.files = filePaths;
@@ -332,12 +270,11 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   async workerSummarySchemaTypes() {
-    const { option, project } = this.check(
-      CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-      'summary schema types fail',
+    const exportedTypes = await summarySchemaTypes(
+      this.#context.project,
+      this.#context.option,
+      this.filter,
     );
-
-    const exportedTypes = await summarySchemaTypes(project, option, this.filter);
 
     this.types = exportedTypes;
 
@@ -354,19 +291,21 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   async workerSummarySchemaFileType() {
-    const { option, project } = this.check(
-      CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
-      'summary schema files, types fail',
+    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(
+      this.#context.project,
+      this.#context.option,
     );
-
-    const { filter: schemaFileFilter, filePaths } = await summarySchemaFiles(project, option);
 
     this.filter = schemaFileFilter;
     this.files = filePaths;
 
     log.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
 
-    const exportedTypes = await summarySchemaTypes(project, option, this.filter);
+    const exportedTypes = await summarySchemaTypes(
+      this.#context.project,
+      this.#context.option,
+      this.filter,
+    );
 
     this.types = exportedTypes;
 
@@ -383,14 +322,12 @@ export default class NozzleEmitter extends EventEmitter {
   }
 
   async loadDatabase() {
-    const { option } = this.check(
-      CE_WORKER_ACTION.LOAD_DATABASE,
-      'ts-json-schema-generator project load fail',
+    const db = await openDatabase(this.#context.option);
+    const basePath = await getDirname(this.#context.option.project);
+    const schemaFilterFilePath = await getSchemaFilterFilePath(
+      this.#context.option.cwd,
+      this.#context.option.listFile,
     );
-
-    const db = await openDatabase(option);
-    const basePath = await getDirname(option.project);
-    const schemaFilterFilePath = await getSchemaFilterFilePath(option.cwd, option.listFile);
 
     if (schemaFilterFilePath == null) {
       const exportedTypesInDb = Object.values(db)
@@ -404,11 +341,15 @@ export default class NozzleEmitter extends EventEmitter {
           };
         });
 
-      option.types = exportedTypesInDb.map((exportedType) => exportedType.identifier);
-      option.files = exportedTypesInDb.map((exportedType) => exportedType.filePath);
+      this.#context.updateFiles(exportedTypesInDb.map((exportedType) => exportedType.filePath));
+      this.#context.updateTypes(exportedTypesInDb.map((exportedType) => exportedType.identifier));
     }
 
-    if (schemaFilterFilePath == null && option.files.length <= 0 && option.types.length <= 0) {
+    if (
+      schemaFilterFilePath == null &&
+      this.#context.option.files.length <= 0 &&
+      this.#context.option.types.length <= 0
+    ) {
       // send message to master process
       const err = new Error('Cannot found .nozzlefiles and empty database');
 
@@ -436,36 +377,10 @@ export default class NozzleEmitter extends EventEmitter {
   async createJsonSchema(
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'],
   ) {
-    const { option } = this.check(
-      CE_WORKER_ACTION.CREATE_JSON_SCHEMA,
-      'ts-json-schema-generator project load fail',
-    );
-
-    const generator = this.loadGenerator();
-
-    if (generator.type === 'fail') {
-      // send message to master process
-      process.send?.({
-        command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: {
-          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
-          id: this.id,
-          result: 'fail',
-          error: {
-            kind: 'error',
-            message: generator.fail.message,
-            stack: generator.fail.stack,
-          },
-        } satisfies IFailWorkerToMasterTaskComplete,
-      } satisfies TWorkerToMasterMessage);
-
-      return;
-    }
-
     const jsonSchema = createJSONSchema({
       filePath: payload.filePath,
       exportedType: payload.exportedType,
-      generator: generator.pass,
+      generator: this.#context.generator,
     });
 
     if (jsonSchema.type === 'fail') {
@@ -496,7 +411,7 @@ export default class NozzleEmitter extends EventEmitter {
       return;
     }
 
-    const item = createDatabaseItem(option, this.types, jsonSchema.pass);
+    const item = createDatabaseItem(this.#context.option, this.types, jsonSchema.pass);
 
     this.schemaes.push(jsonSchema.pass);
     this.databaseItems.push(item.item);
@@ -530,32 +445,6 @@ export default class NozzleEmitter extends EventEmitter {
   async createJsonSchemaBulk(
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK>['data'],
   ) {
-    const { option } = this.check(
-      CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
-      'ts-json-schema-generator project load fail',
-    );
-
-    const generator = this.loadGenerator();
-
-    if (generator.type === 'fail') {
-      // send message to master process
-      process.send?.({
-        command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: {
-          command: CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK,
-          id: this.id,
-          result: 'fail',
-          error: {
-            kind: 'error',
-            message: generator.fail.message,
-            stack: generator.fail.stack,
-          },
-        } satisfies IFailWorkerToMasterTaskComplete,
-      } satisfies TWorkerToMasterMessage);
-
-      return;
-    }
-
     const startAt = dayjs();
     const schemas: ReturnType<typeof createJSONSchema>[] = [];
     const items: IDatabaseItem[] = [];
@@ -568,7 +457,10 @@ export default class NozzleEmitter extends EventEmitter {
         const currentAt = dayjs();
 
         // timeout, wait 30 second
-        if (exportedType == null || currentAt.diff(startAt, 'second') > option.generatorTimeout) {
+        if (
+          exportedType == null ||
+          currentAt.diff(startAt, 'second') > this.#context.option.generatorTimeout
+        ) {
           clearInterval(intervalHandle);
           resolve();
           return;
@@ -577,13 +469,17 @@ export default class NozzleEmitter extends EventEmitter {
         const jsonSchema = createJSONSchema({
           filePath: exportedType.filePath,
           exportedType: exportedType.exportedType,
-          generator: generator.pass,
+          generator: this.#context.generator,
         });
 
         if (isPass(jsonSchema)) {
           this.schemaes.push(jsonSchema.pass);
 
-          const databaseItem = createDatabaseItem(option, this.types, jsonSchema.pass);
+          const databaseItem = createDatabaseItem(
+            this.#context.option,
+            this.types,
+            jsonSchema.pass,
+          );
 
           const definitionItems =
             databaseItem.definitions != null && databaseItem.definitions.length > 0
@@ -637,24 +533,11 @@ export default class NozzleEmitter extends EventEmitter {
   async watchSourceFileAdd(
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD>['data'],
   ) {
-    const { option, project } = this.check(
-      CE_WORKER_ACTION.WATCH_SOURCE_FILE_ADD,
-      'ts-json-schema-generator project load fail',
-    );
-
     try {
-      const sourceFile = project.addSourceFileAtPath(payload.filePath);
+      const sourceFile = this.#context.project.addSourceFileAtPath(payload.filePath);
       const exportedTypes = getSoruceFileExportedTypes(sourceFile);
 
-      option.files = [payload.filePath];
-
-      if (exportedTypes.length > 0) {
-        this.#generator = tjsg.createGenerator({
-          ...option.generatorOptionObject,
-          path: payload.filePath,
-          type: atOrThrow(exportedTypes, 0).identifier,
-        });
-      }
+      this.#context.updateFiles([payload.filePath]);
 
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -693,13 +576,8 @@ export default class NozzleEmitter extends EventEmitter {
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE>['data'],
   ) {
     try {
-      const { option, project } = this.check(
-        CE_WORKER_ACTION.WATCH_SOURCE_FILE_CHANGE,
-        'ts-json-schema-generator project load fail',
-      );
-
-      const sourceFile = project.getSourceFile(payload.filePath);
-      option.files = [payload.filePath];
+      const sourceFile = this.#context.project.getSourceFile(payload.filePath);
+      this.#context.updateFiles([payload.filePath]);
 
       log.trace(`watch source-file: ${payload.filePath}`);
 
@@ -709,14 +587,6 @@ export default class NozzleEmitter extends EventEmitter {
 
       await sourceFile.refreshFromFileSystem();
       const exportedTypes = getSoruceFileExportedTypes(sourceFile);
-
-      if (exportedTypes.length > 0) {
-        this.#generator = tjsg.createGenerator({
-          ...option.generatorOptionObject,
-          path: payload.filePath,
-          type: atOrThrow(exportedTypes, 0).identifier,
-        });
-      }
 
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -755,27 +625,14 @@ export default class NozzleEmitter extends EventEmitter {
     payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK>['data'],
   ) {
     try {
-      const { project, option } = this.check(
-        CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
-        'ts-json-schema-generator project load fail',
-      );
-
-      const sourceFile = project.getSourceFile(payload.filePath);
+      const sourceFile = this.#context.project.getSourceFile(payload.filePath);
 
       if (sourceFile == null) {
         throw new Error(`Cannot found watch-file: ${payload.filePath}`);
       }
 
       const exportedTypes = getSoruceFileExportedTypes(sourceFile);
-      project.removeSourceFile(sourceFile);
-
-      if (exportedTypes.length > 0) {
-        this.#generator = tjsg.createGenerator({
-          ...option.generatorOptionObject,
-          path: payload.filePath,
-          type: atOrThrow(exportedTypes, 0).identifier,
-        });
-      }
+      this.#context.project.removeSourceFile(sourceFile);
 
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -789,6 +646,52 @@ export default class NozzleEmitter extends EventEmitter {
           })),
         } satisfies TPickPassWorkerToMasterTaskComplete<
           typeof CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK
+        >,
+      } satisfies TWorkerToMasterMessage);
+    } catch (caught) {
+      const err = isError(caught, new Error('unknown error raised'));
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,
+          id: this.id,
+          result: 'fail',
+          error: {
+            kind: 'error',
+            message: err.message,
+            stack: err.stack,
+          },
+        } satisfies IFailWorkerToMasterTaskComplete,
+      } satisfies TWorkerToMasterMessage);
+    }
+  }
+
+  async watchSourceEventFileSummary(
+    payload: TPickMasterToWorkerMessage<
+      typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
+    >['data'],
+  ) {
+    try {
+      const updateFiles = payload.filePaths.filter(
+        (filePath) => this.#context.project.getSourceFile(filePath) != null,
+      );
+      const deleteFiles = payload.filePaths.filter(
+        (filePath) => this.#context.project.getSourceFile(filePath) == null,
+      );
+
+      process.send?.({
+        command: CE_MASTER_ACTION.TASK_COMPLETE,
+        data: {
+          command: CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY,
+          id: this.id,
+          result: 'pass',
+          data: {
+            updateFiles,
+            deleteFiles,
+          },
+        } satisfies TPickPassWorkerToMasterTaskComplete<
+          typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
         >,
       } satisfies TWorkerToMasterMessage);
     } catch (caught) {

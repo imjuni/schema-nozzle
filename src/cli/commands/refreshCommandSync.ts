@@ -56,7 +56,7 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    spinner.update('TypeScript project file loaded', 'succeed');
+    spinner.stop('TypeScript project file loaded', 'succeed');
 
     const db = await openDatabase(option);
     const basePath = await getDirname(resolvedPaths.project);
@@ -81,7 +81,7 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
 
     if (schemaFilterFilePath == null && option.files.length <= 0 && option.types.length <= 0) {
       spinner.start();
-      spinner.update('Cannot found .nozzlefiles and empty database', 'fail');
+      spinner.stop('Cannot found .nozzlefiles and empty database', 'fail');
       return;
     }
 

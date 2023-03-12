@@ -59,6 +59,12 @@ export type TPassWorkerToMasterTaskComplete =
       result: 'pass';
       id: number;
       data: { filePath: string; identifier: string }[];
+    }
+  | {
+      command: typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY;
+      result: 'pass';
+      id: number;
+      data: { updateFiles: string[]; deleteFiles: string[] };
     };
 
 export type TPickPassWorkerToMasterTaskComplete<T> = Extract<

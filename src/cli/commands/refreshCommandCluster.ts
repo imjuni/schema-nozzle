@@ -94,7 +94,7 @@ export default async function refreshCommandCluster(baseOption: TRefreshSchemaBa
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update('TypeScript project file loaded', 'succeed');
+    spinner.stop('TypeScript project file loaded', 'succeed');
     spinner.start('schema file select, ...');
 
     workers.broadcast({

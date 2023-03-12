@@ -53,7 +53,7 @@ export default async function addCommandSync(baseOption: TAddSchemaBaseOption): 
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    spinner.update('TypeScript project file loaded', 'succeed');
+    spinner.stop('TypeScript project file loaded', 'succeed');
 
     const summariedSchemaFiles = await summarySchemaFiles(project.pass, option);
     const selectedFiles = await getAddFiles(option, summariedSchemaFiles.filePaths);

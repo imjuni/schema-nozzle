@@ -81,7 +81,7 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
       throw new SchemaNozzleError(failReply.error);
     }
 
-    spinner.update('TypeScript project load success', 'succeed');
+    spinner.stop('TypeScript project load success', 'succeed');
 
     workers.send({
       command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,

@@ -1,6 +1,5 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import * as odb from '#databases/openDatabase';
 import * as ffp from '#modules/getSchemaFilterFilePath';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
@@ -8,45 +7,69 @@ import * as env from '#modules/__tests__/env';
 import getData from '#tools/__tests__/test-tools/getData';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
+import NozzleContext from '#workers/NozzleContext';
 import NozzleEmitter from '#workers/NozzleEmitter';
-import fastCopy from 'fast-copy';
 import 'jest';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 
-const originPath = process.env.INIT_CWD!;
+const originPath = process.cwd();
+const ctx = new NozzleContext();
 const data: {
-  resolvedPaths: ReturnType<typeof getResolvedPaths>;
-  project: tsm.Project;
-  option: TAddSchemaOption;
-  generator: tjsg.SchemaGenerator;
-} = {} as any;
+  exit: jest.SpyInstance | undefined;
+  send: jest.SpyInstance | undefined;
+} = { exit: undefined, send: undefined };
 
 beforeAll(async () => {
-  data.project = new tsm.Project({
+  ctx.project = new tsm.Project({
     tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
   });
-
-  data.resolvedPaths = getResolvedPaths({
-    project: path.join(originPath, 'examples', 'tsconfig.json'),
-    output: path.join(originPath, 'examples'),
+  ctx.option = {
+    ...env.addCmdOption,
+    ...getResolvedPaths({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+    }),
+    generatorOptionObject: await getSchemaGeneratorOption({
+      discriminator: 'add-schema',
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      generatorOption: undefined,
+      skipError: env.addCmdOption.skipError,
+    }),
+  };
+  ctx.generator = tjsg.createGenerator({
+    ...ctx.option.generatorOptionObject,
+    type: '*',
   });
-
-  data.option = { ...env.addCmdOption, ...data.resolvedPaths };
-  data.option.generatorOptionObject = await getSchemaGeneratorOption(data.option);
-
-  data.generator = tjsg.createGenerator(data.option.generatorOptionObject);
 });
 
-beforeEach(() => {
+beforeEach(async () => {
   process.env.INIT_CWD = path.join(originPath, 'examples');
+  ctx.option = {
+    ...env.addCmdOption,
+    ...getResolvedPaths({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+    }),
+    generatorOptionObject: await getSchemaGeneratorOption({
+      discriminator: 'add-schema',
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      generatorOption: undefined,
+      skipError: env.addCmdOption.skipError,
+    }),
+  };
+  ctx.generatorOption = ctx.option.generatorOptionObject;
+  ctx.generator = tjsg.createGenerator({
+    ...ctx.option.generatorOptionObject,
+    type: '*',
+  });
 
-  jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+  data.exit = jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+  data.send = jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
     return true;
   });
 });
@@ -57,9 +80,7 @@ afterEach(() => {
 
 describe('WorkEmitter - summary', () => {
   test('summarySchemaFiles', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaFiles();
 
@@ -68,9 +89,7 @@ describe('WorkEmitter - summary', () => {
   });
 
   test('summarySchemaTypes', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaTypes();
 
@@ -79,9 +98,7 @@ describe('WorkEmitter - summary', () => {
   });
 
   test('summarySchemaFileType', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
-    w.project = data.project;
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaFileType();
 
@@ -90,9 +107,8 @@ describe('WorkEmitter - summary', () => {
   });
 
   test('loadDatabase', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
-    w.project = data.project;
+    const w = new NozzleEmitter({ context: ctx });
+
     await w.loadDatabase();
 
     jest.spyOn(w, 'loadDatabase').mockImplementationOnce(() => Promise.reject());
@@ -100,183 +116,165 @@ describe('WorkEmitter - summary', () => {
   });
 
   test('loadDatabase - exception', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
+    const spy1 = jest
+      .spyOn(ffp, 'default')
+      .mockImplementationOnce(() => Promise.resolve(undefined));
+    const spy2 = jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve({}));
 
-    jest.spyOn(ffp, 'default').mockImplementationOnce(() => Promise.resolve(undefined));
-    jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve({}));
-
-    w.project = data.project;
-    await w.loadDatabase();
+    try {
+      await w.loadDatabase();
+    } catch (err) {
+      spy1.mockRestore();
+      spy2.mockRestore();
+      expect(err).toBeTruthy();
+    }
   });
 
   test('loadDatabase - db', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
     const dbData = await getData<Record<string, IDatabaseItem>>(
       path.join(__dirname, 'data/001.json'),
     );
+    const spy1 = jest
+      .spyOn(ffp, 'default')
+      .mockImplementationOnce(() => Promise.resolve(undefined));
+    const spy2 = jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve(dbData));
 
-    jest.spyOn(ffp, 'default').mockImplementationOnce(() => Promise.resolve(undefined));
-    jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve(dbData));
-
-    w.project = data.project;
     await w.loadDatabase();
+
+    spy1.mockRestore();
+    spy2.mockRestore();
   });
 });
 
 describe('WorkEmitter - create schema', () => {
-  test('loadGenerator - pass', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
-
-    w.loadGenerator();
-  });
-
-  test('loadGenerator - fail', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
-    w.option = undefined;
-
-    const r = w.loadGenerator();
-
-    expect(r.type).toEqual('fail');
-  });
-
-  test('loadGenerator - fail', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
-    w.option = undefined;
-
-    const r = w.loadGenerator();
-
-    expect(r.type).toEqual('fail');
-  });
-
-  test('loadGenerator - createGenerator error', async () => {
-    const w = new NozzleEmitter();
-    const o = fastCopy(data.option);
-    w.project = data.project;
-    w.loadOption({ option: o });
-    w.option!.generatorOptionObject = {};
-
-    const r = w.loadGenerator();
-
-    expect(r.type).toEqual('fail');
-  });
-
   test('createJsonSchema - mapped access + call', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchema({
-      filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
+      filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
       exportedType: 'IProfessorDto',
     });
   });
 
   test('createJsonSchema - mapped access - call', async () => {
-    const w = new NozzleEmitter({ generator: data.generator });
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchema({
-      filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
+      filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
       exportedType: 'IProfessorDto',
     });
   });
 
   test('createJsonSchema - empty definitions + emit', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'] =
       {
-        filePath: path.join(data.option.cwd, 'CE_MAJOR.ts'),
+        filePath: path.join(ctx.option.cwd, 'CE_MAJOR.ts'),
         exportedType: 'CE_MAJOR',
       };
     w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
   });
 
   test('createJsonSchema - with root type + emit exception', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'] =
       {
-        filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
         exportedType: 'IProfessorDto',
       };
 
-    jest.spyOn(w, 'createJsonSchema').mockImplementationOnce(() => Promise.reject());
-    w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
+    const spy = jest.spyOn(w, 'createJsonSchema').mockImplementationOnce(() => Promise.reject());
+
+    try {
+      w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
+    } catch {
+      spy.mockRestore();
+    }
   });
 
-  test('createJsonSchema create generator error', async () => {
-    const w = new NozzleEmitter();
-    const o = fastCopy(data.option);
-    w.loadOption({ option: o });
-    w.project = data.project;
-    o.generatorOptionObject = {};
+  describe('createJsonSchema', () => {
+    afterEach(async () => {
+      ctx.option = {
+        ...env.addCmdOption,
+        ...getResolvedPaths({
+          project: path.join(originPath, 'examples', 'tsconfig.json'),
+          output: path.join(originPath, 'examples'),
+        }),
+        generatorOptionObject: await getSchemaGeneratorOption({
+          discriminator: 'add-schema',
+          project: path.join(originPath, 'examples', 'tsconfig.json'),
+          generatorOption: undefined,
+          skipError: env.addCmdOption.skipError,
+        }),
+      };
 
-    await w.createJsonSchema({
-      filePath: path.join(data.option.cwd, 'CE_MAJOR.ts'),
-      exportedType: 'CE_MAJOR',
+      ctx.generatorOption = ctx.option.generatorOptionObject;
+
+      ctx.generator = tjsg.createGenerator({
+        ...ctx.option.generatorOptionObject,
+        type: '*',
+      });
+    });
+
+    test('createJsonSchema create generator error', async () => {
+      const w = new NozzleEmitter({ context: ctx });
+      ctx.generatorOption = {};
+
+      await w.createJsonSchema({
+        filePath: path.join(ctx.option.cwd, 'CE_MAJOR.ts'),
+        exportedType: 'CE_MAJOR',
+      });
     });
   });
 
   test('createJsonSchema - fail', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
+    const w = new NozzleEmitter({ context: ctx });
 
-    await w.createJsonSchema({
-      filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
-      exportedType: 'IProfessorDto33',
-    });
+    try {
+      await w.createJsonSchema({
+        filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
+        exportedType: 'IProfessorDto33',
+      });
+    } catch (err) {
+      expect(err).toBeTruthy();
+    }
   });
 
   test('createJsonSchemaBulk - call', async () => {
-    const w = new NozzleEmitter({ generator: data.generator });
-    w.loadOption({ option: data.option });
-    w.project = data.project;
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentQuerystring',
       },
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentParam',
       },
     ]);
   });
 
   test('createJsonSchemaBulk - emit', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
-    w.project = data.project;
+    const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<
       typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK
     >['data'] = [
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentParam',
       },
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentQuerystring',
       },
       {
-        filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
         exportedType: 'IProfessorDto',
       },
     ];
@@ -285,37 +283,31 @@ describe('WorkEmitter - create schema', () => {
   });
 
   test('createJsonSchemaBulk - call either fail', async () => {
-    const w = new NozzleEmitter();
-    w.loadOption({ option: data.option });
-    w.project = data.project;
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([
       {
         // add cache logic, so wilful error raising what do pass invalid exportedType
-        filePath: path.join(data.option.cwd, 'IProfessorDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
         exportedType: 'IProfessorDto222',
       },
     ]);
   });
 
   test('createJsonSchemaBulk - call either fail', async () => {
-    const w = new NozzleEmitter();
-    const o = fastCopy(data.option);
-    w.loadOption({ option: o });
-    w.project = data.project;
-    o.generatorOptionObject = {};
+    const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentParam',
       },
       {
-        filePath: path.join(data.option.cwd, 'IReqReadStudentDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IReqReadStudentDto.ts'),
         exportedType: 'IReqReadStudentQuerystring',
       },
       {
-        filePath: path.join(w.option!.cwd, 'IProfessorDto.ts'),
+        filePath: path.join(ctx.option.cwd, 'IProfessorDto.ts'),
         exportedType: 'IProfessorDto',
       },
     ]);

@@ -35,14 +35,14 @@ export default async function deleteCommandSync(baseOption: TDeleteSchemaOption)
     });
     if (project.type === 'fail') throw project.fail;
 
-    spinner.update('TypeScript project load success', 'succeed');
+    spinner.stop('TypeScript project load success', 'succeed');
 
     const diagnostics = getDiagnostics({ option: baseOption, project: project.pass });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
 
     spinner.start('Open database, ...');
     const db = await openDatabase(resolvedPaths);
-    spinner.update('database open success', 'succeed');
+    spinner.stop('database open success', 'succeed');
 
     const targetTypes = await getDeleteTypes({ db, option: { ...baseOption } });
     if (targetTypes.type === 'fail') throw targetTypes.fail;
@@ -66,7 +66,7 @@ export default async function deleteCommandSync(baseOption: TDeleteSchemaOption)
 
     const newDb = targetTypes.pass.reduce((aggregation, identifier) => {
       const schemas = deleteDatabaseItem(aggregation, identifier);
-      spinner.update(`delete schema: ${identifier}`, 'succeed');
+      spinner.stop(`delete schema: ${identifier}`, 'succeed');
       return schemas;
     }, fastCopy(db));
 

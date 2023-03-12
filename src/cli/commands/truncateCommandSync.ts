@@ -14,8 +14,7 @@ export default async function truncateCommandSync(option: TTruncateSchemaOption)
       });
     } else {
       spinner.start('Schema Nozzle start');
-      spinner.update('Schema Nozzle start', 'info');
-      spinner.stop();
+      spinner.stop('Schema Nozzle start', 'info');
     }
 
     spinner.start('Database truncate start, ...');

@@ -1,11 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
-// import { readFileSync } from 'fs';
-// import { argv, logger, option, task } from 'just-scripts';
 import execa from 'execa';
-import { logger, option, series, task } from 'just-task';
+import { logger, series, task } from 'just-task';
 import readPackage from 'read-pkg';
-
-option('env', { default: { env: 'develop' } });
 
 function splitArgs(args: string): string[] {
   return args
@@ -18,7 +13,35 @@ task('clean', async () => {
   const cmd = 'rimraf';
   const option = 'dist artifact';
 
-  logger.info(cmd, option);
+  await execa(cmd, splitArgs(option), {
+    stderr: process.stderr,
+    stdout: process.stdout,
+  });
+});
+
+task('clean:dts', async () => {
+  const cmd = 'rimraf';
+  const option = 'dist/cjs/src dist/esm/src dist/src';
+
+  await execa(cmd, splitArgs(option), {
+    stderr: process.stderr,
+    stdout: process.stdout,
+  });
+});
+
+task('ctix:single', async () => {
+  const cmd = 'ctix';
+  const option = 'single -p ./tsconfig.prod.json --config ./.configs/.ctirc';
+
+  await execa(cmd, splitArgs(option), {
+    stderr: process.stderr,
+    stdout: process.stdout,
+  });
+});
+
+task('ctix:remove', async () => {
+  const cmd = 'ctix';
+  const option = 'remove -p ./tsconfig.json --config ./.configs/.ctirc';
 
   await execa(cmd, splitArgs(option), {
     stderr: process.stderr,
@@ -56,7 +79,7 @@ task('lint', async () => {
   const cmd = 'eslint';
   const option = '--cache .';
 
-  await execa(cmd, splitArgs(option), {
+  await execa(cmd, splitArgs(option).concat(process.argv.slice(5)), {
     stderr: process.stderr,
     stdout: process.stdout,
   });
@@ -64,8 +87,8 @@ task('lint', async () => {
 
 task('+build', async () => {
   const cmd = 'tsc';
-  const option = '--incremental --project tsconfig.prod.json';
-  // const option = '--incremental --project tsconfig.json --tsBuildInfoFile .tsbuildinfo';
+  // const option = '--incremental --project tsconfig.prod.json';
+  const option = '--incremental --project tsconfig.json --tsBuildInfoFile .tsbuildinfo';
 
   await execa(cmd, splitArgs(option), {
     env: {
@@ -121,8 +144,15 @@ task('+unpub', async () => {
   });
 });
 
-task('rollup:prod', series('clean', '+rollup:prod'));
 task('build', series('clean', '+build'));
-task('pub', series('clean', '+rollup:prod', '+pub'));
+task(
+  'rollup:dev',
+  series('clean', 'lint', 'ctix:single', '+rollup:dev', 'ctix:remove', 'clean:dts'),
+);
+task(
+  'rollup:prod',
+  series('clean', 'lint', 'ctix:single', '+rollup:prod', 'ctix:remove', 'clean:dts'),
+);
+task('pub', series('rollup:prod', '+pub'));
 task('unpub', series('clean', '+unpub'));
-task('pub:prod', series('clean', '+rollup:prod', '+pub:prod'));
+task('pub:prod', series('rollup:prod', '+pub:prod'));

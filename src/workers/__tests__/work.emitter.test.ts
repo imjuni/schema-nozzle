@@ -1,79 +1,111 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import * as env from '#modules/__tests__/env';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
+import NozzleContext from '#workers/NozzleContext';
 import NozzleEmitter from '#workers/NozzleEmitter';
+import fastCopy from 'fast-copy';
 import 'jest';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 
-const compilerOptions = {
-  lib: ['lib.es2021.d.ts', 'lib.dom.d.ts'],
-  module: 1,
-  target: 7,
-  strict: true,
-  esModuleInterop: true,
-  skipLibCheck: true,
-  forceConsistentCasingInFileNames: true,
-  moduleResolution: 2,
-  declaration: true,
-  composite: true,
-  incremental: true,
-  declarationMap: true,
-  sourceMap: true,
-  removeComments: true,
-  noImplicitAny: false,
-  importHelpers: false,
-  noImplicitReturns: true,
-  noFallthroughCasesInSwitch: true,
-  isolatedModules: true,
-  allowSyntheticDefaultImports: true,
-  experimentalDecorators: true,
-  emitDecoratorMetadata: true,
-  pretty: true,
-};
+// const compilerOptions = {
+//   lib: ['lib.es2021.d.ts', 'lib.dom.d.ts'],
+//   module: 1,
+//   target: 7,
+//   strict: true,
+//   esModuleInterop: true,
+//   skipLibCheck: true,
+//   forceConsistentCasingInFileNames: true,
+//   moduleResolution: 2,
+//   declaration: true,
+//   composite: true,
+//   incremental: true,
+//   declarationMap: true,
+//   sourceMap: true,
+//   removeComments: true,
+//   noImplicitAny: false,
+//   importHelpers: false,
+//   noImplicitReturns: true,
+//   noFallthroughCasesInSwitch: true,
+//   isolatedModules: true,
+//   allowSyntheticDefaultImports: true,
+//   experimentalDecorators: true,
+//   emitDecoratorMetadata: true,
+//   pretty: true,
+// };
 
-const originPath = process.env.INIT_CWD!;
+const originPath = process.cwd();
+const ctx = new NozzleContext();
 const data: {
-  resolvedPaths: ReturnType<typeof getResolvedPaths>;
-  project: tsm.Project;
-  option: TAddSchemaOption;
-  generator: tjsg.SchemaGenerator;
-} = {} as any;
+  exit: jest.SpyInstance | undefined;
+  send: jest.SpyInstance | undefined;
+} = { exit: undefined, send: undefined };
 
 beforeAll(async () => {
-  data.project = new tsm.Project({
+  ctx.project = new tsm.Project({
     tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
   });
-  data.option = {
+  ctx.option = {
     ...env.addCmdOption,
+    ...getResolvedPaths({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+    }),
+    generatorOptionObject: await getSchemaGeneratorOption({
+      discriminator: 'add-schema',
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      generatorOption: undefined,
+      skipError: env.addCmdOption.skipError,
+    }),
   };
-  data.option.generatorOptionObject = await getSchemaGeneratorOption(data.option);
-  data.generator = tjsg.createGenerator({
-    ...data.option.generatorOptionObject,
-    path: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
+  ctx.generatorOption = ctx.option.generatorOptionObject;
+  ctx.generator = tjsg.createGenerator({
+    ...ctx.option.generatorOptionObject,
     type: '*',
   });
 });
 
-beforeEach(() => {
+beforeEach(async () => {
   process.env.INIT_CWD = path.join(originPath, 'examples');
-  data.resolvedPaths = getResolvedPaths({
-    project: path.join(originPath, 'examples', 'tsconfig.json'),
-    output: path.join(originPath, 'examples'),
+  ctx.option = {
+    ...env.addCmdOption,
+    ...getResolvedPaths({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+    }),
+    generatorOptionObject: await getSchemaGeneratorOption({
+      discriminator: 'add-schema',
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      generatorOption: undefined,
+      skipError: env.addCmdOption.skipError,
+    }),
+  };
+  ctx.generatorOption = ctx.option.generatorOptionObject;
+  ctx.generator = tjsg.createGenerator({
+    ...ctx.option.generatorOptionObject,
+    type: '*',
   });
-  data.option = { ...data.option, ...data.resolvedPaths };
 
-  jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+  data.exit = jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+  data.send = jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
     return true;
   });
+});
+
+afterEach(() => {
+  if (data.exit != null) {
+    data.exit.mockRestore();
+  }
+
+  if (data.send != null) {
+    data.send.mockRestore();
+  }
 });
 
 afterEach(() => {
@@ -82,33 +114,22 @@ afterEach(() => {
 
 describe('WorkEmitter - project', () => {
   test('pass - option load emit', async () => {
-    const w = new NozzleEmitter();
+    const w = new NozzleEmitter({ context: ctx });
 
     w.emit(CE_WORKER_ACTION.OPTION_LOAD, {
-      option: data.option,
+      option: ctx.option,
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>['data']);
   });
 
-  test('load project - direct call', async () => {
-    const w = new NozzleEmitter();
-    w.option = data.option;
-    w.project = data.project;
-
-    expect(w.project.compilerOptions.get()).toMatchObject(compilerOptions);
-  });
-
   test('pass - project emit', async () => {
-    const w = new NozzleEmitter();
-    w.option = data.option;
-
+    const w = new NozzleEmitter({ context: ctx });
     w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
   });
 
   test('fail', async () => {
     try {
-      const w = new NozzleEmitter();
-      w.option = data.option;
-      w.option.project = '';
+      const w = new NozzleEmitter({ context: ctx });
+      ctx.option.project = '';
 
       await w.loadProject();
     } catch (caught) {
@@ -119,8 +140,7 @@ describe('WorkEmitter - project', () => {
   test('fail - 2', async () => {
     try {
       const w = new NozzleEmitter();
-      w.option = data.option;
-      w.option.project = '';
+      ctx.option.project = '';
 
       w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
     } catch (caught) {
@@ -143,68 +163,40 @@ describe('WorkEmitter - project', () => {
   });
 
   test('diagonostic', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
-
+    const w = new NozzleEmitter({ context: ctx });
     await w.diagonostic();
   });
 
-  test('diagonostic - exception', async () => {
-    try {
-      const w = new NozzleEmitter();
-      w.option = { ...env.addCmdOption };
+  describe('diagonostic - exception', () => {
+    afterEach(() => {
+      const sourceFile = ctx.project.getSourceFile('diagonostic_fail.ts');
 
-      jest.spyOn(w, 'diagonostic').mockImplementationOnce(async () => {
-        throw new Error('mock error raised');
-      });
+      if (sourceFile != null) {
+        ctx.project.removeSourceFile(sourceFile);
+      }
 
-      await w.loadProject();
+      ctx.option.skipError = true;
+    });
 
-      w.option.skipError = false;
-      w.project?.createSourceFile('t.ts', 'const a = "1"; a = 3');
+    test('diagonostic - skipError false', async () => {
+      try {
+        const nctx = new NozzleContext();
+        nctx.project = ctx.project;
+        nctx.generatorOption = fastCopy(ctx.generatorOption);
+        nctx.option = fastCopy(ctx.option);
+        nctx.generator = tjsg.createGenerator(nctx.generatorOption);
 
-      w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
-    } catch (caught) {
-      expect(caught).toBeDefined();
-    }
-  });
+        nctx.option.skipError = false;
 
-  test('diagonostic - skipError false', async () => {
-    try {
-      const w = new NozzleEmitter();
-      w.loadOption({ option: data.option });
+        const w = new NozzleEmitter({ context: nctx });
+        nctx.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
+          overwrite: true,
+        });
 
-      await w.loadProject();
-
-      w.option!.skipError = false;
-      w.project?.createSourceFile('t.ts', 'const a = "1"; a = 3');
-
-      w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
-    } catch (caught) {
-      expect(caught).toBeDefined();
-    }
-  });
-});
-
-describe('WorkEmitter - option', () => {
-  test('check', async () => {
-    const w = new NozzleEmitter();
-    w.project = data.project;
-    w.loadOption({ option: data.option });
-
-    const fine = w.check(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, 'test');
-    expect(fine.option).toMatchObject(data.option);
-  });
-
-  test('check - exception', async () => {
-    try {
-      const w = new NozzleEmitter();
-      w.loadOption({ option: data.option });
-
-      w.check(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, 'test');
-    } catch (err) {
-      expect(err).toBeTruthy();
-    }
+        w.emit(CE_WORKER_ACTION.PROJECT_DIAGONOSTIC);
+      } catch (caught) {
+        expect(caught).toBeDefined();
+      }
+    });
   });
 });
