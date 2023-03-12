@@ -17,8 +17,19 @@ let log:
     }>
   | undefined;
 
-export default function logger() {
-  if (log === undefined) {
+export default function logger(): Logger<{
+  browser: {
+    asObject: true;
+  };
+  customLevels: {
+    debug: number;
+    verbose: number;
+    info: number;
+    warn: number;
+    error: number;
+  };
+}> {
+  if (log == null) {
     const stream = pretty({
       translateTime: 'yy-mm-dd HH:MM:ss',
       ignore: 'pid,hostname',

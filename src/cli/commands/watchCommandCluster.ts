@@ -9,7 +9,6 @@ import errorTrace from '#modules/errorTrace';
 import getWatchFiles from '#modules/getWatchFiles';
 import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import type IWatchEvent from '#modules/interfaces/IWatchEvent';
-import type TUpdateEvent from '#modules/interfaces/TUpdateEvent';
 import WatcherClusterModule from '#modules/WatcherClusterModule';
 import logger from '#tools/logger';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
@@ -17,12 +16,13 @@ import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWo
 import { isFailTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import { showLogo } from '@maeum/cli-logo';
-import chalk from 'chalk';
 import chokidar from 'chokidar';
 import cluster from 'cluster';
-import { atOrThrow, isError, populate } from 'my-easy-fp';
+import fastCopy from 'fast-copy';
+import { atOrThrow, populate } from 'my-easy-fp';
 import os from 'os';
-import { debounceTime, Subject } from 'rxjs';
+import { buffer, debounceTime, Subject } from 'rxjs';
+import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
 
 const log = logger();
 
@@ -34,7 +34,7 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
       color: 'cyan',
     });
   } else {
-    spinner.start('Schema Nozzle start').update('Schema Nozzle start', 'info').stop();
+    spinner.start('Schema Nozzle start').stop('Schema Nozzle start', 'info');
   }
 
   const workerSize = baseOption.maxWorkers ?? os.cpus().length - 1;
@@ -91,72 +91,47 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
     throw new SchemaNozzleError(failReply.error);
   }
 
-  spinner.update('TypeScript project file loaded', 'succeed');
   spinner
+    .stop('TypeScript project file loaded', 'succeed')
     .start(`Watch project: ${option.project}`)
-    .update(`Watch project: ${option.project}`, 'info')
-    .stop();
+    .stop(`Watch project: ${option.project}`, 'info');
 
-  const wm = new WatcherClusterModule({ option });
-
+  const wm = new WatcherClusterModule({ option, workerSize });
   const watchHandle = chokidar.watch(watchFiles, { cwd: option.cwd, ignoreInitial: true });
+  const updateProjectSubject = new Subject<IWatchEvent>();
+  const updateDbSubject = new Subject<IWatchEvent[]>();
+  const debounceObserable = updateProjectSubject.pipe(debounceTime(option.debounceTime));
 
-  const addSubject = new Subject<IWatchEvent>();
-  const changeSubject = new Subject<IWatchEvent>();
-  const unlinkSubject = new Subject<IWatchEvent>();
-  const updateSubject = new Subject<TUpdateEvent>();
+  updateProjectSubject.pipe(buffer(debounceObserable)).subscribe((events) => {
+    const eventQueue = fastCopy(events);
 
-  updateSubject.subscribe((event) => {
-    if (event.kind === CE_WATCH_EVENT.UNLINK) {
-      wm.deleteDatabase(event.exportedTypes)
-        .then(() => {
-          spinner.stop(`delete exported type: ${event.exportedTypes.join(', ')}`, 'succeed');
-        })
-        .catch((caught) => {
-          const err = isError(caught, new Error('unknown error raised'));
-          spinner.stop(`delete exported type: ${err.message}`, 'fail');
-        });
-    } else {
-      wm.updateDatabase(event.items)
-        .then(() => {
-          spinner.stop(
-            `${event.kind} exported type: ${event.items.map((item) => item.id).join(', ')}`,
-            'succeed',
-          );
-        })
-        .catch((caught) => {
-          const err = isError(caught, new Error('unknown error raised'));
-          spinner.stop(`${event.kind} exported type: ${err.message}`, 'fail');
-        });
-    }
-  });
+    new Promise<void>((resolve) => {
+      const intervalHandle = setIntervalAsync(async () => {
+        const event = eventQueue.shift();
 
-  addSubject.pipe(debounceTime(option.debounceTime)).subscribe((change) => {
-    spinner.start(`${chalk.greenBright('add')}: ${change.filePath}`);
+        if (event == null) {
+          await clearIntervalAsync(intervalHandle);
+          resolve();
+          return;
+        }
 
-    wm.add(change)
-      .then((items) => updateSubject.next({ kind: CE_WATCH_EVENT.ADD, items }))
-      .catch(errorTrace);
-  });
-
-  changeSubject.pipe(debounceTime(option.debounceTime)).subscribe((change) => {
-    spinner.start(`${chalk.greenBright('change')}: ${change.filePath}`);
-
-    wm.change(change)
-      .then((items) => updateSubject.next({ kind: CE_WATCH_EVENT.CHANGE, items }))
-      .catch(errorTrace);
-  });
-
-  unlinkSubject.pipe(debounceTime(option.debounceTime)).subscribe((change) => {
-    spinner.start(`${chalk.yellowBright('unlink')}: ${change.filePath}`);
-
-    wm.unlink(change)
-      .then((exportedTypes) => updateSubject.next({ kind: CE_WATCH_EVENT.UNLINK, exportedTypes }))
+        if (event.kind === CE_WATCH_EVENT.UNLINK) {
+          await wm.unlink(event);
+        } else if (event.kind === CE_WATCH_EVENT.CHANGE) {
+          await wm.change(event);
+        } else {
+          await wm.add(event);
+        }
+      }, 50);
+    })
+      .then(() => {
+        updateDbSubject.next(events);
+      })
       .catch(errorTrace);
   });
 
   watchHandle
-    .on('add', (filePath) => addSubject.next({ kind: 'add', filePath }))
-    .on('change', (filePath) => changeSubject.next({ kind: 'change', filePath }))
-    .on('unlink', (filePath) => unlinkSubject.next({ kind: 'unlink', filePath }));
+    .on('add', (filePath) => updateProjectSubject.next({ kind: 'add', filePath }))
+    .on('change', (filePath) => updateProjectSubject.next({ kind: 'change', filePath }))
+    .on('unlink', (filePath) => updateProjectSubject.next({ kind: 'unlink', filePath }));
 }

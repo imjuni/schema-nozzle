@@ -14,6 +14,7 @@ export const CE_WORKER_ACTION = {
   WATCH_SOURCE_FILE_ADD: 'watch-source-file-add',
   WATCH_SOURCE_FILE_CHANGE: 'watch-source-file-change',
   WATCH_SOURCE_FILE_UNLINK: 'watch-source-file-unlink',
+  WATCH_SOURCE_EVENT_FILE_SUMMARY: 'watch-source-event-file-summary',
 
   TERMINATE: 'terminate',
   NOOP: 'noop',

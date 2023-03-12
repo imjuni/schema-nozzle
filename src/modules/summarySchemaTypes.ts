@@ -1,4 +1,5 @@
-import getExportedTypes, { type IGetExportTypesReturnType } from '#compilers/getExportedTypes';
+import getExportedTypes from '#compilers/getExportedTypes';
+import type IGetExportTypesReturnType from '#compilers/interfaces/IGetExportTypesReturnType';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';

@@ -37,7 +37,7 @@
     "noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
     "isolatedModules": true /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */,
-    "allowJs": true,
+    // "noUncheckedIndexedAccess": true /* TypeScript has a way to describe objects which have unknown keys but known values on an object, via index signatures. */,
 
     /* Module Resolution Options */
     // "moduleResolution": "Node16" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
@@ -62,6 +62,6 @@
     "pretty": true,
     "typeRoots": ["src/@types", "node_modules/@types"]
   },
-  "include": ["**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["examples/**/*", "dist/**", "**/.configs/**", "**/docs/**/*"]
 }
