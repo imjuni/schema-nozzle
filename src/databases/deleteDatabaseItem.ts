@@ -1,11 +1,11 @@
 import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TDatabase } from '#modules/interfaces/TDatabase';
+import { keyBys } from 'my-easy-fp';
 
 export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
   const item = db[identifier];
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (item == null) {
     return db;
   }
@@ -14,6 +14,7 @@ export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
   const importFroms = item.dependency.import.from;
   const importUpdatedRecords: IDatabaseItem[] = importFroms
     .map((importFrom) => db[importFrom])
+    .filter((importFrom): importFrom is IDatabaseItem => importFrom != null)
     .map((importFrom) => {
       const exportInfo: IDatabaseItem['dependency']['export'] = {
         ...importFrom.dependency.export,
@@ -37,6 +38,7 @@ export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
   const exportTos = item.dependency.export.to;
   const exportUpdatedRecords = exportTos
     .map((exportTo) => db[exportTo])
+    .filter((exportTo): exportTo is IDatabaseItem => exportTo != null)
     .map((exportTo) => {
       const importInfo: IDatabaseItem['dependency']['import'] = {
         ...exportTo.dependency.import,
@@ -74,17 +76,10 @@ export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
       return { [cycleRefrenceRecord.id]: importUpdatedRecordMap[cycleRefrenceRecord.id] };
     })
     .map((mergedDb) => Object.values(mergedDb))
-    .flat();
+    .flat()
+    .filter((dbItem): dbItem is IDatabaseItem => dbItem != null);
 
-  const mergedCycleRefrenceRecordMap = mergedCycleRefrenceRecords.reduce(
-    (aggregation, mergedCycleRefrenceRecord) => {
-      if (mergedCycleRefrenceRecord?.id != null) {
-        return { ...aggregation, [mergedCycleRefrenceRecord.id]: mergedCycleRefrenceRecords };
-      }
-      return aggregation;
-    },
-    {},
-  );
+  const mergedCycleRefrenceRecordMap = keyBys(mergedCycleRefrenceRecords, 'id');
 
   // stage 04. aggregate schema of database
   const remainRecords = [
@@ -104,11 +99,7 @@ export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
 
   // stage 05. generate new database
   const newDb = Object.values(remainRecords).reduce<TDatabase>((aggregation, remainRecord) => {
-    if (remainRecord?.id != null) {
-      return { ...aggregation, [remainRecord.id]: remainRecord };
-    }
-
-    return aggregation;
+    return { ...aggregation, [remainRecord.id]: remainRecord };
   }, {});
 
   return newDb;

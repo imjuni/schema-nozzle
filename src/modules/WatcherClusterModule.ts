@@ -11,6 +11,7 @@ import createJSONSchemaCommand from '#modules/createJSONSchemaCommand';
 import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type IWatchEvent from '#modules/interfaces/IWatchEvent';
+import type { TDatabase } from '#modules/interfaces/TDatabase';
 import logger from '#tools/logger';
 import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
@@ -159,7 +160,7 @@ export default class WatcherClusterModule {
 
     const db = await openDatabase(this.#option);
 
-    const newDb = eventFileSummaries.deleteFiles.reduce((deletingDb, filePath) => {
+    const newDb = eventFileSummaries.deleteFiles.reduce<TDatabase>((deletingDb, filePath) => {
       const nextDb = deleteDatabaseItemsByFile(deletingDb, filePath);
       return nextDb;
     }, db);

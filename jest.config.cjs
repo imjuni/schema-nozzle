@@ -16,8 +16,7 @@ module.exports = {
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['@swc/jest', swcrc],
-    // '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': process.env.SWC === 'true' ? ['@swc/jest', swcrc] : 'ts-jest',
   },
   testMatch: ['**/__tests__/*.(ts|tsx)', '!**/__tests__/expects/*.(ts|tsx)'],
   testPathIgnorePatterns: [
