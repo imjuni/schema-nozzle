@@ -7,6 +7,7 @@ import { startSepRemove } from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';
 
+process.env.USE_INIT_CWD = 'true';
 const originPath = process.env.INIT_CWD!;
 const data: { project: tsm.Project; resolvedPaths: ReturnType<typeof getResolvedPaths> } = {
   project: new tsm.Project({

@@ -11,33 +11,9 @@ import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 
-// const compilerOptions = {
-//   lib: ['lib.es2021.d.ts', 'lib.dom.d.ts'],
-//   module: 1,
-//   target: 7,
-//   strict: true,
-//   esModuleInterop: true,
-//   skipLibCheck: true,
-//   forceConsistentCasingInFileNames: true,
-//   moduleResolution: 2,
-//   declaration: true,
-//   composite: true,
-//   incremental: true,
-//   declarationMap: true,
-//   sourceMap: true,
-//   removeComments: true,
-//   noImplicitAny: false,
-//   importHelpers: false,
-//   noImplicitReturns: true,
-//   noFallthroughCasesInSwitch: true,
-//   isolatedModules: true,
-//   allowSyntheticDefaultImports: true,
-//   experimentalDecorators: true,
-//   emitDecoratorMetadata: true,
-//   pretty: true,
-// };
-
 const originPath = process.cwd();
+process.env.USE_INIT_CWD = 'true';
+process.env.INIT_CWD = path.join(originPath, 'examples');
 const ctx = new NozzleContext();
 const data: {
   exit: jest.SpyInstance | undefined;

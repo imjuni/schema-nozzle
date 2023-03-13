@@ -11,6 +11,8 @@ import * as tjsg from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 
 const originPath = process.cwd();
+process.env.USE_INIT_CWD = 'true';
+process.env.INIT_CWD = path.join(originPath, 'examples');
 const ctx = new NozzleContext();
 const data: {
   exit: jest.SpyInstance | undefined;
