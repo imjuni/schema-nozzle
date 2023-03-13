@@ -7,6 +7,7 @@ import deleteDatabaseItem from '#databases/deleteDatabaseItem';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
 import getDeleteTypes from '#modules/getDeleteTypes';
+import type { TDatabase } from '#modules/interfaces/TDatabase';
 import { showLogo } from '@maeum/cli-logo';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
@@ -64,7 +65,7 @@ export default async function deleteCommandSync(baseOption: TDeleteSchemaOption)
       return;
     }
 
-    const newDb = targetTypes.pass.reduce((aggregation, identifier) => {
+    const newDb = targetTypes.pass.reduce<TDatabase>((aggregation, identifier) => {
       const schemas = deleteDatabaseItem(aggregation, identifier);
       spinner.stop(`delete schema: ${identifier}`, 'succeed');
       return schemas;

@@ -1,3 +1,4 @@
+import getDiagnostics from '#compilers/getDiagnostics';
 import getExportedFiles from '#compilers/getExportedFiles';
 import getExportedTypes from '#compilers/getExportedTypes';
 import getResolvedPaths from '#configs/getResolvedPaths';
@@ -60,5 +61,48 @@ describe('getExportedTypes', () => {
       'IStudentEntity',
       'TGenericExample',
     ]);
+  });
+});
+
+describe('getDiagnostics', () => {
+  test('pass', () => {
+    const r1 = getDiagnostics({ option: { skipError: true }, project: data.project });
+    expect(r1.type).toEqual('pass');
+  });
+
+  test('pass - skipError false', () => {
+    const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+    expect(r1.type).toEqual('pass');
+  });
+
+  describe('getDiagnostics - fail', () => {
+    afterEach(() => {
+      const sf = data.project.getSourceFile('diagonostic_fail.ts');
+
+      if (sf != null) {
+        data.project.removeSourceFile(sf);
+      }
+    });
+
+    test('fail', () => {
+      data.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
+        overwrite: true,
+      });
+      const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+      expect(r1.type).toEqual('fail');
+    });
+
+    test('fail - exception', () => {
+      const spy = jest.spyOn(data.project, 'getPreEmitDiagnostics').mockImplementationOnce(() => {
+        throw new Error('raise error');
+      });
+
+      data.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
+        overwrite: true,
+      });
+      const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+      spy.mockRestore();
+      expect(r1.type).toEqual('fail');
+    });
   });
 });

@@ -1,3 +1,4 @@
+import { getLogLabel, getLogLevel } from '#tools/loggerModule';
 import chalk from 'chalk';
 import pino, { type Logger } from 'pino';
 import pretty from 'pino-pretty';
@@ -17,44 +18,36 @@ let log:
     }>
   | undefined;
 
-export default function logger(): Logger<{
-  browser: {
-    asObject: true;
-  };
-  customLevels: {
-    debug: number;
-    verbose: number;
-    info: number;
-    warn: number;
-    error: number;
-  };
-}> {
-  if (log == null) {
+export function loggerClear() {
+  log = undefined;
+}
+
+export default function logger() {
+  if (log === undefined) {
     const stream = pretty({
       translateTime: 'yy-mm-dd HH:MM:ss',
       ignore: 'pid,hostname',
       colorize: false,
-      sync: true,
       customPrettifiers: {
-        level: (loglevel: string | object) => {
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
-          const ll = Number.parseInt(loglevel.toString(), 10);
-          const levelLabel = pino.levels.labels[ll].toLowerCase();
+        level: (unknownLevel: unknown) => {
+          const levelCode = getLogLevel(unknownLevel);
+          const levelLabel = getLogLabel(levelCode);
 
           switch (levelLabel) {
             case 'debug':
-              return `${chalk.blueBright(pino.levels.labels[ll])}`;
+              return `${chalk.blueBright(pino.levels.labels[levelCode])}`;
             case 'info':
-              return `${chalk.greenBright(pino.levels.labels[ll])}`;
+              return `${chalk.greenBright(pino.levels.labels[levelCode])}`;
             case 'warn':
-              return `${chalk.yellowBright(pino.levels.labels[ll])}`;
+              return `${chalk.yellowBright(pino.levels.labels[levelCode])}`;
             case 'error':
-              return `${chalk.redBright(pino.levels.labels[ll])}`;
+              return `${chalk.redBright(pino.levels.labels[levelCode])}`;
             default:
-              return `${chalk.greenBright(pino.levels.labels[ll])}`;
+              return `${chalk.greenBright(pino.levels.labels[levelCode])}`;
           }
         },
       },
+      sync: true,
     });
 
     log = pino(
@@ -62,11 +55,13 @@ export default function logger(): Logger<{
         browser: { asObject: true },
 
         customLevels: {
-          debug: pino.levels.values.trace,
-          verbose: pino.levels.values.debug,
-          info: pino.levels.values.info,
-          warn: pino.levels.values.warn,
-          error: pino.levels.values.error,
+          trace: pino.levels.values.trace!,
+          verbose: pino.levels.values.verbose!,
+          debug: pino.levels.values.debug!,
+          info: pino.levels.values.info!,
+          warn: pino.levels.values.warn!,
+          error: pino.levels.values.error!,
+          fatal: pino.levels.values.fatal!,
         },
       },
       stream,

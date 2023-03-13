@@ -178,7 +178,7 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
       throw new SchemaNozzleError(failReply.error);
     }
 
-    progress.start(exportedTypes.length, 0, exportedTypes[0].identifier);
+    progress.start(exportedTypes.length, 0, atOrThrow(exportedTypes, 0).identifier);
 
     workers.send(
       ...exportedTypes.map((exportedType) => {

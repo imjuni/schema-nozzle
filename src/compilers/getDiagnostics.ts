@@ -4,7 +4,7 @@ import { fail, pass, type PassFailEither } from 'my-only-either';
 import type * as tsm from 'ts-morph';
 
 interface IGetDiagnostics {
-  option: IBaseOption;
+  option: Pick<IBaseOption, 'skipError'>;
   project: tsm.Project;
 }
 

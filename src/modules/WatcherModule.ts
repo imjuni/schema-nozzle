@@ -8,6 +8,7 @@ import saveDatabase from '#databases/saveDatabase';
 import createJSONSchema from '#modules/createJSONSchema';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type IWatchEvent from '#modules/interfaces/IWatchEvent';
+import type { TDatabase } from '#modules/interfaces/TDatabase';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import logger from '#tools/logger';
@@ -166,7 +167,7 @@ export default class WatcherModule {
   async deleteDatabase(filePaths: string[]) {
     const db = await openDatabase(this.#option);
 
-    const newDb = filePaths.reduce((deletingDb, filePath) => {
+    const newDb = filePaths.reduce<TDatabase>((deletingDb, filePath) => {
       const nextDb = deleteDatabaseItemsByFile(deletingDb, filePath);
       return nextDb;
     }, db);

@@ -24,7 +24,14 @@ export default async function getAddTypes(
       return { ...aggregation, [exportedType.identifier]: exportedType };
     }, {});
 
-    return pass(option.types.map((exportedType) => exportedTypeMap[exportedType]));
+    return pass(
+      option.types
+        .map((exportedType) => exportedTypeMap[exportedType])
+        .filter(
+          (exportedType): exportedType is LastArrayElement<typeof exportedTypes> =>
+            exportedType != null,
+        ),
+    );
   } catch (caught) {
     const err = isError(caught, new Error('unknown error raised get typescript files'));
     return fail(err);

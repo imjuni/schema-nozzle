@@ -78,9 +78,9 @@ class Workers extends EventEmitter {
 
     jobs.forEach((job, index, arr) => {
       const pos = index % Object.keys(this.#workers).length;
-      this.#workers[pos].send(job);
+      this.#workers[pos]?.send(job);
       this.inc();
-      log.trace(`send[${this.#finished}][${index}/${arr.length}]: ${this.#workers[pos].id}`);
+      log.trace(`send[${this.#finished}][${index}/${arr.length}]: ${this.#workers[pos]?.id ?? ''}`);
     });
   }
 

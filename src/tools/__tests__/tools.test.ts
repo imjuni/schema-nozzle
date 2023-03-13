@@ -1,7 +1,6 @@
 import getCwd from '#tools/getCwd';
 import getRatioNumber from '#tools/getRatioNumber';
 import getRelativeCwd from '#tools/getRelativeCwd';
-import logger from '#tools/logger';
 import posixJoin from '#tools/posixJoin';
 import safeParse from '#tools/safeParse';
 import 'jest';
@@ -72,44 +71,6 @@ describe('safeParse', () => {
     spy.mockRestore();
     if (r.type === 'pass') throw new Error('invalid');
     expect(r.fail).toBeInstanceOf(Error);
-  });
-});
-
-describe('logger', () => {
-  test('level - process.env undefined', () => {
-    process.env = {};
-    process.env.LOG_LEVEL = undefined;
-
-    const log = logger();
-    expect(log.level).toEqual('info');
-  });
-
-  test('log', () => {
-    const log = logger();
-
-    log.level = 'debug';
-    log.debug('debug');
-    log.verbose('verbose');
-    log.trace('trace');
-    log.warn('warn');
-    log.info('info');
-    log.error('error');
-    log.fatal('fatal');
-
-    log.level = 'verbose';
-    log.debug('debug');
-    log.verbose('verbose');
-    log.trace('trace');
-    log.warn('warn');
-    log.info('info');
-    log.error('error');
-    log.fatal('fatal');
-  });
-
-  test('level - process.env', () => {
-    process.env.LOG_LEVEL = 'verbose';
-    const log = logger();
-    expect(log.level).toEqual('verbose');
   });
 });
 
