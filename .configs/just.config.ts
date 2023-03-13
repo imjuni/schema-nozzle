@@ -51,7 +51,7 @@ task('ctix:remove', async () => {
 
 task('+rollup:dev', async () => {
   const cmd = 'rollup';
-  const option = '--config ./.configs/rollup.config.dev.ts --configPlugin ts';
+  const option = '--config ./.configs/rollup.config.dev.ts --configPlugin typescript';
 
   await execa(cmd, splitArgs(option), {
     env: {
@@ -64,7 +64,7 @@ task('+rollup:dev', async () => {
 
 task('+rollup:prod', async () => {
   const cmd = 'rollup';
-  const option = '--config ./.configs/rollup.config.prod.ts --configPlugin ts';
+  const option = '--config ./.configs/rollup.config.prod.ts --configPlugin typescript';
 
   await execa(cmd, splitArgs(option), {
     env: {

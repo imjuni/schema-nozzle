@@ -38,8 +38,8 @@ export default function isValidateConfig<
 >(argv: T) {
   const [command] = (argv as any as ArgumentsCamelCase<T>)._;
 
-  if (commands.includes(`${command}`) === false) {
-    throw new Error(`"${command}" is invalid command`);
+  if (commands.includes(`${command ?? ''}`) === false) {
+    throw new Error(`"${command ?? ''}" is invalid command`);
   }
 
   if (command === CE_COMMAND_LIST.INIT || command === CE_COMMAND_LIST.INIT_ALIAS) {
