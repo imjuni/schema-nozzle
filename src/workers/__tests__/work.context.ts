@@ -7,6 +7,8 @@ import path from 'path';
 import type * as tsm from 'ts-morph';
 
 const originPath = process.cwd();
+process.env.USE_INIT_CWD = 'true';
+process.env.INIT_CWD = path.join(originPath, 'examples');
 const data: {
   resolvedPaths: ReturnType<typeof getResolvedPaths>;
   project: tsm.Project;

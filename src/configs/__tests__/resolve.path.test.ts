@@ -2,6 +2,7 @@ import getResolvedPaths from '#configs/getResolvedPaths';
 import 'jest';
 import path from 'path';
 
+process.env.USE_INIT_CWD = 'true';
 const originPath = process.env.INIT_CWD!;
 
 beforeEach(() => {
