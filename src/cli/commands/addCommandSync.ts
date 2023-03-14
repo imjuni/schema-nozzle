@@ -46,26 +46,24 @@ export default async function addCommandSync(baseOption: TAddSchemaBaseOption): 
     option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
     const project = await getTsProject({ tsConfigFilePath: resolvedPaths.project });
-    if (project.type === 'fail') throw project.fail;
-
-    const projectExportedTypes = getExportedTypes(project.pass);
-    const diagnostics = getDiagnostics({ option, project: project.pass });
+    const projectExportedTypes = getExportedTypes(project);
+    const diagnostics = getDiagnostics({ option, project });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     spinner.stop('TypeScript project file loaded', 'succeed');
 
-    const summariedSchemaFiles = await summarySchemaFiles(project.pass, option);
+    const summariedSchemaFiles = await summarySchemaFiles(project, option);
     const selectedFiles = await getAddFiles(option, summariedSchemaFiles.filePaths);
     if (selectedFiles.type === 'fail') throw selectedFiles.fail;
     option.files = selectedFiles.pass.map((file) => file.origin);
-    const schemaFiles = await summarySchemaFiles(project.pass, option);
+    const schemaFiles = await summarySchemaFiles(project, option);
 
-    const summariedSchemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
+    const summariedSchemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
     const selectedTypes = await getAddTypes(option, summariedSchemaTypes);
     if (selectedTypes.type === 'fail') throw selectedTypes.fail;
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
-    const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
+    const schemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
 
     const generator = tjsg.createGenerator(option.generatorOptionObject);
 

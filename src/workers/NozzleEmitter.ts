@@ -219,22 +219,7 @@ export default class NozzleEmitter extends EventEmitter {
     const projectPath = this.#context.option.project;
     const project = await getTsProject({ tsConfigFilePath: projectPath });
 
-    if (project.type === 'fail') {
-      // send message to master process
-      process.send?.({
-        command: CE_MASTER_ACTION.TASK_COMPLETE,
-        data: {
-          command: CE_WORKER_ACTION.PROJECT_LOAD,
-          id: this.id,
-          result: 'fail',
-          error: { kind: 'error', message: project.fail.message, stack: project.fail.stack },
-        },
-      } satisfies TWorkerToMasterMessage);
-
-      process.exit(1);
-    }
-
-    this.#context.project = project.pass;
+    this.#context.project = project;
 
     process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,

@@ -1,18 +1,37 @@
 import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type { TWatchSchemaBaseOption } from '#configs/interfaces/TWatchSchemaOption';
-import fs from 'fs';
-import ts from 'typescript';
+import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
+import getDatabaseFilePath from '#databases/getDatabaseFilePath';
+import getSchemaFileContent from '#modules/getSchemaFileContent';
+import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
+import logger from '#tools/logger';
+import ignore from 'ignore';
 
-export default function getWatchFiles(option: Pick<TWatchSchemaBaseOption, 'project'>): string[] {
+const log = logger();
+
+export default async function getWatchFiles(
+  filePaths: { origin: string; refined: string }[],
+  option: Pick<TWatchSchemaOption, 'project' | 'listFile' | 'cwd' | 'output'>,
+): Promise<string[]> {
   try {
-    const configFile = ts.readConfigFile(option.project, (filePath: string) =>
-      fs.readFileSync(filePath).toString(),
+    log.trace(filePaths.map((f) => `${f.origin} ${f.refined}`).join(', '));
+
+    const dbPath = await getDatabaseFilePath(option);
+
+    const schemaFilterFilePath = await getSchemaFilterFilePath(option.cwd, option.listFile);
+
+    if (schemaFilterFilePath == null) {
+      return filePaths
+        .filter((filePath) => filePath.origin !== dbPath)
+        .map((filePath) => filePath.origin);
+    }
+
+    const listFileFilter = ignore().add(await getSchemaFileContent(schemaFilterFilePath));
+
+    const targetFilePaths = filePaths.filter((filePath) =>
+      listFileFilter.ignores(filePath.refined),
     );
 
-    const files = (configFile.config as Partial<Record<string, string[]>>).include ?? [
-      CE_DEFAULT_VALUE.WATCH_DEFAULT_GLOB,
-    ];
-    return files;
+    return targetFilePaths.map((filePath) => filePath.origin);
   } catch {
     return [CE_DEFAULT_VALUE.WATCH_DEFAULT_GLOB];
   }

@@ -12,6 +12,7 @@ import getWatchFiles from '#modules/getWatchFiles';
 import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import type IWatchEvent from '#modules/interfaces/IWatchEvent';
 import WatcherModule from '#modules/WatcherModule';
+import getRelativeCwd from '#tools/getRelativeCwd';
 import logger from '#tools/logger';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
@@ -44,26 +45,30 @@ export default async function watchCommandSync(baseOption: TWatchSchemaBaseOptio
   };
 
   option.generatorOptionObject = await getSchemaGeneratorOption(option);
-  const watchFiles = getWatchFiles(option);
-
-  log.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
 
   const project = await getTsProject({ tsConfigFilePath: option.project });
-  if (project.type === 'fail') throw project.fail;
+  const projectExportedTypes = getExportedTypes(project);
+  const diagnostics = getDiagnostics({ option, project });
 
-  const projectExportedTypes = getExportedTypes(project.pass);
-  const diagnostics = getDiagnostics({ option, project: project.pass });
   if (diagnostics.type === 'fail') throw diagnostics.fail;
   if (diagnostics.pass === false) throw new Error('project compile error');
 
   spinner.stop('TypeScript project file loaded', 'succeed');
-  spinner.stop(`Watch project: ${option.project}`, 'info');
+  spinner
+    .start(`Watch project: ${option.project}`)
+    .stop(`Watch project: ${option.project}`, 'info');
 
-  const wm = new WatcherModule({
-    project: project.pass,
-    exportTypes: projectExportedTypes,
+  const watchFiles = await getWatchFiles(
+    projectExportedTypes.map((projectExportedType) => ({
+      origin: projectExportedType.filePath,
+      refined: getRelativeCwd(option.cwd, projectExportedType.filePath),
+    })),
     option,
-  });
+  );
+
+  log.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
+
+  const wm = new WatcherModule({ project, exportTypes: projectExportedTypes, option });
 
   const watchHandle = chokidar.watch(watchFiles, { cwd: option.cwd, ignoreInitial: true });
 
@@ -71,8 +76,31 @@ export default async function watchCommandSync(baseOption: TWatchSchemaBaseOptio
   const updateDbSubject = new Subject<IWatchEvent[]>();
   const debounceObserable = updateProjectSubject.pipe(debounceTime(option.debounceTime));
 
+  let lock: boolean = false;
+
   updateDbSubject.subscribe((events) => {
-    wm.bulk(events).catch(errorTrace);
+    new Promise<void>((resolve) => {
+      const intervalHandle = setInterval(() => {
+        if (!lock) {
+          clearInterval(intervalHandle);
+          resolve();
+        }
+
+        log.trace('wait, wait ...');
+      }, 100);
+    })
+      .then(() => {
+        lock = true;
+
+        wm.bulk(events)
+          .then(() => {
+            lock = false;
+          })
+          .catch(() => {
+            lock = false;
+          });
+      })
+      .catch(errorTrace);
   });
 
   updateProjectSubject.pipe(buffer(debounceObserable)).subscribe((events) => {

@@ -1,5 +1,7 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
+import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
 import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
+import getDatabaseFilePath from '#databases/getDatabaseFilePath';
 import openDatabase from '#databases/openDatabase';
 import * as env from '#modules/__tests__/env';
 import fs from 'fs/promises';
@@ -49,6 +51,20 @@ beforeEach(() => {
       },
     },
   };
+});
+
+describe('getDatabaseFilePath', () => {
+  test('pass - directory', async () => {
+    const r = await getDatabaseFilePath({ output: data.resolvedPaths.cwd });
+    expect(r).toEqual(path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.DB_FILE_NAME));
+  });
+
+  test('pass - file', async () => {
+    const r = await getDatabaseFilePath({
+      output: path.join(data.resolvedPaths.cwd, 'abcd.json'),
+    });
+    expect(r).toEqual(path.join(data.resolvedPaths.cwd, 'abcd.json'));
+  });
 });
 
 describe('open database', () => {

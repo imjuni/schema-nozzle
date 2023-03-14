@@ -13,7 +13,10 @@ import WatcherClusterModule from '#modules/WatcherClusterModule';
 import logger from '#tools/logger';
 import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
-import { isFailTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
+import {
+  isFailTaskComplete,
+  type TPassWorkerToMasterTaskComplete,
+} from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
@@ -52,9 +55,6 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
   };
 
   option.generatorOptionObject = await getSchemaGeneratorOption(option);
-  const watchFiles = getWatchFiles(option);
-
-  log.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
 
   workers.broadcast({
     command: CE_WORKER_ACTION.OPTION_LOAD,
@@ -91,10 +91,33 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
     throw new SchemaNozzleError(failReply.error);
   }
 
+  spinner.stop('TypeScript project file loaded', 'succeed');
+
   spinner
-    .stop('TypeScript project file loaded', 'succeed')
     .start(`Watch project: ${option.project}`)
     .stop(`Watch project: ${option.project}`, 'info');
+
+  workers.broadcast({
+    command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
+  } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES>);
+
+  reply = await workers.wait();
+
+  // master check schema file summary
+  if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
+    const failReplies = reply.data.filter(isFailTaskComplete);
+    const failReply = atOrThrow(failReplies, 0);
+    throw new SchemaNozzleError(failReply.error);
+  }
+
+  const { data: schemaFiles } = atOrThrow(reply.data, 0) as Extract<
+    TPassWorkerToMasterTaskComplete,
+    { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES; result: 'pass' }
+  >;
+
+  const watchFiles = await getWatchFiles(schemaFiles, option);
+
+  log.trace(`WatchFile: ${option.debounceTime}, ${watchFiles.join(', ')}`);
 
   const wm = new WatcherClusterModule({ option, workerSize });
   const watchHandle = chokidar.watch(watchFiles, { cwd: option.cwd, ignoreInitial: true });
@@ -102,8 +125,25 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
   const updateDbSubject = new Subject<IWatchEvent[]>();
   const debounceObserable = updateProjectSubject.pipe(debounceTime(option.debounceTime));
 
+  let lock: boolean = false;
+
   updateDbSubject.pipe(filter((events) => events.length > 0)).subscribe((events) => {
-    wm.bulk(events).catch(errorTrace);
+    new Promise<void>((resolve) => {
+      const intervalHandle = setInterval(() => {
+        if (!lock) {
+          clearInterval(intervalHandle);
+          resolve();
+        }
+
+        log.trace('wait, wait ...');
+      }, 100);
+    })
+      .then(() => {
+        lock = true;
+        wm.bulk(events).catch(errorTrace);
+        lock = false;
+      })
+      .catch(errorTrace);
   });
 
   updateProjectSubject.pipe(buffer(debounceObserable)).subscribe((events) => {

@@ -1,3 +1,5 @@
+import progress from '#cli/display/progress';
+import spinner from '#cli/display/spinner';
 import type getExportedTypes from '#compilers/getExportedTypes';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import createDatabaseItem from '#databases/createDatabaseItem';
@@ -13,6 +15,7 @@ import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import logger from '#tools/logger';
 import fastCopy from 'fast-copy';
+import { last } from 'my-easy-fp';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
@@ -55,35 +58,53 @@ export default class WatcherModule {
     const updateFiles = files.filter((file) => this.#project.getSourceFile(file) != null);
     const deleteFiles = files.filter((file) => this.#project.getSourceFile(file) == null);
 
-    option.files = updateFiles;
+    if (updateFiles.length > 0) {
+      option.files = updateFiles;
 
-    const schemaFiles = await summarySchemaFiles(this.#project, option);
-    const schemaTypes = await summarySchemaTypes(this.#project, option, schemaFiles.filter);
+      spinner.start('schema file select, ...');
+      const schemaFiles = await summarySchemaFiles(this.#project, option);
+      spinner.stop('schema file select complete', 'succeed');
 
-    const items = (
-      await Promise.all(
-        schemaTypes.map(async (targetType) => {
-          const schema = createJSONSchema({
-            filePath: targetType.filePath,
-            exportedType: targetType.identifier,
-            generator: this.#generator,
-          });
+      spinner.start('schema type select, ...');
+      const schemaTypes = await summarySchemaTypes(this.#project, option, schemaFiles.filter);
+      spinner.stop(`${schemaTypes.length} schema type select complete`, 'succeed');
 
-          if (schema.type === 'fail') {
-            return undefined;
-          }
+      progress.start(schemaTypes.length, 0, '');
 
-          const item = createDatabaseItem(option, this.#exportTypes, schema.pass);
-          const withDependencies = [item.item, ...(item.definitions ?? [])];
-          return withDependencies;
-        }),
+      const items = (
+        await Promise.all(
+          schemaTypes.map(async (targetType) => {
+            const schema = createJSONSchema({
+              filePath: targetType.filePath,
+              exportedType: targetType.identifier,
+              generator: this.#generator,
+            });
+
+            if (schema.type === 'fail') {
+              return undefined;
+            }
+
+            const item = createDatabaseItem(option, this.#exportTypes, schema.pass);
+            const withDependencies = [item.item, ...(item.definitions ?? [])];
+
+            progress.increment(targetType.identifier);
+
+            return withDependencies;
+          }),
+        )
       )
-    )
-      .flat()
-      .filter((item): item is IDatabaseItem => item != null);
+        .flat()
+        .filter((item): item is IDatabaseItem => item != null);
 
-    await this.updateDatabase(items);
-    await this.deleteDatabase(deleteFiles);
+      progress.update(schemaTypes.length, last(schemaTypes).identifier);
+      progress.stop();
+
+      await this.updateDatabase(items);
+    }
+
+    if (deleteFiles.length > 0) {
+      await this.deleteDatabase(deleteFiles);
+    }
   }
 
   async add(event: IWatchEvent): Promise<IDatabaseItem[]> {

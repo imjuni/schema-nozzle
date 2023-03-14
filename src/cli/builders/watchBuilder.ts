@@ -12,9 +12,9 @@ export default function watchBuilder(argv: Argv) {
       default: CE_OUTPUT_FORMAT.JSON,
     })
     .option('debounce-time', {
-      describe: 'watch debounce time: default 500ms',
+      describe: 'watch debounce time: default 1000ms',
       type: 'number',
-      default: 500,
+      default: CE_DEFAULT_VALUE.WATCH_DEBOUNCE_TIME,
     })
     .option('generator-option', {
       describe: 'ts-json-schema-generator option file path',
