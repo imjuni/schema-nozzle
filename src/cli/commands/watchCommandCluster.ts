@@ -21,7 +21,7 @@ import cluster from 'cluster';
 import fastCopy from 'fast-copy';
 import { atOrThrow, populate } from 'my-easy-fp';
 import os from 'os';
-import { buffer, debounceTime, Subject } from 'rxjs';
+import { buffer, debounceTime, filter, Subject } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
 
 const log = logger();
@@ -58,7 +58,7 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
 
   workers.broadcast({
     command: CE_WORKER_ACTION.OPTION_LOAD,
-    data: { option: { ...option, project: option.project } },
+    data: { option },
   } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
 
   await workers.wait();
@@ -101,6 +101,10 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
   const updateProjectSubject = new Subject<IWatchEvent>();
   const updateDbSubject = new Subject<IWatchEvent[]>();
   const debounceObserable = updateProjectSubject.pipe(debounceTime(option.debounceTime));
+
+  updateDbSubject.pipe(filter((events) => events.length > 0)).subscribe((events) => {
+    wm.bulk(events).catch(errorTrace);
+  });
 
   updateProjectSubject.pipe(buffer(debounceObserable)).subscribe((events) => {
     const eventQueue = fastCopy(events);

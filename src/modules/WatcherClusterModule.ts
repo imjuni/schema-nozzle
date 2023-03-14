@@ -1,4 +1,5 @@
 import progress from '#cli/display/progress';
+import spinner from '#cli/display/spinner';
 import type getExportedTypes from '#compilers/getExportedTypes';
 import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import deleteDatabaseItem from '#databases/deleteDatabaseItem';
@@ -26,7 +27,7 @@ import {
 } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import fastCopy from 'fast-copy';
-import { atOrThrow } from 'my-easy-fp';
+import { atOrThrow, settify } from 'my-easy-fp';
 import path from 'path';
 import type { LastArrayElement } from 'type-fest';
 
@@ -55,10 +56,13 @@ export default class WatcherClusterModule {
 
   async bulk(events: IWatchEvent[]) {
     const option = fastCopy(this.#option);
+    const eventFilePaths = settify(events.map((event) => event.filePath));
+
+    spinner.start('schema file select, ...');
 
     workers.send({
       command: CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY,
-      data: { filePaths: events.map((event) => event.filePath) },
+      data: { filePaths: eventFilePaths },
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY>);
 
     let reply = await workers.wait();
@@ -77,6 +81,10 @@ export default class WatcherClusterModule {
       typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
     >;
 
+    workers.broadcast({
+      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE>);
+
     option.files = eventFileSummaries.updateFiles;
 
     workers.broadcast({
@@ -86,18 +94,14 @@ export default class WatcherClusterModule {
 
     await workers.wait();
 
-    workers.send({
+    workers.broadcast({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE>);
 
     reply = await workers.wait();
 
-    // master check schema file summary
-    if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
-      const failReplies = reply.data.filter(isFailTaskComplete);
-      const failReply = atOrThrow(failReplies, 0);
-      throw new SchemaNozzleError(failReply.error);
-    }
+    spinner.stop('schema file select complete', 'succeed');
+    spinner.start('schema type select, ...');
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
@@ -116,12 +120,23 @@ export default class WatcherClusterModule {
       typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE
     >;
 
-    option.types = exportedTypes.map((exportedType) => exportedType.identifier);
+    const selectedExportedTypes = exportedTypes.filter((exportedType) =>
+      eventFilePaths.includes(exportedType.filePath),
+    );
+    option.types = selectedExportedTypes.map((exportedType) => exportedType.identifier);
 
     workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
       data: { option },
     } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.OPTION_LOAD }>);
+
+    workers.send({
+      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
+    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
+
+    reply = await workers.wait();
+
+    spinner.stop(`${exportedTypes.length} schema type select complete`, 'succeed');
 
     const generationCommands = createJSONSchemaCommand(this.#workerSize, exportedTypes);
 
