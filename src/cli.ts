@@ -11,8 +11,8 @@ import initCommandSync from '#cli/commands/initCommandSync';
 import refreshCommandCluster from '#cli/commands/refreshCommandCluster';
 import refreshCommandSync from '#cli/commands/refreshCommandSync';
 import truncateCommandSync from '#cli/commands/truncateCommandSync';
-import watchCommandCluster from '#cli/commands/watchCommandCluster';
 import watchCommandSync from '#cli/commands/watchCommandSync';
+import progress from '#cli/display/progress';
 import spinner from '#cli/display/spinner';
 import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
 import type IInitOption from '#configs/interfaces/IInitOption';
@@ -39,6 +39,7 @@ const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
 
     if (process.env.SYNC_MODE === 'true') {
       await addCommandSync(argv);
@@ -55,6 +56,7 @@ const deleteCmd: CommandModule<TDeleteSchemaOption, TDeleteSchemaOption> = {
   builder: (argv) => deleteBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
 
     const option = await withDefaultOption(argv);
     await deleteCommandSync(option);
@@ -68,6 +70,7 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
 
     const option = await withDefaultOption(argv);
 
@@ -86,6 +89,7 @@ const truncateCmd: CommandModule<TTruncateSchemaOption, TTruncateSchemaOption> =
   builder: (argv) => truncateBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
 
     const option = await withDefaultOption(argv);
     await truncateCommandSync(option);
@@ -99,6 +103,7 @@ const initCmd: CommandModule<IInitOption, IInitOption> = {
   builder: (argv) => argv,
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
 
     await initCommandSync(argv);
   },
@@ -111,13 +116,11 @@ const watchCmd: CommandModule<TWatchSchemaOption, TWatchSchemaOption> = {
   builder: (argv) => watchBuilder(builder(argv)),
   handler: async (argv) => {
     spinner.isEnable = true;
+    progress.isEnable = true;
+
     const option = await withDefaultOption(argv);
 
-    if (process.env.SYNC_MODE === 'true') {
-      await watchCommandSync(option);
-    } else {
-      await watchCommandCluster(option);
-    }
+    await watchCommandSync(option);
   },
 };
 

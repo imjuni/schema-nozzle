@@ -4,6 +4,7 @@ export const CE_DEFAULT_VALUE = {
   TSCONFIG_FILE_NAME: 'tsconfig.json',
   DB_FILE_NAME: 'db.json',
   WATCH_DEFAULT_GLOB: '**/*.ts',
+  WATCH_DEBOUNCE_TIME: 1000,
   DEFAULT_TASK_WAIT_SECOND: 30,
 } as const;
 

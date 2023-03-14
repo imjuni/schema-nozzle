@@ -28,17 +28,11 @@ export default async function deleteCommandSync(baseOption: TDeleteSchemaOption)
     spinner.start('TypeScript project loading, ...');
 
     const resolvedPaths = getResolvedPaths(baseOption);
-    const project = await getTsProject({
-      tsConfigFilePath: resolvedPaths.project,
-      skipAddingFilesFromTsConfig: false,
-      skipFileDependencyResolution: true,
-      skipLoadingLibFiles: true,
-    });
-    if (project.type === 'fail') throw project.fail;
+    const project = await getTsProject({ tsConfigFilePath: resolvedPaths.project });
 
     spinner.stop('TypeScript project load success', 'succeed');
 
-    const diagnostics = getDiagnostics({ option: baseOption, project: project.pass });
+    const diagnostics = getDiagnostics({ option: baseOption, project });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
 
     spinner.start('Open database, ...');

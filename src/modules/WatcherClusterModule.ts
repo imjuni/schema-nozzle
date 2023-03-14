@@ -52,6 +52,9 @@ export default class WatcherClusterModule {
       id: 0,
       error: { kind: 'error', message: '' },
     };
+
+    this.#option.files = [];
+    this.#option.types = [];
   }
 
   async bulk(events: IWatchEvent[]) {
@@ -80,10 +83,6 @@ export default class WatcherClusterModule {
     ) as TPickPassWorkerToMasterTaskComplete<
       typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
     >;
-
-    workers.broadcast({
-      command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE,
-    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE>);
 
     option.files = eventFileSummaries.updateFiles;
 
@@ -173,14 +172,26 @@ export default class WatcherClusterModule {
       }
     }
 
-    const db = await openDatabase(this.#option);
+    if (eventFileSummaries.deleteFiles.length > 0) {
+      const db = await openDatabase(this.#option);
 
-    const newDb = eventFileSummaries.deleteFiles.reduce<TDatabase>((deletingDb, filePath) => {
-      const nextDb = deleteDatabaseItemsByFile(deletingDb, filePath);
-      return nextDb;
-    }, db);
+      const newDb = eventFileSummaries.deleteFiles.reduce<TDatabase>((deletingDb, filePath) => {
+        const nextDb = deleteDatabaseItemsByFile(deletingDb, filePath);
+        return nextDb;
+      }, db);
 
-    await saveDatabase(this.#option, newDb);
+      await saveDatabase(this.#option, newDb);
+    }
+
+    option.files = [];
+    option.types = [];
+
+    workers.broadcast({
+      command: CE_WORKER_ACTION.OPTION_LOAD,
+      data: { option },
+    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>);
+
+    reply = await workers.wait();
   }
 
   async add(event: IWatchEvent) {

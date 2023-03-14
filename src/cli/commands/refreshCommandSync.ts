@@ -49,10 +49,9 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
     option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
     const project = await getTsProject({ tsConfigFilePath: option.project });
-    if (project.type === 'fail') throw project.fail;
+    const projectExportedTypes = getExportedTypes(project);
+    const diagnostics = getDiagnostics({ option, project });
 
-    const projectExportedTypes = getExportedTypes(project.pass);
-    const diagnostics = getDiagnostics({ option, project: project.pass });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
@@ -85,8 +84,8 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
       return;
     }
 
-    const schemaFiles = await summarySchemaFiles(project.pass, option);
-    const schemaTypes = await summarySchemaTypes(project.pass, option, schemaFiles.filter);
+    const schemaFiles = await summarySchemaFiles(project, option);
+    const schemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
     const generator = tjsg.createGenerator(option.generatorOptionObject);
 
     const items = (

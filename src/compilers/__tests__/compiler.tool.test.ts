@@ -30,25 +30,31 @@ beforeEach(() => {
 describe('getTsProject', () => {
   test('pass', async () => {
     const project = await getTsProject({ tsConfigFilePath: data.resolvedPaths.project });
-    expect(project.type).toEqual('pass');
+    expect(project).toBeTruthy();
   });
 
   test('fail', async () => {
-    const project = await getTsProject({
-      tsConfigFilePath: path.join(originPath, 'examples', '2'),
-    });
-    expect(project.type).toEqual('fail');
+    try {
+      await getTsProject({
+        tsConfigFilePath: path.join(originPath, 'examples', '2'),
+      });
+    } catch (err) {
+      expect(err).toBeTruthy();
+    }
   });
 
   test('fail - exception', async () => {
     const spy = jest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
       throw new Error('raise error');
     });
-    const project = await getTsProject({
-      tsConfigFilePath: path.join(originPath, 'examples', '2'),
-    });
-    spy.mockRestore();
-    expect(project.type).toEqual('fail');
+    try {
+      await getTsProject({
+        tsConfigFilePath: path.join(originPath, 'examples', '2'),
+      });
+    } catch (err) {
+      spy.mockRestore();
+      expect(err).toBeTruthy();
+    }
   });
 });
 

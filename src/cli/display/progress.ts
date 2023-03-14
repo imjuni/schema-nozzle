@@ -7,7 +7,7 @@ class Progress {
   #bar: cliProgesss.SingleBar;
 
   constructor() {
-    this.isEnable = true;
+    this.isEnable = false;
 
     this.#bar = new cliProgesss.SingleBar(
       {
