@@ -1,10 +1,10 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import * as env from '#modules/__tests__/env';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import { CE_WATCH_EVENT } from '#modules/interfaces/CE_WATCH_EVENT';
 import NozzleContext from '#workers/NozzleContext';
 import NozzleEmitter from '#workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
 import 'jest';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';

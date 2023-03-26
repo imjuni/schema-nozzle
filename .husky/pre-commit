@@ -18,7 +18,7 @@ npm run build
 echo -e "\n ${yellow}* code build end.${no_color}"
 
 echo -e "\n ${yellow}* code build start.${no_color}"
-npm run test:swc
+npm run test
 echo -e "\n ${yellow}* code build end.${no_color}"
 
 echo -e "\n ${green}* pre-commit hook was SUCCESSFUL${no_color} \n"

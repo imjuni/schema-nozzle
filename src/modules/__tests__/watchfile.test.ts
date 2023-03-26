@@ -1,8 +1,8 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import * as dfp from '#databases/getDatabaseFilePath';
-import getWatchFiles from '#modules/getWatchFiles';
 import * as env from '#modules/__tests__/env';
+import getWatchFiles from '#modules/getWatchFiles';
 import NozzleContext from '#workers/NozzleContext';
 import 'jest';
 import path from 'path';
