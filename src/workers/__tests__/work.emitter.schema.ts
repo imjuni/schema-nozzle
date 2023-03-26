@@ -1,14 +1,14 @@
 import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import * as odb from '#databases/openDatabase';
+import * as env from '#modules/__tests__/env';
 import * as ffp from '#modules/getSchemaFilterFilePath';
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
-import * as env from '#modules/__tests__/env';
 import getData from '#tools/__tests__/test-tools/getData';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import NozzleContext from '#workers/NozzleContext';
 import NozzleEmitter from '#workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
 import 'jest';
 import path from 'path';
 import * as tjsg from 'ts-json-schema-generator';
