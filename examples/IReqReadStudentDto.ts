@@ -1,9 +1,10 @@
 import type IStudentDto from './IStudentDto';
+import type ITid from './ITid';
 
 /**
  * @nozzleTags hi!!, hello, tag02
  */
-export interface IReqReadStudentQuerystring {
+export interface IReqReadStudentQuerystring extends ITid {
   name: IStudentDto['name'];
   major: IStudentDto['major'];
 }

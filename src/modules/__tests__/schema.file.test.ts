@@ -154,6 +154,10 @@ describe('summarySchemaTypes', () => {
         filePath: path.join(originPath, 'examples', 'IStudentEntity.ts'),
       },
       {
+        identifier: 'ITid',
+        filePath: path.join(originPath, 'examples', 'ITid.ts'),
+      },
+      {
         identifier: 'TGenericExample',
         filePath: path.join(originPath, 'examples', 'TGenericExample.ts'),
       },
