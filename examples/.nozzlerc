@@ -1,4 +1,9 @@
 {
   "tsconfig": "./tsconfig.json",
-  "list-file": "./.nozzlefiles"
+  "list-file": "./.nozzlefiles",
+  "cli-logo": true,
+  "generatorOption": {
+    "additionalProperties": true,
+    "extraTags": ["example"]
+  }
 }

@@ -39,6 +39,7 @@ describe('getExportedFiles', () => {
       'ISlackMessage.ts',
       'IStudentDto.ts',
       'IStudentEntity.ts',
+      'ITid.ts',
       'TGenericExample.ts',
     ]);
   });
@@ -60,6 +61,7 @@ describe('getExportedTypes', () => {
       'ISlackMessageBody',
       'IStudentDto',
       'IStudentEntity',
+      'ITid',
       'TGenericExample',
     ]);
   });

@@ -22,17 +22,19 @@ Strict JSON data validations are need many effort. You can reduce effort using `
 
 ## Table of Contents <!-- omit in toc -->
 
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [How it works?](#how-it-works)
-  - [TypeScript interface](#typescript-interface)
-  - [json-schema](#json-schema)
-- [Usage](#usage)
-- [Performance](#performance)
-- [Example using fastify.js](#example-using-fastifyjs)
-- [Relate To](#relate-to)
-- [Roadmaps](#roadmaps)
-- [License](#license)
+- [schema-nozzle](#schema-nozzle)
+  - [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [How it works?](#how-it-works)
+    - [TypeScript interface](#typescript-interface)
+    - [json-schema](#json-schema)
+  - [Usage](#usage)
+  - [Performance](#performance)
+  - [Example using fastify.js](#example-using-fastifyjs)
+  - [Recommand option](#recommand-option)
+  - [Relate To](#relate-to)
+  - [Roadmaps](#roadmaps)
+  - [License](#license)
 
 ## Getting Started
 
@@ -228,6 +230,24 @@ This image is result of 388 schema extraction using M1 macbook pro(16GB RAM, 1TB
 A complete example of using schema-nozzle to create a swagger.io document and use json-schema to process input-output value verification can be found at [Ma-eum](https://github.com/imjuni/maeum). See the example of how DTO type declaration handles swagger.io document creation, json-schema creation, and typedoc document creation all at once!
 
 - fastify with schema-nozzle [example](/docs/fastify.md)
+
+## Recommand option
+
+`extraTags` and `additionalProperties` options enable in `.nozzlerc`
+
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "list-file": "./.nozzlefiles",
+  "cli-logo": true,
+  "generatorOption": {
+    "additionalProperties": true,
+    "extraTags": ["example"]
+  }
+}
+```
+
+`additionalProperties` option permit additional properties in request object. And `extraTags` option can add to `example` field for swagger.io document.
 
 ## Relate To
 
