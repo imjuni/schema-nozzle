@@ -1,9 +1,9 @@
 {
   "name": "schema-nozzle",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "json-schema generate from typescript interface and type alias, class, enum",
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "scripts": {
     "clean": "just --config ./.configs/just.config.ts clean",
