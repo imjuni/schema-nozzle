@@ -1,7 +1,8 @@
 import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import type { TDatabase, TNullableDatabase } from '#modules/interfaces/TDatabase';
-import deepmerge from 'deepmerge';
+import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
+import { isPlainObject } from 'is-plain-object';
 import { settify } from 'my-easy-fp';
 
 export default function mergeDatabaseItems(
@@ -30,7 +31,32 @@ export default function mergeDatabaseItems(
         to: settify([...prevRecord.dependency.export.to, ...nextRecord.dependency.export.to]),
       };
 
-      const merged = deepmerge(prevRecord, nextRecord);
+      const merged = deepmerge(prevRecord, nextRecord, {
+        isMergeableObject: isPlainObject,
+        arrayMerge: (
+          target: IDatabaseItem[],
+          source: IDatabaseItem[],
+          options: ArrayMergeOptions,
+        ) => {
+          const destination = target.slice();
+
+          source.forEach((item, index) => {
+            if (destination[index] == null) {
+              destination[index] = options.cloneUnlessOtherwiseSpecified(
+                item,
+                options,
+              ) as IDatabaseItem;
+            } else if (options.isMergeableObject(item)) {
+              destination[index] = deepmerge(target[index]!, item, options) as IDatabaseItem;
+            } else if (target.includes(item)) {
+              destination.push(item);
+            }
+          });
+
+          return settify(destination);
+        },
+      });
+
       merged.dependency.import = importInfo;
       merged.dependency.export = exportInfo;
 
