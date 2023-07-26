@@ -155,8 +155,7 @@ if (process.env.SYNC_MODE === 'true') {
     process.exit(1);
   });
 } else {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (cluster.isMaster ?? cluster.isPrimary) {
+  if (cluster.isPrimary) {
     const parser = yargs(process.argv.slice(2));
 
     parser

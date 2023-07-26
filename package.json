@@ -1,6 +1,6 @@
 {
   "name": "schema-nozzle",
-  "version": "0.23.1",
+  "version": "0.24.0",
   "description": "json-schema generate from typescript interface and type alias, class, enum",
   "engines": {
     "node": ">=16"
@@ -110,7 +110,7 @@
     "@types/inquirer-autocomplete-prompt": "^3.0.0",
     "@types/jest": "^29.5.3",
     "@types/minimist": "^1.2.2",
-    "@types/node": "^20.4.5",
+    "@types/node": "^16.11.7",
     "@types/source-map-support": "^0.5.6",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
