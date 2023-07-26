@@ -50,6 +50,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: ['src/tools/logger.ts'],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': ['off'],
+      },
+    },
+    {
       files: ['**/__tests__/*.ts'],
       rules: {
         '@typescript-eslint/no-unsafe-assignment': ['off'],

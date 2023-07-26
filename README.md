@@ -22,19 +22,18 @@ Strict JSON data validations are need many effort. You can reduce effort using `
 
 ## Table of Contents <!-- omit in toc -->
 
-- [schema-nozzle](#schema-nozzle)
-  - [Getting Started](#getting-started)
-  - [Installation](#installation)
-  - [How it works?](#how-it-works)
-    - [TypeScript interface](#typescript-interface)
-    - [json-schema](#json-schema)
-  - [Usage](#usage)
-  - [Performance](#performance)
-  - [Example using fastify.js](#example-using-fastifyjs)
-  - [Recommand option](#recommand-option)
-  - [Relate To](#relate-to)
-  - [Roadmaps](#roadmaps)
-  - [License](#license)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [How it works?](#how-it-works)
+  - [TypeScript interface](#typescript-interface)
+  - [json-schema](#json-schema)
+- [Usage](#usage)
+- [Performance](#performance)
+- [Example using fastify.js](#example-using-fastifyjs)
+- [Recommand option](#recommand-option)
+- [Relate To](#relate-to)
+- [Roadmaps](#roadmaps)
+- [License](#license)
 
 ## Getting Started
 
