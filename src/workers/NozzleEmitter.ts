@@ -182,7 +182,10 @@ export default class NozzleEmitter extends EventEmitter {
     process.send?.({
       command: CE_MASTER_ACTION.TASK_COMPLETE,
       data: { id: this.id, result: 'pass', command: CE_WORKER_ACTION.OPTION_LOAD },
-    } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+    } satisfies Extract<
+      TWorkerToMasterMessage,
+      { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
+    >);
   }
 
   async diagonostic() {
@@ -202,7 +205,10 @@ export default class NozzleEmitter extends EventEmitter {
           command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
           error: { kind: 'error', message: err.message, stack: err.stack },
         },
-      } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+      } satisfies Extract<
+        TWorkerToMasterMessage,
+        { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
+      >);
     } else {
       process.send?.({
         command: CE_MASTER_ACTION.TASK_COMPLETE,
@@ -211,7 +217,10 @@ export default class NozzleEmitter extends EventEmitter {
           result: 'pass',
           command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
         },
-      } satisfies Extract<TWorkerToMasterMessage, { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }>);
+      } satisfies Extract<
+        TWorkerToMasterMessage,
+        { command: typeof CE_MASTER_ACTION.TASK_COMPLETE }
+      >);
     }
   }
 

@@ -11,6 +11,7 @@ import * as tsm from 'ts-morph';
 const getSchemaFilterFilePath = fpm.default;
 
 process.env.USE_INIT_CWD = 'true';
+
 const originPath = process.env.INIT_CWD!;
 const data: { project: tsm.Project; resolvedPaths: ReturnType<typeof getResolvedPaths> } =
   {} as any;

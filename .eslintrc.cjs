@@ -17,7 +17,8 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['tsconfig.eslint.json'],
+    ecmaVersion: 2020,
+    project: 'tsconfig.eslint.json',
     tsconfigRootDir: __dirname,
   },
   ignorePatterns: ['coverage/**', 'dist/**', '__test__/**', '__tests__/**'],
@@ -52,7 +53,16 @@ module.exports = {
       files: ['**/__tests__/*.ts'],
       rules: {
         '@typescript-eslint/no-unsafe-assignment': ['off'],
+        '@typescript-eslint/no-non-null-assertion': ['off'],
+        '@typescript-eslint/no-explicit-any': ['off'],
         'no-console': ['off'],
+      },
+    },
+    {
+      files: ['src/cli.ts'],
+      rules: {
+        '@typescript-eslint/await-thenable': ['off'],
+        '@typescript-eslint/no-misused-promises': ['off'],
       },
     },
     {
@@ -61,6 +71,8 @@ module.exports = {
         '@typescript-eslint/no-unsafe-assignment': ['off'],
         '@typescript-eslint/no-unsafe-argument': ['off'],
         '@typescript-eslint/no-unsafe-member-access': ['off'],
+        '@typescript-eslint/no-var-requires': ['off'],
+        'import/no-extraneous-dependencies': ['off'],
       },
     },
   ],

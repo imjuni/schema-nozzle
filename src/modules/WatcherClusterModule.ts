@@ -66,7 +66,9 @@ export default class WatcherClusterModule {
     workers.send({
       command: CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY,
       data: { filePaths: eventFilePaths },
-    } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY>);
+    } satisfies TPickMasterToWorkerMessage<
+      typeof CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY
+    >);
 
     let reply = await workers.wait();
 
@@ -104,7 +106,10 @@ export default class WatcherClusterModule {
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+    >);
 
     reply = await workers.wait();
 
@@ -131,7 +136,10 @@ export default class WatcherClusterModule {
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+    >);
 
     reply = await workers.wait();
 

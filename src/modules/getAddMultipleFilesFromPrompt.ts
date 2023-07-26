@@ -43,7 +43,7 @@ export default async function getAddMultipleFilesFromPrompt(
 
           return true;
         },
-        source(_answersSoFar: any, input: string | undefined) {
+        source(_answersSoFar: unknown, input: string | undefined) {
           const safeInput = input == null ? '' : input;
 
           if (safeInput === '') {
