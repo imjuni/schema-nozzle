@@ -26,6 +26,9 @@ interface IRefreshSchemaOption {
 
   /** ts-json-schema-generator timeout: default 90 seconds */
   generatorTimeout: number;
+
+  /** truncate previous database file */
+  truncate?: boolean;
 }
 
 export type TRefreshSchemaBaseOption = IRefreshSchemaOption & IBaseOption;

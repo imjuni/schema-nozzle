@@ -7,6 +7,7 @@ import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
 import createDatabaseItem from '#databases/createDatabaseItem';
+import getDatabaseFilePath from '#databases/getDatabaseFilePath';
 import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
@@ -16,9 +17,11 @@ import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#modules/summarySchemaFiles';
 import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { showLogo } from '@maeum/cli-logo';
-import { isError } from 'my-easy-fp';
+import { exists } from 'find-up';
+import { isError, sleep } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import * as tjsg from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
@@ -56,6 +59,14 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     spinner.stop('TypeScript project file loaded', 'succeed');
+
+    const dbPath = await getDatabaseFilePath(option);
+    if ((option.truncate ?? false) && (await exists(dbPath))) {
+      spinner.start('database file truncate, ...');
+      await fs.promises.unlink(dbPath);
+      await sleep(200);
+      spinner.stop('database file truncated', 'succeed');
+    }
 
     const db = await openDatabase(option);
     const basePath = await getDirname(resolvedPaths.project);

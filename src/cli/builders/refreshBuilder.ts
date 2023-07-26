@@ -25,6 +25,11 @@ export default function refreshBuilder(argv: Argv) {
       describe: 'ts-json-schema-generator timeout: default 90 seconds',
       type: 'number',
       default: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
+    })
+    .option('truncate', {
+      describe: 'truncate previous database file',
+      type: 'boolean',
+      default: false,
     });
 
   return argv as Argv<TRefreshSchemaOption>;

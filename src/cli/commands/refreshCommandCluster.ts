@@ -5,6 +5,7 @@ import getResolvedPaths from '#configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
 import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
+import getDatabaseFilePath from '#databases/getDatabaseFilePath';
 import mergeDatabaseItems from '#databases/mergeDatabaseItems';
 import openDatabase from '#databases/openDatabase';
 import saveDatabase from '#databases/saveDatabase';
@@ -21,9 +22,11 @@ import {
 } from '#workers/interfaces/TWorkerToMasterMessage';
 import workers from '#workers/workers';
 import { showLogo } from '@maeum/cli-logo';
-import cluster from 'cluster';
-import { atOrThrow, isError, populate } from 'my-easy-fp';
-import os from 'os';
+import { atOrThrow, isError, populate, sleep } from 'my-easy-fp';
+import { exists } from 'my-node-fp';
+import cluster from 'node:cluster';
+import fs from 'node:fs';
+import os from 'node:os';
 
 const log = logger();
 
@@ -95,6 +98,15 @@ export default async function refreshCommandCluster(baseOption: TRefreshSchemaBa
     }
 
     spinner.stop('TypeScript project file loaded', 'succeed');
+
+    const dbPath = await getDatabaseFilePath(option);
+    if ((option.truncate ?? false) && (await exists(dbPath))) {
+      spinner.start('database file truncate, ...');
+      await fs.promises.unlink(dbPath);
+      await sleep(200);
+      spinner.stop('database file truncated', 'succeed');
+    }
+
     spinner.start('schema file select, ...');
 
     workers.broadcast({
