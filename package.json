@@ -27,9 +27,9 @@
     "lnb": "run-p lint build",
     "prepublishOnly": "node prepublish.cjs",
     "prepub": "npm run rollup:prod",
-    "pub": "npm publish --registry http://localhost:8901 --force",
+    "pub": "NODE_ENV=production RELEASE_MODE=true npm publish --registry http://localhost:8901 --force",
     "prepub:prod": "npm run rollup:prod",
-    "pub:prod": "npm publish",
+    "pub:prod": "NODE_ENV=production RELEASE_MODE=true npm publish",
     "unpub": "unpublish schema-nozzle@latest --registry http://localhost:8901 --force",
     "prepare": "husky install"
   },
