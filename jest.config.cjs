@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 const { pathsToModuleNameMapper } = require('ts-jest');
 const { parse } = require('jsonc-parser');
 const fs = require('fs');

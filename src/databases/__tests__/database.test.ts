@@ -12,7 +12,7 @@ import path from 'path';
 const originPath = process.env.INIT_CWD!;
 const data: {
   resolvedPaths: ReturnType<typeof getResolvedPaths>;
-  db: {};
+  db: any;
 } = {} as any;
 
 beforeEach(() => {

@@ -41,7 +41,7 @@ export default async function getAddMultipleTypesFromPrompt(
 
         return true;
       },
-      source: (_answersSoFar: any, input?: string) => {
+      source: (_answersSoFar: unknown, input?: string) => {
         const safeInput = input == null ? '' : input;
 
         if (safeInput === '') {

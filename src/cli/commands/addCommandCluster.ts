@@ -85,7 +85,10 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
     workers.send({
       command: CE_WORKER_ACTION.PROJECT_DIAGONOSTIC,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.PROJECT_DIAGONOSTIC }
+    >);
 
     reply = await workers.wait();
 
@@ -98,7 +101,10 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }
+    >);
 
     reply = await workers.wait();
 
@@ -127,13 +133,19 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
     workers.broadcast({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES }
+    >);
 
     reply = await workers.wait();
 
     workers.send({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+    >);
 
     reply = await workers.wait();
 
@@ -160,7 +172,10 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
     workers.broadcast({
       command: CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES,
-    } satisfies Extract<TMasterToWorkerMessage, { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }>);
+    } satisfies Extract<
+      TMasterToWorkerMessage,
+      { command: typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES }
+    >);
 
     reply = await workers.wait();
 

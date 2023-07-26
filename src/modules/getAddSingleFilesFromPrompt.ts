@@ -31,7 +31,7 @@ export default async function getAddSingleFilesFromPrompt(
       name: 'schemaFile',
       pageSize: 20,
       message: 'Select file for JSONSchema extraction: ',
-      source: (_answersSoFar: any, input: string | undefined) => {
+      source: (_answersSoFar: unknown, input: string | undefined) => {
         const safeInput = input == null ? '' : input;
 
         if (safeInput === '') {

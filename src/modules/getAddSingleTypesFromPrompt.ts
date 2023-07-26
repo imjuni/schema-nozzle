@@ -32,7 +32,7 @@ export default async function getAddSingleTypesFromPrompt(
       name: 'identifier',
       pageSize: 20,
       message: 'Select type(interface or type alias) for JSONSchema extraction: ',
-      source: (_answersSoFar: any, input?: string) => {
+      source: (_answersSoFar: unknown, input?: string) => {
         const safeInput = input == null ? '' : input;
 
         if (safeInput === '') {

@@ -47,7 +47,7 @@ export default function mergeDatabaseItems(
                 options,
               ) as IDatabaseItem;
             } else if (options.isMergeableObject(item)) {
-              destination[index] = deepmerge(target[index]!, item, options) as IDatabaseItem;
+              destination[index] = deepmerge(target[index] ?? {}, item, options) as IDatabaseItem;
             } else if (target.includes(item)) {
               destination.push(item);
             }
