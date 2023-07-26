@@ -35,7 +35,7 @@ export default async function initCommandSync(_option: IInitOption) {
 
   const tsconfig = parse((await fs.readFile(answer.tsconfigFilePath)).toString()) as Record<
     string,
-    any
+    unknown
   >;
 
   spinner.start(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}, ...`);

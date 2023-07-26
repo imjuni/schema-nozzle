@@ -19,15 +19,12 @@ import type { LastArrayElement } from 'type-fest';
 
 const log = logger();
 
-const traverseHandle: TraversalCallback = ({
-  parent,
-  key,
-  value,
-}: TraversalCallbackContext): any => {
-  const next = parent;
-  if (next != null && key != null && key === '$ref') {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const traverseHandle: TraversalCallback = (ctx: TraversalCallbackContext): any => {
+  const next = ctx.parent;
+  if (next != null && ctx.key != null && ctx.key === '$ref') {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-    next[key] = `${value.replace('#/definitions/', '')}`;
+    next[ctx.key] = `${ctx.value.replace('#/definitions/', '')}`;
   }
 
   return next;

@@ -58,7 +58,7 @@ export default async function getDeleteTypesFromPrompt({
         name: 'typeName',
         pageSize: 20,
         message: 'Select type(interface or type alias) for delete from database: ',
-        source(_answersSoFar: any, input?: string) {
+        source(_answersSoFar: unknown, input?: string) {
           const safeInput = input == null ? '' : input;
 
           if (safeInput === '') {
@@ -114,7 +114,7 @@ export default async function getDeleteTypesFromPrompt({
 
         return true;
       },
-      source: (_answersSoFar: any, input?: string) => {
+      source: (_answersSoFar: unknown, input?: string) => {
         const safeInput = input == null ? '' : input;
 
         if (safeInput === '') {

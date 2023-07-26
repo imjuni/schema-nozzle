@@ -28,7 +28,10 @@ import logger from '#tools/logger';
 import worker from '#workers/worker';
 import cluster from 'cluster';
 import { isError } from 'my-easy-fp';
-import yargs, { type CommandModule } from 'yargs';
+import yargs, { type Arguments, type CommandModule } from 'yargs';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TValidator = (argv: Arguments<any>, aliases: { [alias: string]: string }) => any;
 
 const log = logger();
 
@@ -128,13 +131,13 @@ if (process.env.SYNC_MODE === 'true') {
   const parser = yargs(process.argv.slice(2));
 
   parser
-    .command(addCmd as CommandModule<{}, TAddSchemaOption>)
-    .command(deleteCmd as CommandModule<{}, TDeleteSchemaOption>)
-    .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
-    .command(truncateCmd as CommandModule<{}, TTruncateSchemaOption>)
-    .command(initCmd as CommandModule<{}, IInitOption>)
-    .command(watchCmd as CommandModule<{}, TWatchSchemaOption>)
-    .check(isValidateConfig)
+    .command(addCmd as CommandModule<unknown, TAddSchemaOption>)
+    .command(deleteCmd as CommandModule<unknown, TDeleteSchemaOption>)
+    .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
+    .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
+    .command(initCmd as CommandModule<unknown, IInitOption>)
+    .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
+    .check(isValidateConfig as TValidator)
     .recommendCommands()
     .demandCommand(1, 1)
     .config(preLoadConfig())
@@ -157,13 +160,13 @@ if (process.env.SYNC_MODE === 'true') {
     const parser = yargs(process.argv.slice(2));
 
     parser
-      .command(addCmd as CommandModule<{}, TAddSchemaOption>)
-      .command(deleteCmd as CommandModule<{}, TDeleteSchemaOption>)
-      .command(refreshCmd as CommandModule<{}, TRefreshSchemaOption>)
-      .command(truncateCmd as CommandModule<{}, TTruncateSchemaOption>)
-      .command(initCmd as CommandModule<{}, IInitOption>)
-      .command(watchCmd as CommandModule<{}, TWatchSchemaOption>)
-      .check(isValidateConfig)
+      .command(addCmd as CommandModule<unknown, TAddSchemaOption>)
+      .command(deleteCmd as CommandModule<unknown, TDeleteSchemaOption>)
+      .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
+      .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
+      .command(initCmd as CommandModule<unknown, IInitOption>)
+      .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
+      .check(isValidateConfig as TValidator)
       .recommendCommands()
       .demandCommand(1, 1)
       .config(preLoadConfig())

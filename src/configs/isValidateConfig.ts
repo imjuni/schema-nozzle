@@ -8,7 +8,7 @@ import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import logger from '#tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
-import type { ArgumentsCamelCase } from 'yargs';
+import type { Arguments } from 'yargs';
 
 const log = logger();
 
@@ -36,7 +36,7 @@ export default function isValidateConfig<
     | TWatchSchemaOption
     | IInitOption,
 >(argv: T) {
-  const [command] = (argv as any as ArgumentsCamelCase<T>)._;
+  const [command] = (argv as unknown as Arguments<T>)._;
 
   if (commands.includes(`${command ?? ''}`) === false) {
     throw new Error(`"${command ?? ''}" is invalid command`);
