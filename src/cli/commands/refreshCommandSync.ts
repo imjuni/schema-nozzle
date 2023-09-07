@@ -1,28 +1,28 @@
-import spinner from '#cli/display/spinner';
-import getDiagnostics from '#compilers/getDiagnostics';
-import getExportedTypes from '#compilers/getExportedTypes';
-import getTsProject from '#compilers/getTsProject';
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type { TRefreshSchemaBaseOption } from '#configs/interfaces/TRefreshSchemaOption';
-import createDatabaseItem from '#databases/createDatabaseItem';
-import getDatabaseFilePath from '#databases/getDatabaseFilePath';
-import mergeDatabaseItems from '#databases/mergeDatabaseItems';
-import openDatabase from '#databases/openDatabase';
-import saveDatabase from '#databases/saveDatabase';
-import createJSONSchema from '#modules/createJSONSchema';
-import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
-import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
-import summarySchemaFiles from '#modules/summarySchemaFiles';
-import summarySchemaTypes from '#modules/summarySchemaTypes';
 import { showLogo } from '@maeum/cli-logo';
 import { exists } from 'find-up';
 import { isError, sleep } from 'my-easy-fp';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs';
 import path from 'node:path';
-import * as tjsg from 'ts-json-schema-generator';
+import spinner from 'src/cli/display/spinner';
+import getDiagnostics from 'src/compilers/getDiagnostics';
+import getExportedTypes from 'src/compilers/getExportedTypes';
+import getTsProject from 'src/compilers/getTsProject';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type { TRefreshSchemaBaseOption } from 'src/configs/interfaces/TRefreshSchemaOption';
+import createDatabaseItem from 'src/databases/createDatabaseItem';
+import getDatabaseFilePath from 'src/databases/getDatabaseFilePath';
+import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
+import openDatabase from 'src/databases/openDatabase';
+import saveDatabase from 'src/databases/saveDatabase';
+import createJSONSchema from 'src/modules/createJSONSchema';
+import getSchemaFilterFilePath from 'src/modules/getSchemaFilterFilePath';
+import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
+import summarySchemaFiles from 'src/modules/summarySchemaFiles';
+import summarySchemaTypes from 'src/modules/summarySchemaTypes';
+import { createGenerator } from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
 export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseOption) {
@@ -97,7 +97,7 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
 
     const schemaFiles = await summarySchemaFiles(project, option);
     const schemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
-    const generator = tjsg.createGenerator(option.generatorOptionObject);
+    const generator = createGenerator(option.generatorOptionObject);
 
     const items = (
       await Promise.all(

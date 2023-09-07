@@ -1,6 +1,6 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
 import 'jest';
 import path from 'path';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
 
 process.env.USE_INIT_CWD = 'true';
 const originPath = process.env.INIT_CWD!;

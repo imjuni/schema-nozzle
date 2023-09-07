@@ -1,4 +1,4 @@
-import type IBaseOption from '#configs/interfaces/IBaseOption';
+import type IBaseOption from 'src/configs/interfaces/IBaseOption';
 
 export interface IDeleteSchemaOption extends IBaseOption {
   discriminator: 'delete-schema';

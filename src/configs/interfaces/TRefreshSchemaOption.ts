@@ -1,7 +1,7 @@
-import type { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
-import type IBaseOption from '#configs/interfaces/IBaseOption';
-import type IResolvedPaths from '#configs/interfaces/IResolvedPaths';
-import type * as tjsg from 'ts-json-schema-generator';
+import type { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
+import type IBaseOption from 'src/configs/interfaces/IBaseOption';
+import type IResolvedPaths from 'src/configs/interfaces/IResolvedPaths';
+import type { Config } from 'ts-json-schema-generator';
 
 interface IRefreshSchemaOption {
   discriminator: 'refresh-schema';
@@ -22,7 +22,7 @@ interface IRefreshSchemaOption {
   maxWorkers?: number;
 
   /** ts-json-schema-generator option file path */
-  generatorOption?: string | tjsg.Config;
+  generatorOption?: string | Config;
 
   /** ts-json-schema-generator timeout: default 90 seconds */
   generatorTimeout: number;
@@ -35,6 +35,6 @@ export type TRefreshSchemaBaseOption = IRefreshSchemaOption & IBaseOption;
 
 type TRefreshSchemaOption = IRefreshSchemaOption &
   IBaseOption &
-  IResolvedPaths & { generatorOptionObject: tjsg.Config; files: string[] };
+  IResolvedPaths & { generatorOptionObject: Config; files: string[] };
 
 export default TRefreshSchemaOption;

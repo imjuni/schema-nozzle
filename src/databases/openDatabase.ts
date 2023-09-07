@@ -1,13 +1,13 @@
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
-import type { TDatabase } from '#modules/interfaces/TDatabase';
-import safeParse from '#tools/safeParse';
 import fs from 'fs/promises';
 import { exists, isDirectory } from 'my-node-fp';
 import path from 'path';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from 'src/configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
+import type { TDatabase } from 'src/modules/interfaces/TDatabase';
+import safeParse from 'src/tools/safeParse';
 
 export default async function openDatabase(
   option:

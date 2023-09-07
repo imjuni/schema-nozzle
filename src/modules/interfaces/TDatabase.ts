@@ -1,4 +1,4 @@
-import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
+import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
 
 export type TDatabase = Record<string, IDatabaseItem>;
 

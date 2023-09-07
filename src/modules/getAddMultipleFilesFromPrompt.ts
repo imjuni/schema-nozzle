@@ -1,10 +1,10 @@
-import { CE_FUZZY_SCORE_LIMIT } from '#modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from '#tools/getRatioNumber';
-import logger from '#tools/logger';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
 import path from 'path';
+import { CE_FUZZY_SCORE_LIMIT } from 'src/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import getRatioNumber from 'src/tools/getRatioNumber';
+import logger from 'src/tools/logger';
 
 const log = logger();
 

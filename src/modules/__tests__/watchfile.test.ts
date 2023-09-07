@@ -1,11 +1,11 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import * as dfp from '#databases/getDatabaseFilePath';
-import * as env from '#modules/__tests__/env';
-import getWatchFiles from '#modules/getWatchFiles';
-import NozzleContext from '#workers/NozzleContext';
 import 'jest';
 import path from 'path';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import * as dfp from 'src/databases/getDatabaseFilePath';
+import * as env from 'src/modules/__tests__/env';
+import getWatchFiles from 'src/modules/getWatchFiles';
+import NozzleContext from 'src/workers/NozzleContext';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';

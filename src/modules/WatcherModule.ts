@@ -1,23 +1,24 @@
-import progress from '#cli/display/progress';
-import spinner from '#cli/display/spinner';
-import type getExportedTypes from '#compilers/getExportedTypes';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
-import createDatabaseItem from '#databases/createDatabaseItem';
-import deleteDatabaseItemsByFile from '#databases/deleteDatabaseItemsByFile';
-import mergeDatabaseItems from '#databases/mergeDatabaseItems';
-import openDatabase from '#databases/openDatabase';
-import saveDatabase from '#databases/saveDatabase';
-import createJSONSchema from '#modules/createJSONSchema';
-import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
-import type IWatchEvent from '#modules/interfaces/IWatchEvent';
-import type { TDatabase } from '#modules/interfaces/TDatabase';
-import summarySchemaFiles from '#modules/summarySchemaFiles';
-import summarySchemaTypes from '#modules/summarySchemaTypes';
-import logger from '#tools/logger';
 import fastCopy from 'fast-copy';
 import { last } from 'my-easy-fp';
 import path from 'path';
-import * as tjsg from 'ts-json-schema-generator';
+import progress from 'src/cli/display/progress';
+import spinner from 'src/cli/display/spinner';
+import type getExportedTypes from 'src/compilers/getExportedTypes';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import createDatabaseItem from 'src/databases/createDatabaseItem';
+import deleteDatabaseItemsByFile from 'src/databases/deleteDatabaseItemsByFile';
+import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
+import openDatabase from 'src/databases/openDatabase';
+import saveDatabase from 'src/databases/saveDatabase';
+import createJSONSchema from 'src/modules/createJSONSchema';
+import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
+import type IWatchEvent from 'src/modules/interfaces/IWatchEvent';
+import type { TDatabase } from 'src/modules/interfaces/TDatabase';
+import summarySchemaFiles from 'src/modules/summarySchemaFiles';
+import summarySchemaTypes from 'src/modules/summarySchemaTypes';
+import logger from 'src/tools/logger';
+import type { SchemaGenerator } from 'ts-json-schema-generator';
+import { createGenerator } from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
 import type { LastArrayElement } from 'type-fest';
 
@@ -33,7 +34,7 @@ export default class WatcherModule {
     'filePath' | 'identifier'
   >[];
 
-  #generator: tjsg.SchemaGenerator;
+  #generator: SchemaGenerator;
 
   constructor(args: {
     project: tsm.Project;
@@ -46,14 +47,14 @@ export default class WatcherModule {
     this.#project = args.project;
     this.#option = args.option;
     this.#exportTypes = args.exportTypes;
-    this.#generator = tjsg.createGenerator(args.option.generatorOptionObject);
+    this.#generator = createGenerator(args.option.generatorOptionObject);
   }
 
   async bulk(events: IWatchEvent[]) {
     const option = fastCopy(this.#option);
     const files = events.map((event) => path.join(option.cwd, event.filePath));
 
-    this.#generator = tjsg.createGenerator(this.#option.generatorOptionObject);
+    this.#generator = createGenerator(this.#option.generatorOptionObject);
 
     const updateFiles = files.filter((file) => this.#project.getSourceFile(file) != null);
     const deleteFiles = files.filter((file) => this.#project.getSourceFile(file) == null);
@@ -116,7 +117,7 @@ export default class WatcherModule {
     this.#project.addSourceFileAtPath(resolved);
     option.files = [resolved];
 
-    this.#generator = tjsg.createGenerator(this.#option.generatorOptionObject);
+    this.#generator = createGenerator(this.#option.generatorOptionObject);
 
     const schemaFiles = await summarySchemaFiles(this.#project, option);
     const schemaTypes = await summarySchemaTypes(this.#project, option, schemaFiles.filter);

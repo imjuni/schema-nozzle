@@ -1,14 +1,14 @@
-import type getExportedTypes from '#compilers/getExportedTypes';
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
-import createDatabaseItem from '#databases/createDatabaseItem';
-import createJSONSchema from '#modules/createJSONSchema';
-import getData from '#tools/__tests__/test-tools/getData';
 import 'jest';
 import 'jsonc-parser';
 import path from 'path';
-import * as tjsg from 'ts-json-schema-generator';
+import type getExportedTypes from 'src/compilers/getExportedTypes';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
+import createDatabaseItem from 'src/databases/createDatabaseItem';
+import createJSONSchema from 'src/modules/createJSONSchema';
+import getData from 'src/tools/__tests__/test-tools/getData';
+import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 import type { AsyncReturnType, LastArrayElement } from 'type-fest';
 
@@ -79,7 +79,7 @@ describe('createDatabaseItem', () => {
     const schema = createJSONSchema({
       filePath: path.join(originPath, 'examples', 'IStudentDto.ts'),
       exportedType: 'IStudentDto',
-      generator: tjsg.createGenerator(data.generatorOption),
+      generator: createGenerator(data.generatorOption),
     });
 
     if (schema.type !== 'pass') {

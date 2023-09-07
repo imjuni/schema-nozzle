@@ -1,11 +1,11 @@
-import getCwd from '#tools/getCwd';
-import getRatioNumber from '#tools/getRatioNumber';
-import getRelativeCwd from '#tools/getRelativeCwd';
-import posixJoin from '#tools/posixJoin';
-import safeParse from '#tools/safeParse';
 import 'jest';
 import * as jscp from 'jsonc-parser';
 import path from 'path';
+import getCwd from 'src/tools/getCwd';
+import getRatioNumber from 'src/tools/getRatioNumber';
+import getRelativeCwd from 'src/tools/getRelativeCwd';
+import posixJoin from 'src/tools/posixJoin';
+import safeParse from 'src/tools/safeParse';
 
 describe('getRativeCwd', () => {
   test('default', () => {

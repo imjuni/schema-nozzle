@@ -1,6 +1,6 @@
-import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
-import getFormattedSchema from '#modules/getFormattedSchema';
 import 'jest';
+import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
+import getFormattedSchema from 'src/modules/getFormattedSchema';
 
 describe('getFormattedSchema', () => {
   test('string', () => {

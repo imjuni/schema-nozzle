@@ -1,6 +1,6 @@
-import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
-import type { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
-import type { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
+import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
+import type { CE_MASTER_ACTION } from 'src/workers/interfaces/CE_MASTER_ACTION';
+import type { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
 
 export type TPassWorkerToMasterTaskComplete =
   | {

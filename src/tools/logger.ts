@@ -1,7 +1,7 @@
-import { getLogLabel, getLogLevel } from '#tools/loggerModule';
 import chalk from 'chalk';
 import pino, { type Logger } from 'pino';
 import pretty from 'pino-pretty';
+import { getLogLabel, getLogLevel } from 'src/tools/loggerModule';
 
 let log:
   | Logger<{

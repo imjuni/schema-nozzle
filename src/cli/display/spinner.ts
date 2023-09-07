@@ -1,5 +1,5 @@
-import { CE_STREAM_TYPE } from '#cli/interfaces/CE_STREAM_TYPE';
 import ora from 'ora';
+import { CE_STREAM_TYPE } from 'src/cli/interfaces/CE_STREAM_TYPE';
 
 class Spinner {
   #spinner: ora.Ora;

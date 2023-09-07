@@ -1,6 +1,6 @@
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import { CE_OUTPUT_FORMAT } from '#configs/interfaces/CE_OUTPUT_FORMAT';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function refreshBuilder(argv: Argv) {

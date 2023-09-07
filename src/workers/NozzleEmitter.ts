@@ -1,26 +1,3 @@
-import getDiagnostics from '#compilers/getDiagnostics';
-import getSoruceFileExportedTypes from '#compilers/getSoruceFileExportedTypes';
-import getTsProject from '#compilers/getTsProject';
-import createDatabaseItem from '#databases/createDatabaseItem';
-import openDatabase from '#databases/openDatabase';
-import createJSONSchema from '#modules/createJSONSchema';
-import errorTrace from '#modules/errorTrace';
-import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
-import type IDatabaseItem from '#modules/interfaces/IDatabaseItem';
-import summarySchemaFiles from '#modules/summarySchemaFiles';
-import summarySchemaTypes from '#modules/summarySchemaTypes';
-import logger from '#tools/logger';
-import { CE_MASTER_ACTION } from '#workers/interfaces/CE_MASTER_ACTION';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '#workers/interfaces/TWorkerToMasterMessage';
-import type {
-  IFailWorkerToMasterTaskComplete,
-  TFailData,
-  TPickPassWorkerToMasterTaskComplete,
-} from '#workers/interfaces/TWorkerToMasterMessage';
-import NozzleContext from '#workers/NozzleContext';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import ignore, { type Ignore } from 'ignore';
@@ -30,7 +7,30 @@ import { getDirname } from 'my-node-fp';
 import { isPass } from 'my-only-either';
 import { EventEmitter } from 'node:events';
 import path from 'path';
-import * as tjsg from 'ts-json-schema-generator';
+import getDiagnostics from 'src/compilers/getDiagnostics';
+import getSoruceFileExportedTypes from 'src/compilers/getSoruceFileExportedTypes';
+import getTsProject from 'src/compilers/getTsProject';
+import createDatabaseItem from 'src/databases/createDatabaseItem';
+import openDatabase from 'src/databases/openDatabase';
+import createJSONSchema from 'src/modules/createJSONSchema';
+import errorTrace from 'src/modules/errorTrace';
+import getSchemaFilterFilePath from 'src/modules/getSchemaFilterFilePath';
+import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
+import summarySchemaFiles from 'src/modules/summarySchemaFiles';
+import summarySchemaTypes from 'src/modules/summarySchemaTypes';
+import logger from 'src/tools/logger';
+import NozzleContext from 'src/workers/NozzleContext';
+import { CE_MASTER_ACTION } from 'src/workers/interfaces/CE_MASTER_ACTION';
+import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from 'src/workers/interfaces/TMasterToWorkerMessage';
+import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from 'src/workers/interfaces/TWorkerToMasterMessage';
+import type {
+  IFailWorkerToMasterTaskComplete,
+  TFailData,
+  TPickPassWorkerToMasterTaskComplete,
+} from 'src/workers/interfaces/TWorkerToMasterMessage';
+import { createGenerator } from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
 const log = logger();
@@ -174,7 +174,7 @@ export default class NozzleEmitter extends EventEmitter {
   loadOption(payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>['data']) {
     this.#context.option = payload.option;
     this.#context.generatorOption = payload.option.generatorOptionObject;
-    this.#context.generator = tjsg.createGenerator({
+    this.#context.generator = createGenerator({
       ...this.#context.generatorOption,
       type: '*',
     });
