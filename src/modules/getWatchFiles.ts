@@ -1,10 +1,10 @@
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
-import getDatabaseFilePath from '#databases/getDatabaseFilePath';
-import getSchemaFileContent from '#modules/getSchemaFileContent';
-import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
-import logger from '#tools/logger';
 import ignore from 'ignore';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getDatabaseFilePath from 'src/databases/getDatabaseFilePath';
+import getSchemaFileContent from 'src/modules/getSchemaFileContent';
+import getSchemaFilterFilePath from 'src/modules/getSchemaFilterFilePath';
+import logger from 'src/tools/logger';
 
 const log = logger();
 

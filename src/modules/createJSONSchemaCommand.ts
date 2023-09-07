@@ -1,8 +1,8 @@
-import logger from '#tools/logger';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
-import type { TPickPassWorkerToMasterTaskComplete } from '#workers/interfaces/TWorkerToMasterMessage';
 import { chunk } from 'my-easy-fp';
+import logger from 'src/tools/logger';
+import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
+import type { TPickPassWorkerToMasterTaskComplete } from 'src/workers/interfaces/TWorkerToMasterMessage';
 
 const log = logger();
 

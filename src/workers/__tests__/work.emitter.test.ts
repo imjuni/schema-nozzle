@@ -1,14 +1,14 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import * as env from '#modules/__tests__/env';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
-import NozzleContext from '#workers/NozzleContext';
-import NozzleEmitter from '#workers/NozzleEmitter';
 import fastCopy from 'fast-copy';
 import 'jest';
 import path from 'path';
-import * as tjsg from 'ts-json-schema-generator';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import * as env from 'src/modules/__tests__/env';
+import NozzleContext from 'src/workers/NozzleContext';
+import NozzleEmitter from 'src/workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
+import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 
 const originPath = process.cwd();
@@ -38,7 +38,7 @@ beforeAll(async () => {
     }),
   };
   ctx.generatorOption = ctx.option.generatorOptionObject;
-  ctx.generator = tjsg.createGenerator({
+  ctx.generator = createGenerator({
     ...ctx.option.generatorOptionObject,
     type: '*',
   });
@@ -60,7 +60,7 @@ beforeEach(async () => {
     }),
   };
   ctx.generatorOption = ctx.option.generatorOptionObject;
-  ctx.generator = tjsg.createGenerator({
+  ctx.generator = createGenerator({
     ...ctx.option.generatorOptionObject,
     type: '*',
   });
@@ -160,7 +160,7 @@ describe('WorkEmitter - project', () => {
         nctx.project = ctx.project;
         nctx.generatorOption = fastCopy(ctx.generatorOption);
         nctx.option = fastCopy(ctx.option);
-        nctx.generator = tjsg.createGenerator(nctx.generatorOption);
+        nctx.generator = createGenerator(nctx.generatorOption);
 
         nctx.option.skipError = false;
 

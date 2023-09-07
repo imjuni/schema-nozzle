@@ -1,6 +1,6 @@
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import NozzleEmitter from '#workers/NozzleEmitter';
 import 'jest';
+import NozzleEmitter from 'src/workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
 
 afterAll(() => {
   jest.clearAllMocks();

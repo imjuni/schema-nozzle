@@ -1,13 +1,13 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import getDatabaseFilePath from '#databases/getDatabaseFilePath';
-import openDatabase from '#databases/openDatabase';
-import * as env from '#modules/__tests__/env';
 import fs from 'fs/promises';
 import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import getDatabaseFilePath from 'src/databases/getDatabaseFilePath';
+import openDatabase from 'src/databases/openDatabase';
+import * as env from 'src/modules/__tests__/env';
 
 const originPath = process.env.INIT_CWD!;
 const data: {

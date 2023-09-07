@@ -1,13 +1,13 @@
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
-import getDatabaseFilePath from '#databases/getDatabaseFilePath';
-import type { TDatabase } from '#modules/interfaces/TDatabase';
-import logger from '#tools/logger';
 import fastSafeStringify from 'fast-safe-stringify';
 import fs from 'fs';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from 'src/configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getDatabaseFilePath from 'src/databases/getDatabaseFilePath';
+import type { TDatabase } from 'src/modules/interfaces/TDatabase';
+import logger from 'src/tools/logger';
 
 const log = logger();
 

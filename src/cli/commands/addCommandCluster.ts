@@ -1,31 +1,31 @@
-import progress from '#cli/display/progress';
-import showFailMessage from '#cli/display/showFailMessage';
-import spinner from '#cli/display/spinner';
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type { TAddSchemaBaseOption } from '#configs/interfaces/TAddSchemaOption';
-import mergeDatabaseItems from '#databases/mergeDatabaseItems';
-import openDatabase from '#databases/openDatabase';
-import saveDatabase from '#databases/saveDatabase';
-import SchemaNozzleError from '#errors/SchemaNozzleError';
-import getAddFiles from '#modules/getAddFiles';
-import getAddTypes from '#modules/getAddTypes';
-import logger from '#tools/logger';
-import { CE_WORKER_ACTION } from '#workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from '#workers/interfaces/TMasterToWorkerMessage';
+import { showLogo } from '@maeum/cli-logo';
+import { atOrThrow, isError, populate } from 'my-easy-fp';
+import cluster from 'node:cluster';
+import os from 'node:os';
+import progress from 'src/cli/display/progress';
+import showFailMessage from 'src/cli/display/showFailMessage';
+import spinner from 'src/cli/display/spinner';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type { TAddSchemaBaseOption } from 'src/configs/interfaces/TAddSchemaOption';
+import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
+import openDatabase from 'src/databases/openDatabase';
+import saveDatabase from 'src/databases/saveDatabase';
+import SchemaNozzleError from 'src/errors/SchemaNozzleError';
+import getAddFiles from 'src/modules/getAddFiles';
+import getAddTypes from 'src/modules/getAddTypes';
+import logger from 'src/tools/logger';
+import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from 'src/workers/interfaces/TMasterToWorkerMessage';
+import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
 import {
   isFailTaskComplete,
   isPassTaskComplete,
   type TPassWorkerToMasterTaskComplete,
   type TPickPassWorkerToMasterTaskComplete,
-} from '#workers/interfaces/TWorkerToMasterMessage';
-import workers from '#workers/workers';
-import { showLogo } from '@maeum/cli-logo';
-import cluster from 'cluster';
-import { atOrThrow, isError, populate } from 'my-easy-fp';
-import os from 'os';
+} from 'src/workers/interfaces/TWorkerToMasterMessage';
+import workers from 'src/workers/workers';
 
 const log = logger();
 

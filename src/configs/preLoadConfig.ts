@@ -1,18 +1,18 @@
-import { CE_COMMAND_LIST } from '#cli/interfaces/CE_COMMAND_LIST';
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import type IInitOption from '#configs/interfaces/IInitOption';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
-import getCwd from '#tools/getCwd';
-import logger from '#tools/logger';
 import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import minimist from 'minimist';
 import { atOrThrow, atOrUndefined, isError, toArray } from 'my-easy-fp';
 import { existsSync, getDirnameSync } from 'my-node-fp';
+import { CE_COMMAND_LIST } from 'src/cli/interfaces/CE_COMMAND_LIST';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import type IInitOption from 'src/configs/interfaces/IInitOption';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from 'src/configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
+import getCwd from 'src/tools/getCwd';
+import logger from 'src/tools/logger';
 
 const log = logger();
 

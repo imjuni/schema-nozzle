@@ -1,13 +1,13 @@
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import { exists } from 'my-node-fp';
 import path from 'path';
-import type * as tjsg from 'ts-json-schema-generator';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import type { Config } from 'ts-json-schema-generator';
 
-const defaultGeneratorOption: tjsg.Config = {
+const defaultGeneratorOption: Config = {
   minify: false,
   expose: 'export',
   topRef: false,
@@ -23,9 +23,9 @@ export default async function getSchemaGeneratorOption(
     | Pick<TAddSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
     | Pick<TRefreshSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
     | Pick<TWatchSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>,
-): Promise<tjsg.Config> {
+): Promise<Config> {
   if (option.generatorOption == null) {
-    const generatorOption: tjsg.Config = {
+    const generatorOption: Config = {
       ...defaultGeneratorOption,
       tsconfig: option.project,
       skipTypeCheck: option.skipError,
@@ -49,7 +49,7 @@ export default async function getSchemaGeneratorOption(
 
   if (await exists(filePath)) {
     const configBuf = await fs.promises.readFile(filePath);
-    const config = parse(configBuf.toString()) as tjsg.Config;
+    const config = parse(configBuf.toString()) as Config;
     return config;
   }
 

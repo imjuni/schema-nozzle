@@ -1,10 +1,10 @@
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import getAddMultipleFilesFromPrompt from '#modules/getAddMultipleFilesFromPrompt';
-import getAddSingleFilesFromPrompt from '#modules/getAddSingleFilesFromPrompt';
-import getRelativeCwd from '#tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import path from 'path';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import getAddMultipleFilesFromPrompt from 'src/modules/getAddMultipleFilesFromPrompt';
+import getAddSingleFilesFromPrompt from 'src/modules/getAddSingleFilesFromPrompt';
+import getRelativeCwd from 'src/tools/getRelativeCwd';
 
 export default async function getAddFiles(
   option: Pick<TAddSchemaOption, 'files' | 'multiple' | 'cwd'>,

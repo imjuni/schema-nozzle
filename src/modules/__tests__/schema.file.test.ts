@@ -1,11 +1,11 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import { CE_DEFAULT_VALUE } from '#configs/interfaces/CE_DEFAULT_VALUE';
-import getSchemaFileContent from '#modules/getSchemaFileContent';
-import * as fpm from '#modules/getSchemaFilterFilePath';
-import summarySchemaFiles from '#modules/summarySchemaFiles';
-import summarySchemaTypes from '#modules/summarySchemaTypes';
 import 'jest';
 import path from 'path';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
+import getSchemaFileContent from 'src/modules/getSchemaFileContent';
+import * as fpm from 'src/modules/getSchemaFilterFilePath';
+import summarySchemaFiles from 'src/modules/summarySchemaFiles';
+import summarySchemaTypes from 'src/modules/summarySchemaTypes';
 import * as tsm from 'ts-morph';
 
 const getSchemaFilterFilePath = fpm.default;

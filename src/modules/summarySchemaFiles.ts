@@ -1,12 +1,12 @@
-import getExportedFiles from '#compilers/getExportedFiles';
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
-import getSchemaFileContent from '#modules/getSchemaFileContent';
-import getSchemaFilterFilePath from '#modules/getSchemaFilterFilePath';
-import isSourceFileInclude from '#modules/isSourceFileInclude';
-import getRelativeCwd from '#tools/getRelativeCwd';
 import ignore from 'ignore';
+import getExportedFiles from 'src/compilers/getExportedFiles';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getSchemaFileContent from 'src/modules/getSchemaFileContent';
+import getSchemaFilterFilePath from 'src/modules/getSchemaFilterFilePath';
+import isSourceFileInclude from 'src/modules/isSourceFileInclude';
+import getRelativeCwd from 'src/tools/getRelativeCwd';
 import type * as tsm from 'ts-morph';
 
 function getFilePaths(

@@ -1,9 +1,10 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
-import createJSONSchema from '#modules/createJSONSchema';
 import 'jest';
 import path from 'path';
-import * as tjsg from 'ts-json-schema-generator';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
+import createJSONSchema from 'src/modules/createJSONSchema';
+import { createGenerator } from 'ts-json-schema-generator';
+
 import type { AsyncReturnType } from 'type-fest';
 
 const originPath = process.env.INIT_CWD!;
@@ -33,7 +34,7 @@ describe('createJSONSchema', () => {
     const schema = createJSONSchema({
       filePath: path.join(data.resolvedPaths.cwd, 'I18nDto.ts'),
       exportedType: 'ILanguageDto',
-      generator: tjsg.createGenerator({ ...data.option }),
+      generator: createGenerator({ ...data.option }),
     });
 
     if (schema.type === 'fail') {
@@ -63,7 +64,7 @@ describe('createJSONSchema', () => {
     const schema = createJSONSchema({
       filePath: path.join(data.resolvedPaths.cwd, 'I18nDto.ts'),
       exportedType: 'ILanguageDto2',
-      generator: tjsg.createGenerator({ ...data.option, skipTypeCheck: false }),
+      generator: createGenerator({ ...data.option, skipTypeCheck: false }),
     });
 
     expect(schema.type).toEqual('fail');

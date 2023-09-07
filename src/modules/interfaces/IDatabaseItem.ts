@@ -1,6 +1,6 @@
-import type ISchemaExportInfo from '#modules/interfaces/ISchemaExportInfo';
-import type ISchemaImportInfo from '#modules/interfaces/ISchemaImportInfo';
 import type { JSONSchema7 } from 'json-schema';
+import type ISchemaExportInfo from 'src/modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from 'src/modules/interfaces/ISchemaImportInfo';
 
 export default interface IDatabaseItem {
   id: string;

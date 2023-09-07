@@ -1,7 +1,7 @@
-import type TAddSchemaOption from '#configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#configs/interfaces/TWatchSchemaOption';
-import type * as tjsg from 'ts-json-schema-generator';
+import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import type { Config, SchemaGenerator } from 'ts-json-schema-generator';
 import type { Project } from 'ts-morph';
 
 export default class NozzleContext {
@@ -9,9 +9,9 @@ export default class NozzleContext {
 
   #option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption | undefined;
 
-  #generatorOption: tjsg.Config | undefined;
+  #generatorOption: Config | undefined;
 
-  #generator: tjsg.SchemaGenerator | undefined;
+  #generator: SchemaGenerator | undefined;
 
   get project(): Project {
     if (this.#project == null) throw new Error('Empty project in nozzle-context');
@@ -40,7 +40,7 @@ export default class NozzleContext {
     this.#option = value;
   }
 
-  get generatorOption(): tjsg.Config {
+  get generatorOption(): Config {
     if (this.#generatorOption == null) throw new Error('Empty generatorOption in nozzle-context');
     return this.#generatorOption;
   }
@@ -49,7 +49,7 @@ export default class NozzleContext {
     this.#generatorOption = value;
   }
 
-  get generator(): tjsg.SchemaGenerator {
+  get generator(): SchemaGenerator {
     if (this.#generator == null) throw new Error('Empty generator in nozzle-context');
     return this.#generator;
   }

@@ -1,4 +1,4 @@
-import type TTruncateSchemaOption from '#configs/interfaces/TTruncateSchemaOption';
+import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function truncateBuilder(argv: Argv) {

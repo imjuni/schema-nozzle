@@ -1,9 +1,9 @@
-import getResolvedPaths from '#configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#configs/getSchemaGeneratorOption';
 import fs from 'fs/promises';
 import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
+import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
 
 const originPath = process.env.INIT_CWD!;
 const data: { resolvedPaths: ReturnType<typeof getResolvedPaths> } = {} as any;

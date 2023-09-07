@@ -1,30 +1,31 @@
-import CreateJSONSchemaError from '#errors/CreateJsonSchemaError';
 import type { JSONSchema7 } from 'json-schema';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
-import * as tjsg from 'ts-json-schema-generator';
+import CreateJSONSchemaError from 'src/errors/CreateJsonSchemaError';
+import type { Config, SchemaGenerator } from 'ts-json-schema-generator';
+import { createGenerator } from 'ts-json-schema-generator';
 
 type TCreateJSONSchemaArgs =
   | {
       filePath: string;
       exportedType: string;
-      option: tjsg.Config;
+      option: Config;
     }
   | {
       filePath: string;
       exportedType: string;
-      generator: tjsg.SchemaGenerator;
+      generator: SchemaGenerator;
     };
 
 function getGenerator(args: TCreateJSONSchemaArgs) {
   if ('option' in args) {
-    const option: tjsg.Config = {
+    const option: Config = {
       ...args.option,
       path: args.filePath,
       type: args.exportedType,
     };
 
-    return tjsg.createGenerator(option);
+    return createGenerator(option);
   }
 
   return args.generator;
