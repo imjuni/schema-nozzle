@@ -112,7 +112,7 @@ export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseO
             return undefined;
           }
 
-          const item = createDatabaseItem(option, projectExportedTypes, schema.pass);
+          const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
           const withDependencies = [item.item, ...(item.definitions ?? [])];
 
           return withDependencies;

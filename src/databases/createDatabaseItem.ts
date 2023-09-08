@@ -3,40 +3,33 @@ import type { JSONSchema7 } from 'json-schema';
 import { settify } from 'my-easy-fp';
 import { getDirnameSync } from 'my-node-fp';
 import type { TPickPass } from 'my-only-either';
-import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
 import path from 'path';
 import type getExportedTypes from 'src/compilers/getExportedTypes';
 import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getSchemaId from 'src/databases/modules/getSchemaId';
+import traverser from 'src/databases/modules/traverser';
 import type createJSONSchema from 'src/modules/createJSONSchema';
 import getFormattedSchema from 'src/modules/getFormattedSchema';
 import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
 import type ISchemaExportInfo from 'src/modules/interfaces/ISchemaExportInfo';
 import type ISchemaImportInfo from 'src/modules/interfaces/ISchemaImportInfo';
 import logger from 'src/tools/logger';
+import type { Project } from 'ts-morph';
+import { getFileImportInfos } from 'ts-morph-short';
 import type { LastArrayElement } from 'type-fest';
 
 const log = logger();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const traverseHandle: TraversalCallback = (ctx: TraversalCallbackContext): any => {
-  const next = ctx.parent;
-  if (next != null && ctx.key != null && ctx.key === '$ref') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-    next[ctx.key] = `${ctx.value.replace('#/definitions/', '')}`;
-  }
-
-  return next;
-};
-
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
 export default function createDatabaseItem(
+  project: Project,
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project'>
-    | Pick<TWatchSchemaOption, 'discriminator' | 'format' | 'project'>,
+    | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
+    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
+    | Pick<TWatchSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof createJSONSchema>>,
 ): {
@@ -45,14 +38,15 @@ export default function createDatabaseItem(
 } {
   const basePath = getDirnameSync(option.project);
   const targetSchema = fastCopy(schema.schema);
+  const importInfos = getFileImportInfos(project, schema.filePath);
   const importedMap = exportedTypes.reduce<
     Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
   >((aggregation, exportedType) => {
     return { ...aggregation, [exportedType.identifier]: exportedType };
   }, {});
 
-  targetSchema.$id = schema.exportedType;
-  traverse(targetSchema, traverseHandle);
+  targetSchema.$id = getSchemaId(schema.exportedType, importInfos, option);
+  traverser(targetSchema, importInfos, option);
 
   const id = schema.exportedType;
   const stringified = getFormattedSchema(option.format, {
@@ -82,7 +76,7 @@ export default function createDatabaseItem(
         typeof definition.value === 'object',
     )
     .map((definition) => {
-      const definitionId = definition.key;
+      const definitionId = getSchemaId(definition.key, importInfos, option);
       const importDeclaration = importedMap[definition.key];
       const definitionSchema: JSONSchema7 = {
         $schema: schema.schema.$schema,
@@ -90,7 +84,7 @@ export default function createDatabaseItem(
         ...definition.value,
       };
 
-      traverse(definitionSchema, traverseHandle);
+      traverser(definitionSchema, importInfos, option);
 
       log.trace(`ID: ${definitionId}/ ${id}`);
 

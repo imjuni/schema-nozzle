@@ -15,6 +15,12 @@ export interface IAddSchemaOption {
   /** schema file listing filename */
   listFile?: string;
 
+  /** specify the root folder within your schema path */
+  rootDir?: string;
+
+  /** Specify whether to include the DTO path in the schema ID */
+  includePath?: boolean;
+
   /**
    * json-schema save format
    * * json: json object
