@@ -23,6 +23,16 @@ export default function addBuilder(argv: Argv) {
       choices: [CE_OUTPUT_FORMAT.JSON, CE_OUTPUT_FORMAT.STRING, CE_OUTPUT_FORMAT.BASE64],
       default: CE_OUTPUT_FORMAT.JSON,
     })
+    .option('root-dir', {
+      describe: 'specify the root folder within your schema path',
+      type: 'string',
+      default: undefined,
+    })
+    .option('include-path', {
+      describe: 'Specify whether to include the DTO path in the schema ID',
+      type: 'boolean',
+      default: false,
+    })
     .option('max-workers', {
       describe: 'max worker count',
       type: 'number',

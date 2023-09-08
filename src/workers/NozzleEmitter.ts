@@ -405,7 +405,12 @@ export default class NozzleEmitter extends EventEmitter {
       return;
     }
 
-    const item = createDatabaseItem(this.#context.option, this.types, jsonSchema.pass);
+    const item = createDatabaseItem(
+      this.#context.project,
+      this.#context.option,
+      this.types,
+      jsonSchema.pass,
+    );
 
     this.schemaes.push(jsonSchema.pass);
     this.databaseItems.push(item.item);
@@ -470,6 +475,7 @@ export default class NozzleEmitter extends EventEmitter {
           this.schemaes.push(jsonSchema.pass);
 
           const databaseItem = createDatabaseItem(
+            this.#context.project,
             this.#context.option,
             this.types,
             jsonSchema.pass,

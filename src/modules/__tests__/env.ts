@@ -22,6 +22,7 @@ export const addCmdOption: TAddSchemaOption = {
   generatorOption: {},
   cwd: '',
   listFile: '',
+  includePath: false,
   format: CE_OUTPUT_FORMAT.JSON,
   generatorOptionObject: {},
   generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
@@ -35,6 +36,7 @@ export const refreshCmdOption: TRefreshSchemaOption = {
   cwd: '',
   listFile: '',
   files: [],
+  includePath: false,
   generatorOptionObject: {},
   generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };

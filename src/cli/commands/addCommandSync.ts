@@ -79,7 +79,7 @@ export default async function addCommandSync(baseOption: TAddSchemaBaseOption): 
           return undefined;
         }
 
-        const item = createDatabaseItem(option, projectExportedTypes, schema.pass);
+        const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
         const withDependencies = [item.item, ...(item.definitions ?? [])];
 
         return withDependencies;

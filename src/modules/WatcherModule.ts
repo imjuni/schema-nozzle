@@ -85,7 +85,7 @@ export default class WatcherModule {
               return undefined;
             }
 
-            const item = createDatabaseItem(option, this.#exportTypes, schema.pass);
+            const item = createDatabaseItem(this.#project, option, this.#exportTypes, schema.pass);
             const withDependencies = [item.item, ...(item.definitions ?? [])];
 
             progress.increment(targetType.identifier);
@@ -135,7 +135,7 @@ export default class WatcherModule {
             return undefined;
           }
 
-          const item = createDatabaseItem(option, this.#exportTypes, schema.pass);
+          const item = createDatabaseItem(this.#project, option, this.#exportTypes, schema.pass);
           const withDependencies = [item.item, ...(item.definitions ?? [])];
           return withDependencies;
         }),

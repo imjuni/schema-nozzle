@@ -21,6 +21,12 @@ interface IRefreshSchemaOption {
   /** max worker count */
   maxWorkers?: number;
 
+  /** specify the root folder within your schema path */
+  rootDir?: string;
+
+  /** Specify whether to include the DTO path in the schema ID */
+  includePath?: boolean;
+
   /** ts-json-schema-generator option file path */
   generatorOption?: string | Config;
 

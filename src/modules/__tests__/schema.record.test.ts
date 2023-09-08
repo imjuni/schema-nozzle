@@ -62,6 +62,7 @@ describe('createDatabaseItem', () => {
     }
 
     const reply = createDatabaseItem(
+      data.project,
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,
@@ -87,6 +88,7 @@ describe('createDatabaseItem', () => {
     }
 
     const reply = createDatabaseItem(
+      data.project,
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,
@@ -113,6 +115,7 @@ describe('createDatabaseItem', () => {
     }
 
     const reply = createDatabaseItem(
+      data.project,
       {
         discriminator: 'add-schema',
         format: CE_OUTPUT_FORMAT.JSON,
