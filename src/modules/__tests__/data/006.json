@@ -1,7 +1,7 @@
 {
   "item": {
     "id": "CE_MAJOR",
-    "filePath": "CE_MAJOR.ts",
+    "filePath": "const-enum/CE_MAJOR.ts",
     "dependency": {
       "import": {
         "name": "CE_MAJOR",

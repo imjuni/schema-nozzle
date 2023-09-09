@@ -52,7 +52,7 @@ beforeEach(async () => {
 describe('createDatabaseItem', () => {
   test('without definitions', async () => {
     const schema = createJSONSchema({
-      filePath: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
+      filePath: path.join(originPath, 'examples', 'const-enum', 'CE_MAJOR.ts'),
       exportedType: 'CE_MAJOR',
       option: data.generatorOption,
     });

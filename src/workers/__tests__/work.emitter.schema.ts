@@ -227,7 +227,7 @@ describe('WorkEmitter - create schema', () => {
       ctx.generatorOption = {};
 
       await w.createJsonSchema({
-        filePath: path.join(ctx.option.cwd, 'CE_MAJOR.ts'),
+        filePath: path.join(ctx.option.cwd, 'const-enum', 'CE_MAJOR.ts'),
         exportedType: 'CE_MAJOR',
       });
     });

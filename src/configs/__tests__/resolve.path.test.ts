@@ -48,4 +48,34 @@ describe('getResolvedPaths', () => {
       cwd: path.join(originPath, 'examples'),
     });
   });
+
+  test('relative rootDir', async () => {
+    const r = getResolvedPaths({
+      project: './tsconfig.json',
+      output: '.',
+      rootDir: '.',
+    });
+
+    expect(r).toMatchObject({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+      cwd: path.join(originPath, 'examples'),
+      rootDir: path.join(originPath, 'examples'),
+    });
+  });
+
+  test('absolute rootDir', async () => {
+    const r = getResolvedPaths({
+      project: './tsconfig.json',
+      output: '.',
+      rootDir: path.join(originPath, 'examples'),
+    });
+
+    expect(r).toMatchObject({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+      cwd: path.join(originPath, 'examples'),
+      rootDir: path.join(originPath, 'examples'),
+    });
+  });
 });

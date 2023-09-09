@@ -111,10 +111,6 @@ describe('summarySchemaTypes', () => {
 
     expect(r).toMatchObject([
       {
-        identifier: 'CE_MAJOR',
-        filePath: path.join(originPath, 'examples', 'CE_MAJOR.ts'),
-      },
-      {
         identifier: 'I18nDto',
         filePath: path.join(originPath, 'examples', 'I18nDto.ts'),
       },
@@ -155,12 +151,16 @@ describe('summarySchemaTypes', () => {
         filePath: path.join(originPath, 'examples', 'IStudentEntity.ts'),
       },
       {
-        identifier: 'ITid',
-        filePath: path.join(originPath, 'examples', 'ITid.ts'),
-      },
-      {
         identifier: 'TGenericExample',
         filePath: path.join(originPath, 'examples', 'TGenericExample.ts'),
+      },
+      {
+        identifier: 'ITid',
+        filePath: path.join(originPath, 'examples', 'base', 'ITid.ts'),
+      },
+      {
+        identifier: 'CE_MAJOR',
+        filePath: path.join(originPath, 'examples', 'const-enum', 'CE_MAJOR.ts'),
       },
     ]);
   });
