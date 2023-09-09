@@ -8,6 +8,7 @@ import type getExportedTypes from 'src/compilers/getExportedTypes';
 import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getBaseSchemaId from 'src/databases/modules/getBaseSchemaId';
 import getSchemaId from 'src/databases/modules/getSchemaId';
 import traverser from 'src/databases/modules/traverser';
 import type createJSONSchema from 'src/modules/createJSONSchema';
@@ -48,7 +49,7 @@ export default function createDatabaseItem(
   targetSchema.$id = getSchemaId(schema.exportedType, importInfos, option);
   traverser(targetSchema, importInfos, option);
 
-  const id = getSchemaId(schema.exportedType, importInfos, option);
+  const id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
   const stringified = getFormattedSchema(option.format, {
     ...targetSchema,
     definitions: undefined,

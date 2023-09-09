@@ -5,11 +5,10 @@ import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOpti
 import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
 import getDtoName from 'src/databases/modules/getDtoName';
 import isRelativeDtoPath from 'src/databases/modules/isRelativeDtoPath';
-import type { getFileImportInfos } from 'ts-morph-short';
 
-export default function getSchemaId(
+export default function getBaseSchemaId(
   schemaId: string,
-  importInfos: ReturnType<typeof getFileImportInfos>,
+  filePath: string,
   option:
     | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>
     | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>
@@ -17,19 +16,8 @@ export default function getSchemaId(
 ) {
   if (isRelativeDtoPath(option)) {
     const dtoName = `${schemaId.replace('#/definitions/', '')}`;
-    const findedImportInfo = importInfos.find((importInfo) => importInfo.name === dtoName);
 
-    if (findedImportInfo == null) {
-      return getDtoName(dtoName, (v) => `#/external/${v}`);
-    }
-
-    if (findedImportInfo.isExternal || findedImportInfo.moduleFilePath == null) {
-      return getDtoName(dtoName, (v) => `#/external/${v}`);
-    }
-
-    const relativePath = path
-      .relative(option.rootDir, getDirnameSync(findedImportInfo.moduleFilePath))
-      .replace('./', '');
+    const relativePath = path.relative(option.rootDir, getDirnameSync(filePath)).replace('./', '');
 
     return getDtoName(
       dtoName,
