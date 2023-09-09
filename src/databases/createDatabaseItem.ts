@@ -48,7 +48,7 @@ export default function createDatabaseItem(
   targetSchema.$id = getSchemaId(schema.exportedType, importInfos, option);
   traverser(targetSchema, importInfos, option);
 
-  const id = schema.exportedType;
+  const id = getSchemaId(schema.exportedType, importInfos, option);
   const stringified = getFormattedSchema(option.format, {
     ...targetSchema,
     definitions: undefined,

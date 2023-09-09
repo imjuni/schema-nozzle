@@ -6,6 +6,7 @@ const pkg = readPkg.sync();
 await esbuild.build({
   entryPoints: ['src/cli.ts'],
   target: 'es2021',
+  banner: { js: '#!/usr/bin/env node\n' },
   bundle: true,
   sourcemap: true,
   platform: 'node',
