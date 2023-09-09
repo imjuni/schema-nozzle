@@ -3,6 +3,7 @@ import path from 'path';
 import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
 import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
 import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import getDtoName from 'src/databases/modules/getDtoName';
 import isRelativeDtoPath from 'src/databases/modules/isRelativeDtoPath';
 import type { getFileImportInfos } from 'ts-morph-short';
 
@@ -14,34 +15,26 @@ export default function getSchemaId(
     | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>
     | Pick<TWatchSchemaOption, 'rootDir' | 'includePath'>,
 ) {
-  const isDtoPath = isRelativeDtoPath(option);
-
-  if (isDtoPath) {
-    if (option.rootDir == null) {
-      throw new Error('include-path option need root-dir configuration!');
-    }
-
+  if (isRelativeDtoPath(option)) {
     const dtoName = `${schemaId.replace('#/definitions/', '')}`;
     const findedImportInfo = importInfos.find((importInfo) => importInfo.name === dtoName);
 
     if (findedImportInfo == null) {
-      return dtoName.startsWith('#/') ? dtoName : `#/${dtoName}`;
+      return getDtoName(dtoName, (v) => `#/${v}`);
     }
 
     if (findedImportInfo.isExternal || findedImportInfo.moduleFilePath == null) {
-      return dtoName.startsWith('#/') ? dtoName : `#/external/${dtoName}`;
+      return getDtoName(dtoName, (v) => `#/external/${v}`);
     }
 
-    const relativePathWithExt = path
+    const relativePath = path
       .relative(option.rootDir, getDirnameSync(findedImportInfo.moduleFilePath))
       .replace('./', '');
 
-    const relativePath =
-      relativePathWithExt === '' ? relativePathWithExt : getDirnameSync(relativePathWithExt);
-
-    return dtoName.startsWith('#/')
-      ? dtoName
-      : `#/${[relativePath, dtoName].filter((element) => element !== '').join('/')}`;
+    return getDtoName(
+      dtoName,
+      (v) => `#/${[relativePath, v].filter((element) => element !== '').join('/')}`,
+    );
   }
 
   const dtoName = `${schemaId.replace('#/definitions/', '')}`;

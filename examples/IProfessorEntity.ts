@@ -1,4 +1,4 @@
-import type { CE_MAJOR } from './CE_MAJOR';
+import type { CE_MAJOR } from './const-enum/CE_MAJOR';
 
 export default interface IProfessorEntity {
   id: string;

@@ -31,7 +31,6 @@ describe('getExportedFiles', () => {
     );
 
     expect(refinedFiles).toMatchObject([
-      'CE_MAJOR.ts',
       'I18nDto.ts',
       'IProfessorDto.ts',
       'IProfessorEntity.ts',
@@ -39,8 +38,9 @@ describe('getExportedFiles', () => {
       'ISlackMessage.ts',
       'IStudentDto.ts',
       'IStudentEntity.ts',
-      'ITid.ts',
       'TGenericExample.ts',
+      'base/ITid.ts',
+      'const-enum/CE_MAJOR.ts',
     ]);
   });
 });
@@ -50,7 +50,6 @@ describe('getExportedTypes', () => {
     const types = getExportedTypes(data.project);
 
     expect(types.map((type) => type.identifier)).toMatchObject([
-      'CE_MAJOR',
       'I18nDto',
       'ILanguageDto',
       'IProfessorDto',
@@ -61,8 +60,9 @@ describe('getExportedTypes', () => {
       'ISlackMessageBody',
       'IStudentDto',
       'IStudentEntity',
-      'ITid',
       'TGenericExample',
+      'ITid',
+      'CE_MAJOR',
     ]);
   });
 });
