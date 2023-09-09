@@ -1,6 +1,7 @@
 import 'jest';
 import path from 'path';
 import getResolvedPaths from 'src/configs/getResolvedPaths';
+import getBaseSchemaId from 'src/databases/modules/getBaseSchemaId';
 import getDtoName from 'src/databases/modules/getDtoName';
 import getSchemaId from 'src/databases/modules/getSchemaId';
 import isRelativeDtoPath from 'src/databases/modules/isRelativeDtoPath';
@@ -120,7 +121,7 @@ describe('getSchemaId', () => {
     const rootDir = './examples';
     const inp = 'IProfessorDto';
     const id = getSchemaId(inp, [], { ...env.addCmdOption, includePath: true, rootDir });
-    expect(id).toEqual('#/IProfessorDto');
+    expect(id).toEqual('#/external/IProfessorDto');
   });
 
   it('pass - include-path true + #', () => {
@@ -193,5 +194,39 @@ describe('getDtoName', () => {
 
     const r02 = getDtoName('test', (n) => `#/external/${n}`);
     expect(r02).toEqual('#/external/test');
+  });
+});
+
+describe('getBaseSchemaId', () => {
+  it('pass - include-path', () => {
+    const rootDir = './examples';
+
+    const id = getBaseSchemaId(
+      'CE_MAJOR',
+      path.join(process.cwd(), '/examples/const-enum/CE_MAJOR.ts'),
+      {
+        ...env.addCmdOption,
+        includePath: true,
+        rootDir,
+      },
+    );
+
+    expect(id).toEqual('#/const-enum/CE_MAJOR');
+  });
+
+  it('pass - wihtout include-path', () => {
+    const rootDir = './examples';
+
+    const id = getBaseSchemaId(
+      'CE_MAJOR',
+      path.join(process.cwd(), '/examples/const-enum/CE_MAJOR.ts'),
+      {
+        ...env.addCmdOption,
+        includePath: false,
+        rootDir,
+      },
+    );
+
+    expect(id).toEqual('CE_MAJOR');
   });
 });
