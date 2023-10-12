@@ -1,9 +1,9 @@
+import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import getRatioNumber from '#/tools/getRatioNumber';
+import getRelativeCwd from '#/tools/getRelativeCwd';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
-import { CE_FUZZY_SCORE_LIMIT } from 'src/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from 'src/tools/getRatioNumber';
-import getRelativeCwd from 'src/tools/getRelativeCwd';
 
 export default async function getAddMultipleTypesFromPrompt(
   cwd: string,

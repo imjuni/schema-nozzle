@@ -1,6 +1,6 @@
-import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
-import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
+import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function watchBuilder(argv: Argv) {

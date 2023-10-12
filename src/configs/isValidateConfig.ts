@@ -1,13 +1,13 @@
+import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
+import type IInitOption from '#/configs/interfaces/IInitOption';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import logger from '#/tools/logger';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
-import { CE_COMMAND_LIST } from 'src/cli/interfaces/CE_COMMAND_LIST';
-import type IInitOption from 'src/configs/interfaces/IInitOption';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from 'src/configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import logger from 'src/tools/logger';
 import type { Arguments } from 'yargs';
 
 const log = logger();

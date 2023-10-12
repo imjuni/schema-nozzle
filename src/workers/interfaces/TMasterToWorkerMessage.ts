@@ -1,8 +1,8 @@
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import type { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import type { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 
 type TMasterToWorkerMessage =
   | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }

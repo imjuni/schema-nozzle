@@ -1,7 +1,7 @@
-import type { JSONSchema7 } from 'json-schema';
+import CreateJSONSchemaError from '#/errors/CreateJsonSchemaError';
+import type { AnySchemaObject } from 'ajv';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
-import CreateJSONSchemaError from 'src/errors/CreateJsonSchemaError';
 import type { Config, SchemaGenerator } from 'ts-json-schema-generator';
 import { createGenerator } from 'ts-json-schema-generator';
 
@@ -33,11 +33,11 @@ function getGenerator(args: TCreateJSONSchemaArgs) {
 
 export default function createJSONSchema(
   args: TCreateJSONSchemaArgs,
-): PassFailEither<Error, { filePath: string; exportedType: string; schema: JSONSchema7 }> {
+): PassFailEither<Error, { filePath: string; exportedType: string; schema: AnySchemaObject }> {
   try {
     const generator = getGenerator(args);
 
-    const schema: JSONSchema7 = generator.createSchema(args.exportedType);
+    const schema: AnySchemaObject = generator.createSchema(args.exportedType);
 
     return pass({
       filePath: args.filePath,

@@ -1,9 +1,9 @@
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { TDatabase, TNullableDatabase } from '#/modules/interfaces/TDatabase';
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
 import { isPlainObject } from 'is-plain-object';
 import { settify } from 'my-easy-fp';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import type { TDatabase, TNullableDatabase } from 'src/modules/interfaces/TDatabase';
 
 export default function mergeDatabaseItems(
   db: TNullableDatabase,

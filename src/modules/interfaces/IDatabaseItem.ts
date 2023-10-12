@@ -1,10 +1,10 @@
-import type { JSONSchema7 } from 'json-schema';
-import type ISchemaExportInfo from 'src/modules/interfaces/ISchemaExportInfo';
-import type ISchemaImportInfo from 'src/modules/interfaces/ISchemaImportInfo';
+import type ISchemaExportInfo from '#/modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from '#/modules/interfaces/ISchemaImportInfo';
+import type { AnySchemaObject } from 'ajv';
 
 export default interface IDatabaseItem {
   id: string;
-  schema: string | JSONSchema7;
+  schema: string | AnySchemaObject;
   filePath?: string;
   dependency: {
     import: ISchemaImportInfo;

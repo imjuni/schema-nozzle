@@ -1,8 +1,8 @@
+import spinner from '#/cli/display/spinner';
+import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
+import saveDatabase from '#/databases/saveDatabase';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
-import spinner from 'src/cli/display/spinner';
-import type TTruncateSchemaOption from 'src/configs/interfaces/TTruncateSchemaOption';
-import saveDatabase from 'src/databases/saveDatabase';
 
 export default async function truncateCommandSync(option: TTruncateSchemaOption) {
   try {

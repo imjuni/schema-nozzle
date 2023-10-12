@@ -1,8 +1,8 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import createJSONSchema from '#/modules/createJSONSchema';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import createJSONSchema from 'src/modules/createJSONSchema';
 import { createGenerator } from 'ts-json-schema-generator';
 
 import type { AsyncReturnType } from 'type-fest';

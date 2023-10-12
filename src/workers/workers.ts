@@ -1,17 +1,17 @@
+import progress from '#/cli/display/progress';
+import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import logger from '#/tools/logger';
+import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
+import type { IFailWorkerToMasterTaskComplete } from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import { atOrUndefined } from 'my-easy-fp';
 import { EventEmitter } from 'node:events';
-import progress from 'src/cli/display/progress';
-import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import logger from 'src/tools/logger';
-import type { CE_MASTER_ACTION } from 'src/workers/interfaces/CE_MASTER_ACTION';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from 'src/workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from 'src/workers/interfaces/TWorkerToMasterMessage';
-import type { IFailWorkerToMasterTaskComplete } from 'src/workers/interfaces/TWorkerToMasterMessage';
 
 const log = logger();
 

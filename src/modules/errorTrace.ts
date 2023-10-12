@@ -1,5 +1,5 @@
+import logger from '#/tools/logger';
 import { isError } from 'my-easy-fp';
-import logger from 'src/tools/logger';
 
 const log = logger();
 

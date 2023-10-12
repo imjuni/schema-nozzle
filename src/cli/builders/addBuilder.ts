@@ -1,6 +1,6 @@
-import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
-import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
+import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
 import type { Argv } from 'yargs';
 
 export default function addBuilder(argv: Argv) {

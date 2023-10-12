@@ -1,15 +1,15 @@
+import spinner from '#/cli/display/spinner';
+import getInitialOption from '#/configs/getInitialOption';
+import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import type IInitOption from '#/configs/interfaces/IInitOption';
+import getCwd from '#/tools/getCwd';
+import logger from '#/tools/logger';
 import fastGlob from 'fast-glob';
 import inquirer from 'inquirer';
 import { parse } from 'jsonc-parser';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import spinner from 'src/cli/display/spinner';
-import getInitialOption from 'src/configs/getInitialOption';
-import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
-import type IInitOption from 'src/configs/interfaces/IInitOption';
-import getCwd from 'src/tools/getCwd';
-import logger from 'src/tools/logger';
 
 const log = logger();
 

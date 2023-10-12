@@ -1,12 +1,12 @@
+import type IPromptAnswerSelectType from '#/cli/interfaces/IPromptAnswerSelectType';
+import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { TNullableDatabase } from '#/modules/interfaces/TDatabase';
+import getRatioNumber from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
-import type IPromptAnswerSelectType from 'src/cli/interfaces/IPromptAnswerSelectType';
-import { CE_FUZZY_SCORE_LIMIT } from 'src/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import type { TNullableDatabase } from 'src/modules/interfaces/TDatabase';
-import getRatioNumber from 'src/tools/getRatioNumber';
 
 interface IGetTypesFromPrompt {
   db: TNullableDatabase;

@@ -1,6 +1,6 @@
-import type getExportedTypes from 'src/compilers/getExportedTypes';
-import type { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
+import type getExportedTypes from '#/compilers/getExportedTypes';
+import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
 import type { LastArrayElement } from 'type-fest';
 
 type TUpdateEvent =

@@ -1,10 +1,10 @@
+import getDiagnostics from '#/compilers/getDiagnostics';
+import getExportedFiles from '#/compilers/getExportedFiles';
+import getExportedTypes from '#/compilers/getExportedTypes';
+import getResolvedPaths from '#/configs/getResolvedPaths';
 import 'jest';
 import { startSepRemove } from 'my-node-fp';
 import path from 'path';
-import getDiagnostics from 'src/compilers/getDiagnostics';
-import getExportedFiles from 'src/compilers/getExportedFiles';
-import getExportedTypes from 'src/compilers/getExportedTypes';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
 import * as tsm from 'ts-morph';
 
 process.env.USE_INIT_CWD = 'true';

@@ -1,4 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import spinner from '#/cli/display/spinner';
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TWatchSchemaBaseOption } from '#/configs/interfaces/TWatchSchemaOption';
+import SchemaNozzleError from '#/errors/SchemaNozzleError';
+import WatcherClusterModule from '#/modules/WatcherClusterModule';
+import errorTrace from '#/modules/errorTrace';
+import getWatchFiles from '#/modules/getWatchFiles';
+import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
+import logger from '#/tools/logger';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
+import {
+  isFailTaskComplete,
+  type TPassWorkerToMasterTaskComplete,
+} from '#/workers/interfaces/TWorkerToMasterMessage';
+import workers from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
 import fastCopy from 'fast-copy';
@@ -7,25 +26,6 @@ import cluster from 'node:cluster';
 import os from 'os';
 import { Subject, buffer, debounceTime, filter } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
-import spinner from 'src/cli/display/spinner';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import type { TWatchSchemaBaseOption } from 'src/configs/interfaces/TWatchSchemaOption';
-import SchemaNozzleError from 'src/errors/SchemaNozzleError';
-import WatcherClusterModule from 'src/modules/WatcherClusterModule';
-import errorTrace from 'src/modules/errorTrace';
-import getWatchFiles from 'src/modules/getWatchFiles';
-import { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import type IWatchEvent from 'src/modules/interfaces/IWatchEvent';
-import logger from 'src/tools/logger';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
-import {
-  isFailTaskComplete,
-  type TPassWorkerToMasterTaskComplete,
-} from 'src/workers/interfaces/TWorkerToMasterMessage';
-import workers from 'src/workers/workers';
 
 const log = logger();
 

@@ -1,10 +1,10 @@
+import getExportedTypes from '#/compilers/getExportedTypes';
+import type IGetExportTypesReturnType from '#/compilers/interfaces/IGetExportTypesReturnType';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import getRelativeCwd from '#/tools/getRelativeCwd';
 import { type Ignore } from 'ignore';
-import getExportedTypes from 'src/compilers/getExportedTypes';
-import type IGetExportTypesReturnType from 'src/compilers/interfaces/IGetExportTypesReturnType';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import getRelativeCwd from 'src/tools/getRelativeCwd';
 import { type Project } from 'ts-morph';
 
 function applyOptionFilter(

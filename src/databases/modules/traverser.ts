@@ -1,13 +1,13 @@
-import type { JSONSchema7 } from 'json-schema';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import getSchemaId from '#/databases/modules/getSchemaId';
+import type { AnySchemaObject } from 'ajv';
 import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import getSchemaId from 'src/databases/modules/getSchemaId';
 import type { getFileImportInfos } from 'ts-morph-short';
 
 export default function traverser(
-  schema: JSONSchema7,
+  schema: AnySchemaObject,
   importInfos: ReturnType<typeof getFileImportInfos>,
   option:
     | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>

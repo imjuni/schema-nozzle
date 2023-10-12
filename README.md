@@ -51,7 +51,7 @@ You can see this mechanics!
 ## Installation
 
 ```bash
-npm install schema-nozzle
+npm install schema-nozzle --save-dev
 ```
 
 ## How it works?

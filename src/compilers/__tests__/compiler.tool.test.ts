@@ -1,10 +1,10 @@
+import getExportedName from '#/compilers/getExportedName';
+import getJsDocTags from '#/compilers/getJsDocTags';
+import getTsProject from '#/compilers/getTsProject';
+import getResolvedPaths from '#/configs/getResolvedPaths';
 import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
-import getExportedName from 'src/compilers/getExportedName';
-import getJsDocTags from 'src/compilers/getJsDocTags';
-import getTsProject from 'src/compilers/getTsProject';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
 import * as tsm from 'ts-morph';
 
 const originPath = process.env.INIT_CWD!;

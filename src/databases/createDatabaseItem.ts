@@ -1,23 +1,23 @@
+import type getExportedTypes from '#/compilers/getExportedTypes';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import getBaseSchemaId from '#/databases/modules/getBaseSchemaId';
+import getSchemaId from '#/databases/modules/getSchemaId';
+import traverser from '#/databases/modules/traverser';
+import type createJSONSchema from '#/modules/createJSONSchema';
+import getFormattedSchema from '#/modules/getFormattedSchema';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type ISchemaExportInfo from '#/modules/interfaces/ISchemaExportInfo';
+import type ISchemaImportInfo from '#/modules/interfaces/ISchemaImportInfo';
+import logger from '#/tools/logger';
+import type { AnySchemaObject } from 'ajv';
 import fastCopy from 'fast-copy';
-import type { JSONSchema7 } from 'json-schema';
 import { settify } from 'my-easy-fp';
 import { getDirnameSync } from 'my-node-fp';
 import type { TPickPass } from 'my-only-either';
 import path from 'path';
-import type getExportedTypes from 'src/compilers/getExportedTypes';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import getBaseSchemaId from 'src/databases/modules/getBaseSchemaId';
-import getSchemaId from 'src/databases/modules/getSchemaId';
-import traverser from 'src/databases/modules/traverser';
-import type createJSONSchema from 'src/modules/createJSONSchema';
-import getFormattedSchema from 'src/modules/getFormattedSchema';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import type ISchemaExportInfo from 'src/modules/interfaces/ISchemaExportInfo';
-import type ISchemaImportInfo from 'src/modules/interfaces/ISchemaImportInfo';
-import logger from 'src/tools/logger';
-import type { Project } from 'ts-morph';
+import type * as tsm from 'ts-morph';
 import { getFileImportInfos } from 'ts-morph-short';
 import type { LastArrayElement } from 'type-fest';
 
@@ -26,7 +26,7 @@ const log = logger();
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
 export default function createDatabaseItem(
-  project: Project,
+  project: tsm.Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
     | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
@@ -73,13 +73,13 @@ export default function createDatabaseItem(
   const definitions = Object.entries(schema.schema.definitions)
     .map(([key, value]) => ({ key, value }))
     .filter(
-      (definition): definition is { key: string; value: JSONSchema7 } =>
+      (definition): definition is { key: string; value: AnySchemaObject } =>
         typeof definition.value === 'object',
     )
     .map((definition) => {
       const definitionId = getSchemaId(definition.key, importInfos, option);
       const importDeclaration = importedMap[definition.key];
-      const definitionSchema: JSONSchema7 = {
+      const definitionSchema: AnySchemaObject = {
         $schema: schema.schema.$schema,
         $id: definitionId,
         ...definition.value,

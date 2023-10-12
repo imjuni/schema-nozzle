@@ -1,34 +1,34 @@
-import fastCopy from 'fast-copy';
-import { atOrThrow, settify } from 'my-easy-fp';
-import path from 'path';
-import progress from 'src/cli/display/progress';
-import spinner from 'src/cli/display/spinner';
-import type getExportedTypes from 'src/compilers/getExportedTypes';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import deleteDatabaseItem from 'src/databases/deleteDatabaseItem';
-import deleteDatabaseItemsByFile from 'src/databases/deleteDatabaseItemsByFile';
-import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
-import openDatabase from 'src/databases/openDatabase';
-import saveDatabase from 'src/databases/saveDatabase';
-import SchemaNozzleError from 'src/errors/SchemaNozzleError';
-import createJSONSchemaCommand from 'src/modules/createJSONSchemaCommand';
-import { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import type IWatchEvent from 'src/modules/interfaces/IWatchEvent';
-import type { TDatabase } from 'src/modules/interfaces/TDatabase';
-import logger from 'src/tools/logger';
-import type { CE_MASTER_ACTION } from 'src/workers/interfaces/CE_MASTER_ACTION';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from 'src/workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from 'src/workers/interfaces/TWorkerToMasterMessage';
+import progress from '#/cli/display/progress';
+import spinner from '#/cli/display/spinner';
+import type getExportedTypes from '#/compilers/getExportedTypes';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import deleteDatabaseItem from '#/databases/deleteDatabaseItem';
+import deleteDatabaseItemsByFile from '#/databases/deleteDatabaseItemsByFile';
+import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
+import openDatabase from '#/databases/openDatabase';
+import saveDatabase from '#/databases/saveDatabase';
+import SchemaNozzleError from '#/errors/SchemaNozzleError';
+import createJSONSchemaCommand from '#/modules/createJSONSchemaCommand';
+import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
+import type { TDatabase } from '#/modules/interfaces/TDatabase';
+import logger from '#/tools/logger';
+import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
+import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
+import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
 import {
   isFailTaskComplete,
   isPassTaskComplete,
   type TPassWorkerToMasterTaskComplete,
   type TPickPassWorkerToMasterTaskComplete,
-} from 'src/workers/interfaces/TWorkerToMasterMessage';
-import workers from 'src/workers/workers';
+} from '#/workers/interfaces/TWorkerToMasterMessage';
+import workers from '#/workers/workers';
+import fastCopy from 'fast-copy';
+import { atOrThrow, settify } from 'my-easy-fp';
+import path from 'path';
 import type { LastArrayElement } from 'type-fest';
 
 const log = logger();

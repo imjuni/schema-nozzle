@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import spinner from '#/cli/display/spinner';
+import getDiagnostics from '#/compilers/getDiagnostics';
+import getExportedTypes from '#/compilers/getExportedTypes';
+import getTsProject from '#/compilers/getTsProject';
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TWatchSchemaBaseOption } from '#/configs/interfaces/TWatchSchemaOption';
+import errorTrace from '#/modules/errorTrace';
+import getWatchFiles from '#/modules/getWatchFiles';
+import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
+import WatcherModule from '#/modules/WatcherModule';
+import getRelativeCwd from '#/tools/getRelativeCwd';
+import logger from '#/tools/logger';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
 import fastCopy from 'fast-copy';
 import { buffer, debounceTime, Subject } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
-import spinner from 'src/cli/display/spinner';
-import getDiagnostics from 'src/compilers/getDiagnostics';
-import getExportedTypes from 'src/compilers/getExportedTypes';
-import getTsProject from 'src/compilers/getTsProject';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import type { TWatchSchemaBaseOption } from 'src/configs/interfaces/TWatchSchemaOption';
-import errorTrace from 'src/modules/errorTrace';
-import getWatchFiles from 'src/modules/getWatchFiles';
-import { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import type IWatchEvent from 'src/modules/interfaces/IWatchEvent';
-import WatcherModule from 'src/modules/WatcherModule';
-import getRelativeCwd from 'src/tools/getRelativeCwd';
-import logger from 'src/tools/logger';
 
 const log = logger();
 

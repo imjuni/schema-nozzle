@@ -1,7 +1,7 @@
+import logger from '#/tools/logger';
+import NozzleEmitter from '#/workers/NozzleEmitter';
+import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
 import { isError } from 'my-easy-fp';
-import logger from 'src/tools/logger';
-import NozzleEmitter from 'src/workers/NozzleEmitter';
-import type TMasterToWorkerMessage from 'src/workers/interfaces/TMasterToWorkerMessage';
 
 const log = logger();
 
