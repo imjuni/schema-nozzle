@@ -1,32 +1,32 @@
+import progress from '#/cli/display/progress';
+import showFailMessage from '#/cli/display/showFailMessage';
+import spinner from '#/cli/display/spinner';
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TRefreshSchemaBaseOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
+import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
+import openDatabase from '#/databases/openDatabase';
+import saveDatabase from '#/databases/saveDatabase';
+import SchemaNozzleError from '#/errors/SchemaNozzleError';
+import createJSONSchemaCommand from '#/modules/createJSONSchemaCommand';
+import logger from '#/tools/logger';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
+import {
+  isFailTaskComplete,
+  isPassTaskComplete,
+  type TPassWorkerToMasterTaskComplete,
+  type TPickPassWorkerToMasterTaskComplete,
+} from '#/workers/interfaces/TWorkerToMasterMessage';
+import workers from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import { atOrThrow, isError, populate, sleep } from 'my-easy-fp';
 import { exists } from 'my-node-fp';
 import cluster from 'node:cluster';
 import fs from 'node:fs';
 import os from 'node:os';
-import progress from 'src/cli/display/progress';
-import showFailMessage from 'src/cli/display/showFailMessage';
-import spinner from 'src/cli/display/spinner';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type { TRefreshSchemaBaseOption } from 'src/configs/interfaces/TRefreshSchemaOption';
-import getDatabaseFilePath from 'src/databases/getDatabaseFilePath';
-import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
-import openDatabase from 'src/databases/openDatabase';
-import saveDatabase from 'src/databases/saveDatabase';
-import SchemaNozzleError from 'src/errors/SchemaNozzleError';
-import createJSONSchemaCommand from 'src/modules/createJSONSchemaCommand';
-import logger from 'src/tools/logger';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
-import {
-  isFailTaskComplete,
-  isPassTaskComplete,
-  type TPassWorkerToMasterTaskComplete,
-  type TPickPassWorkerToMasterTaskComplete,
-} from 'src/workers/interfaces/TWorkerToMasterMessage';
-import workers from 'src/workers/workers';
 
 const log = logger();
 

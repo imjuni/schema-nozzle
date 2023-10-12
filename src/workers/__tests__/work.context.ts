@@ -1,9 +1,9 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import * as env from '#/modules/__tests__/env';
+import NozzleContext from '#/workers/NozzleContext';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import * as env from 'src/modules/__tests__/env';
-import NozzleContext from 'src/workers/NozzleContext';
 import type * as tsm from 'ts-morph';
 
 const originPath = process.cwd();

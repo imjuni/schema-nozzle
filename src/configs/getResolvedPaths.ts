@@ -1,9 +1,9 @@
+import type IResolvedPaths from '#/configs/interfaces/IResolvedPaths';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import getCwd from '#/tools/getCwd';
 import { getDirnameSync } from 'my-node-fp';
 import path from 'path';
-import type IResolvedPaths from 'src/configs/interfaces/IResolvedPaths';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import getCwd from 'src/tools/getCwd';
 import type { SetOptional } from 'type-fest';
 
 export default function getResolvedPaths(

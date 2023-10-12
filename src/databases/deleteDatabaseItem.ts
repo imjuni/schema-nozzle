@@ -1,7 +1,7 @@
+import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import { keyBys } from 'my-easy-fp';
-import mergeDatabaseItems from 'src/databases/mergeDatabaseItems';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import type { TDatabase } from 'src/modules/interfaces/TDatabase';
 
 export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
   const item = db[identifier];

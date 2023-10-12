@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
+import type { TFailData } from '#/workers/interfaces/TWorkerToMasterMessage';
 import chalk from 'chalk';
-import type { TFailData } from 'src/workers/interfaces/TWorkerToMasterMessage';
 
 export default function showFailMessage(data: TFailData[]) {
   console.log('\n');

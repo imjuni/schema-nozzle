@@ -1,9 +1,9 @@
-import { CE_DEFAULT_VALUE } from 'src/configs/interfaces/CE_DEFAULT_VALUE';
-import { CE_OUTPUT_FORMAT } from 'src/configs/interfaces/CE_OUTPUT_FORMAT';
-import type IBaseOption from 'src/configs/interfaces/IBaseOption';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from 'src/configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
+import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import type IBaseOption from '#/configs/interfaces/IBaseOption';
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
 
 export const baseOption: IBaseOption = {
   config: undefined,

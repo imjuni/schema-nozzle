@@ -1,11 +1,11 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getBaseSchemaId from '#/databases/modules/getBaseSchemaId';
+import getDtoName from '#/databases/modules/getDtoName';
+import getSchemaId from '#/databases/modules/getSchemaId';
+import isRelativeDtoPath from '#/databases/modules/isRelativeDtoPath';
+import * as env from '#/modules/__tests__/env';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getBaseSchemaId from 'src/databases/modules/getBaseSchemaId';
-import getDtoName from 'src/databases/modules/getDtoName';
-import getSchemaId from 'src/databases/modules/getSchemaId';
-import isRelativeDtoPath from 'src/databases/modules/isRelativeDtoPath';
-import * as env from 'src/modules/__tests__/env';
 import type { IFileImportInfo } from 'ts-morph-short';
 
 const originPath = process.env.INIT_CWD!;

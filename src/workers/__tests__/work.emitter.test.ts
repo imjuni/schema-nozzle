@@ -1,13 +1,13 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import * as env from '#/modules/__tests__/env';
+import NozzleContext from '#/workers/NozzleContext';
+import NozzleEmitter from '#/workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import fastCopy from 'fast-copy';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import * as env from 'src/modules/__tests__/env';
-import NozzleContext from 'src/workers/NozzleContext';
-import NozzleEmitter from 'src/workers/NozzleEmitter';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 

@@ -1,12 +1,12 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import * as env from '#/modules/__tests__/env';
+import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import NozzleContext from '#/workers/NozzleContext';
+import NozzleEmitter from '#/workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import * as env from 'src/modules/__tests__/env';
-import { CE_WATCH_EVENT } from 'src/modules/interfaces/CE_WATCH_EVENT';
-import NozzleContext from 'src/workers/NozzleContext';
-import NozzleEmitter from 'src/workers/NozzleEmitter';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 

@@ -1,16 +1,16 @@
+import getResolvedPaths from '#/configs/getResolvedPaths';
+import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import * as odb from '#/databases/openDatabase';
+import * as env from '#/modules/__tests__/env';
+import * as ffp from '#/modules/getSchemaFilterFilePath';
+import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import getData from '#/tools/__tests__/test-tools/getData';
+import NozzleContext from '#/workers/NozzleContext';
+import NozzleEmitter from '#/workers/NozzleEmitter';
+import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
+import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import 'jest';
 import path from 'path';
-import getResolvedPaths from 'src/configs/getResolvedPaths';
-import getSchemaGeneratorOption from 'src/configs/getSchemaGeneratorOption';
-import * as odb from 'src/databases/openDatabase';
-import * as env from 'src/modules/__tests__/env';
-import * as ffp from 'src/modules/getSchemaFilterFilePath';
-import type IDatabaseItem from 'src/modules/interfaces/IDatabaseItem';
-import getData from 'src/tools/__tests__/test-tools/getData';
-import NozzleContext from 'src/workers/NozzleContext';
-import NozzleEmitter from 'src/workers/NozzleEmitter';
-import { CE_WORKER_ACTION } from 'src/workers/interfaces/CE_WORKER_ACTION';
-import type { TPickMasterToWorkerMessage } from 'src/workers/interfaces/TMasterToWorkerMessage';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 

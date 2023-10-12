@@ -1,6 +1,6 @@
+import type IBaseOption from '#/configs/interfaces/IBaseOption';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
-import type IBaseOption from 'src/configs/interfaces/IBaseOption';
 import type * as tsm from 'ts-morph';
 
 interface IGetDiagnostics {

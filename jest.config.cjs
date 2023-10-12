@@ -14,4 +14,7 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['./.configs/jest.setup.cjs'],
   moduleDirectories: ['node_modules', 'src', __dirname],
+  moduleNameMapper: {
+    '#/(.*)': '<rootDir>/src/$1',
+  },
 };

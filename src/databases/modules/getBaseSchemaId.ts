@@ -1,10 +1,10 @@
+import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
+import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import getDtoName from '#/databases/modules/getDtoName';
+import isRelativeDtoPath from '#/databases/modules/isRelativeDtoPath';
 import { getDirnameSync } from 'my-node-fp';
 import path from 'path';
-import type TAddSchemaOption from 'src/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from 'src/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from 'src/configs/interfaces/TWatchSchemaOption';
-import getDtoName from 'src/databases/modules/getDtoName';
-import isRelativeDtoPath from 'src/databases/modules/isRelativeDtoPath';
 
 export default function getBaseSchemaId(
   schemaId: string,

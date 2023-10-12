@@ -56,6 +56,12 @@ module.exports = {
       },
     },
     {
+      files: ['src/databases/createDatabaseItem.ts'],
+      rules: {
+        '@typescript-eslint/no-unsafe-argument': ['off'],
+      },
+    },
+    {
       files: ['**/__tests__/*.ts'],
       rules: {
         '@typescript-eslint/no-unsafe-assignment': ['off'],
