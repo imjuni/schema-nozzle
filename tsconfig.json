@@ -15,14 +15,11 @@
     },
     "require": ["tsconfig-paths/register"]
   },
-  "compileOnSave": false,
-  "buildOnSave": false,
   "compilerOptions": {
     /* Basic Options */
     "module": "CommonJS",
     "moduleResolution": "Node",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],
-    "composite": true,
     "declaration": true /* Generates corresponding '.d.ts' file. */,
     // "declarationDir": "./dist/typings",
     "declarationMap": true /* Generates corresponding '.d.ts' file. */,

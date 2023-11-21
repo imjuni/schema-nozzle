@@ -10,16 +10,19 @@
     "build": "pnpm run clean && tsc --incremental --project tsconfig.json --tsBuildInfoFile .tsbuildinfo",
     "dev": "ts-node --project ./tsconfig.json src/cli.ts",
     "debug": "node --inspect-brk -r ts-node/register src/cli.ts",
-    "ctix": "ctix single -p ./tsconfig.prod.json --config ./.configs/.ctirc",
-    "ctix:remove": "ctix remove -p ./tsconfig.prod.json --config ./.configs/.ctirc",
-    "dts": "tsc --project tsconfig.prod.json --declaration --emitDeclarationOnly --declarationDir dist/types/origin",
-    "dts-gen": "rollup --config ./.configs/rollup.mjs",
-    "dts:clean": "rimraf dist/types/origin",
-    "esbuild-cjs": "FORMAT=cjs node .configs/esbuild.mjs",
-    "esbuild-esm": "FORMAT=esm node .configs/esbuild.mjs",
-    "esbuild-cli": "FORMAT=esm node .configs/esbuild.cli.mjs",
-    "bundle-pack": "pnpm run ctix && run-p esbuild-cjs esbuild-esm esbuild-cli dts && pnpm run ctix:remove",
-    "bundle": "run-s clean bundle-pack dts-gen dts:clean",
+    "ctix": "ctix build --config .configs/.ctirc",
+    "ctix-rm": "ctix remove --config ./.configs/.ctirc --force-yes --remove-backup",
+    "dts": "tsc -p tsconfig.dts.json",
+    "dts-alias": "tsc-alias -p tsconfig.dts.json",
+    "dts-gen": "rollup --config ./.configs/rollup.config.mjs",
+    "dts-pack": "run-s dts dts-alias dts-gen",
+    "dts-rm": "rimraf dist/types/origin",
+    "esbuild-lib-cjs": "FORMAT=cjs node .configs/esbuild.mjs",
+    "esbuild-lib-esm": "FORMAT=esm node .configs/esbuild.mjs",
+    "bundle-lib-pack": "run-p esbuild-lib-cjs esbuild-lib-esm dts-pack",
+    "bundle-lib": "run-s ctix bundle-lib-pack ctix-rm",
+    "bundle-cli": "FORMAT=cjs node .configs/esbuild.cli.mjs",
+    "bundle": "run-s clean bundle-cli bundle-lib",
     "prettier": "prettier --write src/**/*.ts",
     "lint": "eslint --cache .",
     "lint-staged": "lint-staged",
@@ -32,9 +35,23 @@
     "prepublishOnly": "node prepublish.cjs",
     "prepare": "husky install"
   },
-  "main": "dist/cli.cjs",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "default": "./dist/cjs/index.cjs",
+        "types": "./dist/types/index.d.ts"
+      },
+      "import": {
+        "default": "./dist/esm/index.mjs",
+        "types": "./dist/types/index.d.ts"
+      }
+    }
+  },
   "bin": {
-    "nozzle": "dist/cli.cjs"
+    "nozzle": "dist/cjs/cli.cjs"
   },
   "repository": {
     "type": "git",
@@ -94,6 +111,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@slack/web-api": "^6.9.0",
     "@tsconfig/node18": "^18.2.2",
     "@types/cli-progress": "^3.11.3",
@@ -110,7 +128,7 @@
     "ajv": "^8.12.0",
     "concurrently": "^8.2.1",
     "cross-env": "^7.0.3",
-    "ctix": "^1.8.2",
+    "ctix": "^2.3.0",
     "deps-diff": "^1.0.2",
     "esbuild": "^0.19.4",
     "eslint": "^8.51.0",

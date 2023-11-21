@@ -4,16 +4,14 @@
     "allowJs": true
   },
   "exclude": [
-    "**/node_modules/**",
+    "node_modules/**",
     "examples/**/*",
     "dist/**",
     "**/.configs/**",
     "**/docs/**/*",
     "**/__test__/**",
     "**/__tests__/**",
-    "dist/**",
-    "**/.configs/**",
-    "**/docs/**",
+    "docs/**",
     "jest.config.cjs",
     "prepublish.cjs"
   ]
