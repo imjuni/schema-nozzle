@@ -14,20 +14,6 @@
       }
     },
     {
-      "files": ".tjsclirc",
-      "options": {
-        "parser": "json5"
-      }
-    },
-    {
-      "files": [
-        ".depsdiffrc"
-      ],
-      "options": {
-        "parser": "json"
-      }
-    },
-    {
       "files": [
         ".vscode/launch.json",
         ".vscode/settings.json"
@@ -39,7 +25,8 @@
     {
       "files": [
         "tsconfig.*.json",
-        "tsconfig.json"
+        "tsconfig.json",
+        ".configs/.ctirc"
       ],
       "options": {
         "parser": "json"
