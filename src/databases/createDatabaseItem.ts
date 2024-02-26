@@ -1,15 +1,15 @@
-import type getExportedTypes from '#/compilers/getExportedTypes';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import getBaseSchemaId from '#/databases/modules/getBaseSchemaId';
-import getSchemaId from '#/databases/modules/getSchemaId';
-import traverser from '#/databases/modules/traverser';
-import type createJSONSchema from '#/modules/createJSONSchema';
-import getFormattedSchema from '#/modules/getFormattedSchema';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import type ISchemaExportInfo from '#/modules/interfaces/ISchemaExportInfo';
-import type ISchemaImportInfo from '#/modules/interfaces/ISchemaImportInfo';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
+import { getSchemaId } from '#/databases/modules/getSchemaId';
+import { traverser } from '#/databases/modules/traverser';
+import type { createJSONSchema } from '#/modules/createJSONSchema';
+import { getFormattedSchema } from '#/modules/getFormattedSchema';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import type { ISchemaExportInfo } from '#/modules/interfaces/ISchemaExportInfo';
+import type { ISchemaImportInfo } from '#/modules/interfaces/ISchemaImportInfo';
 import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
@@ -23,7 +23,7 @@ import type { LastArrayElement } from 'type-fest';
 
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
-export default function createDatabaseItem(
+export function createDatabaseItem(
   project: tsm.Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>

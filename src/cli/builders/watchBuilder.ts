@@ -1,9 +1,9 @@
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import type { Argv } from 'yargs';
 
-export default function watchBuilder(argv: Argv) {
+export function watchBuilder(argv: Argv) {
   argv
     .option('format', {
       describe: 'json-schema save format',

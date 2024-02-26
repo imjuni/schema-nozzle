@@ -1,7 +1,7 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import * as env from '#/modules/__tests__/env';
-import NozzleContext from '#/workers/NozzleContext';
+import { NozzleContext } from '#/workers/NozzleContext';
 import path from 'path';
 import type * as tsm from 'ts-morph';
 import { beforeEach, describe, expect, it } from 'vitest';

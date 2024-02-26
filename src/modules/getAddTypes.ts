@@ -1,11 +1,11 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import getAddMultipleTypesFromPrompt from '#/modules/getAddMultipleTypesFromPrompt';
-import getAddSingleTypesFromPrompt from '#/modules/getAddSingleTypesFromPrompt';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import { getAddMultipleTypesFromPrompt } from '#/modules/getAddMultipleTypesFromPrompt';
+import { getAddSingleTypesFromPrompt } from '#/modules/getAddSingleTypesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import type { LastArrayElement } from 'type-fest';
 
-export default async function getAddTypes(
+export async function getAddTypes(
   option: TAddSchemaOption,
   exportedTypes: { filePath: string; identifier: string }[],
 ): Promise<PassFailEither<Error, typeof exportedTypes>> {

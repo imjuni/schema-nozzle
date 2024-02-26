@@ -1,4 +1,4 @@
-export default interface ISchemaImportInfo {
+export interface ISchemaImportInfo {
   name: string;
   from: string[];
 }

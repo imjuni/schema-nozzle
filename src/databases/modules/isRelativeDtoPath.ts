@@ -1,9 +1,9 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import type { SetRequired } from 'type-fest';
 
-export default function isRelativeDtoPath(
+export function isRelativeDtoPath(
   option:
     | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>
     | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>

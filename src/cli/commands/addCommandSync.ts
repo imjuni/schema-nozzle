@@ -1,26 +1,25 @@
-import spinner from '#/cli/display/spinner';
-import getDiagnostics from '#/compilers/getDiagnostics';
-import getExportedTypes from '#/compilers/getExportedTypes';
-import getTsProject from '#/compilers/getTsProject';
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type { TAddSchemaBaseOption } from '#/configs/interfaces/TAddSchemaOption';
-import createDatabaseItem from '#/databases/createDatabaseItem';
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import createJSONSchema from '#/modules/createJSONSchema';
-import getAddFiles from '#/modules/getAddFiles';
-import getAddTypes from '#/modules/getAddTypes';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import summarySchemaFiles from '#/modules/summarySchemaFiles';
-import summarySchemaTypes from '#/modules/summarySchemaTypes';
+import { spinner } from '#/cli/display/spinner';
+import { getDiagnostics } from '#/compilers/getDiagnostics';
+import { getExportedTypes } from '#/compilers/getExportedTypes';
+import { getTsProject } from '#/compilers/getTsProject';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
+import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { createJSONSchema } from '#/modules/createJSONSchema';
+import { getAddFiles } from '#/modules/getAddFiles';
+import { getAddTypes } from '#/modules/getAddTypes';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import { summarySchemaFiles } from '#/modules/summarySchemaFiles';
+import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import { createGenerator } from 'ts-json-schema-generator';
 
-export default async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<void> {
+export async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
     if (baseOption.cliLogo) {
       await showLogo({

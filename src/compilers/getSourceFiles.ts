@@ -7,7 +7,7 @@ interface ISourceFileLoaderParams {
   files: string[];
 }
 
-export default function getSourceFiles({
+export function getSourceFiles({
   files,
   project,
 }: ISourceFileLoaderParams): PassFailEither<Error, string[]> {

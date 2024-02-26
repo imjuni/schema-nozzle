@@ -1,7 +1,7 @@
-import getExportedName from '#/compilers/getExportedName';
-import getJsDocTags from '#/compilers/getJsDocTags';
-import getTsProject from '#/compilers/getTsProject';
-import getResolvedPaths from '#/configs/getResolvedPaths';
+import { getExportedName } from '#/compilers/getExportedName';
+import { getJsDocTags } from '#/compilers/getJsDocTags';
+import { getTsProject } from '#/compilers/getTsProject';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import * as mnf from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';

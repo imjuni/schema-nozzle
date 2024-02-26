@@ -1,4 +1,4 @@
-export default interface ITid {
+export interface ITid {
   /**
    * transaction id for each request
    *

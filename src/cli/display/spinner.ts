@@ -75,6 +75,4 @@ class Spinner {
   }
 }
 
-const spinner = new Spinner();
-
-export default spinner;
+export const spinner = new Spinner();

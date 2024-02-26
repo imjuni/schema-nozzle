@@ -1,6 +1,6 @@
 import type * as tsm from 'ts-morph';
 
-export default interface IPromptAnswerSelectType {
+export interface IPromptAnswerSelectType {
   typeName: {
     filePath: string;
     identifier: string;

@@ -5,5 +5,4 @@ export const CE_JSDOC_EXTENDS = {
   REMARK_TAG_ALIAS: 'nozzle-tag',
 } as const;
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare, @typescript-eslint/naming-convention
 export type CE_JSDOC_EXTENDS = (typeof CE_JSDOC_EXTENDS)[keyof typeof CE_JSDOC_EXTENDS];

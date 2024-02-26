@@ -1,12 +1,12 @@
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from '#/tools/getRatioNumber';
-import getRelativeCwd from '#/tools/getRelativeCwd';
+import { getRatioNumber } from '#/tools/getRatioNumber';
+import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
 import type { LastArrayElement } from 'type-fest';
 
-export default async function getAddSingleTypesFromPrompt(
+export async function getAddSingleTypesFromPrompt(
   cwd: string,
   exportedTypes: { filePath: string; identifier: string }[],
 ): Promise<typeof exportedTypes> {

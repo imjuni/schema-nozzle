@@ -1,9 +1,9 @@
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import { keyBys } from 'my-easy-fp';
 
-export default function deleteDatabaseItem(db: TDatabase, identifier: string) {
+export function deleteDatabaseItem(db: TDatabase, identifier: string) {
   const item = db[identifier];
 
   if (item == null) {

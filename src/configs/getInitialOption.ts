@@ -6,7 +6,7 @@
  * @param listFile .nozzlefiles file path
  * @returns jsonc style configuration string
  */
-export default function getInitialOption(output: string, project: string, listFile: string) {
+export function getInitialOption(output: string, project: string, listFile: string) {
   return `{
   // database file directory or filename
   "output": "${output}",

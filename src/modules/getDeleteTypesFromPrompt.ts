@@ -1,8 +1,8 @@
-import type IPromptAnswerSelectType from '#/cli/interfaces/IPromptAnswerSelectType';
+import type { IPromptAnswerSelectType } from '#/cli/interfaces/IPromptAnswerSelectType';
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { TNullableDatabase } from '#/modules/interfaces/TDatabase';
-import getRatioNumber from '#/tools/getRatioNumber';
+import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
@@ -20,7 +20,7 @@ interface IChoiceTypeItem {
   value: string;
 }
 
-export default async function getDeleteTypesFromPrompt({
+export async function getDeleteTypesFromPrompt({
   db,
   isMultipleSelect,
 }: IGetTypesFromPrompt): Promise<string[]> {

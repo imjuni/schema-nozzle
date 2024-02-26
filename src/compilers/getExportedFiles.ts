@@ -1,7 +1,7 @@
 import { settify } from 'my-easy-fp';
 import * as tsm from 'ts-morph';
 
-export default function getExportedFiles(project: tsm.Project): string[] {
+export function getExportedFiles(project: tsm.Project): string[] {
   const sourceFilePaths = project
     .getSourceFiles()
     .map((sourceFile) => {

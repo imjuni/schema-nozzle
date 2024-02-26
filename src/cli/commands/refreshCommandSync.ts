@@ -1,21 +1,23 @@
-import spinner from '#/cli/display/spinner';
-import getDiagnostics from '#/compilers/getDiagnostics';
-import getExportedTypes from '#/compilers/getExportedTypes';
-import getTsProject from '#/compilers/getTsProject';
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type { TRefreshSchemaBaseOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import createDatabaseItem from '#/databases/createDatabaseItem';
-import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import createJSONSchema from '#/modules/createJSONSchema';
-import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import summarySchemaFiles from '#/modules/summarySchemaFiles';
-import summarySchemaTypes from '#/modules/summarySchemaTypes';
+import { spinner } from '#/cli/display/spinner';
+import { getDiagnostics } from '#/compilers/getDiagnostics';
+import { getExportedTypes } from '#/compilers/getExportedTypes';
+import { getTsProject } from '#/compilers/getTsProject';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
+import type {
+  TRefreshSchemaBaseOption,
+  TRefreshSchemaOption,
+} from '#/configs/interfaces/TRefreshSchemaOption';
+import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { createJSONSchema } from '#/modules/createJSONSchema';
+import { getSchemaFilterFilePath } from '#/modules/getSchemaFilterFilePath';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import { summarySchemaFiles } from '#/modules/summarySchemaFiles';
+import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import { showLogo } from '@maeum/cli-logo';
 import { exists } from 'find-up';
 import { isError, sleep } from 'my-easy-fp';
@@ -25,7 +27,7 @@ import path from 'node:path';
 import { createGenerator } from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
-export default async function refreshCommandSync(baseOption: TRefreshSchemaBaseOption) {
+export async function refreshCommandSync(baseOption: TRefreshSchemaBaseOption) {
   try {
     if (baseOption.cliLogo) {
       await showLogo({

@@ -1,5 +1,5 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import fs from 'fs/promises';
 import * as mnf from 'my-node-fp';
 import path from 'path';

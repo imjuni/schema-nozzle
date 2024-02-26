@@ -2,7 +2,7 @@ import { parse, type ParseError } from 'jsonc-parser';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 
-export default function safeParse<T>(db: string): PassFailEither<Error, T> {
+export function safeParse<T>(db: string): PassFailEither<Error, T> {
   try {
     const errors: ParseError[] = [];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

@@ -8,7 +8,7 @@ import type TGenericExample from './TGenericExample';
  *
  * @nozzleTag professor
  */
-export default interface IProfessorDto {
+export interface IProfessorDto {
   id: IStudentEntity['id'];
   nick: IStudentEntity['nick'];
   name: I18nDto;

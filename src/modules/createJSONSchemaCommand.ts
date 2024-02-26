@@ -4,7 +4,7 @@ import type { TPickPassWorkerToMasterTaskComplete } from '#/workers/interfaces/T
 import consola from 'consola';
 import { chunk } from 'my-easy-fp';
 
-export default function createJSONSchemaCommand(
+export function createJSONSchemaCommand(
   size: number,
   exportedTypes: TPickPassWorkerToMasterTaskComplete<
     typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES

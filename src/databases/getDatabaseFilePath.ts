@@ -1,11 +1,11 @@
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { isDirectory } from 'my-node-fp';
 import path from 'path';
 
-export default async function getDatabaseFilePath(
+export async function getDatabaseFilePath(
   option:
     | Pick<TWatchSchemaOption, 'output'>
     | Pick<TRefreshSchemaOption, 'output'>

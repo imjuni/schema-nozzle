@@ -1,6 +1,6 @@
 import { bignumber } from 'mathjs';
 
-export default function getRatioNumber(num: number, base: 1 | 100 = 1) {
+export function getRatioNumber(num: number, base: 1 | 100 = 1) {
   return bignumber(1)
     .sub(bignumber(num))
     .mul(100 * base)

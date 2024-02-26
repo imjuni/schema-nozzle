@@ -1,11 +1,11 @@
 import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import type IInitOption from '#/configs/interfaces/IInitOption';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
-import getCwd from '#/tools/getCwd';
+import type { IInitOption } from '#/configs/interfaces/IInitOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
+import { getCwd } from '#/tools/getCwd';
 import consola from 'consola';
 import findUp from 'find-up';
 import fs from 'fs';
@@ -52,7 +52,7 @@ function getDiscriminator(
   return 'add-schema';
 }
 
-export default function preLoadConfig() {
+export function preLoadConfig() {
   try {
     const cwd = getCwd(process.env);
     const argv = minimist(process.argv.slice(2));

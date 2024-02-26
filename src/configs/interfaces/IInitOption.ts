@@ -1,3 +1,3 @@
-export default interface IInitOption {
+export interface IInitOption {
   discriminator: 'init-nozzle';
 }

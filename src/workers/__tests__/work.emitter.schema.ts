@@ -1,12 +1,12 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import * as odb from '#/databases/openDatabase';
 import * as env from '#/modules/__tests__/env';
 import * as ffp from '#/modules/getSchemaFilterFilePath';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import getData from '#/tools/__tests__/test-tools/getData';
-import NozzleContext from '#/workers/NozzleContext';
-import NozzleEmitter from '#/workers/NozzleEmitter';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import { getData } from '#/tools/__tests__/test-tools/getData';
+import { NozzleContext } from '#/workers/NozzleContext';
+import { NozzleEmitter } from '#/workers/NozzleEmitter';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import path from 'path';
@@ -129,9 +129,11 @@ describe('WorkEmitter - summary', () => {
   it('loadDatabase - exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
     const spy1 = vitest
-      .spyOn(ffp, 'default')
+      .spyOn(ffp, 'getSchemaFilterFilePath')
       .mockImplementationOnce(() => Promise.resolve(undefined));
-    const spy2 = vitest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve({}));
+    const spy2 = vitest
+      .spyOn(odb, 'openDatabase')
+      .mockImplementationOnce(() => Promise.resolve({}));
 
     try {
       await w.loadDatabase();
@@ -148,9 +150,11 @@ describe('WorkEmitter - summary', () => {
       path.join(__dirname, 'data/001.json'),
     );
     const spy1 = vitest
-      .spyOn(ffp, 'default')
+      .spyOn(ffp, 'getSchemaFilterFilePath')
       .mockImplementationOnce(() => Promise.resolve(undefined));
-    const spy2 = vitest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve(dbData));
+    const spy2 = vitest
+      .spyOn(odb, 'openDatabase')
+      .mockImplementationOnce(() => Promise.resolve(dbData));
 
     await w.loadDatabase();
 

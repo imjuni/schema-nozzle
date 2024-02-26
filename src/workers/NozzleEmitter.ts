@@ -1,24 +1,26 @@
-import getDiagnostics from '#/compilers/getDiagnostics';
-import getSoruceFileExportedTypes from '#/compilers/getSoruceFileExportedTypes';
-import getTsProject from '#/compilers/getTsProject';
-import createDatabaseItem from '#/databases/createDatabaseItem';
-import openDatabase from '#/databases/openDatabase';
-import createJSONSchema from '#/modules/createJSONSchema';
-import errorTrace from '#/modules/errorTrace';
-import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import summarySchemaFiles from '#/modules/summarySchemaFiles';
-import summarySchemaTypes from '#/modules/summarySchemaTypes';
-import NozzleContext from '#/workers/NozzleContext';
+import { getDiagnostics } from '#/compilers/getDiagnostics';
+import { getSoruceFileExportedTypes } from '#/compilers/getSoruceFileExportedTypes';
+import { getTsProject } from '#/compilers/getTsProject';
+import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { openDatabase } from '#/databases/openDatabase';
+import { createJSONSchema } from '#/modules/createJSONSchema';
+import { errorTrace } from '#/modules/errorTrace';
+import { getSchemaFilterFilePath } from '#/modules/getSchemaFilterFilePath';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import { summarySchemaFiles } from '#/modules/summarySchemaFiles';
+import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
+import { NozzleContext } from '#/workers/NozzleContext';
 import { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
+import type {
+  TMasterToWorkerMessage,
+  TPickMasterToWorkerMessage,
+} from '#/workers/interfaces/TMasterToWorkerMessage';
 import type {
   IFailWorkerToMasterTaskComplete,
   TFailData,
   TPickPassWorkerToMasterTaskComplete,
+  TWorkerToMasterMessage,
 } from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
@@ -33,7 +35,7 @@ import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
 
-export default class NozzleEmitter extends EventEmitter {
+export class NozzleEmitter extends EventEmitter {
   #context: NozzleContext;
 
   accessor id: number = 0;

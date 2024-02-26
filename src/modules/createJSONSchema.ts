@@ -1,4 +1,4 @@
-import CreateJSONSchemaError from '#/errors/CreateJsonSchemaError';
+import { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import type { AnySchemaObject } from 'ajv';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
@@ -31,7 +31,7 @@ function getGenerator(args: TCreateJSONSchemaArgs) {
   return args.generator;
 }
 
-export default function createJSONSchema(
+export function createJSONSchema(
   args: TCreateJSONSchemaArgs,
 ): PassFailEither<Error, { filePath: string; exportedType: string; schema: AnySchemaObject }> {
   try {

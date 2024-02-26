@@ -1,14 +1,14 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
-import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
+import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
-import safeParse from '#/tools/safeParse';
+import { safeParse } from '#/tools/safeParse';
 import fs from 'fs/promises';
 import { exists } from 'my-node-fp';
 
-export default async function openDatabase(
+export async function openDatabase(
   option:
     | Pick<TAddSchemaOption, 'output'>
     | Pick<TRefreshSchemaOption, 'output'>

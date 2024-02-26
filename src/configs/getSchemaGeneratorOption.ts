@@ -1,6 +1,6 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import { exists } from 'my-node-fp';
@@ -18,7 +18,7 @@ const defaultGeneratorOption: Config = {
   additionalProperties: false,
 };
 
-export default async function getSchemaGeneratorOption(
+export async function getSchemaGeneratorOption(
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
     | Pick<TRefreshSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>

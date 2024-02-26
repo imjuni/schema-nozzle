@@ -1,4 +1,4 @@
-export default class CreateJSONSchemaError extends Error {
+export class CreateJSONSchemaError extends Error {
   constructor(
     public readonly filePath: string,
     public readonly typeName: string,

@@ -1,4 +1,4 @@
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import type { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 
@@ -106,7 +106,7 @@ export function isFailTaskComplete(
   return value.result === 'fail';
 }
 
-type TWorkerToMasterMessage =
+export type TWorkerToMasterMessage =
   | {
       command: typeof CE_MASTER_ACTION.TASK_COMPLETE;
       data: IFailWorkerToMasterTaskComplete | TPassWorkerToMasterTaskComplete;
@@ -117,5 +117,3 @@ type TWorkerToMasterMessage =
         schemaName: string;
       };
     };
-
-export default TWorkerToMasterMessage;

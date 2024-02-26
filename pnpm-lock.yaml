@@ -17,6 +17,9 @@ dependencies:
   cli-progress:
     specifier: ^3.12.0
     version: 3.12.0
+  comment-parser:
+    specifier: ^1.4.1
+    version: 1.4.1
   consola:
     specifier: ^3.2.3
     version: 3.2.3
@@ -1978,7 +1981,6 @@ packages:
   /comment-parser@1.4.1:
     resolution: {integrity: sha512-buhp5kePrmda3vhc5B9t7pUQXAb2Tnd0qgpkIhPhkHXxJpiPJ11H0ZEU0oBpJ2QztSbzG/ZxMj/CHsYJqRHmyg==}
     engines: {node: '>= 12.0.0'}
-    dev: true
 
   /common-tags@1.8.2:
     resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}

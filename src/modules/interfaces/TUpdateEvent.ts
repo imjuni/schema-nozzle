@@ -1,9 +1,9 @@
-import type getExportedTypes from '#/compilers/getExportedTypes';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
 import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { LastArrayElement } from 'type-fest';
 
-type TUpdateEvent =
+export type TUpdateEvent =
   | {
       /**
        * event kind
@@ -29,5 +29,3 @@ type TUpdateEvent =
         'filePath' | 'identifier'
       >[];
     };
-
-export default TUpdateEvent;

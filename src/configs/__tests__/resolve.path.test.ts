@@ -1,4 +1,4 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import path from 'path';
 import { beforeEach, describe, expect, it } from 'vitest';
 

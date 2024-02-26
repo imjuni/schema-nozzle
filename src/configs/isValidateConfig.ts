@@ -1,10 +1,10 @@
 import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
-import type IInitOption from '#/configs/interfaces/IInitOption';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { IInitOption } from '#/configs/interfaces/IInitOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import consola from 'consola';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
@@ -25,7 +25,7 @@ const commands: string[] = [
   CE_COMMAND_LIST.WATCH_ALIAS,
 ];
 
-export default function isValidateConfig<
+export function isValidateConfig<
   T extends
     | TDeleteSchemaOption
     | TAddSchemaOption

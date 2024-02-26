@@ -48,6 +48,4 @@ class Progress {
   }
 }
 
-const progress = new Progress();
-
-export default progress;
+export const progress = new Progress();

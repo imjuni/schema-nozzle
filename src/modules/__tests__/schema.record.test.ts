@@ -1,10 +1,10 @@
-import type getExportedTypes from '#/compilers/getExportedTypes';
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
-import createDatabaseItem from '#/databases/createDatabaseItem';
-import createJSONSchema from '#/modules/createJSONSchema';
-import getData from '#/tools/__tests__/test-tools/getData';
+import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { createJSONSchema } from '#/modules/createJSONSchema';
+import { getData } from '#/tools/__tests__/test-tools/getData';
 import 'jsonc-parser';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';

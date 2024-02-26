@@ -1,4 +1,4 @@
-export default interface IResolvedPaths {
+export interface IResolvedPaths {
   project: string;
   cwd: string;
   output: string;

@@ -1,7 +1,7 @@
 import type I18nDto from './I18nDto';
 import type IStudentEntity from './IStudentEntity';
 
-export default interface IStudentDto {
+export interface IStudentDto {
   id: IStudentEntity['id'];
   nick: IStudentEntity['nick'];
   name: I18nDto;
