@@ -5,11 +5,9 @@ import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOpti
 import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
 import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import fastSafeStringify from 'fast-safe-stringify';
 import fs from 'fs';
-
-const log = logger();
 
 export default async function saveDatabase(
   option:
@@ -22,7 +20,7 @@ export default async function saveDatabase(
 ) {
   const dbPath = await getDatabaseFilePath(option);
 
-  log.trace(`SaveDatabase: ${dbPath}`);
+  consola.trace(`SaveDatabase: ${dbPath}`);
 
   const sortedDb = Object.values(db)
     .sort((l, r) => l.id.localeCompare(r.id))

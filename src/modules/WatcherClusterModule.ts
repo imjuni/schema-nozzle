@@ -13,7 +13,6 @@ import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
 import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
-import logger from '#/tools/logger';
 import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
@@ -26,12 +25,11 @@ import {
   type TPickPassWorkerToMasterTaskComplete,
 } from '#/workers/interfaces/TWorkerToMasterMessage';
 import workers from '#/workers/workers';
+import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { atOrThrow, settify } from 'my-easy-fp';
 import path from 'path';
 import type { LastArrayElement } from 'type-fest';
-
-const log = logger();
 
 export default class WatcherClusterModule {
   #option: TWatchSchemaOption;
@@ -167,7 +165,7 @@ export default class WatcherClusterModule {
 
         await saveDatabase(option, newDb);
       } else {
-        log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
+        consola.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
         const items = passes as Extract<
           TPassWorkerToMasterTaskComplete,
@@ -206,7 +204,7 @@ export default class WatcherClusterModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
     option.files = [resolved];
 
     workers.broadcast({
@@ -221,7 +219,7 @@ export default class WatcherClusterModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
 
     option.files = [resolved];
 
@@ -237,7 +235,7 @@ export default class WatcherClusterModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
 
     workers.broadcast({
       command: CE_WORKER_ACTION.WATCH_SOURCE_FILE_UNLINK,

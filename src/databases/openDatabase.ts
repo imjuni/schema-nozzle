@@ -1,13 +1,12 @@
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
 import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
+import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import safeParse from '#/tools/safeParse';
 import fs from 'fs/promises';
-import { exists, isDirectory } from 'my-node-fp';
-import path from 'path';
+import { exists } from 'my-node-fp';
 
 export default async function openDatabase(
   option:
@@ -16,9 +15,7 @@ export default async function openDatabase(
     | Pick<TDeleteSchemaOption, 'output'>
     | Pick<TTruncateSchemaOption, 'output'>,
 ) {
-  const dbPath = (await isDirectory(option.output))
-    ? path.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
-    : option.output;
+  const dbPath = await getDatabaseFilePath(option);
 
   const rawDb = (await exists(dbPath)) ? (await fs.readFile(dbPath)).toString() : '{}';
 

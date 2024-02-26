@@ -1,10 +1,8 @@
-import logger from '#/tools/logger';
+import consola from 'consola';
 import { isError } from 'my-easy-fp';
-
-const log = logger();
 
 export default function errorTrace(caught: unknown) {
   const err = isError(caught, new Error('unknown error raised'));
-  log.trace(err.message);
-  log.trace(err.stack);
+  consola.trace(err.message);
+  consola.trace(err.stack);
 }

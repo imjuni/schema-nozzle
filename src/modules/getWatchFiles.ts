@@ -3,17 +3,15 @@ import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
 import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
 import getSchemaFileContent from '#/modules/getSchemaFileContent';
 import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import ignore from 'ignore';
-
-const log = logger();
 
 export default async function getWatchFiles(
   filePaths: { origin: string; refined: string }[],
   option: Pick<TWatchSchemaOption, 'project' | 'listFile' | 'cwd' | 'output'>,
 ): Promise<string[]> {
   try {
-    log.trace(filePaths.map((f) => `${f.origin} ${f.refined}`).join(', '));
+    consola.trace(filePaths.map((f) => `${f.origin} ${f.refined}`).join(', '));
 
     const dbPath = await getDatabaseFilePath(option);
 

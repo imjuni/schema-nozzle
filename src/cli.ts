@@ -24,16 +24,14 @@ import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
 import isValidateConfig from '#/configs/isValidateConfig';
 import preLoadConfig from '#/configs/preLoadConfig';
 import withDefaultOption from '#/configs/withDefaultOption';
-import logger from '#/tools/logger';
 import worker from '#/workers/worker';
 import cluster from 'cluster';
+import consola from 'consola';
 import { isError } from 'my-easy-fp';
 import yargs, { type Arguments, type CommandModule } from 'yargs';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TValidator = (argv: Arguments<any>, aliases: { [alias: string]: string }) => any;
-
-const log = logger();
 
 const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
   command: CE_COMMAND_LIST.ADD,
@@ -149,8 +147,8 @@ if (process.env.SYNC_MODE === 'true') {
 
   handler().catch((caught) => {
     const err = isError(caught, new Error('unknown error raised'));
-    log.error(err.message);
-    log.error(err.stack);
+    consola.error(err.message);
+    consola.error(err.stack);
 
     process.exit(1);
   });
@@ -177,8 +175,8 @@ if (process.env.SYNC_MODE === 'true') {
 
     handler().catch((caught) => {
       const err = isError(caught, new Error('unknown error raised'));
-      log.error(err.message);
-      log.error(err.stack);
+      consola.error(err.message);
+      consola.error(err.stack);
 
       process.exit(1);
     });
@@ -187,8 +185,8 @@ if (process.env.SYNC_MODE === 'true') {
   if (cluster.isWorker) {
     worker().catch((caught) => {
       const err = isError(caught, new Error('unknown error raised'));
-      log.error(err.message);
-      log.error(err.stack);
+      consola.error(err.message);
+      consola.error(err.stack);
       process.exit(1);
     });
   }

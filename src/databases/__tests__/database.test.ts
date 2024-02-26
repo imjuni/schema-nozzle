@@ -5,9 +5,17 @@ import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
 import openDatabase from '#/databases/openDatabase';
 import * as env from '#/modules/__tests__/env';
 import fs from 'fs/promises';
-import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
+import { beforeEach, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock('my-node-fp', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const mod = await importOriginal<typeof import('my-node-fp')>();
+  return {
+    ...mod,
+  };
+});
 
 const originPath = process.env.INIT_CWD!;
 const data: {
@@ -54,12 +62,12 @@ beforeEach(() => {
 });
 
 describe('getDatabaseFilePath', () => {
-  test('pass - directory', async () => {
+  it('pass - directory', async () => {
     const r = await getDatabaseFilePath({ output: data.resolvedPaths.cwd });
     expect(r).toEqual(path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.DB_FILE_NAME));
   });
 
-  test('pass - file', async () => {
+  it('pass - file', async () => {
     const r = await getDatabaseFilePath({
       output: path.join(data.resolvedPaths.cwd, 'abcd.json'),
     });
@@ -68,32 +76,32 @@ describe('getDatabaseFilePath', () => {
 });
 
 describe('open database', () => {
-  test('openDatabase', async () => {
+  it('openDatabase', async () => {
     const option: TAddSchemaOption = { ...env.addCmdOption, ...data.resolvedPaths };
-    jest
+    vitest
       .spyOn(fs, 'readFile')
       .mockImplementationOnce(() => Promise.resolve(Buffer.from(JSON.stringify(data.db))));
-    jest.spyOn(mnf, 'exists').mockImplementationOnce(() => Promise.resolve(true));
+    vitest.spyOn(mnf, 'exists').mockImplementationOnce(() => Promise.resolve(true));
 
     const db = await openDatabase(option);
     expect(db).toMatchObject(data.db);
   });
 
-  test('openDatabase - invalid file name', async () => {
+  it('openDatabase - invalid file name', async () => {
     const option: TAddSchemaOption = { ...env.addCmdOption, ...data.resolvedPaths };
     option.output = 'aa11';
     const db = await openDatabase(option);
     expect(db).toMatchObject({});
   });
 
-  test('openDatabase - invalid json', async () => {
+  it('openDatabase - invalid json', async () => {
     try {
       const option: TAddSchemaOption = {
         ...env.addCmdOption,
         ...data.resolvedPaths,
         output: data.resolvedPaths.project,
       };
-      jest
+      vitest
         .spyOn(fs, 'readFile')
         .mockImplementationOnce(() => Promise.resolve(Buffer.from(`${JSON.stringify(data.db)}}}`)));
       await openDatabase(option);

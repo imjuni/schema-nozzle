@@ -13,14 +13,12 @@ import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
 import WatcherModule from '#/modules/WatcherModule';
 import getRelativeCwd from '#/tools/getRelativeCwd';
-import logger from '#/tools/logger';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
+import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { buffer, debounceTime, Subject } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
-
-const log = logger();
 
 export default async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
   if (baseOption.cliLogo) {
@@ -66,7 +64,7 @@ export default async function watchCommandSync(baseOption: TWatchSchemaBaseOptio
     option,
   );
 
-  log.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
+  consola.trace(`${option.debounceTime}, ${watchFiles.join(', ')}`);
 
   const wm = new WatcherModule({ project, exportTypes: projectExportedTypes, option });
 
@@ -86,7 +84,7 @@ export default async function watchCommandSync(baseOption: TWatchSchemaBaseOptio
           resolve();
         }
 
-        log.trace('wait, wait ...');
+        consola.trace('wait, wait ...');
       }, 100);
     })
       .then(() => {

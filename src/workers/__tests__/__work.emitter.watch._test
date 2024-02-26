@@ -5,18 +5,27 @@ import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 import NozzleContext from '#/workers/NozzleContext';
 import NozzleEmitter from '#/workers/NozzleEmitter';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
-import 'jest';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vitest,
+  type MockInstance,
+} from 'vitest';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';
 process.env.INIT_CWD = path.join(originPath, 'examples');
 const ctx = new NozzleContext();
 const data: {
-  exit: jest.SpyInstance | undefined;
-  send: jest.SpyInstance | undefined;
+  exit: MockInstance<any, any> | MockInstance<any, never> | undefined;
+  send: MockInstance<any, any> | undefined;
 } = { exit: undefined, send: undefined };
 
 beforeAll(async () => {
@@ -63,11 +72,11 @@ beforeEach(async () => {
     type: '*',
   });
 
-  data.exit = jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+  data.exit = vitest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  data.send = jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+  data.send = vitest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
     return true;
   });
 });
@@ -83,7 +92,7 @@ afterEach(() => {
 });
 
 describe('WorkEmitter - watch', () => {
-  test('add', async () => {
+  it('add', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.watchSourceFileAdd({
@@ -97,7 +106,7 @@ describe('WorkEmitter - watch', () => {
     });
   });
 
-  test('add - exception', async () => {
+  it('add - exception', async () => {
     try {
       const w = new NozzleEmitter({ context: ctx });
 
@@ -110,7 +119,7 @@ describe('WorkEmitter - watch', () => {
     }
   });
 
-  test('change', async () => {
+  it('change', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.watchSourceFileChange({
@@ -124,7 +133,7 @@ describe('WorkEmitter - watch', () => {
     });
   });
 
-  test('change - not found', async () => {
+  it('change - not found', async () => {
     try {
       const w = new NozzleEmitter({ context: ctx });
 
@@ -137,9 +146,9 @@ describe('WorkEmitter - watch', () => {
     }
   });
 
-  test('change - exception', async () => {
+  it('change - exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
-    const spy = jest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
+    const spy = vitest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
       throw new Error('error deliberate raise');
     });
 
@@ -154,7 +163,7 @@ describe('WorkEmitter - watch', () => {
     }
   });
 
-  test('unlink', async () => {
+  it('unlink', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.watchSourceFileUnlink({
@@ -168,7 +177,7 @@ describe('WorkEmitter - watch', () => {
     });
   });
 
-  test('unlink - not found', async () => {
+  it('unlink - not found', async () => {
     try {
       const w = new NozzleEmitter({ context: ctx });
 
@@ -181,9 +190,9 @@ describe('WorkEmitter - watch', () => {
     }
   });
 
-  test('unlink - exception', async () => {
+  it('unlink - exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
-    const spy = jest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
+    const spy = vitest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
       throw new Error('error deliberate raise');
     });
 
@@ -198,7 +207,7 @@ describe('WorkEmitter - watch', () => {
     }
   });
 
-  test('watchSourceEventFileSummary', async () => {
+  it('watchSourceEventFileSummary', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.watchSourceEventFileSummary({
@@ -206,16 +215,16 @@ describe('WorkEmitter - watch', () => {
     });
   });
 
-  test('watchSourceEventFileSummary', async () => {
+  it('watchSourceEventFileSummary', async () => {
     const w = new NozzleEmitter({ context: ctx });
     w.emit(CE_WORKER_ACTION.WATCH_SOURCE_EVENT_FILE_SUMMARY, {
       filePaths: ['a', 'b', 'c'],
     });
   });
 
-  test('watchSourceEventFileSummary - exception', async () => {
+  it('watchSourceEventFileSummary - exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
-    const spy = jest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
+    const spy = vitest.spyOn(ctx.project, 'getSourceFile').mockImplementationOnce(() => {
       throw new Error('error deliberate raise');
     });
 

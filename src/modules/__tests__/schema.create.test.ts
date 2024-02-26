@@ -1,9 +1,9 @@
 import getResolvedPaths from '#/configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
 import createJSONSchema from '#/modules/createJSONSchema';
-import 'jest';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import type { AsyncReturnType } from 'type-fest';
 
@@ -30,7 +30,7 @@ beforeEach(() => {
 });
 
 describe('createJSONSchema', () => {
-  test('normal', async () => {
+  it('normal', async () => {
     const schema = createJSONSchema({
       filePath: path.join(data.resolvedPaths.cwd, 'I18nDto.ts'),
       exportedType: 'ILanguageDto',
@@ -60,7 +60,7 @@ describe('createJSONSchema', () => {
     });
   });
 
-  test('exception', async () => {
+  it('exception', async () => {
     const schema = createJSONSchema({
       filePath: path.join(data.resolvedPaths.cwd, 'I18nDto.ts'),
       exportedType: 'ILanguageDto2',

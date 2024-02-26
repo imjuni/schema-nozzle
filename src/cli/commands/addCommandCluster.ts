@@ -11,7 +11,6 @@ import saveDatabase from '#/databases/saveDatabase';
 import SchemaNozzleError from '#/errors/SchemaNozzleError';
 import getAddFiles from '#/modules/getAddFiles';
 import getAddTypes from '#/modules/getAddTypes';
-import logger from '#/tools/logger';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
@@ -23,11 +22,10 @@ import {
 } from '#/workers/interfaces/TWorkerToMasterMessage';
 import workers from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
+import consola from 'consola';
 import { atOrThrow, isError, populate } from 'my-easy-fp';
 import cluster from 'node:cluster';
 import os from 'node:os';
-
-const log = logger();
 
 export default async function addCommandCluster(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
@@ -58,8 +56,8 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
     option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
-    log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
-    log.trace(`${JSON.stringify(option)}`);
+    consola.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
+    consola.trace(`${JSON.stringify(option)}`);
 
     workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
@@ -222,7 +220,7 @@ export default async function addCommandCluster(baseOption: TAddSchemaBaseOption
 
       await saveDatabase(option, newDb);
     } else {
-      log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
+      consola.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
       const items = passes as TPickPassWorkerToMasterTaskComplete<
         typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA

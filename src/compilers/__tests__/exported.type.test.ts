@@ -2,10 +2,10 @@ import getDiagnostics from '#/compilers/getDiagnostics';
 import getExportedFiles from '#/compilers/getExportedFiles';
 import getExportedTypes from '#/compilers/getExportedTypes';
 import getResolvedPaths from '#/configs/getResolvedPaths';
-import 'jest';
 import { startSepRemove } from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';
+import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
 
 process.env.USE_INIT_CWD = 'true';
 const originPath = process.env.INIT_CWD!;
@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 
 describe('getExportedFiles', () => {
-  test('normal', () => {
+  it('normal', () => {
     const files = getExportedFiles(data.project);
     const refinedFiles = files.map((file) =>
       startSepRemove(file.replace(data.resolvedPaths.cwd, '')),
@@ -46,7 +46,7 @@ describe('getExportedFiles', () => {
 });
 
 describe('getExportedTypes', () => {
-  test('normal', () => {
+  it('normal', () => {
     const types = getExportedTypes(data.project);
 
     expect(types.map((type) => type.identifier)).toMatchObject([
@@ -68,12 +68,12 @@ describe('getExportedTypes', () => {
 });
 
 describe('getDiagnostics', () => {
-  test('pass', () => {
+  it('pass', () => {
     const r1 = getDiagnostics({ option: { skipError: true }, project: data.project });
     expect(r1.type).toEqual('pass');
   });
 
-  test('pass - skipError false', () => {
+  it('pass - skipError false', () => {
     const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
     expect(r1.type).toEqual('pass');
   });
@@ -87,7 +87,7 @@ describe('getDiagnostics', () => {
       }
     });
 
-    test('fail', () => {
+    it('fail', () => {
       data.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
         overwrite: true,
       });
@@ -95,8 +95,8 @@ describe('getDiagnostics', () => {
       expect(r1.type).toEqual('fail');
     });
 
-    test('fail - exception', () => {
-      const spy = jest.spyOn(data.project, 'getPreEmitDiagnostics').mockImplementationOnce(() => {
+    it('fail - exception', () => {
+      const spy = vitest.spyOn(data.project, 'getPreEmitDiagnostics').mockImplementationOnce(() => {
         throw new Error('raise error');
       });
 

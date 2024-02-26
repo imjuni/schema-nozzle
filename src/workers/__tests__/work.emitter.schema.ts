@@ -9,18 +9,27 @@ import NozzleContext from '#/workers/NozzleContext';
 import NozzleEmitter from '#/workers/NozzleEmitter';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
-import 'jest';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vitest,
+  type MockInstance,
+} from 'vitest';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';
 process.env.INIT_CWD = path.join(originPath, 'examples');
 const ctx = new NozzleContext();
 const data: {
-  exit: jest.SpyInstance | undefined;
-  send: jest.SpyInstance | undefined;
+  exit: MockInstance<any, any> | MockInstance<any, never> | undefined;
+  send: MockInstance<any, any> | undefined;
 } = { exit: undefined, send: undefined };
 
 beforeAll(async () => {
@@ -67,62 +76,62 @@ beforeEach(async () => {
     type: '*',
   });
 
-  data.exit = jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+  data.exit = vitest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  data.send = jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+  data.send = vitest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
     return true;
   });
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 describe('WorkEmitter - summary', () => {
-  test('summarySchemaFiles', async () => {
+  it('summarySchemaFiles', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaFiles();
 
-    jest.spyOn(w, 'workerSummarySchemaFiles').mockImplementationOnce(() => Promise.reject());
+    vitest.spyOn(w, 'workerSummarySchemaFiles').mockImplementationOnce(() => Promise.reject());
     w.emit(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILES);
   });
 
-  test('summarySchemaTypes', async () => {
+  it('summarySchemaTypes', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaTypes();
 
-    jest.spyOn(w, 'workerSummarySchemaTypes').mockImplementationOnce(() => Promise.reject());
+    vitest.spyOn(w, 'workerSummarySchemaTypes').mockImplementationOnce(() => Promise.reject());
     w.emit(CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES);
   });
 
-  test('summarySchemaFileType', async () => {
+  it('summarySchemaFileType', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.workerSummarySchemaFileType();
 
-    jest.spyOn(w, 'workerSummarySchemaFileType').mockImplementationOnce(() => Promise.reject());
+    vitest.spyOn(w, 'workerSummarySchemaFileType').mockImplementationOnce(() => Promise.reject());
     w.emit(CE_WORKER_ACTION.SUMMARY_SCHEMA_FILE_TYPE);
   });
 
-  test('loadDatabase', async () => {
+  it('loadDatabase', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.loadDatabase();
 
-    jest.spyOn(w, 'loadDatabase').mockImplementationOnce(() => Promise.reject());
+    vitest.spyOn(w, 'loadDatabase').mockImplementationOnce(() => Promise.reject());
     w.emit(CE_WORKER_ACTION.LOAD_DATABASE);
   });
 
-  test('loadDatabase - exception', async () => {
+  it('loadDatabase - exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
-    const spy1 = jest
+    const spy1 = vitest
       .spyOn(ffp, 'default')
       .mockImplementationOnce(() => Promise.resolve(undefined));
-    const spy2 = jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve({}));
+    const spy2 = vitest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve({}));
 
     try {
       await w.loadDatabase();
@@ -133,15 +142,15 @@ describe('WorkEmitter - summary', () => {
     }
   });
 
-  test('loadDatabase - db', async () => {
+  it('loadDatabase - db', async () => {
     const w = new NozzleEmitter({ context: ctx });
     const dbData = await getData<Record<string, IDatabaseItem>>(
       path.join(__dirname, 'data/001.json'),
     );
-    const spy1 = jest
+    const spy1 = vitest
       .spyOn(ffp, 'default')
       .mockImplementationOnce(() => Promise.resolve(undefined));
-    const spy2 = jest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve(dbData));
+    const spy2 = vitest.spyOn(odb, 'default').mockImplementationOnce(() => Promise.resolve(dbData));
 
     await w.loadDatabase();
 
@@ -151,7 +160,7 @@ describe('WorkEmitter - summary', () => {
 });
 
 describe('WorkEmitter - create schema', () => {
-  test('createJsonSchema - mapped access + call', async () => {
+  it('createJsonSchema - mapped access + call', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchema({
@@ -160,7 +169,7 @@ describe('WorkEmitter - create schema', () => {
     });
   });
 
-  test('createJsonSchema - mapped access - call', async () => {
+  it('createJsonSchema - mapped access - call', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchema({
@@ -169,7 +178,7 @@ describe('WorkEmitter - create schema', () => {
     });
   });
 
-  test('createJsonSchema - empty definitions + emit', async () => {
+  it('createJsonSchema - empty definitions + emit', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'] =
@@ -180,7 +189,7 @@ describe('WorkEmitter - create schema', () => {
     w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
   });
 
-  test('createJsonSchema - with root type + emit exception', async () => {
+  it('createJsonSchema - with root type + emit exception', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.CREATE_JSON_SCHEMA>['data'] =
@@ -189,7 +198,7 @@ describe('WorkEmitter - create schema', () => {
         exportedType: 'IProfessorDto',
       };
 
-    const spy = jest.spyOn(w, 'createJsonSchema').mockImplementationOnce(() => Promise.reject());
+    const spy = vitest.spyOn(w, 'createJsonSchema').mockImplementationOnce(() => Promise.reject());
 
     try {
       w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA, payload);
@@ -222,7 +231,7 @@ describe('WorkEmitter - create schema', () => {
       });
     });
 
-    test('createJsonSchema create generator error', async () => {
+    it('createJsonSchema create generator error', async () => {
       const w = new NozzleEmitter({ context: ctx });
       ctx.generatorOption = {};
 
@@ -233,7 +242,7 @@ describe('WorkEmitter - create schema', () => {
     });
   });
 
-  test('createJsonSchema - fail', async () => {
+  it('createJsonSchema - fail', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     try {
@@ -246,7 +255,7 @@ describe('WorkEmitter - create schema', () => {
     }
   });
 
-  test('createJsonSchemaBulk - call', async () => {
+  it('createJsonSchemaBulk - call', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([
@@ -261,7 +270,7 @@ describe('WorkEmitter - create schema', () => {
     ]);
   });
 
-  test('createJsonSchemaBulk - emit', async () => {
+  it('createJsonSchemaBulk - emit', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     const payload: TPickMasterToWorkerMessage<
@@ -284,7 +293,7 @@ describe('WorkEmitter - create schema', () => {
     w.emit(CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK, payload);
   });
 
-  test('createJsonSchemaBulk - call either fail', async () => {
+  it('createJsonSchemaBulk - call either fail', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([
@@ -296,7 +305,7 @@ describe('WorkEmitter - create schema', () => {
     ]);
   });
 
-  test('createJsonSchemaBulk - call either fail', async () => {
+  it('createJsonSchemaBulk - call either fail', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     await w.createJsonSchemaBulk([

@@ -1,6 +1,6 @@
 import getResolvedPaths from '#/configs/getResolvedPaths';
-import 'jest';
 import path from 'path';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 process.env.USE_INIT_CWD = 'true';
 const originPath = process.env.INIT_CWD!;
@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 describe('getResolvedPaths', () => {
-  test('normal', async () => {
+  it('normal', async () => {
     const r = getResolvedPaths({
       project: path.join(originPath, 'examples', 'tsconfig.json'),
       output: path.join(originPath, 'examples'),
@@ -23,7 +23,7 @@ describe('getResolvedPaths', () => {
     });
   });
 
-  test('no output', async () => {
+  it('no output', async () => {
     const r = getResolvedPaths({
       project: path.join(originPath, 'examples', 'tsconfig.json'),
       output: undefined,
@@ -36,7 +36,7 @@ describe('getResolvedPaths', () => {
     });
   });
 
-  test('relative path', async () => {
+  it('relative path', async () => {
     const r = getResolvedPaths({
       project: './tsconfig.json',
       output: '.',
@@ -49,7 +49,7 @@ describe('getResolvedPaths', () => {
     });
   });
 
-  test('relative rootDir', async () => {
+  it('relative rootDir', async () => {
     const r = getResolvedPaths({
       project: './tsconfig.json',
       output: '.',
@@ -64,7 +64,7 @@ describe('getResolvedPaths', () => {
     });
   });
 
-  test('absolute rootDir', async () => {
+  it('absolute rootDir', async () => {
     const r = getResolvedPaths({
       project: './tsconfig.json',
       output: '.',

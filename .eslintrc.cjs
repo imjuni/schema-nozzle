@@ -24,6 +24,9 @@ module.exports = {
   ignorePatterns: ['coverage/**', 'dist/**', '__test__/**', '__tests__/**'],
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
+    // ----------------------------------------------------------------------------------------------------------
+    // eslint
+    // ----------------------------------------------------------------------------------------------------------
     'max-len': [
       'error',
       {
@@ -35,6 +38,49 @@ module.exports = {
         code: 120,
       },
     ],
+    'no-underscore-dangle': ['error', { allowAfterThis: true }],
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'TSEnumDeclaration:not([const=true])',
+        message: "Don't declare non-const enums",
+      },
+    ],
+    // ----------------------------------------------------------------------------------------------------------
+    // @typescript-eslint
+    // ----------------------------------------------------------------------------------------------------------
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'interface',
+        format: ['PascalCase'],
+        custom: {
+          regex: '^I[A-Z]+',
+          match: true,
+        },
+      },
+      {
+        selector: 'typeAlias',
+        format: ['PascalCase'],
+        custom: {
+          regex: '^T[A-Z]+',
+          match: true,
+        },
+      },
+    ],
+    '@typescript-eslint/member-delimiter-style': [
+      'off',
+      {
+        multiline: {
+          delimiter: 'none',
+          requireLast: true,
+        },
+        singleline: {
+          delimiter: 'semi',
+          requireLast: false,
+        },
+      },
+    ],
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
@@ -42,11 +88,17 @@ module.exports = {
         argsIgnorePattern: '^_.+$',
       },
     ],
-    'import/extensions': ['off'],
-    '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
-    // static function use this: void
-    '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }],
-    '@typescript-eslint/no-unnecessary-boolean-literal-compare': ['off'],
+    '@typescript-eslint/consistent-type-imports': [
+      'error',
+      {
+        prefer: 'type-imports',
+      },
+    ],
+    // ----------------------------------------------------------------------------------------------------------
+    // eslint-plugin-import
+    // ----------------------------------------------------------------------------------------------------------
+    // 'import/prefer-default-export': ['off'],
+    // 'import/no-default-export': ['error'],
   },
   overrides: [
     {
@@ -78,13 +130,19 @@ module.exports = {
       },
     },
     {
-      files: ['jest.config.cjs'],
+      files: ['vitest.config.ts'],
       rules: {
         '@typescript-eslint/no-unsafe-assignment': ['off'],
         '@typescript-eslint/no-unsafe-argument': ['off'],
         '@typescript-eslint/no-unsafe-member-access': ['off'],
         '@typescript-eslint/no-var-requires': ['off'],
         'import/no-extraneous-dependencies': ['off'],
+      },
+    },
+    {
+      files: ['examples/*.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': ['off'],
       },
     },
   ],

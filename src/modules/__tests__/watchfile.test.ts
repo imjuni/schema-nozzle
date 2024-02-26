@@ -4,8 +4,8 @@ import * as dfp from '#/databases/getDatabaseFilePath';
 import * as env from '#/modules/__tests__/env';
 import getWatchFiles from '#/modules/getWatchFiles';
 import NozzleContext from '#/workers/NozzleContext';
-import 'jest';
 import path from 'path';
+import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';
@@ -29,7 +29,7 @@ beforeAll(async () => {
 });
 
 describe('getWatchFiles', () => {
-  test('pass', async () => {
+  it('pass', async () => {
     const filePaths = [
       { origin: path.join(ctx.option.cwd, 'a.ts'), refined: 'a.ts' },
       { origin: path.join(ctx.option.cwd, 'b.ts'), refined: 'b.ts' },
@@ -44,7 +44,7 @@ describe('getWatchFiles', () => {
     ]);
   });
 
-  test('pass - no listfile', async () => {
+  it('pass - no listfile', async () => {
     const filePaths = [
       { origin: path.join(ctx.option.cwd, 'a.ts'), refined: 'a.ts' },
       { origin: path.join(ctx.option.cwd, 'b.ts'), refined: 'b.ts' },
@@ -64,8 +64,8 @@ describe('getWatchFiles', () => {
     ]);
   });
 
-  test('fail - exception', async () => {
-    const spy = jest.spyOn(dfp, 'default').mockImplementationOnce(() => {
+  it('fail - exception', async () => {
+    const spy = vitest.spyOn(dfp, 'default').mockImplementationOnce(() => {
       throw new Error('raise error');
     });
 

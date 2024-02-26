@@ -3,15 +3,13 @@ import getInitialOption from '#/configs/getInitialOption';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import type IInitOption from '#/configs/interfaces/IInitOption';
 import getCwd from '#/tools/getCwd';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import fastGlob from 'fast-glob';
 import inquirer from 'inquirer';
 import { parse } from 'jsonc-parser';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-
-const log = logger();
 
 export default async function initCommandSync(_option: IInitOption) {
   const cwd = getCwd(process.env);
@@ -20,7 +18,7 @@ export default async function initCommandSync(_option: IInitOption) {
     ignore: ['node_modules'],
   });
 
-  log.trace('tsconfig file: %s', tsconfigFilePaths);
+  consola.trace('tsconfig file: %s', tsconfigFilePaths);
 
   const answer = await inquirer.prompt<{
     tsconfigFilePath: string;
@@ -60,5 +58,5 @@ export default async function initCommandSync(_option: IInitOption) {
 
   spinner.stop(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`, 'succeed');
 
-  log.trace(answer.tsconfigFilePath);
+  consola.trace(answer.tsconfigFilePath);
 }
