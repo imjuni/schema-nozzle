@@ -1,18 +1,18 @@
-import spinner from '#/cli/display/spinner';
-import getDiagnostics from '#/compilers/getDiagnostics';
-import getTsProject from '#/compilers/getTsProject';
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
-import deleteDatabaseItem from '#/databases/deleteDatabaseItem';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import getDeleteTypes from '#/modules/getDeleteTypes';
+import { spinner } from '#/cli/display/spinner';
+import { getDiagnostics } from '#/compilers/getDiagnostics';
+import { getTsProject } from '#/compilers/getTsProject';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
+import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { getDeleteTypes } from '#/modules/getDeleteTypes';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import { showLogo } from '@maeum/cli-logo';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
 
-export default async function deleteCommandSync(baseOption: TDeleteSchemaOption) {
+export async function deleteCommandSync(baseOption: TDeleteSchemaOption) {
   try {
     if (baseOption.cliLogo) {
       await showLogo({

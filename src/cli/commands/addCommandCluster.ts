@@ -1,33 +1,34 @@
-import progress from '#/cli/display/progress';
-import showFailMessage from '#/cli/display/showFailMessage';
-import spinner from '#/cli/display/spinner';
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type { TAddSchemaBaseOption } from '#/configs/interfaces/TAddSchemaOption';
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import SchemaNozzleError from '#/errors/SchemaNozzleError';
-import getAddFiles from '#/modules/getAddFiles';
-import getAddTypes from '#/modules/getAddTypes';
+import { progress } from '#/cli/display/progress';
+import { showFailMessage } from '#/cli/display/showFailMessage';
+import { spinner } from '#/cli/display/spinner';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
+import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { SchemaNozzleError } from '#/errors/SchemaNozzleError';
+import { getAddFiles } from '#/modules/getAddFiles';
+import { getAddTypes } from '#/modules/getAddTypes';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
+import type {
+  TMasterToWorkerMessage,
+  TPickMasterToWorkerMessage,
+} from '#/workers/interfaces/TMasterToWorkerMessage';
 import {
   isFailTaskComplete,
   isPassTaskComplete,
   type TPassWorkerToMasterTaskComplete,
   type TPickPassWorkerToMasterTaskComplete,
 } from '#/workers/interfaces/TWorkerToMasterMessage';
-import workers from '#/workers/workers';
+import { workers } from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import consola from 'consola';
 import { atOrThrow, isError, populate } from 'my-easy-fp';
 import cluster from 'node:cluster';
 import os from 'node:os';
 
-export default async function addCommandCluster(baseOption: TAddSchemaBaseOption): Promise<void> {
+export async function addCommandCluster(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
     if (baseOption.cliLogo) {
       await showLogo({

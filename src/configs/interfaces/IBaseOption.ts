@@ -1,4 +1,4 @@
-export default interface IBaseOption {
+export interface IBaseOption {
   /** configuration file */
   config?: string;
 

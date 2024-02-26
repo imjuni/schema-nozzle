@@ -1,10 +1,10 @@
-import getExportedName from '#/compilers/getExportedName';
-import getJsDocTags from '#/compilers/getJsDocTags';
-import type IGetExportTypesReturnType from '#/compilers/interfaces/IGetExportTypesReturnType';
+import { getExportedName } from '#/compilers/getExportedName';
+import { getJsDocTags } from '#/compilers/getJsDocTags';
+import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExportTypesReturnType';
 import { CE_JSDOC_EXTENDS } from '#/modules/interfaces/CE_JSDOC_EXTENDS';
 import * as tsm from 'ts-morph';
 
-export default function getSoruceFileExportedTypes(
+export function getSoruceFileExportedTypes(
   sourceFile: tsm.SourceFile,
 ): IGetExportTypesReturnType[] {
   const exportedTypes = Array.from(sourceFile.getExportedDeclarations().values()).flat();

@@ -1,7 +1,7 @@
-import deleteDatabaseItem from '#/databases/deleteDatabaseItem';
+import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 
-export default function deleteDatabaseItemsByFile(db: TDatabase, filePath: string) {
+export function deleteDatabaseItemsByFile(db: TDatabase, filePath: string) {
   const entries = Object.entries(db)
     .filter(([, item]) => item.filePath === filePath)
     .map(([identifier, item]) => ({ identifier, item }));

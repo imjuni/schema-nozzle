@@ -1,12 +1,12 @@
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import getDatabaseFilePath from '#/databases/getDatabaseFilePath';
-import getSchemaFileContent from '#/modules/getSchemaFileContent';
-import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
+import { getSchemaFileContent } from '#/modules/getSchemaFileContent';
+import { getSchemaFilterFilePath } from '#/modules/getSchemaFilterFilePath';
 import consola from 'consola';
 import ignore from 'ignore';
 
-export default async function getWatchFiles(
+export async function getWatchFiles(
   filePaths: { origin: string; refined: string }[],
   option: Pick<TWatchSchemaOption, 'project' | 'listFile' | 'cwd' | 'output'>,
 ): Promise<string[]> {

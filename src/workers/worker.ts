@@ -1,9 +1,9 @@
-import NozzleEmitter from '#/workers/NozzleEmitter';
-import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
+import { NozzleEmitter } from '#/workers/NozzleEmitter';
+import type { TMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import consola from 'consola';
 import { isError } from 'my-easy-fp';
 
-export default async function worker() {
+export async function worker() {
   const emitter: NozzleEmitter = new NozzleEmitter();
 
   process.on('message', (payload: TMasterToWorkerMessage) => {

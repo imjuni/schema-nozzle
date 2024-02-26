@@ -1,37 +1,39 @@
-import progress from '#/cli/display/progress';
-import spinner from '#/cli/display/spinner';
-import type getExportedTypes from '#/compilers/getExportedTypes';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import deleteDatabaseItem from '#/databases/deleteDatabaseItem';
-import deleteDatabaseItemsByFile from '#/databases/deleteDatabaseItemsByFile';
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import SchemaNozzleError from '#/errors/SchemaNozzleError';
-import createJSONSchemaCommand from '#/modules/createJSONSchemaCommand';
+import { progress } from '#/cli/display/progress';
+import { spinner } from '#/cli/display/spinner';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
+import { deleteDatabaseItemsByFile } from '#/databases/deleteDatabaseItemsByFile';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { SchemaNozzleError } from '#/errors/SchemaNozzleError';
+import { createJSONSchemaCommand } from '#/modules/createJSONSchemaCommand';
 import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import type { IWatchEvent } from '#/modules/interfaces/IWatchEvent';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
-import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
+import type {
+  TMasterToWorkerMessage,
+  TPickMasterToWorkerMessage,
+} from '#/workers/interfaces/TMasterToWorkerMessage';
 import {
   isFailTaskComplete,
   isPassTaskComplete,
   type TPassWorkerToMasterTaskComplete,
   type TPickPassWorkerToMasterTaskComplete,
+  type TWorkerToMasterMessage,
 } from '#/workers/interfaces/TWorkerToMasterMessage';
-import workers from '#/workers/workers';
+import { workers } from '#/workers/workers';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { atOrThrow, settify } from 'my-easy-fp';
 import path from 'path';
 import type { LastArrayElement } from 'type-fest';
 
-export default class WatcherClusterModule {
+export class WatcherClusterModule {
   #option: TWatchSchemaOption;
 
   #workerSize: number;

@@ -1,5 +1,5 @@
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from '#/tools/getRatioNumber';
+import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
@@ -7,7 +7,7 @@ import path from 'path';
 import type { LastArrayElement } from 'type-fest';
 
 // single file select ui
-export default async function getAddSingleFilesFromPrompt(
+export async function getAddSingleFilesFromPrompt(
   schemaFiles: { origin: string; refined: string }[],
 ): Promise<LastArrayElement<typeof schemaFiles>[]> {
   inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);

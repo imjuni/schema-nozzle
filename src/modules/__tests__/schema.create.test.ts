@@ -1,6 +1,6 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
-import createJSONSchema from '#/modules/createJSONSchema';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
+import { createJSONSchema } from '#/modules/createJSONSchema';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';

@@ -1,6 +1,6 @@
 import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 
-export default interface IWatchEvent {
+export interface IWatchEvent {
   /**
    * event kind
    */

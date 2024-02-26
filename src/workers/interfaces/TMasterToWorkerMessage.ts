@@ -1,10 +1,10 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 import type { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 
-type TMasterToWorkerMessage =
+export type TMasterToWorkerMessage =
   | { command: typeof CE_WORKER_ACTION.PROJECT_LOAD }
   | {
       command: typeof CE_WORKER_ACTION.OPTION_LOAD;
@@ -52,5 +52,3 @@ export type TPickMasterToWorkerMessage<T extends CE_WORKER_ACTION> = Extract<
   TMasterToWorkerMessage,
   { command: T }
 >;
-
-export default TMasterToWorkerMessage;

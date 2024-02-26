@@ -1,8 +1,8 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getBaseSchemaId from '#/databases/modules/getBaseSchemaId';
-import getDtoName from '#/databases/modules/getDtoName';
-import getSchemaId from '#/databases/modules/getSchemaId';
-import isRelativeDtoPath from '#/databases/modules/isRelativeDtoPath';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
+import { getDtoName } from '#/databases/modules/getDtoName';
+import { getSchemaId } from '#/databases/modules/getSchemaId';
+import { isRelativeDtoPath } from '#/databases/modules/isRelativeDtoPath';
 import * as env from '#/modules/__tests__/env';
 import path from 'path';
 import type { IFileImportInfo } from 'ts-morph-short';

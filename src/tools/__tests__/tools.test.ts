@@ -1,8 +1,8 @@
-import getCwd from '#/tools/getCwd';
-import getRatioNumber from '#/tools/getRatioNumber';
-import getRelativeCwd from '#/tools/getRelativeCwd';
-import posixJoin from '#/tools/posixJoin';
-import safeParse from '#/tools/safeParse';
+import { getCwd } from '#/tools/getCwd';
+import { getRatioNumber } from '#/tools/getRatioNumber';
+import { getRelativeCwd } from '#/tools/getRelativeCwd';
+import { posixJoin } from '#/tools/posixJoin';
+import { safeParse } from '#/tools/safeParse';
 import * as jscp from 'jsonc-parser';
 import path from 'node:path';
 import { describe, expect, it, vitest } from 'vitest';

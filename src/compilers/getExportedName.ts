@@ -1,6 +1,6 @@
 import * as tsm from 'ts-morph';
 
-export default function getExportedName(exportedDeclarationNode: tsm.ExportedDeclarations): string {
+export function getExportedName(exportedDeclarationNode: tsm.ExportedDeclarations): string {
   if (exportedDeclarationNode.asKind(tsm.SyntaxKind.ClassDeclaration) != null) {
     const classDeclarationNode = exportedDeclarationNode.asKindOrThrow(
       tsm.SyntaxKind.ClassDeclaration,

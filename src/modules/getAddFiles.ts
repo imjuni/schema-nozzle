@@ -1,12 +1,12 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import getAddMultipleFilesFromPrompt from '#/modules/getAddMultipleFilesFromPrompt';
-import getAddSingleFilesFromPrompt from '#/modules/getAddSingleFilesFromPrompt';
-import getRelativeCwd from '#/tools/getRelativeCwd';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import { getAddMultipleFilesFromPrompt } from '#/modules/getAddMultipleFilesFromPrompt';
+import { getAddSingleFilesFromPrompt } from '#/modules/getAddSingleFilesFromPrompt';
+import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import path from 'path';
 
-export default async function getAddFiles(
+export async function getAddFiles(
   option: Pick<TAddSchemaOption, 'files' | 'multiple' | 'cwd'>,
   schemaFiles: { origin: string; refined: string }[],
 ): Promise<PassFailEither<Error, typeof schemaFiles>> {

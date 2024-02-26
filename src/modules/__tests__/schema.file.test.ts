@@ -1,14 +1,12 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import getSchemaFileContent from '#/modules/getSchemaFileContent';
+import { getSchemaFileContent } from '#/modules/getSchemaFileContent';
 import * as fpm from '#/modules/getSchemaFilterFilePath';
-import summarySchemaFiles from '#/modules/summarySchemaFiles';
-import summarySchemaTypes from '#/modules/summarySchemaTypes';
+import { summarySchemaFiles } from '#/modules/summarySchemaFiles';
+import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import path from 'path';
 import * as tsm from 'ts-morph';
 import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
-
-const getSchemaFilterFilePath = fpm.default;
 
 process.env.USE_INIT_CWD = 'true';
 
@@ -37,20 +35,20 @@ describe('getSchemaListFilePath', () => {
       project: path.join(originPath, 'tsconfig.json'),
       output: originPath,
     });
-    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
+    const result = await fpm.getSchemaFilterFilePath(data.resolvedPaths.cwd);
     expect(result).toBeUndefined();
   });
 
   it('resolved', async () => {
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
-    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd, f);
+    const result = await fpm.getSchemaFilterFilePath(data.resolvedPaths.cwd, f);
     expect(result).toEqual(path.resolve(f));
   });
 
   it('default', async () => {
     process.env.INIT_CWD = path.resolve(path.join(process.env.INIT_CWD!, 'examples'));
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
-    const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
+    const result = await fpm.getSchemaFilterFilePath(data.resolvedPaths.cwd);
     expect(result).toEqual(path.resolve(f));
   });
 });
@@ -76,7 +74,7 @@ describe('summarySchemaFiles', () => {
   });
 
   it('empty list file', async () => {
-    vitest.spyOn(fpm, 'default').mockImplementationOnce(async () => undefined);
+    vitest.spyOn(fpm, 'getSchemaFilterFilePath').mockImplementationOnce(async () => undefined);
 
     const filter = await summarySchemaFiles(data.project, {
       discriminator: 'refresh-schema',

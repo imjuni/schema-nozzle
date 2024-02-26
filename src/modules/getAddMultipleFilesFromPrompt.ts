@@ -1,12 +1,12 @@
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import getRatioNumber from '#/tools/getRatioNumber';
+import { getRatioNumber } from '#/tools/getRatioNumber';
 import consola from 'consola';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
 import path from 'path';
 
-export default async function getAddMultipleFilesFromPrompt(
+export async function getAddMultipleFilesFromPrompt(
   schemaFiles: { origin: string; refined: string }[],
 ): Promise<typeof schemaFiles> {
   try {

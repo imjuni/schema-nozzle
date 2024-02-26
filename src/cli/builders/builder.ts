@@ -1,6 +1,6 @@
 import type { Argv } from 'yargs';
 
-export default function builder(argv: Argv) {
+export function builder(argv: Argv) {
   // have alias option
   argv
     .option('project', {

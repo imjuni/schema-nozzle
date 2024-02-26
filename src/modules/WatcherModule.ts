@@ -1,18 +1,18 @@
-import progress from '#/cli/display/progress';
-import spinner from '#/cli/display/spinner';
-import type getExportedTypes from '#/compilers/getExportedTypes';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import createDatabaseItem from '#/databases/createDatabaseItem';
-import deleteDatabaseItemsByFile from '#/databases/deleteDatabaseItemsByFile';
-import mergeDatabaseItems from '#/databases/mergeDatabaseItems';
-import openDatabase from '#/databases/openDatabase';
-import saveDatabase from '#/databases/saveDatabase';
-import createJSONSchema from '#/modules/createJSONSchema';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
+import { progress } from '#/cli/display/progress';
+import { spinner } from '#/cli/display/spinner';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { deleteDatabaseItemsByFile } from '#/databases/deleteDatabaseItemsByFile';
+import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { openDatabase } from '#/databases/openDatabase';
+import { saveDatabase } from '#/databases/saveDatabase';
+import { createJSONSchema } from '#/modules/createJSONSchema';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import type { IWatchEvent } from '#/modules/interfaces/IWatchEvent';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
-import summarySchemaFiles from '#/modules/summarySchemaFiles';
-import summarySchemaTypes from '#/modules/summarySchemaTypes';
+import { summarySchemaFiles } from '#/modules/summarySchemaFiles';
+import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { last } from 'my-easy-fp';
@@ -22,7 +22,7 @@ import { createGenerator } from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
 import type { LastArrayElement } from 'type-fest';
 
-export default class WatcherModule {
+export class WatcherModule {
   #project: tsm.Project;
 
   #option: TWatchSchemaOption;

@@ -1,4 +1,4 @@
-export default interface I18nDto {
+export interface I18nDto {
   /** i18n resource id */
   id: string;
 

@@ -97,14 +97,21 @@ module.exports = {
     // ----------------------------------------------------------------------------------------------------------
     // eslint-plugin-import
     // ----------------------------------------------------------------------------------------------------------
-    // 'import/prefer-default-export': ['off'],
-    // 'import/no-default-export': ['error'],
+    'import/prefer-default-export': ['off'],
+    'import/no-default-export': ['error'],
   },
   overrides: [
     {
       files: ['src/tools/logger.ts'],
       rules: {
         '@typescript-eslint/no-non-null-assertion': ['off'],
+      },
+    },
+    {
+      files: ['**/CE_*.ts'],
+      rules: {
+        '@typescript-eslint/no-redeclare': ['off'],
+        '@typescript-eslint/naming-convention': ['off'],
       },
     },
     {

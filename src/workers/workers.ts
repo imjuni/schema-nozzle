@@ -1,11 +1,13 @@
-import progress from '#/cli/display/progress';
+import { progress } from '#/cli/display/progress';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
-import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
-import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
-import type { IFailWorkerToMasterTaskComplete } from '#/workers/interfaces/TWorkerToMasterMessage';
+import type { TMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
+import type {
+  IFailWorkerToMasterTaskComplete,
+  TWorkerToMasterMessage,
+} from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
 import consola from 'consola';
 import dayjs from 'dayjs';
@@ -147,6 +149,4 @@ class Workers extends EventEmitter {
   }
 }
 
-const workers = new Workers();
-
-export default workers;
+export const workers = new Workers();

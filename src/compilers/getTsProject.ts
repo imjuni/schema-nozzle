@@ -1,7 +1,7 @@
 import { existsSync } from 'my-node-fp';
 import * as tsm from 'ts-morph';
 
-export default async function getTsProject(
+export async function getTsProject(
   option: Omit<tsm.ProjectOptions, 'tsConfigFilePath'> & { tsConfigFilePath: string },
 ): Promise<tsm.Project> {
   if (existsSync(option.tsConfigFilePath) === false) {

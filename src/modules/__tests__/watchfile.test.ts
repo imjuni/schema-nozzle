@@ -1,9 +1,9 @@
-import getResolvedPaths from '#/configs/getResolvedPaths';
-import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import * as dfp from '#/databases/getDatabaseFilePath';
 import * as env from '#/modules/__tests__/env';
-import getWatchFiles from '#/modules/getWatchFiles';
-import NozzleContext from '#/workers/NozzleContext';
+import { getWatchFiles } from '#/modules/getWatchFiles';
+import { NozzleContext } from '#/workers/NozzleContext';
 import path from 'path';
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
@@ -65,7 +65,7 @@ describe('getWatchFiles', () => {
   });
 
   it('fail - exception', async () => {
-    const spy = vitest.spyOn(dfp, 'default').mockImplementationOnce(() => {
+    const spy = vitest.spyOn(dfp, 'getDatabaseFilePath').mockImplementationOnce(() => {
       throw new Error('raise error');
     });
 

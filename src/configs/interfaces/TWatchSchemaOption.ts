@@ -1,6 +1,6 @@
 import type { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
-import type IBaseOption from '#/configs/interfaces/IBaseOption';
-import type IResolvedPaths from '#/configs/interfaces/IResolvedPaths';
+import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
+import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
 
 interface IWatchSchemaOption {
@@ -39,8 +39,6 @@ interface IWatchSchemaOption {
 
 export type TWatchSchemaBaseOption = IWatchSchemaOption & IBaseOption;
 
-type TWatchSchemaOption = IWatchSchemaOption &
+export type TWatchSchemaOption = IWatchSchemaOption &
   IBaseOption &
   IResolvedPaths & { generatorOptionObject: Config; files: string[] };
-
-export default TWatchSchemaOption;

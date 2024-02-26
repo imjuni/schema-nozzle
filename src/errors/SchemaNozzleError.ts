@@ -1,6 +1,6 @@
 import type { TFailData } from '#/workers/interfaces/TWorkerToMasterMessage';
 
-export default class SchemaNozzleError extends Error {
+export class SchemaNozzleError extends Error {
   readonly data: Omit<TFailData, 'message' | 'stack'>;
 
   constructor(args: TFailData) {

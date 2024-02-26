@@ -1,7 +1,7 @@
 import { CE_EXPORTED_TYPE } from '#/compilers/interfaces/CE_EXPORTED_TYPE';
 import * as tsm from 'ts-morph';
 
-export default function getExportedType(
+export function getExportedType(
   exportedDeclarationNode: tsm.ExportedDeclarations,
 ): CE_EXPORTED_TYPE {
   if (exportedDeclarationNode.asKind(tsm.SyntaxKind.ClassDeclaration) != null) {

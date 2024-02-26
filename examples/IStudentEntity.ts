@@ -1,6 +1,6 @@
 import type { CE_MAJOR } from './const-enum/CE_MAJOR';
 
-export default interface IStudentEntity {
+export interface IStudentEntity {
   id: string;
   /** nick :)  */
   nick: string;

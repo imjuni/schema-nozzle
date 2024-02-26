@@ -1,11 +1,11 @@
-import getExportedFiles from '#/compilers/getExportedFiles';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import getSchemaFileContent from '#/modules/getSchemaFileContent';
-import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
-import isSourceFileInclude from '#/modules/isSourceFileInclude';
-import getRelativeCwd from '#/tools/getRelativeCwd';
+import { getExportedFiles } from '#/compilers/getExportedFiles';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getSchemaFileContent } from '#/modules/getSchemaFileContent';
+import { getSchemaFilterFilePath } from '#/modules/getSchemaFilterFilePath';
+import { isSourceFileInclude } from '#/modules/isSourceFileInclude';
+import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import ignore from 'ignore';
 import type * as tsm from 'ts-morph';
 
@@ -19,7 +19,7 @@ function getFilePaths(
   return option.files.length > 0 ? option.files : filePaths;
 }
 
-export default async function summarySchemaFiles(
+export async function summarySchemaFiles(
   project: tsm.Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'listFile' | 'files' | 'cwd'>

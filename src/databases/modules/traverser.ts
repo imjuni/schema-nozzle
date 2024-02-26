@@ -1,12 +1,12 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import getSchemaId from '#/databases/modules/getSchemaId';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getSchemaId } from '#/databases/modules/getSchemaId';
 import type { AnySchemaObject } from 'ajv';
 import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
 import type { getFileImportInfos } from 'ts-morph-short';
 
-export default function traverser(
+export function traverser(
   schema: AnySchemaObject,
   importInfos: ReturnType<typeof getFileImportInfos>,
   option:

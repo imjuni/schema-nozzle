@@ -1,7 +1,7 @@
-import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { Argv } from 'yargs';
 
-export default function deleteBuilder(argv: Argv) {
+export function deleteBuilder(argv: Argv) {
   argv.option('multiple', {
     describe: 'use checkbox with multiple selections',
     type: 'boolean',

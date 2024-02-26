@@ -1,6 +1,6 @@
 import type { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
-import type IBaseOption from '#/configs/interfaces/IBaseOption';
-import type IResolvedPaths from '#/configs/interfaces/IResolvedPaths';
+import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
+import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
 
 export interface IAddSchemaOption {
@@ -41,8 +41,6 @@ export interface IAddSchemaOption {
 
 export type TAddSchemaBaseOption = IAddSchemaOption & IBaseOption;
 
-type TAddSchemaOption = IAddSchemaOption &
+export type TAddSchemaOption = IAddSchemaOption &
   IBaseOption &
   IResolvedPaths & { generatorOptionObject: Config };
-
-export default TAddSchemaOption;

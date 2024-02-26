@@ -1,8 +1,6 @@
 import * as tsm from 'ts-morph';
 
-export default function getJsDocTags(
-  exportedDeclaration: tsm.ExportedDeclarations,
-): tsm.JSDocTag[] {
+export function getJsDocTags(exportedDeclaration: tsm.ExportedDeclarations): tsm.JSDocTag[] {
   if (exportedDeclaration.getKind() === tsm.SyntaxKind.TypeAliasDeclaration) {
     return exportedDeclaration
       .asKindOrThrow(tsm.SyntaxKind.TypeAliasDeclaration)

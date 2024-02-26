@@ -1,8 +1,8 @@
-import spinner from '#/cli/display/spinner';
-import getInitialOption from '#/configs/getInitialOption';
+import { spinner } from '#/cli/display/spinner';
+import { getInitialOption } from '#/configs/getInitialOption';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import type IInitOption from '#/configs/interfaces/IInitOption';
-import getCwd from '#/tools/getCwd';
+import type { IInitOption } from '#/configs/interfaces/IInitOption';
+import { getCwd } from '#/tools/getCwd';
 import consola from 'consola';
 import fastGlob from 'fast-glob';
 import inquirer from 'inquirer';
@@ -11,7 +11,7 @@ import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-export default async function initCommandSync(_option: IInitOption) {
+export async function initCommandSync(_option: IInitOption) {
   const cwd = getCwd(process.env);
   const tsconfigFilePaths = await fastGlob(['**/tsconfig.json', '**/tsconfig.*.json'], {
     cwd,

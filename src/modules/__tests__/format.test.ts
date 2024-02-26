@@ -1,5 +1,5 @@
 import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
-import getFormattedSchema from '#/modules/getFormattedSchema';
+import { getFormattedSchema } from '#/modules/getFormattedSchema';
 import { describe, expect, it } from 'vitest';
 
 describe('getFormattedSchema', () => {

@@ -1,14 +1,11 @@
-import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
+import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { TDatabase, TNullableDatabase } from '#/modules/interfaces/TDatabase';
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
 import { isPlainObject } from 'is-plain-object';
 import { settify } from 'my-easy-fp';
 
-export default function mergeDatabaseItems(
-  db: TNullableDatabase,
-  records: IDatabaseItem[],
-): TDatabase {
+export function mergeDatabaseItems(db: TNullableDatabase, records: IDatabaseItem[]): TDatabase {
   const newDb = records.reduce<TNullableDatabase>((aggregation, record) => {
     try {
       const prevRecord = aggregation[record.id];

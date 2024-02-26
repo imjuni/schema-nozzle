@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
-
 import type { TFailData } from '#/workers/interfaces/TWorkerToMasterMessage';
 import chalk from 'chalk';
 
-export default function showFailMessage(data: TFailData[]) {
+export function showFailMessage(data: TFailData[]) {
   console.log('\n');
 
   data.forEach((message) => {

@@ -1,10 +1,10 @@
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import type { Config, SchemaGenerator } from 'ts-json-schema-generator';
 import type { Project } from 'ts-morph';
 
-export default class NozzleContext {
+export class NozzleContext {
   #project: Project | undefined;
 
   #option: TAddSchemaOption | TRefreshSchemaOption | TWatchSchemaOption | undefined;

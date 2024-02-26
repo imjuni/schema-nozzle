@@ -1,7 +1,7 @@
-import getDiagnostics from '#/compilers/getDiagnostics';
-import getExportedFiles from '#/compilers/getExportedFiles';
-import getExportedTypes from '#/compilers/getExportedTypes';
-import getResolvedPaths from '#/configs/getResolvedPaths';
+import { getDiagnostics } from '#/compilers/getDiagnostics';
+import { getExportedFiles } from '#/compilers/getExportedFiles';
+import { getExportedTypes } from '#/compilers/getExportedTypes';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { startSepRemove } from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';

@@ -1,9 +1,9 @@
-import getExportedTypes from '#/compilers/getExportedTypes';
-import type IGetExportTypesReturnType from '#/compilers/interfaces/IGetExportTypesReturnType';
-import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
-import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
-import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import getRelativeCwd from '#/tools/getRelativeCwd';
+import { getExportedTypes } from '#/compilers/getExportedTypes';
+import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExportTypesReturnType';
+import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
+import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { type Ignore } from 'ignore';
 import { type Project } from 'ts-morph';
 
@@ -21,7 +21,7 @@ function applyOptionFilter(
   return exportedTypes.filter((exportedType) => option.types.includes(exportedType.identifier));
 }
 
-export default async function summarySchemaTypes(
+export async function summarySchemaTypes(
   project: Project,
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'types' | 'cwd'>
