@@ -13,7 +13,7 @@ import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
 import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import summarySchemaFiles from '#/modules/summarySchemaFiles';
 import summarySchemaTypes from '#/modules/summarySchemaTypes';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { last } from 'my-easy-fp';
 import path from 'path';
@@ -21,8 +21,6 @@ import type { SchemaGenerator } from 'ts-json-schema-generator';
 import { createGenerator } from 'ts-json-schema-generator';
 import type * as tsm from 'ts-morph';
 import type { LastArrayElement } from 'type-fest';
-
-const log = logger();
 
 export default class WatcherModule {
   #project: tsm.Project;
@@ -112,7 +110,7 @@ export default class WatcherModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
 
     this.#project.addSourceFileAtPath(resolved);
     option.files = [resolved];
@@ -144,7 +142,7 @@ export default class WatcherModule {
       .flat()
       .filter((item): item is IDatabaseItem => item != null);
 
-    log.trace(`add new: ${items.length}, ${items.map((item) => item.id).join(', ')}`);
+    consola.trace(`add new: ${items.length}, ${items.map((item) => item.id).join(', ')}`);
 
     return items;
   }
@@ -153,7 +151,7 @@ export default class WatcherModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
 
     // change event file is tsconfig.json terminate watch process
     const sourceFile = this.#project.getSourceFile(resolved);
@@ -169,7 +167,7 @@ export default class WatcherModule {
     const option = fastCopy(this.#option);
     const resolved = path.join(option.cwd, event.filePath);
 
-    log.trace(`received: ${resolved}`);
+    consola.trace(`received: ${resolved}`);
 
     const sourceFile = this.#project.getSourceFile(resolved);
 

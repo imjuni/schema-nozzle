@@ -111,3 +111,5 @@ dist/
 
 # swc
 .swc
+.DS_Store
+git-short.sh

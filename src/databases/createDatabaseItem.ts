@@ -10,8 +10,8 @@ import getFormattedSchema from '#/modules/getFormattedSchema';
 import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
 import type ISchemaExportInfo from '#/modules/interfaces/ISchemaExportInfo';
 import type ISchemaImportInfo from '#/modules/interfaces/ISchemaImportInfo';
-import logger from '#/tools/logger';
 import type { AnySchemaObject } from 'ajv';
+import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { settify } from 'my-easy-fp';
 import { getDirnameSync } from 'my-node-fp';
@@ -20,8 +20,6 @@ import path from 'path';
 import type * as tsm from 'ts-morph';
 import { getFileImportInfos } from 'ts-morph-short';
 import type { LastArrayElement } from 'type-fest';
-
-const log = logger();
 
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
@@ -87,7 +85,7 @@ export default function createDatabaseItem(
 
       traverser(definitionSchema, importInfos, option);
 
-      log.trace(`ID: ${definitionId}/ ${id}`);
+      consola.trace(`ID: ${definitionId}/ ${id}`);
 
       const definitionStringified = getFormattedSchema(option.format, definitionSchema);
       const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };

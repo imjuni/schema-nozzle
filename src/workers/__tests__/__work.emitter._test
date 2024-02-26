@@ -6,18 +6,27 @@ import NozzleEmitter from '#/workers/NozzleEmitter';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import fastCopy from 'fast-copy';
-import 'jest';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vitest,
+  type MockInstance,
+} from 'vitest';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';
 process.env.INIT_CWD = path.join(originPath, 'examples');
 const ctx = new NozzleContext();
 const data: {
-  exit: jest.SpyInstance | undefined;
-  send: jest.SpyInstance | undefined;
+  exit: MockInstance<any, any> | MockInstance<any, never> | undefined;
+  send: MockInstance<any, any> | undefined;
 } = { exit: undefined, send: undefined };
 
 beforeAll(async () => {
@@ -65,11 +74,11 @@ beforeEach(async () => {
     type: '*',
   });
 
-  data.exit = jest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
+  data.exit = vitest.spyOn(process, 'exit').mockImplementationOnce((_code?: number | undefined) => {
     throw new Error('Exit triggered');
   });
 
-  data.send = jest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
+  data.send = vitest.spyOn(process, 'send').mockImplementationOnce((_data: unknown) => {
     return true;
   });
 });
@@ -85,11 +94,11 @@ afterEach(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vitest.clearAllMocks();
 });
 
 describe('WorkEmitter - project', () => {
-  test('pass - option load emit', async () => {
+  it('pass - option load emit', async () => {
     const w = new NozzleEmitter({ context: ctx });
 
     w.emit(CE_WORKER_ACTION.OPTION_LOAD, {
@@ -97,12 +106,12 @@ describe('WorkEmitter - project', () => {
     } satisfies TPickMasterToWorkerMessage<typeof CE_WORKER_ACTION.OPTION_LOAD>['data']);
   });
 
-  test('pass - project emit', async () => {
+  it('pass - project emit', async () => {
     const w = new NozzleEmitter({ context: ctx });
     w.emit(CE_WORKER_ACTION.PROJECT_LOAD);
   });
 
-  test('fail', async () => {
+  it('fail', async () => {
     try {
       const w = new NozzleEmitter({ context: ctx });
       ctx.option.project = '';
@@ -113,7 +122,7 @@ describe('WorkEmitter - project', () => {
     }
   });
 
-  test('fail - 2', async () => {
+  it('fail - 2', async () => {
     try {
       const w = new NozzleEmitter();
       ctx.option.project = '';
@@ -124,7 +133,7 @@ describe('WorkEmitter - project', () => {
     }
   });
 
-  test('fail - 3', async () => {
+  it('fail - 3', async () => {
     try {
       const w = new NozzleEmitter();
       await w.loadProject();
@@ -133,12 +142,12 @@ describe('WorkEmitter - project', () => {
     }
   });
 
-  test('working', () => {
+  it('working', () => {
     const w = new NozzleEmitter();
     w.working({ command: CE_WORKER_ACTION.NOOP });
   });
 
-  test('diagonostic', async () => {
+  it('diagonostic', async () => {
     const w = new NozzleEmitter({ context: ctx });
     await w.diagonostic();
   });
@@ -154,7 +163,7 @@ describe('WorkEmitter - project', () => {
       ctx.option.skipError = true;
     });
 
-    test('diagonostic - skipError false', async () => {
+    it('diagonostic - skipError false', async () => {
       try {
         const nctx = new NozzleContext();
         nctx.project = ctx.project;

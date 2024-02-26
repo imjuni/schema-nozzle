@@ -4,9 +4,9 @@ import getSchemaFileContent from '#/modules/getSchemaFileContent';
 import * as fpm from '#/modules/getSchemaFilterFilePath';
 import summarySchemaFiles from '#/modules/summarySchemaFiles';
 import summarySchemaTypes from '#/modules/summarySchemaTypes';
-import 'jest';
 import path from 'path';
 import * as tsm from 'ts-morph';
+import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
 
 const getSchemaFilterFilePath = fpm.default;
 
@@ -31,7 +31,7 @@ beforeEach(() => {
 });
 
 describe('getSchemaListFilePath', () => {
-  test('undefined', async () => {
+  it('undefined', async () => {
     process.env.INIT_CWD = originPath;
     data.resolvedPaths = getResolvedPaths({
       project: path.join(originPath, 'tsconfig.json'),
@@ -41,13 +41,13 @@ describe('getSchemaListFilePath', () => {
     expect(result).toBeUndefined();
   });
 
-  test('resolved', async () => {
+  it('resolved', async () => {
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd, f);
     expect(result).toEqual(path.resolve(f));
   });
 
-  test('default', async () => {
+  it('default', async () => {
     process.env.INIT_CWD = path.resolve(path.join(process.env.INIT_CWD!, 'examples'));
     const f = path.join('.', 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const result = await getSchemaFilterFilePath(data.resolvedPaths.cwd);
@@ -56,7 +56,7 @@ describe('getSchemaListFilePath', () => {
 });
 
 describe('getSchemaFileContent', () => {
-  test('exist file', async () => {
+  it('exist file', async () => {
     const lines = await getSchemaFileContent(
       path.join(data.resolvedPaths.cwd, CE_DEFAULT_VALUE.LIST_FILE_NAME),
     );
@@ -65,7 +65,7 @@ describe('getSchemaFileContent', () => {
 });
 
 describe('summarySchemaFiles', () => {
-  test('files', async () => {
+  it('files', async () => {
     const filter = await summarySchemaFiles(data.project, {
       discriminator: 'add-schema',
       files: ['IProfessorEntity.ts'],
@@ -75,8 +75,8 @@ describe('summarySchemaFiles', () => {
     expect(filter.filter.ignores('IProfessorEntity.ts')).toBeTruthy();
   });
 
-  test('empty list file', async () => {
-    jest.spyOn(fpm, 'default').mockImplementationOnce(async () => undefined);
+  it('empty list file', async () => {
+    vitest.spyOn(fpm, 'default').mockImplementationOnce(async () => undefined);
 
     const filter = await summarySchemaFiles(data.project, {
       discriminator: 'refresh-schema',
@@ -88,7 +88,7 @@ describe('summarySchemaFiles', () => {
     expect(filter.filter.ignores('I18nDto.ts')).toBeTruthy();
   });
 
-  test('file hit test', async () => {
+  it('file hit test', async () => {
     const listFile = path.join(data.resolvedPaths.cwd, 'examples', CE_DEFAULT_VALUE.LIST_FILE_NAME);
     const filter = await summarySchemaFiles(data.project, {
       discriminator: 'add-schema',
@@ -102,7 +102,7 @@ describe('summarySchemaFiles', () => {
 });
 
 describe('summarySchemaTypes', () => {
-  test('empty types', async () => {
+  it('empty types', async () => {
     const r = await summarySchemaTypes(data.project, {
       discriminator: 'add-schema',
       types: [],
@@ -165,7 +165,7 @@ describe('summarySchemaTypes', () => {
     ]);
   });
 
-  test('types', async () => {
+  it('types', async () => {
     const r = await summarySchemaTypes(data.project, {
       discriminator: 'add-schema',
       types: [

@@ -5,12 +5,11 @@ import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
 import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
 import type { TWatchSchemaBaseOption } from '#/configs/interfaces/TWatchSchemaOption';
 import SchemaNozzleError from '#/errors/SchemaNozzleError';
-import WatcherClusterModule from '#/modules/WatcherClusterModule';
 import errorTrace from '#/modules/errorTrace';
 import getWatchFiles from '#/modules/getWatchFiles';
 import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
 import type IWatchEvent from '#/modules/interfaces/IWatchEvent';
-import logger from '#/tools/logger';
+import WatcherClusterModule from '#/modules/WatcherClusterModule';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import {
@@ -20,14 +19,13 @@ import {
 import workers from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
 import chokidar from 'chokidar';
+import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { atOrThrow, populate } from 'my-easy-fp';
 import cluster from 'node:cluster';
 import os from 'os';
-import { Subject, buffer, debounceTime, filter } from 'rxjs';
+import { buffer, debounceTime, filter, Subject } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
-
-const log = logger();
 
 export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOption) {
   if (baseOption.cliLogo) {
@@ -69,7 +67,7 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
 
   let reply = await workers.wait();
 
-  log.trace(`reply::: ${JSON.stringify(reply)}`);
+  consola.trace(`reply::: ${JSON.stringify(reply)}`);
 
   // master check project loading on worker
   if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
@@ -117,7 +115,7 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
 
   const watchFiles = await getWatchFiles(schemaFiles, option);
 
-  log.trace(`WatchFile: ${option.debounceTime}, ${watchFiles.join(', ')}`);
+  consola.trace(`WatchFile: ${option.debounceTime}, ${watchFiles.join(', ')}`);
 
   const wm = new WatcherClusterModule({ option, workerSize });
   const watchHandle = chokidar.watch(watchFiles, { cwd: option.cwd, ignoreInitial: true });
@@ -135,7 +133,7 @@ export default async function watchCommandCluster(baseOption: TWatchSchemaBaseOp
           resolve();
         }
 
-        log.trace('wait, wait ...');
+        consola.trace('wait, wait ...');
       }, 100);
     })
       .then(() => {

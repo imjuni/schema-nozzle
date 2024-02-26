@@ -6,15 +6,13 @@ import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
 import getCwd from '#/tools/getCwd';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import findUp from 'find-up';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import minimist from 'minimist';
 import { atOrThrow, atOrUndefined, isError, toArray } from 'my-easy-fp';
 import { existsSync, getDirnameSync } from 'my-node-fp';
-
-const log = logger();
 
 function getConfigObject(configFilePath: string): Record<string, string | undefined> {
   if (existsSync(configFilePath) === false) {
@@ -115,8 +113,8 @@ export default function preLoadConfig() {
   } catch (caught) {
     const err = isError(caught, new Error('unknown error raised'));
 
-    log.error(err);
-    log.error(err.stack);
+    consola.error(err);
+    consola.error(err.stack);
 
     return {};
   }

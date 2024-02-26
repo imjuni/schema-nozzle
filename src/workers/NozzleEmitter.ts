@@ -9,7 +9,6 @@ import getSchemaFilterFilePath from '#/modules/getSchemaFilterFilePath';
 import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
 import summarySchemaFiles from '#/modules/summarySchemaFiles';
 import summarySchemaTypes from '#/modules/summarySchemaTypes';
-import logger from '#/tools/logger';
 import NozzleContext from '#/workers/NozzleContext';
 import { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
@@ -22,6 +21,7 @@ import type {
   TPickPassWorkerToMasterTaskComplete,
 } from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { AnySchemaObject } from 'ajv';
+import consola from 'consola';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import ignore, { type Ignore } from 'ignore';
@@ -32,8 +32,6 @@ import { EventEmitter } from 'node:events';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import type { SetRequired } from 'type-fest';
-
-const log = logger();
 
 export default class NozzleEmitter extends EventEmitter {
   #context: NozzleContext;
@@ -163,6 +161,7 @@ export default class NozzleEmitter extends EventEmitter {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
   static terminate(this: void, code?: number) {
     process.exit(code ?? 0);
   }
@@ -249,7 +248,7 @@ export default class NozzleEmitter extends EventEmitter {
     this.filter = schemaFileFilter;
     this.files = filePaths;
 
-    log.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
+    consola.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
 
     // send message to master process
     process.send?.({
@@ -293,7 +292,7 @@ export default class NozzleEmitter extends EventEmitter {
     this.filter = schemaFileFilter;
     this.files = filePaths;
 
-    log.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
+    consola.trace(`Complete schema file summarying: ${JSON.stringify(this.files)}`);
 
     const exportedTypes = await summarySchemaTypes(
       this.#context.project,
@@ -579,7 +578,7 @@ export default class NozzleEmitter extends EventEmitter {
       const sourceFile = this.#context.project.getSourceFile(payload.filePath);
       this.#context.updateFiles([payload.filePath]);
 
-      log.trace(`watch source-file: ${payload.filePath}`);
+      consola.trace(`watch source-file: ${payload.filePath}`);
 
       if (sourceFile == null) {
         throw new Error(`Cannot found watch-file: ${payload.filePath}`);

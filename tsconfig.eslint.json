@@ -9,6 +9,7 @@
     ".eslintrc.cjs",
     "jest.config.cjs",
     "jest.config.js",
+    "vitest.config.ts",
     "prepublish.js"
   ],
   "exclude": ["**/node_modules/**", "**/dist/**/*", "**/.configs/**", "**/docs/**"]

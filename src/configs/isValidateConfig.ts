@@ -5,12 +5,10 @@ import type TDeleteSchemaOption from '#/configs/interfaces/TDeleteSchemaOption';
 import type TRefreshSchemaOption from '#/configs/interfaces/TRefreshSchemaOption';
 import type TTruncateSchemaOption from '#/configs/interfaces/TTruncateSchemaOption';
 import type TWatchSchemaOption from '#/configs/interfaces/TWatchSchemaOption';
-import logger from '#/tools/logger';
+import consola from 'consola';
 import { existsSync } from 'my-node-fp';
 import path from 'path';
 import type { Arguments } from 'yargs';
-
-const log = logger();
 
 const commands: string[] = [
   CE_COMMAND_LIST.ADD,
@@ -54,14 +52,14 @@ export default function isValidateConfig<
   const resolvedProject = path.isAbsolute(project) ? project : path.resolve(project);
 
   if (existsSync(resolvedProject) === false) {
-    log.error(`Cannot found project: ${resolvedProject}`);
+    consola.error(`Cannot found project: ${resolvedProject}`);
     throw new Error(`Cannot found project: ${resolvedProject}`);
   }
 
   if ('files' in argv && argv.files.length > 0) {
     const files = argv.files.map((file) => ({ file, exists: existsSync(file) }));
     const notExistFiles = files.filter((file) => file.exists === false);
-    log.error(`Cannot found files: ${notExistFiles.map((file) => file.file).join(', ')}`);
+    consola.error(`Cannot found files: ${notExistFiles.map((file) => file.file).join(', ')}`);
     throw new Error(`Cannot found files: ${notExistFiles.map((file) => file.file).join(', ')}`);
   }
 

@@ -5,13 +5,12 @@ name: ci
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ['master']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master']
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,12 +29,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - run: pnpm install
-      - run: pnpm run build
-      - run: pnpm run clean
       - run: pnpm run test
+      - run: pnpm run build
       - run: pnpm run clean
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  

@@ -1,9 +1,17 @@
 import getResolvedPaths from '#/configs/getResolvedPaths';
 import getSchemaGeneratorOption from '#/configs/getSchemaGeneratorOption';
 import fs from 'fs/promises';
-import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
+import { beforeEach, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock('my-node-fp', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const mod = await importOriginal<typeof import('my-node-fp')>();
+  return {
+    ...mod,
+  };
+});
 
 const originPath = process.env.INIT_CWD!;
 const data: { resolvedPaths: ReturnType<typeof getResolvedPaths> } = {} as any;
@@ -17,7 +25,7 @@ beforeEach(() => {
 });
 
 describe('getSchemaGeneratorOption', () => {
-  test('undefined', async () => {
+  it('undefined', async () => {
     const option = await getSchemaGeneratorOption({
       discriminator: 'add-schema',
       project: data.resolvedPaths.project,
@@ -39,7 +47,7 @@ describe('getSchemaGeneratorOption', () => {
     });
   });
 
-  test('option object', async () => {
+  it('option object', async () => {
     const option = await getSchemaGeneratorOption({
       discriminator: 'add-schema',
       project: data.resolvedPaths.project,
@@ -72,9 +80,9 @@ describe('getSchemaGeneratorOption', () => {
     });
   });
 
-  test('option from file', async () => {
-    jest.spyOn(mnf, 'exists').mockImplementationOnce(async () => true);
-    jest.spyOn(fs, 'readFile').mockImplementationOnce(async () =>
+  it('option from file', async () => {
+    vitest.spyOn(mnf, 'exists').mockImplementationOnce(async () => true);
+    vitest.spyOn(fs, 'readFile').mockImplementationOnce(async () =>
       Buffer.from(
         JSON.stringify({
           tsconfig: data.resolvedPaths.project,
@@ -112,8 +120,8 @@ describe('getSchemaGeneratorOption', () => {
     });
   });
 
-  test('option from file', async () => {
-    jest.spyOn(mnf, 'exists').mockImplementationOnce(async () => false);
+  it('option from file', async () => {
+    vitest.spyOn(mnf, 'exists').mockImplementationOnce(async () => false);
 
     try {
       await getSchemaGeneratorOption({

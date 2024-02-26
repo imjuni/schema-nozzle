@@ -5,12 +5,12 @@ import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
 import createDatabaseItem from '#/databases/createDatabaseItem';
 import createJSONSchema from '#/modules/createJSONSchema';
 import getData from '#/tools/__tests__/test-tools/getData';
-import 'jest';
 import 'jsonc-parser';
 import path from 'path';
 import { createGenerator } from 'ts-json-schema-generator';
 import * as tsm from 'ts-morph';
 import type { AsyncReturnType, LastArrayElement } from 'type-fest';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 const originPath = process.env.INIT_CWD!;
 const data: {
@@ -50,7 +50,7 @@ beforeEach(async () => {
 });
 
 describe('createDatabaseItem', () => {
-  test('without definitions', async () => {
+  it('without definitions', async () => {
     const schema = createJSONSchema({
       filePath: path.join(originPath, 'examples', 'const-enum', 'CE_MAJOR.ts'),
       exportedType: 'CE_MAJOR',
@@ -76,7 +76,7 @@ describe('createDatabaseItem', () => {
     );
   });
 
-  test('with definitions', async () => {
+  it('with definitions', async () => {
     const schema = createJSONSchema({
       filePath: path.join(originPath, 'examples', 'IStudentDto.ts'),
       exportedType: 'IStudentDto',
@@ -103,7 +103,7 @@ describe('createDatabaseItem', () => {
     );
   });
 
-  test('import', async () => {
+  it('import', async () => {
     const schema = createJSONSchema({
       filePath: path.join(originPath, 'examples', 'ISlackMessage.ts'),
       exportedType: 'ISlackMessageBody',

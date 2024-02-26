@@ -4,9 +4,9 @@ import getDtoName from '#/databases/modules/getDtoName';
 import getSchemaId from '#/databases/modules/getSchemaId';
 import isRelativeDtoPath from '#/databases/modules/isRelativeDtoPath';
 import * as env from '#/modules/__tests__/env';
-import 'jest';
 import path from 'path';
 import type { IFileImportInfo } from 'ts-morph-short';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 const originPath = process.env.INIT_CWD!;
 const data: {

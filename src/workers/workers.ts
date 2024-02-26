@@ -1,19 +1,17 @@
 import progress from '#/cli/display/progress';
 import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import type IDatabaseItem from '#/modules/interfaces/IDatabaseItem';
-import logger from '#/tools/logger';
 import type { CE_MASTER_ACTION } from '#/workers/interfaces/CE_MASTER_ACTION';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type TMasterToWorkerMessage from '#/workers/interfaces/TMasterToWorkerMessage';
 import type TWorkerToMasterMessage from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { IFailWorkerToMasterTaskComplete } from '#/workers/interfaces/TWorkerToMasterMessage';
 import type { Worker } from 'cluster';
+import consola from 'consola';
 import dayjs from 'dayjs';
 import fastCopy from 'fast-copy';
 import { atOrUndefined } from 'my-easy-fp';
 import { EventEmitter } from 'node:events';
-
-const log = logger();
 
 class Workers extends EventEmitter {
   #workers: Worker[];
@@ -53,7 +51,7 @@ class Workers extends EventEmitter {
     if (this.#finished - 1 >= 0) {
       this.#finished -= 1;
     } else {
-      log.trace(`invalid #finished: ${this.#finished}`);
+      consola.trace(`invalid #finished: ${this.#finished}`);
       this.#finished = 0;
     }
   }
@@ -67,7 +65,7 @@ class Workers extends EventEmitter {
 
       this.#reply.push(message.data);
       this.dec();
-      log.trace(`received: ${this.finished} ${message.command}>${message.data.command}`);
+      consola.trace(`received: ${this.finished} ${message.command}>${message.data.command}`);
     });
 
     this.#workers.push(worker);
@@ -80,7 +78,9 @@ class Workers extends EventEmitter {
       const pos = index % Object.keys(this.#workers).length;
       this.#workers[pos]?.send(job);
       this.inc();
-      log.trace(`send[${this.#finished}][${index}/${arr.length}]: ${this.#workers[pos]?.id ?? ''}`);
+      consola.trace(
+        `send[${this.#finished}][${index}/${arr.length}]: ${this.#workers[pos]?.id ?? ''}`,
+      );
     });
   }
 
@@ -90,7 +90,7 @@ class Workers extends EventEmitter {
     this.#workers.forEach((worker, index, arr) => {
       worker.send(job);
       this.inc();
-      log.trace(`sendAll[${this.#finished}][${index}/${arr.length}]: ${worker.id}`);
+      consola.trace(`sendAll[${this.#finished}][${index}/${arr.length}]: ${worker.id}`);
     });
   }
 

@@ -1,10 +1,8 @@
-import logger from '#/tools/logger';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import type { TPickPassWorkerToMasterTaskComplete } from '#/workers/interfaces/TWorkerToMasterMessage';
+import consola from 'consola';
 import { chunk } from 'my-easy-fp';
-
-const log = logger();
 
 export default function createJSONSchemaCommand(
   size: number,
@@ -12,11 +10,11 @@ export default function createJSONSchemaCommand(
     typeof CE_WORKER_ACTION.SUMMARY_SCHEMA_TYPES
   >['data'],
 ) {
-  log.trace(`worker-size: ${size}/ data-size: ${exportedTypes.length}`);
+  consola.trace(`worker-size: ${size}/ data-size: ${exportedTypes.length}`);
 
   // use `CREATE_JSON_SCHEMA` command
   if (size * 2 > exportedTypes.length) {
-    log.trace(`using command > ${CE_WORKER_ACTION.CREATE_JSON_SCHEMA}`);
+    consola.trace(`using command > ${CE_WORKER_ACTION.CREATE_JSON_SCHEMA}`);
 
     return exportedTypes.map((exportedType) => {
       return {
@@ -26,7 +24,7 @@ export default function createJSONSchemaCommand(
     });
   }
 
-  log.trace(`using command > ${CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK}`);
+  consola.trace(`using command > ${CE_WORKER_ACTION.CREATE_JSON_SCHEMA_BULK}`);
 
   // use `CREATE_JSON_SCHEMA_BULK` command
   const chunkSize = Math.ceil(exportedTypes.length / size);

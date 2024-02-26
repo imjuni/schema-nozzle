@@ -2,9 +2,9 @@ import getResolvedPaths from '#/configs/getResolvedPaths';
 import type TAddSchemaOption from '#/configs/interfaces/TAddSchemaOption';
 import * as env from '#/modules/__tests__/env';
 import NozzleContext from '#/workers/NozzleContext';
-import 'jest';
 import path from 'path';
 import type * as tsm from 'ts-morph';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 const originPath = process.cwd();
 process.env.USE_INIT_CWD = 'true';
@@ -25,14 +25,14 @@ beforeEach(() => {
 });
 
 describe('NozzleContext', () => {
-  test('project', async () => {
+  it('project', async () => {
     const ctx = new NozzleContext();
     ctx.project = {} as any;
 
     expect(ctx.project).toBeTruthy();
   });
 
-  test('project - empty', async () => {
+  it('project - empty', async () => {
     const ctx = new NozzleContext();
 
     try {
@@ -42,25 +42,25 @@ describe('NozzleContext', () => {
     }
   });
 
-  test('option - add', async () => {
+  it('option - add', async () => {
     const ctx = new NozzleContext();
     ctx.option = env.addCmdOption;
     expect(ctx.option).toBeTruthy();
   });
 
-  test('option - refresh', async () => {
+  it('option - refresh', async () => {
     const ctx = new NozzleContext();
     ctx.option = env.refreshCmdOption;
     expect(ctx.option).toBeTruthy();
   });
 
-  test('option - watch', async () => {
+  it('option - watch', async () => {
     const ctx = new NozzleContext();
     ctx.option = { ...env.addCmdOption, discriminator: 'watch-schema', debounceTime: 1000 };
     expect(ctx.option).toBeTruthy();
   });
 
-  test('option - empty', async () => {
+  it('option - empty', async () => {
     const ctx = new NozzleContext();
 
     try {
@@ -70,13 +70,13 @@ describe('NozzleContext', () => {
     }
   });
 
-  test('generatorOption', async () => {
+  it('generatorOption', async () => {
     const ctx = new NozzleContext();
     ctx.generatorOption = {};
     expect(ctx.generatorOption).toBeTruthy();
   });
 
-  test('generatorOption - empty', async () => {
+  it('generatorOption - empty', async () => {
     const ctx = new NozzleContext();
 
     try {
@@ -86,19 +86,19 @@ describe('NozzleContext', () => {
     }
   });
 
-  test('generatorOption', async () => {
+  it('generatorOption', async () => {
     const ctx = new NozzleContext();
     ctx.generatorOption = {};
     expect(ctx.generatorOption).toBeTruthy();
   });
 
-  test('generator', async () => {
+  it('generator', async () => {
     const ctx = new NozzleContext();
     ctx.generator = {} as any;
     expect(ctx.generator).toBeTruthy();
   });
 
-  test('generator - empty', async () => {
+  it('generator - empty', async () => {
     const ctx = new NozzleContext();
 
     try {
@@ -108,14 +108,14 @@ describe('NozzleContext', () => {
     }
   });
 
-  test('updateFiles', async () => {
+  it('updateFiles', async () => {
     const ctx = new NozzleContext();
     ctx.option = env.addCmdOption;
     ctx.updateFiles(['a', 'b']);
     expect(ctx.option.files).toEqual(['a', 'b']);
   });
 
-  test('updateFiles - empty', async () => {
+  it('updateFiles - empty', async () => {
     const ctx = new NozzleContext();
 
     try {
@@ -125,14 +125,14 @@ describe('NozzleContext', () => {
     }
   });
 
-  test('updateTypes', async () => {
+  it('updateTypes', async () => {
     const ctx = new NozzleContext();
     ctx.option = env.addCmdOption;
     ctx.updateTypes(['a', 'b']);
     expect(ctx.option.types).toEqual(['a', 'b']);
   });
 
-  test('updateTypes - empty', async () => {
+  it('updateTypes - empty', async () => {
     const ctx = new NozzleContext();
 
     try {

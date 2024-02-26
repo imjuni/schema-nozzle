@@ -11,7 +11,6 @@ import openDatabase from '#/databases/openDatabase';
 import saveDatabase from '#/databases/saveDatabase';
 import SchemaNozzleError from '#/errors/SchemaNozzleError';
 import createJSONSchemaCommand from '#/modules/createJSONSchemaCommand';
-import logger from '#/tools/logger';
 import { CE_WORKER_ACTION } from '#/workers/interfaces/CE_WORKER_ACTION';
 import type { TPickMasterToWorkerMessage } from '#/workers/interfaces/TMasterToWorkerMessage';
 import {
@@ -22,13 +21,12 @@ import {
 } from '#/workers/interfaces/TWorkerToMasterMessage';
 import workers from '#/workers/workers';
 import { showLogo } from '@maeum/cli-logo';
+import consola from 'consola';
 import { atOrThrow, isError, populate, sleep } from 'my-easy-fp';
 import { exists } from 'my-node-fp';
 import cluster from 'node:cluster';
 import fs from 'node:fs';
 import os from 'node:os';
-
-const log = logger();
 
 export default async function refreshCommandCluster(baseOption: TRefreshSchemaBaseOption) {
   try {
@@ -59,8 +57,8 @@ export default async function refreshCommandCluster(baseOption: TRefreshSchemaBa
 
     option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
-    log.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
-    log.trace(`${JSON.stringify(option)}`);
+    consola.trace(`cwd: ${resolvedPaths.cwd}/${resolvedPaths.project}`);
+    consola.trace(`${JSON.stringify(option)}`);
 
     workers.broadcast({
       command: CE_WORKER_ACTION.OPTION_LOAD,
@@ -75,7 +73,7 @@ export default async function refreshCommandCluster(baseOption: TRefreshSchemaBa
 
     let reply = await workers.wait(option.generatorTimeout);
 
-    log.trace(`reply::: ${JSON.stringify(reply)}`);
+    consola.trace(`reply::: ${JSON.stringify(reply)}`);
 
     // master check project loading on worker
     if (reply.data.some((workerReply) => workerReply.result === 'fail')) {
@@ -175,7 +173,7 @@ export default async function refreshCommandCluster(baseOption: TRefreshSchemaBa
 
         await saveDatabase(option, newDb);
       } else {
-        log.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
+        consola.trace(`reply::: ${JSON.stringify(passes.map((items) => items.data).flat())}`);
 
         const items = passes as Extract<
           TPassWorkerToMasterTaskComplete,

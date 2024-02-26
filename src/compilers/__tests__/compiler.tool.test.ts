@@ -2,10 +2,18 @@ import getExportedName from '#/compilers/getExportedName';
 import getJsDocTags from '#/compilers/getJsDocTags';
 import getTsProject from '#/compilers/getTsProject';
 import getResolvedPaths from '#/configs/getResolvedPaths';
-import 'jest';
 import * as mnf from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';
+import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
+
+vitest.mock('my-node-fp', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const mod = await importOriginal<typeof import('my-node-fp')>();
+  return {
+    ...mod,
+  };
+});
 
 const originPath = process.env.INIT_CWD!;
 const data: {
@@ -28,12 +36,12 @@ beforeEach(() => {
 });
 
 describe('getTsProject', () => {
-  test('pass', async () => {
+  it('pass', async () => {
     const project = await getTsProject({ tsConfigFilePath: data.resolvedPaths.project });
     expect(project).toBeTruthy();
   });
 
-  test('fail', async () => {
+  it('fail', async () => {
     try {
       await getTsProject({
         tsConfigFilePath: path.join(originPath, 'examples', '2'),
@@ -43,8 +51,8 @@ describe('getTsProject', () => {
     }
   });
 
-  test('fail - exception', async () => {
-    const spy = jest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
+  it('fail - exception', async () => {
+    const spy = vitest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
       throw new Error('raise error');
     });
     try {
@@ -80,7 +88,7 @@ describe('getExportedName', () => {
     data.project.createSourceFile('c7.ts', `export const { a, b }`);
   });
 
-  test('normal', () => {
+  it('normal', () => {
     const d1 = data.project.getSourceFile('c1.ts')!.getExportedDeclarations();
 
     const r = Array.from(d1.values())
@@ -89,7 +97,7 @@ describe('getExportedName', () => {
     expect(r).toMatchObject(['ff', 'a', 'A', 'ar', 'IA', 'TA', 'EA']);
   });
 
-  test('array literal', () => {
+  it('array literal', () => {
     try {
       const d1 = data.project.getSourceFile('c2.ts')!.getExportedDeclarations();
       Array.from(d1.values())
@@ -100,7 +108,7 @@ describe('getExportedName', () => {
     }
   });
 
-  test('object literal', () => {
+  it('object literal', () => {
     try {
       const d1 = data.project.getSourceFile('c3.ts')!.getExportedDeclarations();
       Array.from(d1.values())
@@ -111,7 +119,7 @@ describe('getExportedName', () => {
     }
   });
 
-  test('exception', () => {
+  it('exception', () => {
     try {
       const d1 = data.project.getSourceFile('c5.ts')!.getExportedDeclarations();
 
@@ -123,7 +131,7 @@ describe('getExportedName', () => {
     }
   });
 
-  test('binding element', () => {
+  it('binding element', () => {
     try {
       const d1 = data.project.getSourceFile('c6.ts')!.getExportedDeclarations();
       Array.from(d1.values())
@@ -134,7 +142,7 @@ describe('getExportedName', () => {
     }
   });
 
-  test('object literal expression', () => {
+  it('object literal expression', () => {
     try {
       const d1 = data.project.getSourceFile('c7.ts')!.getExportedDeclarations();
       Array.from(d1.values())
@@ -167,7 +175,7 @@ describe('getJsDocTags', () => {
     data.project.createSourceFile('tt1.ts', sourceText);
   });
 
-  test('all', () => {
+  it('all', () => {
     const d1 = data.project.getSourceFile('tt1.ts')!.getExportedDeclarations();
     const tags = Array.from(d1.values())
       .flat()
