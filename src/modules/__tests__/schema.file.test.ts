@@ -1,5 +1,5 @@
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import { getSchemaFileContent } from '#/modules/getSchemaFileContent';
 import * as fpm from '#/modules/getSchemaFilterFilePath';
 import { summarySchemaFiles } from '#/modules/summarySchemaFiles';

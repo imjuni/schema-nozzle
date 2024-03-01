@@ -1,5 +1,4 @@
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
-import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
@@ -16,29 +15,33 @@ export const baseOption: IBaseOption = {
 
 export const addCmdOption: TAddSchemaOption = {
   ...baseOption,
+  projectDir: '.',
   discriminator: 'add-schema',
   files: [],
   multiple: false,
   generatorOption: {},
   cwd: '',
   listFile: '',
+  include: [],
+  exclude: [],
   includePath: false,
   format: CE_OUTPUT_FORMAT.JSON,
   generatorOptionObject: {},
-  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const refreshCmdOption: TRefreshSchemaOption = {
   ...baseOption,
+  projectDir: '.',
   discriminator: 'refresh-schema',
   generatorOption: {},
   format: CE_OUTPUT_FORMAT.JSON,
   cwd: '',
   listFile: '',
+  include: [],
+  exclude: [],
   files: [],
   includePath: false,
   generatorOptionObject: {},
-  generatorTimeout: CE_DEFAULT_VALUE.DEFAULT_TASK_WAIT_SECOND * 3,
 };
 
 export const deleteCmdOption: TDeleteSchemaOption = {

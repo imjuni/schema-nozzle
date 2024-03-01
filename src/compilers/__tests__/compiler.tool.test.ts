@@ -1,8 +1,6 @@
 import { getExportedName } from '#/compilers/getExportedName';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
-import { getTsProject } from '#/compilers/getTsProject';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import * as mnf from 'my-node-fp';
 import path from 'path';
 import * as tsm from 'ts-morph';
 import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
@@ -32,37 +30,6 @@ beforeEach(() => {
   data.resolvedPaths = getResolvedPaths({
     project: path.join(originPath, 'examples', 'tsconfig.json'),
     output: path.join(originPath, 'examples'),
-  });
-});
-
-describe('getTsProject', () => {
-  it('pass', async () => {
-    const project = await getTsProject({ tsConfigFilePath: data.resolvedPaths.project });
-    expect(project).toBeTruthy();
-  });
-
-  it('fail', async () => {
-    try {
-      await getTsProject({
-        tsConfigFilePath: path.join(originPath, 'examples', '2'),
-      });
-    } catch (err) {
-      expect(err).toBeTruthy();
-    }
-  });
-
-  it('fail - exception', async () => {
-    const spy = vitest.spyOn(mnf, 'exists').mockImplementationOnce(() => {
-      throw new Error('raise error');
-    });
-    try {
-      await getTsProject({
-        tsConfigFilePath: path.join(originPath, 'examples', '2'),
-      });
-    } catch (err) {
-      spy.mockRestore();
-      expect(err).toBeTruthy();
-    }
   });
 });
 

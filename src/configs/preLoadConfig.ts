@@ -1,5 +1,5 @@
 import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import type { IInitOption } from '#/configs/interfaces/IInitOption';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';

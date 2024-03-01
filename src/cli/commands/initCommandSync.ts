@@ -1,6 +1,6 @@
 import { spinner } from '#/cli/display/spinner';
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getInitialOption } from '#/configs/getInitialOption';
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import type { IInitOption } from '#/configs/interfaces/IInitOption';
 import { getCwd } from '#/tools/getCwd';
 import consola from 'consola';

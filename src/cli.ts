@@ -4,11 +4,9 @@ import { deleteBuilder } from '#/cli/builders/deleteBuilder';
 import { refreshBuilder } from '#/cli/builders/refreshBuilder';
 import { truncateBuilder } from '#/cli/builders/truncateBuilder';
 import { watchBuilder } from '#/cli/builders/watchBuilder';
-import { addCommandCluster } from '#/cli/commands/addCommandCluster';
 import { addCommandSync } from '#/cli/commands/addCommandSync';
 import { deleteCommandSync } from '#/cli/commands/deleteCommandSync';
 import { initCommandSync } from '#/cli/commands/initCommandSync';
-import { refreshCommandCluster } from '#/cli/commands/refreshCommandCluster';
 import { refreshCommandSync } from '#/cli/commands/refreshCommandSync';
 import { truncateCommandSync } from '#/cli/commands/truncateCommandSync';
 import { watchCommandSync } from '#/cli/commands/watchCommandSync';
@@ -24,8 +22,6 @@ import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption
 import { isValidateConfig } from '#/configs/isValidateConfig';
 import { preLoadConfig } from '#/configs/preLoadConfig';
 import { withDefaultOption } from '#/configs/withDefaultOption';
-import { worker } from '#/workers/worker';
-import cluster from 'cluster';
 import consola from 'consola';
 import { isError } from 'my-easy-fp';
 import yargs, { type Arguments, type CommandModule } from 'yargs';
@@ -42,11 +38,7 @@ const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
     spinner.isEnable = true;
     progress.isEnable = true;
 
-    if (process.env.SYNC_MODE === 'true') {
-      await addCommandSync(argv);
-    } else {
-      await addCommandCluster(argv);
-    }
+    await addCommandSync(argv);
   },
 };
 
@@ -74,12 +66,7 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
     progress.isEnable = true;
 
     const option = await withDefaultOption(argv);
-
-    if (process.env.SYNC_MODE === 'true') {
-      await refreshCommandSync(option);
-    } else {
-      await refreshCommandCluster(option);
-    }
+    await refreshCommandSync(option);
   },
 };
 
@@ -125,69 +112,29 @@ const watchCmd: CommandModule<TWatchSchemaOption, TWatchSchemaOption> = {
   },
 };
 
-if (process.env.SYNC_MODE === 'true') {
-  const parser = yargs(process.argv.slice(2));
+const parser = yargs(process.argv.slice(2));
 
-  parser
-    .command(addCmd as CommandModule<unknown, TAddSchemaOption>)
-    .command(deleteCmd as CommandModule<unknown, TDeleteSchemaOption>)
-    .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
-    .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
-    .command(initCmd as CommandModule<unknown, IInitOption>)
-    .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
-    .check(isValidateConfig as TValidator)
-    .recommendCommands()
-    .demandCommand(1, 1)
-    .config(preLoadConfig())
-    .help();
+parser
+  .command(addCmd as CommandModule<unknown, TAddSchemaOption>)
+  .command(deleteCmd as CommandModule<unknown, TDeleteSchemaOption>)
+  .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
+  .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
+  .command(initCmd as CommandModule<unknown, IInitOption>)
+  .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
+  .check(isValidateConfig as TValidator)
+  .recommendCommands()
+  .demandCommand(1, 1)
+  .config(preLoadConfig())
+  .help();
 
-  const handler = async () => {
-    await parser.argv;
-  };
+const handler = async () => {
+  await parser.argv;
+};
 
-  handler().catch((caught) => {
-    const err = isError(caught, new Error('unknown error raised'));
-    consola.error(err.message);
-    consola.error(err.stack);
+handler().catch((caught) => {
+  const err = isError(caught, new Error('unknown error raised'));
+  consola.error(err.message);
+  consola.error(err.stack);
 
-    process.exit(1);
-  });
-} else {
-  if (cluster.isPrimary) {
-    const parser = yargs(process.argv.slice(2));
-
-    parser
-      .command(addCmd as CommandModule<unknown, TAddSchemaOption>)
-      .command(deleteCmd as CommandModule<unknown, TDeleteSchemaOption>)
-      .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
-      .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
-      .command(initCmd as CommandModule<unknown, IInitOption>)
-      .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
-      .check(isValidateConfig as TValidator)
-      .recommendCommands()
-      .demandCommand(1, 1)
-      .config(preLoadConfig())
-      .help();
-
-    const handler = async () => {
-      await parser.argv;
-    };
-
-    handler().catch((caught) => {
-      const err = isError(caught, new Error('unknown error raised'));
-      consola.error(err.message);
-      consola.error(err.stack);
-
-      process.exit(1);
-    });
-  }
-
-  if (cluster.isWorker) {
-    worker().catch((caught) => {
-      const err = isError(caught, new Error('unknown error raised'));
-      consola.error(err.message);
-      consola.error(err.stack);
-      process.exit(1);
-    });
-  }
-}
+  process.exit(1);
+});

@@ -1,4 +1,4 @@
-import type { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import type { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
 import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
@@ -15,11 +15,8 @@ interface IRefreshSchemaOption {
    * */
   format: CE_OUTPUT_FORMAT;
 
-  /** target list filename */
-  listFile?: string;
-
-  /** max worker count */
-  maxWorkers?: number;
+  include: string[];
+  exclude: string[];
 
   /** specify the root folder within your schema path */
   rootDir?: string;
@@ -29,9 +26,6 @@ interface IRefreshSchemaOption {
 
   /** ts-json-schema-generator option file path */
   generatorOption?: string | Config;
-
-  /** ts-json-schema-generator timeout: default 90 seconds */
-  generatorTimeout: number;
 
   /** truncate previous database file */
   truncate?: boolean;

@@ -16,6 +16,7 @@ export function getResolvedPaths(
   const project = path.isAbsolute(option.project)
     ? path.resolve(option.project)
     : path.resolve(path.join(cwd, option.project));
+  const projectDir = getDirnameSync(project);
 
   const getOutputPathHandler = () => {
     if (option.output != null) {
@@ -41,5 +42,5 @@ export function getResolvedPaths(
     return undefined;
   };
 
-  return { project, cwd, output: getOutputPathHandler(), rootDir: getRootDirHandler() };
+  return { project, projectDir, cwd, output: getOutputPathHandler(), rootDir: getRootDirHandler() };
 }

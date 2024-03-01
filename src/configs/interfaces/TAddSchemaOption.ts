@@ -1,4 +1,4 @@
-import type { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import type { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
 import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
@@ -21,6 +21,9 @@ export interface IAddSchemaOption {
   /** Specify whether to include the DTO path in the schema ID */
   includePath?: boolean;
 
+  include: string[];
+  exclude: string[];
+
   /**
    * json-schema save format
    * * json: json object
@@ -29,14 +32,8 @@ export interface IAddSchemaOption {
    * */
   format: CE_OUTPUT_FORMAT;
 
-  /** max worker count */
-  maxWorkers?: number;
-
   /** ts-json-schema-generator option file path */
   generatorOption?: string | Config;
-
-  /** ts-json-schema-generator timeout: default 90 seconds */
-  generatorTimeout: number;
 }
 
 export type TAddSchemaBaseOption = IAddSchemaOption & IBaseOption;

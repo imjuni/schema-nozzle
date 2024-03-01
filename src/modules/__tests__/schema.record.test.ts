@@ -1,7 +1,7 @@
 import type { getExportedTypes } from '#/compilers/getExportedTypes';
+import { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
-import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
 import { createJSONSchema } from '#/modules/createJSONSchema';
 import { getData } from '#/tools/__tests__/test-tools/getData';

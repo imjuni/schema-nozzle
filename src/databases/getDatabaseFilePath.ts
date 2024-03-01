@@ -1,4 +1,4 @@
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
