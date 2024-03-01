@@ -36,7 +36,6 @@ export function createJSONSchema(
 ): PassFailEither<Error, { filePath: string; exportedType: string; schema: AnySchemaObject }> {
   try {
     const generator = getGenerator(args);
-
     const schema: AnySchemaObject = generator.createSchema(args.exportedType);
 
     return pass({

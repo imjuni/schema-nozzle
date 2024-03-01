@@ -1,4 +1,4 @@
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { exists } from 'my-node-fp';
 import path from 'path';
 

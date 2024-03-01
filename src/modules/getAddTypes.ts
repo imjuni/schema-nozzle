@@ -1,6 +1,6 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
-import { getAddMultipleTypesFromPrompt } from '#/modules/getAddMultipleTypesFromPrompt';
-import { getAddSingleTypesFromPrompt } from '#/modules/getAddSingleTypesFromPrompt';
+import { getAddMultipleTypesFromPrompt } from '#/modules/prompts/getAddMultipleTypesFromPrompt';
+import { getAddSingleTypesFromPrompt } from '#/modules/prompts/getAddSingleTypesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import type { LastArrayElement } from 'type-fest';

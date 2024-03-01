@@ -3,8 +3,6 @@ import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExpor
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
-import { getRelativeCwd } from '#/tools/getRelativeCwd';
-import { type Ignore } from 'ignore';
 import { type Project } from 'ts-morph';
 
 function applyOptionFilter(
@@ -23,37 +21,33 @@ function applyOptionFilter(
 
 export async function summarySchemaTypes(
   project: Project,
+  schemaFilePaths: string[],
   option:
     | Pick<TAddSchemaOption, 'discriminator' | 'types' | 'cwd'>
     | Pick<TRefreshSchemaOption, 'discriminator' | 'types' | 'cwd'>
     | Pick<TWatchSchemaOption, 'discriminator' | 'types' | 'cwd'>,
-  filter?: Ignore,
 ) {
   // stage01. Extract sll exported types
-  const exportedTypes = getExportedTypes(project);
+  const exportedTypes = getExportedTypes(project, schemaFilePaths);
 
   // stage02. apply type name filter in option
   const optionFilteredExportedTypes = applyOptionFilter(exportedTypes, option);
 
-  // stage03. apply file name filter
-  const filteredExportedTypes = optionFilteredExportedTypes.filter(
-    (exportedType) => filter?.ignores(getRelativeCwd(option.cwd, exportedType.filePath)) ?? true,
-  );
-
-  // stage04. dedupe same item
-  const exportedTypeMap = filteredExportedTypes
+  // stage03. dedupe same item
+  const exportedTypeMap = optionFilteredExportedTypes
     .map((exportedType) => {
       return {
         identifier: exportedType.identifier,
         filePath: exportedType.filePath,
       };
     })
-    .reduce<Record<string, Pick<IGetExportTypesReturnType, 'identifier' | 'filePath'>>>(
+    .reduce<Map<string, Pick<IGetExportTypesReturnType, 'identifier' | 'filePath'>>>(
       (aggregation, item) => {
-        return { ...aggregation, [`${item.identifier}://${item.filePath}`]: item };
+        aggregation.set(`${item.identifier}://${item.filePath}`, item);
+        return aggregation;
       },
-      {},
+      new Map<string, Pick<IGetExportTypesReturnType, 'identifier' | 'filePath'>>(),
     );
 
-  return Object.values(exportedTypeMap);
+  return Array.from(exportedTypeMap.values());
 }

@@ -1,5 +1,5 @@
+import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import { CE_DEFAULT_VALUE } from '#/configs/interfaces/CE_DEFAULT_VALUE';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
 import { openDatabase } from '#/databases/openDatabase';

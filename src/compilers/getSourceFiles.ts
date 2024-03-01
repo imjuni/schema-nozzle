@@ -20,7 +20,7 @@ export function getSourceFiles({
 
     return pass(filteredSourceFiles);
   } catch (caught) {
-    const err = isError(caught) ?? new Error('unknown error raised');
+    const err = isError(caught, new Error('unknown error raised'));
     return fail(err);
   }
 }

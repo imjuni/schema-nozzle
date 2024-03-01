@@ -1,4 +1,4 @@
-import { CE_OUTPUT_FORMAT } from '#/configs/interfaces/CE_OUTPUT_FORMAT';
+import { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import { getFormattedSchema } from '#/modules/getFormattedSchema';
 import { describe, expect, it } from 'vitest';
 

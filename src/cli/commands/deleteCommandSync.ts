@@ -1,6 +1,5 @@
 import { spinner } from '#/cli/display/spinner';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
-import { getTsProject } from '#/compilers/getTsProject';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
@@ -11,6 +10,7 @@ import type { TDatabase } from '#/modules/interfaces/TDatabase';
 import { showLogo } from '@maeum/cli-logo';
 import fastCopy from 'fast-copy';
 import { isError } from 'my-easy-fp';
+import { getTypeScriptProject } from 'ts-morph-short';
 
 export async function deleteCommandSync(baseOption: TDeleteSchemaOption) {
   try {
@@ -28,7 +28,7 @@ export async function deleteCommandSync(baseOption: TDeleteSchemaOption) {
     spinner.start('TypeScript project loading, ...');
 
     const resolvedPaths = getResolvedPaths(baseOption);
-    const project = await getTsProject({ tsConfigFilePath: resolvedPaths.project });
+    const project = getTypeScriptProject(resolvedPaths.project);
 
     spinner.stop('TypeScript project load success', 'succeed');
 

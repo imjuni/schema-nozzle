@@ -1,6 +1,6 @@
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
-import { getDeleteTypesFromPrompt } from '#/modules/getDeleteTypesFromPrompt';
 import type { TNullableDatabase } from '#/modules/interfaces/TDatabase';
+import { getDeleteTypesFromPrompt } from '#/modules/prompts/getDeleteTypesFromPrompt';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 

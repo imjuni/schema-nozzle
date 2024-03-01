@@ -1,6 +1,6 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
-import { getAddMultipleFilesFromPrompt } from '#/modules/getAddMultipleFilesFromPrompt';
-import { getAddSingleFilesFromPrompt } from '#/modules/getAddSingleFilesFromPrompt';
+import { getAddMultipleFilesFromPrompt } from '#/modules/prompts/getAddMultipleFilesFromPrompt';
+import { getAddSingleFilesFromPrompt } from '#/modules/prompts/getAddSingleFilesFromPrompt';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';

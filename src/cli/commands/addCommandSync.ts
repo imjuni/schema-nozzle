@@ -1,7 +1,6 @@
 import { spinner } from '#/cli/display/spinner';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
 import { getExportedTypes } from '#/compilers/getExportedTypes';
-import { getTsProject } from '#/compilers/getTsProject';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
@@ -18,6 +17,7 @@ import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import { createGenerator } from 'ts-json-schema-generator';
+import { getTypeScriptProject } from 'ts-morph-short';
 
 export async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<void> {
   try {
@@ -44,8 +44,8 @@ export async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<
 
     option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
-    const project = await getTsProject({ tsConfigFilePath: resolvedPaths.project });
-    const projectExportedTypes = getExportedTypes(project);
+    const project = getTypeScriptProject(resolvedPaths.project);
+    const projectExportedTypes = getExportedTypes(project, []);
     const diagnostics = getDiagnostics({ option, project });
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
@@ -56,13 +56,13 @@ export async function addCommandSync(baseOption: TAddSchemaBaseOption): Promise<
     const selectedFiles = await getAddFiles(option, summariedSchemaFiles.filePaths);
     if (selectedFiles.type === 'fail') throw selectedFiles.fail;
     option.files = selectedFiles.pass.map((file) => file.origin);
-    const schemaFiles = await summarySchemaFiles(project, option);
+    // const schemaFiles = await summarySchemaFiles(project, option);
 
-    const summariedSchemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
+    const summariedSchemaTypes = await summarySchemaTypes(project, [], option);
     const selectedTypes = await getAddTypes(option, summariedSchemaTypes);
     if (selectedTypes.type === 'fail') throw selectedTypes.fail;
     option.types = selectedTypes.pass.map((exportedType) => exportedType.identifier);
-    const schemaTypes = await summarySchemaTypes(project, option, schemaFiles.filter);
+    const schemaTypes = await summarySchemaTypes(project, [], option);
 
     const generator = createGenerator(option.generatorOptionObject);
 

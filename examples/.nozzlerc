@@ -2,6 +2,7 @@
   "tsconfig": "./tsconfig.json",
   "list-file": "./.nozzlefiles",
   "cli-logo": true,
+  "include": ["*.ts"],
   "generatorOption": {
     "additionalProperties": true,
     "extraTags": ["example"]

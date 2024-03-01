@@ -1,34 +1,32 @@
+import { LokiDb } from '#/databases/files/LokiDb';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
-import type { TDatabase, TNullableDatabase } from '#/modules/interfaces/TDatabase';
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
 import { isPlainObject } from 'is-plain-object';
 import { settify } from 'my-easy-fp';
 
-export function mergeDatabaseItems(db: TNullableDatabase, records: IDatabaseItem[]): TDatabase {
-  const newDb = records.reduce<TNullableDatabase>((aggregation, record) => {
-    try {
-      const prevRecord = aggregation[record.id];
+export function mergeDatabaseItems(items: IDatabaseItem[]) {
+  items.forEach((item) => {
+    const prevItem = LokiDb.it.find(item.id);
 
-      if (prevRecord == null) {
-        return { ...aggregation, [record.id]: record };
-      }
-
-      const nextRecord = fastCopy(record);
+    if (prevItem == null) {
+      LokiDb.it.insert(item);
+    } else {
+      const nextRecord = fastCopy(item);
 
       // nextRecord.dependency.import = {
       const importInfo = {
-        name: record.dependency.import.name,
-        from: settify([...prevRecord.dependency.import.from, ...nextRecord.dependency.import.from]),
+        name: item.dependency.import.name,
+        from: settify([...prevItem.dependency.import.from, ...nextRecord.dependency.import.from]),
       };
 
       // nextRecord.dependency.export = {
       const exportInfo = {
-        name: record.dependency.export.name,
-        to: settify([...prevRecord.dependency.export.to, ...nextRecord.dependency.export.to]),
+        name: item.dependency.export.name,
+        to: settify([...prevItem.dependency.export.to, ...nextRecord.dependency.export.to]),
       };
 
-      const merged = deepmerge(prevRecord, nextRecord, {
+      const merged = deepmerge(prevItem, nextRecord, {
         isMergeableObject: isPlainObject,
         arrayMerge: (
           target: IDatabaseItem[],
@@ -37,16 +35,16 @@ export function mergeDatabaseItems(db: TNullableDatabase, records: IDatabaseItem
         ) => {
           const destination = target.slice();
 
-          source.forEach((item, index) => {
+          source.forEach(($item, index) => {
             if (destination[index] == null) {
               destination[index] = options.cloneUnlessOtherwiseSpecified(
-                item,
+                $item,
                 options,
               ) as IDatabaseItem;
-            } else if (options.isMergeableObject(item)) {
-              destination[index] = deepmerge(target[index] ?? {}, item, options) as IDatabaseItem;
-            } else if (target.includes(item)) {
-              destination.push(item);
+            } else if (options.isMergeableObject($item)) {
+              destination[index] = deepmerge(target[index] ?? {}, $item, options) as IDatabaseItem;
+            } else if (target.includes($item)) {
+              destination.push($item);
             }
           });
 
@@ -57,11 +55,7 @@ export function mergeDatabaseItems(db: TNullableDatabase, records: IDatabaseItem
       merged.dependency.import = importInfo;
       merged.dependency.export = exportInfo;
 
-      return { ...aggregation, [nextRecord.id]: merged };
-    } catch {
-      return aggregation;
+      LokiDb.it.update(merged);
     }
-  }, fastCopy(db));
-
-  return newDb as TDatabase;
+  });
 }

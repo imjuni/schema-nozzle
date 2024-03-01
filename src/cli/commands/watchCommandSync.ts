@@ -2,7 +2,6 @@
 import { spinner } from '#/cli/display/spinner';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
 import { getExportedTypes } from '#/compilers/getExportedTypes';
-import { getTsProject } from '#/compilers/getTsProject';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import type {
@@ -21,6 +20,7 @@ import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { buffer, debounceTime, Subject } from 'rxjs';
 import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
+import { getTypeScriptProject } from 'ts-morph-short';
 
 export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
   if (baseOption.cliLogo) {
@@ -46,8 +46,8 @@ export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
 
   option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
-  const project = await getTsProject({ tsConfigFilePath: option.project });
-  const projectExportedTypes = getExportedTypes(project);
+  const project = getTypeScriptProject(option.project);
+  const projectExportedTypes = getExportedTypes(project, []);
   const diagnostics = getDiagnostics({ option, project });
 
   if (diagnostics.type === 'fail') throw diagnostics.fail;
