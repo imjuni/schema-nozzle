@@ -1,6 +1,6 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
-import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
+import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { getSchemaFileContent } from '#/modules/getSchemaFileContent';
 import { getSchemaFilterFilePath } from '#/modules/getSchemaFilterFilePath';
 import consola from 'consola';

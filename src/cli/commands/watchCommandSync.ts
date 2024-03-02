@@ -1,26 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { spinner } from '#/cli/display/spinner';
-import { getDiagnostics } from '#/compilers/getDiagnostics';
-import { getExportedTypes } from '#/compilers/getExportedTypes';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import type {
   TWatchSchemaBaseOption,
   TWatchSchemaOption,
 } from '#/configs/interfaces/TWatchSchemaOption';
-import { errorTrace } from '#/modules/errorTrace';
-import { getWatchFiles } from '#/modules/getWatchFiles';
-import { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
-import type { IWatchEvent } from '#/modules/interfaces/IWatchEvent';
-import { WatcherModule } from '#/modules/WatcherModule';
-import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { showLogo } from '@maeum/cli-logo';
-import chokidar from 'chokidar';
-import consola from 'consola';
-import fastCopy from 'fast-copy';
-import { buffer, debounceTime, Subject } from 'rxjs';
-import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async';
-import { getTypeScriptProject } from 'ts-morph-short';
 
 export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
   if (baseOption.cliLogo) {
@@ -46,6 +32,7 @@ export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
 
   option.generatorOptionObject = await getSchemaGeneratorOption(option);
 
+  /*
   const project = getTypeScriptProject(option.project);
   const projectExportedTypes = getExportedTypes(project, []);
   const diagnostics = getDiagnostics({ option, project });
@@ -100,7 +87,10 @@ export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
             lock = false;
           });
       })
-      .catch(errorTrace);
+      .catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
+        consola.error(err);
+      });
   });
 
   updateProjectSubject.pipe(buffer(debounceObserable)).subscribe((events) => {
@@ -128,11 +118,15 @@ export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
       .then(() => {
         updateDbSubject.next(events);
       })
-      .catch(errorTrace);
+      .catch((caught) => {
+        const err = isError(caught, new Error('unknown error raised'));
+        consola.error(err);
+      });
   });
 
   watchHandle
     .on('add', (filePath) => updateProjectSubject.next({ kind: 'add', filePath }))
     .on('change', (filePath) => updateProjectSubject.next({ kind: 'change', filePath }))
     .on('unlink', (filePath) => updateProjectSubject.next({ kind: 'unlink', filePath }));
+    */
 }

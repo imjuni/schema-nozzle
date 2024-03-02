@@ -6,7 +6,6 @@ import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import { traverser } from '#/databases/modules/traverser';
 import type { createJSONSchema } from '#/modules/createJSONSchema';
-import { getFormattedSchema } from '#/modules/getFormattedSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { ISchemaExportInfo } from '#/modules/interfaces/ISchemaExportInfo';
 import type { ISchemaImportInfo } from '#/modules/interfaces/ISchemaImportInfo';
@@ -48,10 +47,6 @@ export function createDatabaseItem(
   traverser(targetSchema, importInfos, option);
 
   const id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
-  const stringified = getFormattedSchema(option.format, {
-    ...targetSchema,
-    definitions: undefined,
-  });
 
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
     const record: IDatabaseItem = {
@@ -61,7 +56,7 @@ export function createDatabaseItem(
         import: { name: id, from: [] },
         export: { name: id, to: [] },
       },
-      schema: stringified,
+      schema: targetSchema,
     };
 
     return { item: record };
@@ -87,7 +82,7 @@ export function createDatabaseItem(
 
       consola.trace(`ID: ${definitionId}/ ${id}`);
 
-      const definitionStringified = getFormattedSchema(option.format, definitionSchema);
+      const definitionStringified = definitionSchema;
       const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
 
       const definitionRecord: IDatabaseItem = {
@@ -142,7 +137,7 @@ export function createDatabaseItem(
       import: importValue,
       export: { name: id, to: [] },
     },
-    schema: stringified,
+    schema: targetSchema,
   };
 
   return { item: record, definitions };

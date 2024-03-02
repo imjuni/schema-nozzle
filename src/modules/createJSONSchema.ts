@@ -2,8 +2,7 @@ import { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import type { AnySchemaObject } from 'ajv';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
-import type { Config, SchemaGenerator } from 'ts-json-schema-generator';
-import { createGenerator } from 'ts-json-schema-generator';
+import { createGenerator, type Config, type SchemaGenerator } from 'ts-json-schema-generator';
 
 type TCreateJSONSchemaArgs =
   | {
@@ -17,7 +16,7 @@ type TCreateJSONSchemaArgs =
       generator: SchemaGenerator;
     };
 
-function getGenerator(args: TCreateJSONSchemaArgs) {
+export function getGenerator(args: TCreateJSONSchemaArgs) {
   if ('option' in args) {
     const option: Config = {
       ...args.option,

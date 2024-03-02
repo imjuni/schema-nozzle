@@ -1,7 +1,7 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
-import { getDatabaseFilePath } from '#/databases/getDatabaseFilePath';
+import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { openDatabase } from '#/databases/openDatabase';
 import * as env from '#/modules/__tests__/env';
 import fs from 'fs/promises';
