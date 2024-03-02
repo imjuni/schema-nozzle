@@ -1,7 +1,5 @@
 import type { IPromptAnswerSelectType } from '#/cli/interfaces/IPromptAnswerSelectType';
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
-import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
-import type { TNullableDatabase } from '#/modules/interfaces/TDatabase';
 import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
@@ -9,7 +7,7 @@ import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
 
 interface IGetTypesFromPrompt {
-  db: TNullableDatabase;
+  schemaTypes: { filePath?: string; id: string }[];
   isMultipleSelect: boolean;
 }
 
@@ -21,20 +19,17 @@ interface IChoiceTypeItem {
 }
 
 export async function getDeleteTypesFromPrompt({
-  db,
+  schemaTypes,
   isMultipleSelect,
 }: IGetTypesFromPrompt): Promise<string[]> {
-  const choiceAbleTypes: IChoiceTypeItem[] = Object.entries(db)
-    .map(([key, value]) => ({ key, value }))
-    .filter((entry): entry is { key: string; value: IDatabaseItem } => entry.value != null)
-    .map((entry) => {
-      return {
-        name: entry.value.id,
-        identifier: entry.value.id,
-        filePath: entry.value.filePath ?? 'external module',
-        value: entry.value.id,
-      };
-    });
+  const choiceAbleTypes: IChoiceTypeItem[] = schemaTypes.map((schemaType) => {
+    return {
+      name: schemaType.id,
+      identifier: schemaType.id,
+      filePath: schemaType.filePath ?? 'external module',
+      value: schemaType.id,
+    };
+  });
 
   if (choiceAbleTypes.length <= 0) {
     throw new Error(

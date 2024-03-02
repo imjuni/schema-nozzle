@@ -1,7 +1,8 @@
 import { spinner } from '#/cli/display/spinner';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
-import { saveDatabase } from '#/databases/saveDatabase';
+import { truncating } from '#/modules/truncating';
 import { showLogo } from '@maeum/cli-logo';
+
 import { isError } from 'my-easy-fp';
 
 export async function truncateCommandSync(option: TTruncateSchemaOption) {
@@ -19,7 +20,7 @@ export async function truncateCommandSync(option: TTruncateSchemaOption) {
 
     spinner.start('Database truncate start, ...');
 
-    await saveDatabase(option, {});
+    await truncating(option);
 
     spinner.stop('truncate complete', 'succeed');
   } catch (caught) {

@@ -1,4 +1,4 @@
-import { LokiDb } from '#/databases/files/LokiDb';
+import { LokiDbContainer } from '#/databases/files/LokiDb';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
@@ -7,10 +7,10 @@ import { settify } from 'my-easy-fp';
 
 export function mergeDatabaseItems(items: IDatabaseItem[]) {
   items.forEach((item) => {
-    const prevItem = LokiDb.it.find(item.id);
+    const prevItem = LokiDbContainer.it.find(item.id);
 
     if (prevItem == null) {
-      LokiDb.it.insert(item);
+      LokiDbContainer.it.insert(item);
     } else {
       const nextRecord = fastCopy(item);
 
@@ -55,7 +55,7 @@ export function mergeDatabaseItems(items: IDatabaseItem[]) {
       merged.dependency.import = importInfo;
       merged.dependency.export = exportInfo;
 
-      LokiDb.it.update(merged);
+      LokiDbContainer.it.update(merged);
     }
   });
 }

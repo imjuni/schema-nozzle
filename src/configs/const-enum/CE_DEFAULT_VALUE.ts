@@ -4,7 +4,7 @@ export const CE_DEFAULT_VALUE = {
   TSCONFIG_FILE_NAME: 'tsconfig.json',
 
   DB_FILE_NAME: 'db.json',
-  DB_COLLECTION_NAME: 'json-schema',
+  DB_COLLECTION_NAME: 'json_schema',
 
   WATCH_DEFAULT_GLOB: '**/*.ts',
   WATCH_DEBOUNCE_TIME: 1000,

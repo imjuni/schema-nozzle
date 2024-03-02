@@ -1,19 +1,19 @@
-import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
+import { LokiDbContainer } from '#/databases/files/LokiDb';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
-import type { TDatabase } from '#/modules/interfaces/TDatabase';
-import { keyBys } from 'my-easy-fp';
 
-export function deleteDatabaseItem(db: TDatabase, identifier: string) {
-  const item = db[identifier];
+export function deleteDatabaseItem(identifier: string) {
+  const item = LokiDbContainer.it.find(identifier);
 
   if (item == null) {
-    return db;
+    return;
   }
 
   // stage 01. imported schema information update
   const importFroms = item.dependency.import.from;
   const importUpdatedRecords: IDatabaseItem[] = importFroms
-    .map((importFrom) => db[importFrom])
+    .map((importFrom) => {
+      return LokiDbContainer.it.find(importFrom);
+    })
     .filter((importFrom): importFrom is IDatabaseItem => importFrom != null)
     .map((importFrom) => {
       const exportInfo: IDatabaseItem['dependency']['export'] = {
@@ -28,16 +28,16 @@ export function deleteDatabaseItem(db: TDatabase, identifier: string) {
     });
 
   // TODO: compile json-schema and check delete id in definitions
-  const importUpdatedRecordMap = importUpdatedRecords.reduce<
-    Partial<Record<string, IDatabaseItem>>
-  >((aggregation, updateExportRecord) => {
-    return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
-  }, {});
+  const importUpdatedRecordMap = new Map<string, IDatabaseItem>(
+    Object.entries(importUpdatedRecords),
+  );
 
   // stage 02. exported schema information update
   const exportTos = item.dependency.export.to;
   const exportUpdatedRecords = exportTos
-    .map((exportTo) => db[exportTo])
+    .map((exportTo) => {
+      return LokiDbContainer.it.find(exportTo);
+    })
     .filter((exportTo): exportTo is IDatabaseItem => exportTo != null)
     .map((exportTo) => {
       const importInfo: IDatabaseItem['dependency']['import'] = {
@@ -52,55 +52,21 @@ export function deleteDatabaseItem(db: TDatabase, identifier: string) {
     });
 
   // TODO: compile json-schema and check delete id in definitions
-  const exportUpdatedRecordMap = exportUpdatedRecords.reduce<
-    Partial<Record<string, IDatabaseItem>>
-  >((aggregation, updateExportRecord) => {
-    return { ...aggregation, [updateExportRecord.id]: updateExportRecord };
-  }, {});
+  const exportUpdatedRecordMap = new Map<string, IDatabaseItem>(
+    Object.entries(exportUpdatedRecords),
+  );
 
   const cycleRefrenceRecords = exportUpdatedRecords.filter(
-    (exportUpdatedRecord) => importUpdatedRecordMap[exportUpdatedRecord.id] != null,
+    (exportUpdatedRecord) => importUpdatedRecordMap.get(exportUpdatedRecord.id) != null,
   );
 
   // stage 03. cycle reference schema update
-  const mergedCycleRefrenceRecords = cycleRefrenceRecords
-    .map((cycleRefrenceRecord) => {
-      const exportedItem = exportUpdatedRecordMap[cycleRefrenceRecord.id];
-      if (exportedItem != null) {
-        return mergeDatabaseItems(
-          { [cycleRefrenceRecord.id]: importUpdatedRecordMap[cycleRefrenceRecord.id] },
-          [exportedItem],
-        );
-      }
+  cycleRefrenceRecords.forEach((cycleRefrenceRecord) => {
+    const exportedItem = exportUpdatedRecordMap.get(cycleRefrenceRecord.id);
+    const importedItem = importUpdatedRecordMap.get(cycleRefrenceRecord.id);
 
-      return { [cycleRefrenceRecord.id]: importUpdatedRecordMap[cycleRefrenceRecord.id] };
-    })
-    .map((mergedDb) => Object.values(mergedDb))
-    .flat()
-    .filter((dbItem): dbItem is IDatabaseItem => dbItem != null);
-
-  const mergedCycleRefrenceRecordMap = keyBys(mergedCycleRefrenceRecords, 'id');
-
-  // stage 04. aggregate schema of database
-  const remainRecords = [
-    ...importUpdatedRecords.filter(
-      (importUpdatedRecord) => mergedCycleRefrenceRecordMap[importUpdatedRecord.id] == null,
-    ),
-    ...exportUpdatedRecords.filter(
-      (exportUpdatedRecord) => mergedCycleRefrenceRecordMap[exportUpdatedRecord.id] == null,
-    ),
-    ...mergedCycleRefrenceRecords,
-  ].concat(
-    Object.values(db)
-      .filter((entry) => entry.id !== identifier)
-      .filter((entry) => importUpdatedRecordMap[entry.id] == null)
-      .filter((entry) => exportUpdatedRecordMap[entry.id] == null),
-  );
-
-  // stage 05. generate new database
-  const newDb = Object.values(remainRecords).reduce<TDatabase>((aggregation, remainRecord) => {
-    return { ...aggregation, [remainRecord.id]: remainRecord };
-  }, {});
-
-  return newDb;
+    if (exportedItem != null && importedItem != null) {
+      LokiDbContainer.it.merge(importedItem);
+    }
+  });
 }
