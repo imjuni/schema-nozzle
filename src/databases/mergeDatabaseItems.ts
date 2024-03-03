@@ -1,4 +1,6 @@
-import { LokiDbContainer } from '#/databases/files/LokiDb';
+import { findOne } from '#/databases/files/repository/findOne';
+import { insert } from '#/databases/files/repository/insert';
+import { update } from '#/databases/files/repository/update';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import deepmerge, { type ArrayMergeOptions } from 'deepmerge';
 import fastCopy from 'fast-copy';
@@ -7,24 +9,12 @@ import { settify } from 'my-easy-fp';
 
 export function mergeDatabaseItems(items: IDatabaseItem[]) {
   items.forEach((item) => {
-    const prevItem = LokiDbContainer.it.find(item.id);
+    const prevItem = findOne({ id: { $eq: item.id } });
 
     if (prevItem == null) {
-      LokiDbContainer.it.insert(item);
+      insert(item);
     } else {
       const nextRecord = fastCopy(item);
-
-      // nextRecord.dependency.import = {
-      const importInfo = {
-        name: item.dependency.import.name,
-        from: settify([...prevItem.dependency.import.from, ...nextRecord.dependency.import.from]),
-      };
-
-      // nextRecord.dependency.export = {
-      const exportInfo = {
-        name: item.dependency.export.name,
-        to: settify([...prevItem.dependency.export.to, ...nextRecord.dependency.export.to]),
-      };
 
       const merged = deepmerge(prevItem, nextRecord, {
         isMergeableObject: isPlainObject,
@@ -52,10 +42,7 @@ export function mergeDatabaseItems(items: IDatabaseItem[]) {
         },
       });
 
-      merged.dependency.import = importInfo;
-      merged.dependency.export = exportInfo;
-
-      LokiDbContainer.it.update(merged);
+      update(merged);
     }
   });
 }

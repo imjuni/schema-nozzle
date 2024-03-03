@@ -8,9 +8,9 @@ import { type Project } from 'ts-morph';
 function applyOptionFilter(
   exportedTypes: ReturnType<typeof getExportedTypes>,
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'types'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'types'>
-    | Pick<TWatchSchemaOption, 'discriminator' | 'types'>,
+    | Pick<TAddSchemaOption, '$kind' | 'types'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'types'>
+    | Pick<TWatchSchemaOption, '$kind' | 'types'>,
 ) {
   if (option.types.length <= 0) {
     return exportedTypes;
@@ -23,9 +23,9 @@ export async function summarySchemaTypes(
   project: Project,
   schemaFilePaths: string[],
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'types' | 'cwd'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'types' | 'cwd'>
-    | Pick<TWatchSchemaOption, 'discriminator' | 'types' | 'cwd'>,
+    | Pick<TAddSchemaOption, '$kind' | 'types' | 'cwd'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'types' | 'cwd'>
+    | Pick<TWatchSchemaOption, '$kind' | 'types' | 'cwd'>,
 ) {
   // stage01. Extract sll exported types
   const exportedTypes = getExportedTypes(project, schemaFilePaths);

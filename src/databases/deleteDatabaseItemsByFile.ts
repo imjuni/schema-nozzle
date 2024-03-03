@@ -1,15 +1,10 @@
 import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
-import type { TDatabase } from '#/modules/interfaces/TDatabase';
+import { find } from '#/databases/files/repository/find';
 
-export function deleteDatabaseItemsByFile(db: TDatabase, filePath: string) {
-  const entries = Object.entries(db)
-    .filter(([, item]) => item.filePath === filePath)
-    .map(([identifier, item]) => ({ identifier, item }));
+export function deleteDatabaseItemsByFile(filePath: string) {
+  const items = find({
+    filePath: { $and: [{ filePath: { $not: null } }, { filePath: { $eq: filePath } }] },
+  });
 
-  const newDb = entries.reduce((deletingDb, entry) => {
-    const nextDb = deleteDatabaseItem(deletingDb, entry.identifier);
-    return nextDb;
-  }, db);
-
-  return newDb;
+  items.forEach((item) => deleteDatabaseItem(item.id));
 }

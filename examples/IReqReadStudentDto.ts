@@ -1,5 +1,5 @@
-import type IStudentDto from './IStudentDto';
-import type ITid from './base/ITid';
+import type { IStudentDto } from './IStudentDto';
+import type { ITid } from './base/ITid';
 
 /**
  * @nozzleTags hi!!, hello, tag02

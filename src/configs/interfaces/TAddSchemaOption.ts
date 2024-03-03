@@ -4,7 +4,7 @@ import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
 
 export interface IAddSchemaOption {
-  discriminator: 'add-schema';
+  $kind: 'add-schema';
 
   /** input filename */
   files: string[];
@@ -17,9 +17,6 @@ export interface IAddSchemaOption {
 
   /** specify the root folder within your schema path */
   rootDir?: string;
-
-  /** Specify whether to include the DTO path in the schema ID */
-  includePath?: boolean;
 
   include: string[];
   exclude: string[];

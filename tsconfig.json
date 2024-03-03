@@ -60,5 +60,5 @@
     "pretty": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["examples/**/*", "dist/**", "**/.configs/**", "**/docs/**/*"]
+  "exclude": ["examples/**/*.ts", "dist/**", "**/.configs/**", "**/docs/**/*"]
 }

@@ -1,5 +1,5 @@
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
-import { bootstrap as lokiBootstrap, instance as lokidb } from '#/databases/files/LokiDb';
+import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import fs from 'fs';
 

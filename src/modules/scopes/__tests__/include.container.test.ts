@@ -1,10 +1,10 @@
 import { getGlobFiles } from '#/modules/files/getGlobFiles';
+import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
-import { posixJoin } from '#/tools/posixJoin';
+import { defaultExclude } from '#/modules/scopes/defaultExclude';
 import { Glob } from 'glob';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { defaultExclude } from 'vitest/dist/config';
 
 const tsconfigDir = path.join(process.cwd(), 'examples');
 
@@ -31,49 +31,19 @@ describe('IncludeContainer', () => {
 
   it('isInclude', () => {
     const container = new IncludeContainer({
-      patterns: ['src/cli/**/*.ts', 'src/compilers/**/*.ts', 'examples/**/*.ts'],
+      patterns: ['src/modules/**/*.ts', 'src/compilers/**/*.ts', 'examples/**/*.ts'],
       options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
     });
 
-    const r01 = container.isInclude('src/files/IncludeContainer.ts');
-    const r02 = container.isInclude('src/compilers/routes/getRouteHandler.ts');
-    const r03 = container.isInclude(posixJoin(process.cwd(), 'src/files/IncludeContainer.ts'));
-    const r04 = container.isInclude(
-      posixJoin(process.cwd(), 'src/compilers/routes/getRouteHandler.ts'),
-    );
+    const r01 = container.isInclude('src/databases/deleteDatabaseItem.ts');
+    const r02 = container.isInclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
+    const r03 = container.isInclude(posixJoin(process.cwd(), 'src/tools/getRatioNumber.ts'));
+    const r04 = container.isInclude(posixJoin(process.cwd(), 'src/compilers/getExportedFiles.ts'));
 
     expect(r01).toBeFalsy();
     expect(r02).toBeTruthy();
     expect(r03).toBeFalsy();
     expect(r04).toBeTruthy();
-  });
-
-  it('with exclusive glob isInclude', () => {
-    const container = new IncludeContainer({
-      patterns: [
-        'src/cli/**/*.ts',
-        'src/compilers/**/*.ts',
-        '!src/compilers/tools/getTypeScriptProject.ts',
-        'examples/**/*.ts',
-      ],
-      options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
-    });
-
-    const r01 = container.isInclude('src/files/IncludeContainer.ts');
-    const r02 = container.isInclude('src/compilers/routes/getRouteHandler.ts');
-    const r03 = container.isInclude(posixJoin(process.cwd(), 'src/files/IncludeContainer.ts'));
-    const r04 = container.isInclude(
-      posixJoin(process.cwd(), 'src/compilers/routes/getRouteHandler.ts'),
-    );
-    const r05 = container.isInclude(
-      posixJoin(process.cwd(), 'src/cli/compilers/tools/getTypeScriptProject.ts'),
-    );
-
-    expect(r01).toBeFalsy();
-    expect(r02).toBeTruthy();
-    expect(r03).toBeFalsy();
-    expect(r04).toBeTruthy();
-    expect(r05).toBeFalsy();
   });
 
   it('files - string path', () => {

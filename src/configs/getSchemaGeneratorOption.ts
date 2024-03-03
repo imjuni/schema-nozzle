@@ -10,25 +10,27 @@ import type { Config } from 'ts-json-schema-generator';
 const defaultGeneratorOption: Config = {
   minify: false,
   expose: 'export',
-  topRef: false,
   jsDoc: 'extended',
   sortProps: true,
   strictTuples: true,
-  encodeRefs: true,
+  encodeRefs: false,
   additionalProperties: false,
 };
 
 export async function getSchemaGeneratorOption(
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>
-    | Pick<TWatchSchemaOption, 'discriminator' | 'project' | 'generatorOption' | 'skipError'>,
+    | Pick<TAddSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>
+    | Pick<TWatchSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>,
 ): Promise<Config> {
+  const topRef = false;
+
   if (option.generatorOption == null) {
     const generatorOption: Config = {
       ...defaultGeneratorOption,
       tsconfig: option.project,
       skipTypeCheck: option.skipError,
+      topRef,
     };
 
     return generatorOption;
@@ -40,6 +42,7 @@ export async function getSchemaGeneratorOption(
       tsconfig: option.project,
       skipTypeCheck: option.skipError,
       ...option.generatorOption,
+      topRef,
     };
   }
 
@@ -50,7 +53,7 @@ export async function getSchemaGeneratorOption(
   if (await exists(filePath)) {
     const configBuf = await fs.promises.readFile(filePath);
     const config = parse(configBuf.toString()) as Config;
-    return config;
+    return { ...config, topRef };
   }
 
   throw new Error(`cannot found generator option file: ${filePath}`);

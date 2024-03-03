@@ -4,7 +4,7 @@ import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
 
 interface IWatchSchemaOption {
-  discriminator: 'watch-schema';
+  $kind: 'watch-schema';
 
   /**
    * json-schema save format

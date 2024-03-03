@@ -5,13 +5,9 @@ import type { SetRequired } from 'type-fest';
 
 export function isRelativeDtoPath(
   option:
-    | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TWatchSchemaOption, 'rootDir' | 'includePath'>,
+    | Pick<TAddSchemaOption, 'rootDir'>
+    | Pick<TRefreshSchemaOption, 'rootDir'>
+    | Pick<TWatchSchemaOption, 'rootDir'>,
 ): option is SetRequired<typeof option, 'rootDir'> {
-  if (option.rootDir == null) {
-    return false;
-  }
-
-  return option.includePath ?? false;
+  return option.rootDir != null;
 }

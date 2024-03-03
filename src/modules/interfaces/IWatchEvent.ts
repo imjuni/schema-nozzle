@@ -1,4 +1,4 @@
-import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type { CE_WATCH_EVENT } from '#/modules/const-enum/CE_WATCH_EVENT';
 
 export interface IWatchEvent {
   /**

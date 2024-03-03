@@ -1,7 +1,7 @@
 import { getExportedName } from '#/compilers/getExportedName';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
 import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExportTypesReturnType';
-import { CE_JSDOC_EXTENDS } from '#/modules/interfaces/CE_JSDOC_EXTENDS';
+import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import * as tsm from 'ts-morph';
 
 export function getSoruceFileExportedTypes(

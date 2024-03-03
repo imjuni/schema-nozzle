@@ -5,8 +5,10 @@ import type {
   IDeleteSchemaOption,
   TDeleteSchemaOption,
 } from '#/configs/interfaces/TDeleteSchemaOption';
-import { bootstrap as lokiBootstrap, instance as lokidb } from '#/databases/files/LokiDb';
+import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
+import { remove } from '#/databases/files/repository/remove';
+import { types } from '#/databases/files/repository/types';
 import { getDeleteTypes } from '#/modules/cli/getDeleteTypes';
 import type * as tsm from 'ts-morph';
 import type { getTypeScriptConfig } from 'ts-morph-short';
@@ -21,7 +23,7 @@ export async function deleting(
     ...baseOption,
     ...resolvedPaths,
     multiple: true,
-    discriminator: 'delete-schema',
+    $kind: 'delete-schema',
   };
 
   const diagnostics = getDiagnostics({ option, project });
@@ -32,7 +34,7 @@ export async function deleting(
   const dbPath = await getDatabaseFilePath(option);
   await lokiBootstrap({ filename: dbPath });
 
-  const schemaTypes = lokidb().types();
+  const schemaTypes = types();
   const targetTypes = await getDeleteTypes({ schemaTypes, option: { ...baseOption } });
   if (targetTypes.type === 'fail') throw targetTypes.fail;
 
@@ -40,7 +42,7 @@ export async function deleting(
     `Start [${targetTypes.pass.map((targetType) => `"${targetType}"`).join(', ')}] deletion...`,
   );
 
-  lokidb().remove(targetTypes.pass);
+  remove(targetTypes.pass);
   await lokidb().save();
 
   spinner.stop(

@@ -9,11 +9,13 @@ import type {
   TRefreshSchemaOption,
 } from '#/configs/interfaces/TRefreshSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { bootstrap as lokiBootstrap, instance as lokidb } from '#/databases/files/LokiDb';
+import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
+import { merge as mergeItems } from '#/databases/files/repository/merge';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
 import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
-import { GeneratorContainer } from '#/modules/generator/GeneratorContainer';
+import { bootstrap as generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
+import { create as createJsonSchema } from '#/modules/generator/modules/create';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
@@ -33,7 +35,7 @@ export async function refreshing(
     const option: TRefreshSchemaOption = {
       ...baseOption,
       ...resolvedPaths,
-      discriminator: 'refresh-schema',
+      $kind: 'refresh-schema',
       files: [],
       generatorOptionObject: {},
     };
@@ -45,7 +47,7 @@ export async function refreshing(
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     const dbPath = await getDatabaseFilePath(option);
-    GeneratorContainer.bootstrap(option);
+    generatorBootstrap(option);
     await lokiBootstrap({ filename: dbPath });
 
     const filePaths = project
@@ -78,7 +80,7 @@ export async function refreshing(
 
     const items = schemaTypes
       .map((targetType) => {
-        const schema = GeneratorContainer.it.create(targetType.filePath, targetType.identifier);
+        const schema = createJsonSchema(targetType.filePath, targetType.identifier);
 
         if (schema.type === 'fail') {
           return undefined;
@@ -92,7 +94,7 @@ export async function refreshing(
       .flat()
       .filter((record): record is IDatabaseItem => record != null);
 
-    lokidb().merge(items);
+    mergeItems(items);
     await lokidb().save();
 
     spinner.stop(
