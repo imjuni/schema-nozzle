@@ -3,8 +3,9 @@ import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOp
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { getDtoName } from '#/databases/modules/getDtoName';
 import { isRelativeDtoPath } from '#/databases/modules/isRelativeDtoPath';
+import { replaceId } from '#/databases/modules/replaceId';
 import { getDirnameSync } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import type { getFileImportInfos } from 'ts-morph-short';
 
 export function getSchemaId(
@@ -16,15 +17,15 @@ export function getSchemaId(
     | Pick<TWatchSchemaOption, 'rootDir'>,
 ) {
   if (isRelativeDtoPath(option)) {
-    const dtoName = `${schemaId.replace('#/definitions/', '')}`;
+    const dtoName = replaceId(schemaId);
     const findedImportInfo = importInfos.find((importInfo) => importInfo.name === dtoName);
 
     if (findedImportInfo == null) {
-      return getDtoName(dtoName, (v) => `#/external/${v}`);
+      return getDtoName(dtoName, (name) => `#/$ext/${name}`);
     }
 
     if (findedImportInfo.isExternal || findedImportInfo.moduleFilePath == null) {
-      return getDtoName(dtoName, (v) => `#/external/${v}`);
+      return getDtoName(dtoName, (name) => `#/$ext/${name}`);
     }
 
     const relativePath = path
@@ -33,10 +34,10 @@ export function getSchemaId(
 
     return getDtoName(
       dtoName,
-      (v) => `#/${[relativePath, v].filter((element) => element !== '').join('/')}`,
+      (name) => `#/${[relativePath, name].filter((element) => element !== '').join('/')}`,
     );
   }
 
-  const dtoName = `${schemaId.replace('#/definitions/', '')}`;
+  const dtoName = replaceId(schemaId);
   return dtoName;
 }

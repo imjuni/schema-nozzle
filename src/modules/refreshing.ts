@@ -1,3 +1,4 @@
+import { showFailMessage } from '#/cli/display/showFailMessage';
 import { spinner } from '#/cli/display/spinner';
 import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFiles';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
@@ -12,6 +13,7 @@ import { createDatabaseItem } from '#/databases/createDatabaseItem';
 import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
+import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
 import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
 import { bootstrap as generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
@@ -50,6 +52,12 @@ export async function refreshing(
     generatorBootstrap(option);
     await lokiBootstrap({ filename: dbPath });
 
+    if (option.truncate) {
+      spinner.start('truncate database, ...');
+      await lokidb().delete();
+      spinner.stop('truncated database!', 'succeed');
+    }
+
     const filePaths = project
       .getSourceFiles()
       .map((sourceFile) => sourceFile.getFilePath().toString());
@@ -78,24 +86,36 @@ export async function refreshing(
     const projectExportedTypes = getExportedTypes(project, schemaFilePaths);
     const schemaTypes = await summarySchemaTypes(project, schemaFilePaths, option);
 
-    const items = schemaTypes
+    const generatedItems = schemaTypes
       .map((targetType) => {
         const schema = createJsonSchema(targetType.filePath, targetType.identifier);
 
         if (schema.type === 'fail') {
-          return undefined;
+          return { $kind: 'fail', error: schema.fail };
         }
 
         const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
         const withDependencies = [item.item, ...(item.definitions ?? [])];
 
-        return withDependencies;
+        return { $kind: 'pass', items: withDependencies };
       })
-      .flat()
-      .filter((record): record is IDatabaseItem => record != null);
+      .flat();
+
+    const errors = generatedItems
+      .filter(
+        (item): item is { $kind: 'fail'; error: CreateJSONSchemaError } => item.$kind === 'fail',
+      )
+      .map((item) => item.error);
+
+    const items = generatedItems
+      .filter((item): item is { $kind: 'pass'; items: IDatabaseItem[] } => item.$kind === 'pass')
+      .map((item) => item.items)
+      .flat();
 
     mergeItems(items);
     await lokidb().save();
+
+    showFailMessage(errors);
 
     spinner.stop(
       `[${schemaTypes.map((targetType) => `"${targetType.identifier}"`).join(', ')}] add complete`,

@@ -1,7 +1,7 @@
 import { getExportedName } from '#/compilers/getExportedName';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import path from 'path';
+import path from 'node:path';
 import * as tsm from 'ts-morph';
 import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
 

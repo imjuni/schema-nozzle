@@ -1,3 +1,6 @@
+/**
+ * @nozzle-ignore
+ */
 export type TGenericExample<T extends { nick: string }> = Omit<T, 'nick'> &
   Partial<Pick<T, 'nick'>> & {
     /** @format date-time */

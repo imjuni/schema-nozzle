@@ -3,13 +3,11 @@ import { builder } from '#/cli/builders/builder';
 import { deleteBuilder } from '#/cli/builders/deleteBuilder';
 import { refreshBuilder } from '#/cli/builders/refreshBuilder';
 import { truncateBuilder } from '#/cli/builders/truncateBuilder';
-import { watchBuilder } from '#/cli/builders/watchBuilder';
 import { addCommandSync } from '#/cli/commands/addCommandSync';
 import { deleteCommandSync } from '#/cli/commands/deleteCommandSync';
 import { initCommandSync } from '#/cli/commands/initCommandSync';
 import { refreshCommandSync } from '#/cli/commands/refreshCommandSync';
 import { truncateCommandSync } from '#/cli/commands/truncateCommandSync';
-import { watchCommandSync } from '#/cli/commands/watchCommandSync';
 import { progress } from '#/cli/display/progress';
 import { spinner } from '#/cli/display/spinner';
 import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
@@ -18,7 +16,6 @@ import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
-import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { isValidateConfig } from '#/configs/isValidateConfig';
 import { preLoadConfig } from '#/configs/preLoadConfig';
 import { withDefaultOption } from '#/configs/withDefaultOption';
@@ -97,21 +94,6 @@ const initCmd: CommandModule<IInitOption, IInitOption> = {
   },
 };
 
-const watchCmd: CommandModule<TWatchSchemaOption, TWatchSchemaOption> = {
-  command: CE_COMMAND_LIST.WATCH,
-  aliases: CE_COMMAND_LIST.WATCH_ALIAS,
-  describe: 'watch schema-nozzle',
-  builder: (argv) => watchBuilder(builder(argv)),
-  handler: async (argv) => {
-    spinner.isEnable = true;
-    progress.isEnable = true;
-
-    const option = await withDefaultOption(argv);
-
-    await watchCommandSync(option);
-  },
-};
-
 const parser = yargs(process.argv.slice(2));
 
 parser
@@ -120,7 +102,6 @@ parser
   .command(refreshCmd as CommandModule<unknown, TRefreshSchemaOption>)
   .command(truncateCmd as CommandModule<unknown, TTruncateSchemaOption>)
   .command(initCmd as CommandModule<unknown, IInitOption>)
-  .command(watchCmd as CommandModule<unknown, TWatchSchemaOption>)
   .check(isValidateConfig as TValidator)
   .recommendCommands()
   .demandCommand(1, 1)
@@ -133,8 +114,6 @@ const handler = async () => {
 
 handler().catch((caught) => {
   const err = isError(caught, new Error('unknown error raised'));
-  consola.error(err.message);
-  consola.error(err.stack);
-
+  consola.error(err);
   process.exit(1);
 });

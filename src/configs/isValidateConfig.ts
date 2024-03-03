@@ -7,7 +7,7 @@ import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchema
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import consola from 'consola';
 import { existsSync } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import type { Arguments } from 'yargs';
 
 const commands: string[] = [
@@ -21,8 +21,6 @@ const commands: string[] = [
   CE_COMMAND_LIST.TRUNCATE_ALIAS,
   CE_COMMAND_LIST.INIT,
   CE_COMMAND_LIST.INIT_ALIAS,
-  CE_COMMAND_LIST.WATCH,
-  CE_COMMAND_LIST.WATCH_ALIAS,
 ];
 
 export function isValidateConfig<

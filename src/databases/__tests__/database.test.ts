@@ -1,6 +1,6 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import path from 'path';
+import path from 'node:path';
 import { describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('my-node-fp', async (importOriginal) => {

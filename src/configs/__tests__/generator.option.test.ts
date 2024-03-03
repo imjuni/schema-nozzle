@@ -2,7 +2,7 @@ import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import fs from 'fs/promises';
 import * as mnf from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import { beforeEach, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('my-node-fp', async (importOriginal) => {

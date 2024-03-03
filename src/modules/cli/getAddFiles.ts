@@ -4,7 +4,7 @@ import { getAddSingleFilesFromPrompt } from '#/modules/prompts/getAddSingleFiles
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
-import path from 'path';
+import path from 'node:path';
 
 export async function getAddFiles(
   option: Pick<TAddSchemaOption, 'files' | 'multiple' | 'cwd'>,

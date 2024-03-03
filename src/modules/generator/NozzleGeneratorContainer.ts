@@ -20,7 +20,7 @@ export function bootstrap(
   }
 
   it = new NozzleGenerator({
-    ...(options.generatorOptionObject ?? {}),
+    ...options.generatorOptionObject,
     tsconfig: options.project,
   });
 

@@ -1,7 +1,7 @@
 import type { getExportedTypes } from '#/compilers/getExportedTypes';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import { traverser } from '#/databases/modules/traverser';
@@ -11,7 +11,7 @@ import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
 import type { TPickPass } from 'my-only-either';
-import path from 'path';
+import path from 'node:path';
 import type * as tsm from 'ts-morph';
 import { getFileImportInfos } from 'ts-morph-short';
 import type { LastArrayElement } from 'type-fest';
@@ -21,9 +21,9 @@ type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 export function createDatabaseItem(
   project: tsm.Project,
   option:
-    | Pick<TAddSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>
-    | Pick<TRefreshSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>
-    | Pick<TWatchSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>,
+    | Pick<TAddSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>
+    | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof create>>,
 ): {
@@ -31,7 +31,7 @@ export function createDatabaseItem(
   definitions?: IDatabaseItem[];
 } {
   const basePath = option.projectDir;
-  const targetSchema = fastCopy(schema.schema);
+  const currentSchema = fastCopy(schema.schema);
   const importInfos = getFileImportInfos(project, schema.filePath);
   const importedMap = exportedTypes.reduce<
     Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
@@ -39,8 +39,8 @@ export function createDatabaseItem(
     return { ...aggregation, [exportedType.identifier]: exportedType };
   }, {});
 
-  targetSchema.$id = getSchemaId(schema.exportedType, importInfos, option);
-  traverser(targetSchema, importInfos, option);
+  currentSchema.$id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
+  traverser(currentSchema, importInfos, option);
 
   const id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
 
@@ -49,7 +49,7 @@ export function createDatabaseItem(
       id,
       filePath: path.relative(basePath, schema.filePath),
       $ref: [],
-      schema: targetSchema,
+      schema: currentSchema,
     };
 
     return { item: record };
@@ -100,7 +100,7 @@ export function createDatabaseItem(
     id,
     filePath: path.relative(basePath, schema.filePath),
     $ref: definitions.map((definition) => definition.id),
-    schema: targetSchema,
+    schema: currentSchema,
   };
 
   return { item: record, definitions };

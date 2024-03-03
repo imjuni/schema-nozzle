@@ -3,7 +3,7 @@ import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
-import path from 'path';
+import path from 'node:path';
 import type { LastArrayElement } from 'type-fest';
 
 // single file select ui

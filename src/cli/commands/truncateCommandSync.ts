@@ -18,11 +18,11 @@ export async function truncateCommandSync(option: TTruncateSchemaOption) {
       spinner.stop('Schema Nozzle start', 'info');
     }
 
-    spinner.start('Database truncate start, ...');
+    spinner.start('database truncate start, ...');
 
     await truncating(option);
 
-    spinner.stop('truncate complete', 'succeed');
+    spinner.stop('database truncate complete', 'succeed');
   } catch (caught) {
     spinner.stop('Error occured...', 'fail');
     const err = isError(caught) ?? new Error('Unknown error raised');

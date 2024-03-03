@@ -23,7 +23,7 @@ export async function refreshCommandSync(options: TRefreshSchemaBaseOption) {
     const project = getTypeScriptProject(options.project);
     const tsconfig = getTypeScriptConfig(options.project);
 
-    spinner.stop('TypeScript project load success', 'succeed');
+    spinner.stop('TypeScript project loaded!', 'succeed');
 
     ProjectContainer.bootstrap({ 'schema-nozzle': { project, config: tsconfig } });
 

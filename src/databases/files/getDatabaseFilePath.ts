@@ -3,7 +3,7 @@ import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { isDirectory } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 
 export async function getDatabaseFilePath(
   option:
