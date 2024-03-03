@@ -4,7 +4,7 @@ import consola from 'consola';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import { CheckboxPlusPrompt } from 'inquirer-ts-checkbox-plus-prompt';
-import path from 'path';
+import path from 'node:path';
 
 export async function getAddMultipleFilesFromPrompt(
   schemaFiles: { origin: string; refined: string }[],

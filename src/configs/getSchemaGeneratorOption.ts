@@ -1,10 +1,10 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import fs from 'fs';
 import { parse } from 'jsonc-parser';
 import { exists } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import type { Config } from 'ts-json-schema-generator';
 
 const defaultGeneratorOption: Config = {
@@ -21,7 +21,7 @@ export async function getSchemaGeneratorOption(
   option:
     | Pick<TAddSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>
     | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>
-    | Pick<TWatchSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>,
+    | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'generatorOption' | 'skipError'>,
 ): Promise<Config> {
   const topRef = false;
 

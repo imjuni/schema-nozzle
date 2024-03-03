@@ -1,5 +1,5 @@
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import path from 'path';
+import path from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 process.env.USE_INIT_CWD = 'true';

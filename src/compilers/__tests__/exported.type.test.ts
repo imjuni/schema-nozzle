@@ -3,7 +3,7 @@ import { getExportedFiles } from '#/compilers/getExportedFiles';
 import { getExportedTypes } from '#/compilers/getExportedTypes';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { startSepRemove } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import type * as tsm from 'ts-morph';
 import { getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
@@ -41,6 +41,7 @@ describe('getExportedFiles', () => {
       'IStudentDto.ts',
       'IStudentEntity.ts',
       'TGenericExample.ts',
+      'TSimpleSetRequired.ts',
       'base/ITid.ts',
       'const-enum/CE_MAJOR.ts',
     ]);
@@ -48,7 +49,7 @@ describe('getExportedFiles', () => {
 });
 
 describe('getExportedTypes', () => {
-  it('normal', () => {
+  it('every file on tsconfig', () => {
     const types = getExportedTypes(data.project, data.config.fileNames);
 
     expect(types.map((type) => type.identifier)).toMatchObject([
@@ -62,7 +63,6 @@ describe('getExportedTypes', () => {
       'ISlackMessageBody',
       'IStudentDto',
       'IStudentEntity',
-      'TGenericExample',
       'ITid',
       'CE_MAJOR',
     ]);

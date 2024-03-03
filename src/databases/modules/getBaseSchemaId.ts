@@ -3,8 +3,8 @@ import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOp
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { getDtoName } from '#/databases/modules/getDtoName';
 import { isRelativeDtoPath } from '#/databases/modules/isRelativeDtoPath';
-import { getDirnameSync } from 'my-node-fp';
-import path from 'path';
+import { replaceId } from '#/databases/modules/replaceId';
+import path from 'node:path';
 
 export function getBaseSchemaId(
   schemaId: string,
@@ -15,15 +15,15 @@ export function getBaseSchemaId(
     | Pick<TWatchSchemaOption, 'rootDir'>,
 ) {
   if (isRelativeDtoPath(option)) {
-    const dtoName = `${schemaId.replace('#/definitions/', '')}`;
-    const relativePath = path.relative(option.rootDir, getDirnameSync(filePath)).replace('./', '');
+    const dtoName = replaceId(schemaId);
+    const relativePath = path.relative(option.rootDir, path.dirname(filePath)).replace('./', '');
 
     return getDtoName(
       dtoName,
-      (v) => `#/${[relativePath, v].filter((element) => element !== '').join('/')}`,
+      (name) => `#/${[relativePath, name].filter((element) => element !== '').join('/')}`,
     );
   }
 
-  const dtoName = `${schemaId.replace('#/definitions/', '')}`;
+  const dtoName = replaceId(schemaId);
   return dtoName;
 }

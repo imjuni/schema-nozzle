@@ -1,3 +1,4 @@
+import { showFailMessage } from '#/cli/display/showFailMessage';
 import { spinner } from '#/cli/display/spinner';
 import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFiles';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
@@ -9,6 +10,7 @@ import { createDatabaseItem } from '#/databases/createDatabaseItem';
 import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
+import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { getAddFiles } from '#/modules/cli/getAddFiles';
 import { getAddTypes } from '#/modules/cli/getAddTypes';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
@@ -101,24 +103,36 @@ export async function adding(
       types: option.types,
     });
 
-    const items = schemaTypes
+    const generatedItems = schemaTypes
       .map((selectedType) => {
         const schema = createJsonSchema(selectedType.filePath, selectedType.identifier);
 
         if (schema.type === 'fail') {
-          return undefined;
+          return { $kind: 'error', error: schema.fail };
         }
 
         const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
         const withDependencies = [item.item, ...(item.definitions ?? [])];
 
-        return withDependencies;
+        return { $kind: 'item', items: withDependencies };
       })
-      .flat()
-      .filter((record): record is IDatabaseItem => record != null);
+      .flat();
+
+    const errors = generatedItems
+      .filter(
+        (item): item is { $kind: 'fail'; error: CreateJSONSchemaError } => item.$kind === 'fail',
+      )
+      .map((item) => item.error);
+
+    const items = generatedItems
+      .filter((item): item is { $kind: 'pass'; items: IDatabaseItem[] } => item.$kind === 'pass')
+      .map((item) => item.items)
+      .flat();
 
     mergeItems(items);
     await lokidb().save();
+
+    showFailMessage(errors);
 
     spinner.stop(
       `[${schemaTypes.map((targetType) => `"${targetType.identifier}"`).join(', ')}] add complete`,

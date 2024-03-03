@@ -1,6 +1,7 @@
-/* eslint-disable max-classes-per-file */
 import { LokiDb } from '#/databases/files/LokiDb';
 import Lokijs from 'lokijs';
+import { existsSync } from 'my-node-fp';
+import fs from 'node:fs';
 
 let it: LokiDb;
 
@@ -15,22 +16,42 @@ export async function bootstrap(options: { filename: string }) {
     return;
   }
 
-  const db = await new Promise<Lokijs>((resolve, reject) => {
-    const lokidb = new Lokijs(options.filename, {
-      env: 'NODEJS',
-      autoload: true,
-      persistenceMethod: 'fs',
-      serializationMethod: 'pretty',
-      autoloadCallback(err) {
-        if (err != null) {
-          reject(err);
+  const lokidb = new Lokijs(options.filename, {
+    env: 'NODEJS',
+    adapter: {
+      mode: 'fs',
+      loadDatabase(dbname: string, callback: (value: unknown) => void) {
+        if (existsSync(dbname)) {
+          const buf = fs.readFileSync(dbname);
+          callback(JSON.parse(buf.toString()));
         } else {
-          resolve(lokidb);
+          callback({});
         }
       },
-    });
+      saveDatabase(dbname, dbstring, callback) {
+        fs.writeFileSync(dbname, dbstring as string);
+        callback();
+      },
+      deleteDatabase(dbname, callback) {
+        const filePath =
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          typeof dbname === 'object' ? (dbname.filename as string) : (dbname as string);
+
+        if (existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+
+        callback();
+      },
+    },
+    throttledSaves: false,
+    autoload: true,
+    persistenceMethod: 'fs',
+    serializationMethod: 'pretty',
   });
 
-  it = new LokiDb(db);
+  lokidb.loadDatabase();
+
+  it = new LokiDb(lokidb);
   isBootstrap = true;
 }

@@ -20,6 +20,11 @@ describe('singletone-container', () => {
 
     bootstrap({
       project: tsconfig,
+      generatorOptionObject: { minify: false },
+    });
+
+    bootstrap({
+      project: tsconfig,
       generatorOptionObject: {},
     });
 

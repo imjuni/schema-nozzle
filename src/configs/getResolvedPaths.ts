@@ -3,7 +3,7 @@ import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import { getCwd } from '#/tools/getCwd';
 import { getDirnameSync } from 'my-node-fp';
-import path from 'path';
+import path from 'node:path';
 import type { SetOptional } from 'type-fest';
 
 export function getResolvedPaths(

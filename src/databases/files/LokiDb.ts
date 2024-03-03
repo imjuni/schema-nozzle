@@ -34,4 +34,16 @@ export class LokiDb {
       });
     });
   }
+
+  delete() {
+    return new Promise<void>((resolve, reject) => {
+      this.#loki.deleteDatabase((err) => {
+        if (err != null) {
+          return reject(err);
+        }
+
+        return resolve();
+      });
+    });
+  }
 }
