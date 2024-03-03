@@ -2,9 +2,11 @@ import { spinner } from '#/cli/display/spinner';
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getInitialOption } from '#/configs/getInitialOption';
 import type { IInitOption } from '#/configs/interfaces/IInitOption';
+import { getGlobFiles } from '#/modules/files/getGlobFiles';
+import { defaultExclude } from '#/modules/scopes/defaultExclude';
 import { getCwd } from '#/tools/getCwd';
 import consola from 'consola';
-import fastGlob from 'fast-glob';
+import { Glob } from 'glob';
 import inquirer from 'inquirer';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
@@ -13,10 +15,13 @@ import { getTypeScriptConfig } from 'ts-morph-short';
 
 export async function initCommandSync(_option: IInitOption) {
   const cwd = getCwd(process.env);
-  const tsconfigFilePaths = await fastGlob(['**/tsconfig.json', '**/tsconfig.*.json'], {
+  const globs = new Glob(['**/tsconfig.json', '**/tsconfig.*.json'], {
     cwd,
-    ignore: ['node_modules'],
+    ignore: defaultExclude,
   });
+  const tsconfigFilePaths = getGlobFiles(globs)
+    .map<[string, boolean]>((filePath) => [filePath, true])
+    .map(([filePath, _flag]) => filePath);
 
   consola.trace('tsconfig file: %s', tsconfigFilePaths);
 
