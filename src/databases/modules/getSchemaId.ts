@@ -11,9 +11,9 @@ export function getSchemaId(
   schemaId: string,
   importInfos: ReturnType<typeof getFileImportInfos>,
   option:
-    | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TWatchSchemaOption, 'rootDir' | 'includePath'>,
+    | Pick<TAddSchemaOption, 'rootDir'>
+    | Pick<TRefreshSchemaOption, 'rootDir'>
+    | Pick<TWatchSchemaOption, 'rootDir'>,
 ) {
   if (isRelativeDtoPath(option)) {
     const dtoName = `${schemaId.replace('#/definitions/', '')}`;

@@ -1,3 +1,3 @@
 export interface IInitOption {
-  discriminator: 'init-nozzle';
+  $kind: 'init-nozzle';
 }

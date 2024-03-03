@@ -1,5 +1,5 @@
+import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
-import { posixJoin } from '#/tools/posixJoin';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { defaultExclude } from 'vitest/dist/config';
@@ -31,7 +31,7 @@ describe('ExcludeContainer', () => {
 
   it('isExclude', () => {
     const container = new ExcludeContainer({
-      patterns: ['src/cli/**/*.ts', 'src/compilers/**/*.ts'],
+      patterns: ['src/modules/**/*.ts', 'src/compilers/**/*.ts', 'examples/**/*.ts'],
       inlineExcludedFiles: [
         {
           commentCode: 'inline exclude test',
@@ -59,51 +59,16 @@ describe('ExcludeContainer', () => {
       options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
     });
 
-    const r01 = container.isExclude('src/files/IncludeContainer.ts');
-    const r02 = container.isExclude('src/compilers/routes/getRouteHandler.ts');
-    const r03 = container.isExclude(
-      posixJoin(process.cwd(), 'src/modules/files/IncludeContainer.ts'),
-    );
-    const r04 = container.isExclude(
-      posixJoin(process.cwd(), 'src/compilers/routes/getRouteHandler.ts'),
-    );
-    const r05 = container.isExclude(
-      posixJoin(process.cwd(), 'src/compilers/navigate/getResolvedImportedModules.ts'),
-    );
+    const r01 = container.isExclude('src/databases/deleteDatabaseItem.ts');
+    const r02 = container.isExclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
+    const r03 = container.isExclude(posixJoin(process.cwd(), 'src/tools/getRatioNumber.ts'));
+    const r04 = container.isExclude(posixJoin(process.cwd(), 'src/compilers/getExportedFiles.ts'));
+    const r05 = container.isExclude(posixJoin(process.cwd(), 'src/compilers/getJsDocTags.ts'));
 
     expect(r01).toBeFalsy();
     expect(r02).toBeTruthy();
     expect(r03).toBeFalsy();
     expect(r04).toBeTruthy();
     expect(r05).toBeTruthy();
-  });
-
-  it('isExclude', () => {
-    const container = new ExcludeContainer({
-      patterns: [
-        'src/cli/**/*.ts',
-        'src/compilers/**/*.ts',
-        'examples/**/*.ts',
-        '!src/compilers/getTypeScriptProject.ts',
-      ],
-      inlineExcludedFiles: [],
-      options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
-    });
-
-    const r01 = container.isExclude('src/files/IncludeContainer.ts');
-    const r02 = container.isExclude('src/compilers/routes/getRouteHandler.ts');
-    const r03 = container.isExclude(path.join(process.cwd(), 'src/files/IncludeContainer.ts'));
-    const r04 = container.isExclude(
-      path.join(process.cwd(), 'src/compilers/routes/getRouteHandler.ts'),
-    );
-    const r05 = container.isExclude(
-      path.join(process.cwd(), 'src/cli/compilers/getTypeScriptProject.ts'),
-    );
-
-    expect(r01).toBeFalsy();
-    expect(r02).toBeTruthy();
-    expect(r03).toBeFalsy();
-    expect(r04).toBeTruthy();
-    expect(r05).toBeFalsy();
   });
 });

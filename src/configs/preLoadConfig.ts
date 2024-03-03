@@ -28,11 +28,11 @@ function getConfigObject(configFilePath: string): Record<string, string | undefi
 function getDiscriminator(
   command: string,
 ):
-  | TAddSchemaOption['discriminator']
-  | TRefreshSchemaOption['discriminator']
-  | TDeleteSchemaOption['discriminator']
-  | TTruncateSchemaOption['discriminator']
-  | IInitOption['discriminator'] {
+  | TAddSchemaOption['$kind']
+  | TRefreshSchemaOption['$kind']
+  | TDeleteSchemaOption['$kind']
+  | TTruncateSchemaOption['$kind']
+  | IInitOption['$kind'] {
   if (command === CE_COMMAND_LIST.REFRESH || command === CE_COMMAND_LIST.REFRESH_ALIAS) {
     return 'refresh-schema';
   }

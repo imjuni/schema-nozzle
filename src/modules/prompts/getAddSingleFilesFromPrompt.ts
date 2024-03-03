@@ -1,4 +1,4 @@
-import { CE_FUZZY_SCORE_LIMIT } from '#/modules/interfaces/CE_FUZZY_SCORE_LIMIT';
+import { CE_FUZZY_SCORE_LIMIT } from '#/modules/const-enum/CE_FUZZY_SCORE_LIMIT';
 import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';

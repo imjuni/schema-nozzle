@@ -10,6 +10,8 @@
   "buildOnSave": false,
   "compilerOptions": {
     "lib": ["es2021", "DOM"],
+    "module": "CommonJS",
+    "moduleResolution": "Node",
     "declaration": true,
     "composite": true,
     "incremental": true,
@@ -31,5 +33,6 @@
     "emitDecoratorMetadata": true,
     "pretty": true
   },
+  "include": ["*.ts", "**/*.ts"],
   "exclude": ["dist/**", "**/.configs/**", "**/docs/**/*"]
 }

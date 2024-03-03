@@ -16,18 +16,18 @@ vitest.mock('my-node-fp', async (importOriginal) => {
 const originPath = process.env.INIT_CWD!;
 const data: { resolvedPaths: ReturnType<typeof getResolvedPaths> } = {} as any;
 
-beforeEach(() => {
-  process.env.INIT_CWD = path.join(originPath, 'examples');
-  data.resolvedPaths = getResolvedPaths({
-    project: path.join(originPath, 'examples', 'tsconfig.json'),
-    output: path.join(originPath, 'examples'),
-  });
-});
-
 describe('getSchemaGeneratorOption', () => {
+  beforeEach(() => {
+    vitest.stubEnv('INIT_CWD', path.join(originPath, 'examples'));
+    data.resolvedPaths = getResolvedPaths({
+      project: path.join(originPath, 'examples', 'tsconfig.json'),
+      output: path.join(originPath, 'examples'),
+    });
+  });
+
   it('undefined', async () => {
     const option = await getSchemaGeneratorOption({
-      discriminator: 'add-schema',
+      $kind: 'add-schema',
       project: data.resolvedPaths.project,
       skipError: true,
       generatorOption: undefined,
@@ -42,14 +42,14 @@ describe('getSchemaGeneratorOption', () => {
       skipTypeCheck: true,
       sortProps: true,
       strictTuples: true,
-      encodeRefs: true,
+      encodeRefs: false,
       additionalProperties: false,
     });
   });
 
   it('option object', async () => {
     const option = await getSchemaGeneratorOption({
-      discriminator: 'add-schema',
+      $kind: 'add-schema',
       project: data.resolvedPaths.project,
       skipError: false,
       generatorOption: {
@@ -61,7 +61,7 @@ describe('getSchemaGeneratorOption', () => {
         jsDoc: 'extended',
         sortProps: true,
         strictTuples: true,
-        encodeRefs: true,
+        encodeRefs: false,
         additionalProperties: true,
       },
     });
@@ -75,7 +75,7 @@ describe('getSchemaGeneratorOption', () => {
       jsDoc: 'extended',
       sortProps: true,
       strictTuples: true,
-      encodeRefs: true,
+      encodeRefs: false,
       additionalProperties: true,
     });
   });
@@ -93,14 +93,14 @@ describe('getSchemaGeneratorOption', () => {
           jsDoc: 'extended',
           sortProps: true,
           strictTuples: true,
-          encodeRefs: true,
+          encodeRefs: false,
           additionalProperties: true,
         }),
       ),
     );
 
     const option = await getSchemaGeneratorOption({
-      discriminator: 'add-schema',
+      $kind: 'add-schema',
       project: data.resolvedPaths.project,
       skipError: false,
       generatorOption: './.tjsgrc',
@@ -115,7 +115,7 @@ describe('getSchemaGeneratorOption', () => {
       jsDoc: 'extended',
       sortProps: true,
       strictTuples: true,
-      encodeRefs: true,
+      encodeRefs: false,
       additionalProperties: true,
     });
   });
@@ -125,7 +125,7 @@ describe('getSchemaGeneratorOption', () => {
 
     try {
       await getSchemaGeneratorOption({
-        discriminator: 'add-schema',
+        $kind: 'add-schema',
         project: data.resolvedPaths.project,
         skipError: false,
         generatorOption: path.join(originPath, 'examples', '.tjsgrc'),

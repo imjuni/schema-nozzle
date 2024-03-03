@@ -10,9 +10,9 @@ export function getBaseSchemaId(
   schemaId: string,
   filePath: string,
   option:
-    | Pick<TAddSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TRefreshSchemaOption, 'rootDir' | 'includePath'>
-    | Pick<TWatchSchemaOption, 'rootDir' | 'includePath'>,
+    | Pick<TAddSchemaOption, 'rootDir'>
+    | Pick<TRefreshSchemaOption, 'rootDir'>
+    | Pick<TWatchSchemaOption, 'rootDir'>,
 ) {
   if (isRelativeDtoPath(option)) {
     const dtoName = `${schemaId.replace('#/definitions/', '')}`;

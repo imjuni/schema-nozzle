@@ -44,7 +44,7 @@ export function isValidateConfig<
     return true;
   }
 
-  if (argv.discriminator === 'init-nozzle') {
+  if (argv.$kind === 'init-nozzle') {
     return true;
   }
 

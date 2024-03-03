@@ -1,5 +1,5 @@
 import type { getExportedTypes } from '#/compilers/getExportedTypes';
-import type { CE_WATCH_EVENT } from '#/modules/interfaces/CE_WATCH_EVENT';
+import type { CE_WATCH_EVENT } from '#/modules/const-enum/CE_WATCH_EVENT';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { LastArrayElement } from 'type-fest';
 

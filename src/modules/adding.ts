@@ -6,13 +6,15 @@ import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { bootstrap as lokiBootstrap, instance as lokidb } from '#/databases/files/LokiDb';
+import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
+import { merge as mergeItems } from '#/databases/files/repository/merge';
 import { getAddFiles } from '#/modules/cli/getAddFiles';
 import { getAddTypes } from '#/modules/cli/getAddTypes';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
 import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
-import { GeneratorContainer } from '#/modules/generator/GeneratorContainer';
+import { bootstrap as generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
+import { create as createJsonSchema } from '#/modules/generator/modules/create';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
@@ -35,7 +37,7 @@ export async function adding(
       ...resolvedPaths,
       files: [],
       multiple: true,
-      discriminator: 'add-schema',
+      $kind: 'add-schema',
       generatorOptionObject: {},
     };
 
@@ -48,7 +50,7 @@ export async function adding(
 
     const dbPath = await getDatabaseFilePath(option);
     await lokiBootstrap({ filename: dbPath });
-    GeneratorContainer.bootstrap(option);
+    generatorBootstrap(option);
 
     const filePaths = project
       .getSourceFiles()
@@ -101,7 +103,7 @@ export async function adding(
 
     const items = schemaTypes
       .map((selectedType) => {
-        const schema = GeneratorContainer.it.create(selectedType.filePath, selectedType.identifier);
+        const schema = createJsonSchema(selectedType.filePath, selectedType.identifier);
 
         if (schema.type === 'fail') {
           return undefined;
@@ -115,7 +117,7 @@ export async function adding(
       .flat()
       .filter((record): record is IDatabaseItem => record != null);
 
-    lokidb().merge(items);
+    mergeItems(items);
     await lokidb().save();
 
     spinner.stop(

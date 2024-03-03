@@ -5,15 +5,11 @@ import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption
 import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import { traverser } from '#/databases/modules/traverser';
-import type { createJSONSchema } from '#/modules/createJSONSchema';
+import type { create } from '#/modules/generator/modules/create';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
-import type { ISchemaExportInfo } from '#/modules/interfaces/ISchemaExportInfo';
-import type { ISchemaImportInfo } from '#/modules/interfaces/ISchemaImportInfo';
 import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
-import { settify } from 'my-easy-fp';
-import { getDirnameSync } from 'my-node-fp';
 import type { TPickPass } from 'my-only-either';
 import path from 'path';
 import type * as tsm from 'ts-morph';
@@ -25,16 +21,16 @@ type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 export function createDatabaseItem(
   project: tsm.Project,
   option:
-    | Pick<TAddSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
-    | Pick<TRefreshSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>
-    | Pick<TWatchSchemaOption, 'discriminator' | 'format' | 'project' | 'rootDir' | 'includePath'>,
+    | Pick<TAddSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>
+    | Pick<TWatchSchemaOption, '$kind' | 'format' | 'project' | 'projectDir' | 'rootDir'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
-  schema: TPickPass<ReturnType<typeof createJSONSchema>>,
+  schema: TPickPass<ReturnType<typeof create>>,
 ): {
   item: IDatabaseItem;
   definitions?: IDatabaseItem[];
 } {
-  const basePath = getDirnameSync(option.project);
+  const basePath = option.projectDir;
   const targetSchema = fastCopy(schema.schema);
   const importInfos = getFileImportInfos(project, schema.filePath);
   const importedMap = exportedTypes.reduce<
@@ -52,10 +48,7 @@ export function createDatabaseItem(
     const record: IDatabaseItem = {
       id,
       filePath: path.relative(basePath, schema.filePath),
-      dependency: {
-        import: { name: id, from: [] },
-        export: { name: id, to: [] },
-      },
+      $ref: [],
       schema: targetSchema,
     };
 
@@ -83,7 +76,7 @@ export function createDatabaseItem(
       consola.trace(`ID: ${definitionId}/ ${id}`);
 
       const definitionStringified = definitionSchema;
-      const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
+      // const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
 
       const definitionRecord: IDatabaseItem = {
         id: definitionId,
@@ -96,47 +89,17 @@ export function createDatabaseItem(
           importDeclaration != null
             ? path.relative(basePath, importDeclaration.filePath)
             : undefined,
-        dependency: {
-          import: { name: definitionId, from: [] },
-          export: exportValue,
-        },
+        $ref: [],
         schema: definitionStringified,
       };
 
       return definitionRecord;
     });
 
-  const duplicableImportValue: ISchemaImportInfo = definitions
-    .map((definition) => definition.id)
-    .filter((definition) => id !== definition)
-    .map(
-      (definition): ISchemaImportInfo => ({
-        name: id,
-        from: [definition],
-      }),
-    )
-    .reduce(
-      (aggregation, importInfo) => {
-        return { ...aggregation, from: [...aggregation.from, ...importInfo.from] };
-      },
-      {
-        name: id,
-        from: [],
-      },
-    );
-
-  const importValue: ISchemaImportInfo = {
-    ...duplicableImportValue,
-    from: settify(duplicableImportValue.from),
-  };
-
   const record: IDatabaseItem = {
     id,
     filePath: path.relative(basePath, schema.filePath),
-    dependency: {
-      import: importValue,
-      export: { name: id, to: [] },
-    },
+    $ref: definitions.map((definition) => definition.id),
     schema: targetSchema,
   };
 

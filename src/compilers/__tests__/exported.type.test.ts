@@ -4,30 +4,32 @@ import { getExportedTypes } from '#/compilers/getExportedTypes';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { startSepRemove } from 'my-node-fp';
 import path from 'path';
-import * as tsm from 'ts-morph';
+import type * as tsm from 'ts-morph';
+import { getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
 
-process.env.USE_INIT_CWD = 'true';
-const originPath = process.env.INIT_CWD!;
-const data: { project: tsm.Project; resolvedPaths: ReturnType<typeof getResolvedPaths> } = {
-  project: new tsm.Project({
-    tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
+const data: {
+  project: tsm.Project;
+  config: ReturnType<typeof getTypeScriptConfig>;
+  resolvedPaths: ReturnType<typeof getResolvedPaths>;
+} = {
+  project: getTypeScriptProject(path.join(process.cwd(), 'examples', 'tsconfig.json')),
+  config: getTypeScriptConfig(path.join(process.cwd(), 'examples', 'tsconfig.json')),
+  resolvedPaths: getResolvedPaths({
+    project: path.join(process.cwd(), 'examples', 'tsconfig.json'),
+    output: path.join(process.cwd(), 'examples'),
   }),
 } as any;
 
-beforeEach(() => {
-  process.env.INIT_CWD = path.join(originPath, 'examples');
-  data.resolvedPaths = getResolvedPaths({
-    project: path.join(originPath, 'examples', 'tsconfig.json'),
-    output: path.join(originPath, 'examples'),
-  });
-});
-
 describe('getExportedFiles', () => {
-  it('normal', () => {
+  beforeEach(() => {
+    vitest.stubEnv('INIT_CWD', path.join(process.cwd(), 'examples'));
+  });
+
+  it('export files', () => {
     const files = getExportedFiles(data.project);
     const refinedFiles = files.map((file) =>
-      startSepRemove(file.replace(data.resolvedPaths.cwd, '')),
+      startSepRemove(file.replace(path.join(process.cwd(), 'examples'), '')),
     );
 
     expect(refinedFiles).toMatchObject([
@@ -47,7 +49,7 @@ describe('getExportedFiles', () => {
 
 describe('getExportedTypes', () => {
   it('normal', () => {
-    const types = getExportedTypes(data.project);
+    const types = getExportedTypes(data.project, data.config.fileNames);
 
     expect(types.map((type) => type.identifier)).toMatchObject([
       'I18nDto',

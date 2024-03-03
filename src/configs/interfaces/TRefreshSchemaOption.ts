@@ -4,7 +4,7 @@ import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
 
 interface IRefreshSchemaOption {
-  discriminator: 'refresh-schema';
+  $kind: 'refresh-schema';
 
   /**
    * json-schema save format

@@ -25,7 +25,7 @@ export async function watchCommandSync(baseOption: TWatchSchemaBaseOption) {
   const option: TWatchSchemaOption = {
     ...baseOption,
     ...resolvedPaths,
-    discriminator: 'watch-schema',
+    $kind: 'watch-schema',
     files: [],
     generatorOptionObject: {},
   };
