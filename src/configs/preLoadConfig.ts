@@ -25,7 +25,7 @@ function getConfigObject(configFilePath: string): Record<string, string | undefi
   return configObj;
 }
 
-function getDiscriminator(
+function getKind(
   command: string,
 ):
   | TAddSchemaOption['$kind']
@@ -69,7 +69,7 @@ export function preLoadConfig() {
       return {};
     }
 
-    const discriminator = getDiscriminator(atOrThrow(toArray(argv._), 0));
+    const kind = getKind(atOrThrow(toArray(argv._), 0));
 
     if (configFilePath != null) {
       const configObj = getConfigObject(configFilePath);
@@ -80,7 +80,7 @@ export function preLoadConfig() {
         project: configObj.p ?? configObj.project ?? tsconfigPath,
         c: configFilePath,
         config: configFilePath,
-        discriminator,
+        $kind: kind,
       };
     }
 
@@ -98,14 +98,14 @@ export function preLoadConfig() {
           project: configObj.p ?? configObj.project ?? tsconfigPath,
           c: configFilePath,
           config: configFilePath,
-          discriminator,
+          discriminator: kind,
         };
       }
 
       return {
         p: tsconfigPath,
         project: tsconfigPath,
-        discriminator,
+        discriminator: kind,
       };
     }
 

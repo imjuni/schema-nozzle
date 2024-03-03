@@ -8,8 +8,10 @@ export interface IDeleteSchemaOption extends IBaseOption {
   /** use checkbox with multiple selections */
   multiple: boolean;
 
+  /** list of files to generate json-schema from */
   include: string[];
 
+  /** List of files to exclude from the list of files to generate json-schema from */
   exclude: string[];
 
   /** ts-json-schema-generator option file path */

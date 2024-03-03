@@ -1,4 +1,3 @@
-import type { CE_OUTPUT_FORMAT } from '#/configs/const-enum/CE_OUTPUT_FORMAT';
 import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
 import type { IResolvedPaths } from '#/configs/interfaces/IResolvedPaths';
 import type { Config } from 'ts-json-schema-generator';
@@ -6,16 +5,10 @@ import type { Config } from 'ts-json-schema-generator';
 interface IRefreshSchemaOption {
   $kind: 'refresh-schema';
 
-  /**
-   * json-schema save format
-   *
-   * * json: json object
-   * * string: plain string
-   * * base64: plain string > base64
-   * */
-  format: CE_OUTPUT_FORMAT;
-
+  /** list of files to generate json-schema from */
   include: string[];
+
+  /** List of files to exclude from the list of files to generate json-schema from */
   exclude: string[];
 
   /** specify the root folder within your schema path */

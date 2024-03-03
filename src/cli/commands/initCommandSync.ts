@@ -6,10 +6,10 @@ import { getCwd } from '#/tools/getCwd';
 import consola from 'consola';
 import fastGlob from 'fast-glob';
 import inquirer from 'inquirer';
-import { parse } from 'jsonc-parser';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { getTypeScriptConfig } from 'ts-morph-short';
 
 export async function initCommandSync(_option: IInitOption) {
   const cwd = getCwd(process.env);
@@ -31,32 +31,31 @@ export async function initCommandSync(_option: IInitOption) {
     },
   ]);
 
-  const tsconfig = parse((await fs.readFile(answer.tsconfigFilePath)).toString()) as Record<
-    string,
-    unknown
-  >;
+  const { tsconfigFilePath } = answer;
+  const tsconfigDirPath = await getDirname(answer.tsconfigFilePath);
+
+  const tsconfig = getTypeScriptConfig(tsconfigFilePath);
 
   spinner.start(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}, ...`);
 
-  const projectRootDir = await getDirname(answer.tsconfigFilePath);
-
-  const outputFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.DB_FILE_NAME);
-  const listFileFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.LIST_FILE_NAME);
-  const configFilePath = path.join(projectRootDir, CE_DEFAULT_VALUE.CONFIG_FILE_NAME);
+  const outputFilePath = path.relative(
+    tsconfigDirPath,
+    path.resolve(path.join(tsconfigDirPath, CE_DEFAULT_VALUE.DB_FILE_NAME)),
+  );
+  const configFilePath = path.resolve(
+    path.join(tsconfigDirPath, CE_DEFAULT_VALUE.CONFIG_FILE_NAME),
+  );
 
   await fs.writeFile(
     configFilePath,
-    getInitialOption(outputFilePath, answer.tsconfigFilePath, listFileFilePath),
+    getInitialOption(
+      outputFilePath,
+      path.relative(tsconfigDirPath, tsconfigFilePath),
+      tsconfig.raw.include ?? [],
+    ),
   );
 
   spinner.stop(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}: ${configFilePath}`, 'succeed');
-
-  spinner.start(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}, ...`);
-
-  const nozzlefiles = tsconfig.include != null ? (tsconfig.include as string[]) : ['**/*.ts'];
-  await fs.writeFile(listFileFilePath, `${nozzlefiles.join('\n')}\n`);
-
-  spinner.stop(`create ${CE_DEFAULT_VALUE.LIST_FILE_NAME}: ${listFileFilePath}`, 'succeed');
 
   consola.trace(answer.tsconfigFilePath);
 }
