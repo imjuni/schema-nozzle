@@ -6,11 +6,11 @@ let it: NozzleGenerator;
 
 let isBootstrap: boolean = false;
 
-export function instance(): Readonly<NozzleGenerator> {
+export function getGenerator(): Readonly<NozzleGenerator> {
   return it;
 }
 
-export function bootstrap(
+export function generatorBootstrap(
   options:
     | Pick<TAddSchemaOption, 'project' | 'generatorOptionObject'>
     | Pick<TRefreshSchemaOption, 'project' | 'generatorOptionObject'>,

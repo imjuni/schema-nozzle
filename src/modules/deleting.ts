@@ -7,7 +7,7 @@ import type {
   TDeleteSchemaOption,
 } from '#/configs/interfaces/TDeleteSchemaOption';
 import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
-import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
+import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { types } from '#/databases/files/repository/types';
 import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';

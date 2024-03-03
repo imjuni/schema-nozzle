@@ -10,14 +10,14 @@ import type {
   TRefreshSchemaOption,
 } from '#/configs/interfaces/TRefreshSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { bootstrap as lokiBootstrap, container as lokidb } from '#/databases/files/LokiDbContainer';
+import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
 import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
-import { bootstrap as generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
-import { create as createJsonSchema } from '#/modules/generator/modules/create';
+import { generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
+import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';

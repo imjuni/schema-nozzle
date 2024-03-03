@@ -1,7 +1,7 @@
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import * as container from '#/modules/generator/NozzleGeneratorContainer';
-import { bootstrap as bootstrapGenerator } from '#/modules/generator/NozzleGeneratorContainer';
-import { create } from '#/modules/generator/modules/create';
+import { generatorBootstrap as bootstrapGenerator } from '#/modules/generator/NozzleGeneratorContainer';
+import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import path from 'node:path';
 import { beforeAll, describe, expect, it, vitest } from 'vitest';
 
@@ -21,7 +21,7 @@ describe('create', () => {
   });
 
   it('pass create-schema', () => {
-    const schema = create('examples/IProfessorEntity.ts', 'IProfessorEntity');
+    const schema = createJsonSchema('examples/IProfessorEntity.ts', 'IProfessorEntity');
     expect(schema).toMatchObject({
       type: 'pass',
       pass: {
@@ -63,11 +63,11 @@ describe('create', () => {
   });
 
   it('exception', () => {
-    vitest.spyOn(container, 'instance').mockImplementationOnce(() => {
+    vitest.spyOn(container, 'getGenerator').mockImplementationOnce(() => {
       throw new Error('intentional raise error');
     });
 
-    const r01 = create('examples/IProfessorEntity.ts', 'IProfessorEntity');
+    const r01 = createJsonSchema('examples/IProfessorEntity.ts', 'IProfessorEntity');
     expect(r01).toMatchObject({ type: 'fail' });
   });
 });

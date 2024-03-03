@@ -5,7 +5,7 @@ import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOp
 import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import { traverser } from '#/databases/modules/traverser';
-import type { create } from '#/modules/generator/modules/create';
+import type { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
@@ -25,7 +25,7 @@ export function createDatabaseItem(
     | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>
     | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
-  schema: TPickPass<ReturnType<typeof create>>,
+  schema: TPickPass<ReturnType<typeof createJsonSchema>>,
 ): {
   item: IDatabaseItem;
   definitions?: IDatabaseItem[];

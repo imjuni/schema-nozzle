@@ -1,10 +1,10 @@
 import { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
-import { instance as generator } from '#/modules/generator/NozzleGeneratorContainer';
+import { getGenerator as generator } from '#/modules/generator/NozzleGeneratorContainer';
 import type { AnySchemaObject } from 'ajv';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 
-export function create(
+export function createJsonSchema(
   filePath: string,
   exportedType: string,
 ): PassFailEither<Error, { filePath: string; exportedType: string; schema: AnySchemaObject }> {

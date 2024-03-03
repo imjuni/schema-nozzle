@@ -4,7 +4,7 @@ import { createDatabaseItem } from '#/databases/createDatabaseItem';
 import { find } from '#/databases/files/repository/find';
 import { findOne } from '#/databases/files/repository/findOne';
 import { remove } from '#/databases/files/repository/remove';
-import { create as createJsonSchema } from '#/modules/generator/modules/create';
+import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type * as tsm from 'ts-morph';
 import { getFileImportInfos } from 'ts-morph-short';

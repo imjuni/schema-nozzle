@@ -1,5 +1,5 @@
 import { NozzleGenerator } from '#/modules/generator/NozzleGenerator';
-import { bootstrap, instance } from '#/modules/generator/NozzleGeneratorContainer';
+import { generatorBootstrap, getGenerator } from '#/modules/generator/NozzleGeneratorContainer';
 import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { describe, expect, it } from 'vitest';
 
@@ -18,17 +18,17 @@ describe('singletone-container', () => {
   it('bootstrap', () => {
     const tsconfig = posixJoin(process.cwd(), 'examples', 'tsconfig.json');
 
-    bootstrap({
+    generatorBootstrap({
       project: tsconfig,
       generatorOptionObject: { minify: false },
     });
 
-    bootstrap({
+    generatorBootstrap({
       project: tsconfig,
       generatorOptionObject: {},
     });
 
-    const container = instance();
+    const container = getGenerator();
 
     expect(container.generator).toBeDefined();
   });

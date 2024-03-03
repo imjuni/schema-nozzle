@@ -1,5 +1,5 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
-import { container as lokidb } from '#/databases/files/LokiDbContainer';
+import { getDb as lokidb } from '#/databases/files/LokiDbContainer';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 
 export function update(items: IDatabaseItem) {
