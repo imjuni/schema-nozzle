@@ -45,14 +45,14 @@ export function createDatabaseItem(
   const id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
 
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
-    const record: IDatabaseItem = {
+    const item: IDatabaseItem = {
       id,
       filePath: path.relative(basePath, schema.filePath),
       $ref: [],
       schema: currentSchema,
     };
 
-    return { item: record };
+    return { item };
   }
 
   // extract schema from definitions field
@@ -78,6 +78,7 @@ export function createDatabaseItem(
       const definitionStringified = definitionSchema;
       // const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
 
+      delete definitionStringified.definitions;
       const definitionRecord: IDatabaseItem = {
         id: definitionId,
         filePath:
@@ -96,12 +97,13 @@ export function createDatabaseItem(
       return definitionRecord;
     });
 
-  const record: IDatabaseItem = {
+  delete currentSchema.definitions;
+  const item: IDatabaseItem = {
     id,
     filePath: path.relative(basePath, schema.filePath),
     $ref: definitions.map((definition) => definition.id),
     schema: currentSchema,
   };
 
-  return { item: record, definitions };
+  return { item, definitions };
 }

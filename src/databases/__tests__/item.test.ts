@@ -54,7 +54,10 @@ describe('createDatabaseItem', () => {
         projectDir: tsconfigDirPath,
         rootDir: 'examples',
       },
-      [{ filePath: 'examples/IProfessorEntity.ts', identifier: 'IProfessorEntity' }],
+      [
+        { filePath: 'examples/IProfessorEntity.ts', identifier: 'IProfessorEntity' },
+        { filePath: 'examples/const-enum/CE_MAJOR.ts', identifier: 'CE_MAJOR' },
+      ],
       schemas.IProfessorEntity,
     );
 
@@ -88,18 +91,13 @@ describe('createDatabaseItem', () => {
           },
           required: ['id', 'name', 'age', 'joinAt', 'major'],
           additionalProperties: false,
-          definitions: {
-            CE_MAJOR: {
-              type: 'string',
-              enum: ['computer science', 'electrical'],
-            },
-          },
           $id: '#/IProfessorEntity',
         },
       },
       definitions: [
         {
           id: '#/const-enum/CE_MAJOR',
+          filePath: 'const-enum/CE_MAJOR.ts',
           $ref: [],
           schema: {
             $schema: 'http://json-schema.org/draft-07/schema#',

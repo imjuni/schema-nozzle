@@ -23,7 +23,9 @@ import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
 import { defaultExclude } from '#/modules/scopes/defaultExclude';
 import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
+import { unlink } from 'fs/promises';
 import { isError } from 'my-easy-fp';
+import { exists } from 'my-node-fp';
 import type * as tsm from 'ts-morph';
 import type { getTypeScriptConfig } from 'ts-morph-short';
 
@@ -50,13 +52,14 @@ export async function refreshing(
 
     const dbPath = await getDatabaseFilePath(option);
     generatorBootstrap(option);
-    await lokiBootstrap({ filename: dbPath });
 
-    if (option.truncate) {
+    if (option.truncate && (await exists(dbPath))) {
       spinner.start('truncate database, ...');
-      await lokidb().delete();
+      await unlink(dbPath);
       spinner.stop('truncated database!', 'succeed');
     }
+
+    await lokiBootstrap({ filename: dbPath });
 
     const filePaths = project
       .getSourceFiles()

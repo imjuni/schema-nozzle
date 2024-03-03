@@ -1,7 +1,14 @@
 {
-  "tsconfig": "./tsconfig.json",
+  // tsconfig.json file path
+  "project": "./tsconfig.json",
+
+  // database file directory or filename
+  "output": "db.json",
+
   "cli-logo": true,
+
   "include": ["*.ts"],
+
   "generatorOption": {
     "additionalProperties": true,
     "extraTags": ["example"]
