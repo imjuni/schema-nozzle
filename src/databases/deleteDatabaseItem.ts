@@ -7,12 +7,13 @@ import { remove } from '#/databases/files/repository/remove';
 import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type * as tsm from 'ts-morph';
-import { getFileImportInfos } from 'ts-morph-short';
+import type { getImportInfoMap, IImportInfoMapElement } from 'ts-morph-short';
 import type { SetRequired } from 'type-fest';
 
 export function deleteDatabaseItem(
   project: tsm.Project,
-  option: Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>,
+  option: Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>,
+  importMap: ReturnType<typeof getImportInfoMap>,
   identifier: string,
 ) {
   const item = findOne({ id: { $eq: identifier } });
@@ -29,23 +30,35 @@ export function deleteDatabaseItem(
     .filter(
       (refItem): refItem is SetRequired<typeof refItem, 'filePath'> => refItem.filePath != null,
     )
-    .map((refItem) => getFileImportInfos(project, refItem.filePath))
-    .flat();
+    .map((refItem) => {
+      const importInfo = importMap.get(refItem.typeName);
+
+      if (importInfo != null) {
+        importInfo.sourceFilePath.set(refItem.filePath, false);
+      }
+
+      return importInfo;
+    })
+    .filter((importInfo): importInfo is IImportInfoMapElement => importInfo != null);
 
   const items = importInfos
-    .filter(
-      (importInfo): importInfo is SetRequired<typeof importInfo, 'sourceFilePath'> =>
-        importInfo.sourceFilePath != null,
-    )
     .map((importInfo) => {
-      const schema = createJsonSchema(importInfo.sourceFilePath, importInfo.name);
+      return Array.from(importInfo.sourceFilePath.entries()).map(([filePath, include]) => ({
+        filePath,
+        typeName: importInfo.name,
+        include: !include,
+      }));
+    })
+    .flat()
+    .map((importInfo) => {
+      const schema = createJsonSchema(importInfo.filePath, importInfo.typeName);
 
       if (schema.type === 'fail') {
         return undefined;
       }
 
-      const projectExportedTypes = getExportedTypes(project, [importInfo.sourceFilePath]);
-      const nextRefItem = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
+      const projectExportedTypes = getExportedTypes(project, [importInfo.filePath]);
+      const nextRefItem = createDatabaseItem(option, projectExportedTypes, schema.pass, importMap);
       const withDependencies = [nextRefItem.item, ...(nextRefItem.definitions ?? [])];
       return withDependencies;
     })

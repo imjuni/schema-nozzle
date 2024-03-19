@@ -113,3 +113,7 @@ dist/
 .swc
 .DS_Store
 git-short.sh
+
+# Test
+jin-frame
+maeum-pet-store

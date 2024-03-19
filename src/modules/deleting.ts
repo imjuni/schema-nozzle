@@ -7,14 +7,14 @@ import type {
   TDeleteSchemaOption,
 } from '#/configs/interfaces/TDeleteSchemaOption';
 import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
-import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
+import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { types } from '#/databases/files/repository/types';
 import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
 import { getDeleteTypes } from '#/modules/cli/getDeleteTypes';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type * as tsm from 'ts-morph';
-import type { getTypeScriptConfig } from 'ts-morph-short';
+import { getImportInfoMap, type getTypeScriptConfig } from 'ts-morph-short';
 
 export async function deleting(
   project: tsm.Project,
@@ -38,18 +38,19 @@ export async function deleting(
   if (diagnostics.pass === false) throw new Error('project compile error');
 
   const dbPath = await getDatabaseFilePath(option);
-  await lokiBootstrap({ filename: dbPath });
+  lokiBootstrap({ filename: dbPath });
 
   const schemaTypes = types();
   const targetTypes = await getDeleteTypes({ schemaTypes, option });
   if (targetTypes.type === 'fail') throw targetTypes.fail;
+  const importMap = getImportInfoMap(project);
 
   spinner.start(
     `Start [${targetTypes.pass.map((targetType) => `"${targetType}"`).join(', ')}] deletion...`,
   );
 
   const nextRefItems = targetTypes.pass
-    .map((targetType) => deleteDatabaseItem(project, option, targetType))
+    .map((targetType) => deleteDatabaseItem(project, option, importMap, targetType))
     .filter((refItems): refItems is IDatabaseItem[] => refItems != null)
     .flat();
 

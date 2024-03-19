@@ -3,5 +3,5 @@ export interface IResolvedPaths {
   projectDir: string;
   cwd: string;
   output: string;
-  rootDir?: string;
+  rootDirs?: string[];
 }

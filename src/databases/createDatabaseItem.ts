@@ -3,6 +3,7 @@ import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
+import { getFastifySwaggerId } from '#/databases/modules/getFastifySwaggerId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import { traverser } from '#/databases/modules/traverser';
 import type { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
@@ -12,44 +13,48 @@ import consola from 'consola';
 import fastCopy from 'fast-copy';
 import type { TPickPass } from 'my-only-either';
 import path from 'node:path';
-import type * as tsm from 'ts-morph';
-import { getFileImportInfos } from 'ts-morph-short';
+import type { getImportInfoMap } from 'ts-morph-short';
 import type { LastArrayElement } from 'type-fest';
 
 type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
 
 export function createDatabaseItem(
-  project: tsm.Project,
   option:
-    | Pick<TAddSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>
-    | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>
-    | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDir'>,
+    | Pick<TAddSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>
+    | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>
+    | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>,
   exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
   schema: TPickPass<ReturnType<typeof createJsonSchema>>,
+  importInfoMap: ReturnType<typeof getImportInfoMap>,
 ): {
   item: IDatabaseItem;
   definitions?: IDatabaseItem[];
 } {
   const basePath = option.projectDir;
   const currentSchema = fastCopy(schema.schema);
-  const importInfos = getFileImportInfos(project, schema.filePath);
   const importedMap = exportedTypes.reduce<
     Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
   >((aggregation, exportedType) => {
     return { ...aggregation, [exportedType.identifier]: exportedType };
   }, {});
 
-  currentSchema.$id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
-  traverser(currentSchema, importInfos, option);
+  currentSchema.$id = getFastifySwaggerId(
+    getBaseSchemaId(schema.exportedType, schema.filePath, option),
+    option,
+  );
+  currentSchema.title = getBaseSchemaId(schema.exportedType, schema.filePath, option, false);
+  traverser({ ...currentSchema, $$filePath: schema.filePath }, importInfoMap, option);
 
-  const id = getBaseSchemaId(schema.exportedType, schema.filePath, option);
+  const id = currentSchema.$id;
 
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
     const item: IDatabaseItem = {
       id,
+      typeName: schema.exportedType,
       filePath: path.relative(basePath, schema.filePath),
       $ref: [],
       schema: currentSchema,
+      rawSchema: JSON.stringify(currentSchema),
     };
 
     return { item };
@@ -63,15 +68,20 @@ export function createDatabaseItem(
         typeof definition.value === 'object',
     )
     .map((definition) => {
-      const definitionId = getSchemaId(definition.key, importInfos, option);
+      const definitionId = getFastifySwaggerId(
+        getSchemaId(definition.key, importInfoMap, option),
+        option,
+      );
+      const title = getSchemaId(definition.key, importInfoMap, option, false);
       const importDeclaration = importedMap[definition.key];
       const definitionSchema: AnySchemaObject = {
         $schema: schema.schema.$schema,
         $id: definitionId,
+        title,
         ...definition.value,
       };
 
-      traverser(definitionSchema, importInfos, option);
+      traverser({ ...definitionSchema, $$filePath: schema.filePath }, importInfoMap, option);
 
       consola.trace(`ID: ${definitionId}/ ${id}`);
 
@@ -81,6 +91,7 @@ export function createDatabaseItem(
       delete definitionStringified.definitions;
       const definitionRecord: IDatabaseItem = {
         id: definitionId,
+        typeName: definition.key,
         filePath:
           // slack처럼 외부 모듈을 설치해서 json-schema를 추출하려고 하는 경우,
           // local export map으로 검색할 수 없어 importDeclaration은 undefined 가 된다
@@ -92,6 +103,7 @@ export function createDatabaseItem(
             : undefined,
         $ref: [],
         schema: definitionStringified,
+        rawSchema: JSON.stringify(definitionStringified),
       };
 
       return definitionRecord;
@@ -100,9 +112,11 @@ export function createDatabaseItem(
   delete currentSchema.definitions;
   const item: IDatabaseItem = {
     id,
+    typeName: schema.exportedType,
     filePath: path.relative(basePath, schema.filePath),
     $ref: definitions.map((definition) => definition.id),
     schema: currentSchema,
+    rawSchema: JSON.stringify(currentSchema),
   };
 
   return { item, definitions };

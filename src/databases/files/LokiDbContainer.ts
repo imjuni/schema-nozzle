@@ -7,11 +7,11 @@ let it: LokiDb;
 
 let isBootstrap: boolean = false;
 
-export function getDb(): Readonly<LokiDb> {
+export function getIt(): Readonly<LokiDb> {
   return it;
 }
 
-export async function dbBootstrap(options: { filename: string }) {
+export function bootstrap(options: { filename: string }) {
   if (isBootstrap) {
     return;
   }

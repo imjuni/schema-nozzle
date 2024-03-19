@@ -1,24 +1,25 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
+import { getFastifySwaggerId } from '#/databases/modules/getFastifySwaggerId';
 import { getSchemaId } from '#/databases/modules/getSchemaId';
 import type { AnySchemaObject } from 'ajv';
 import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
-import type { getFileImportInfos } from 'ts-morph-short';
+import type { getImportInfoMap } from 'ts-morph-short';
 
 export function traverser(
   schema: AnySchemaObject,
-  importInfos: ReturnType<typeof getFileImportInfos>,
+  importInfoMap: ReturnType<typeof getImportInfoMap>,
   option:
-    | Pick<TAddSchemaOption, 'rootDir'>
-    | Pick<TRefreshSchemaOption, 'rootDir'>
-    | Pick<TWatchSchemaOption, 'rootDir'>,
+    | Pick<TAddSchemaOption, 'rootDirs'>
+    | Pick<TRefreshSchemaOption, 'rootDirs'>
+    | Pick<TDeleteSchemaOption, 'rootDirs'>,
 ) {
   const traverseHandler: TraversalCallback = (ctx: TraversalCallbackContext): unknown => {
     const next = ctx.parent;
 
-    if (next != null && ctx.key != null && ctx.key === '$ref') {
-      const $id = getSchemaId(ctx.value as string, importInfos, option);
+    if (next != null && ctx.key != null && ctx.key === '$ref' && typeof ctx.value === 'string') {
+      const $id = getFastifySwaggerId(getSchemaId(ctx.value, importInfoMap, option), option);
       next[ctx.key] = $id;
     }
 

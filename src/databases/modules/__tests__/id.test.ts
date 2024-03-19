@@ -1,13 +1,14 @@
-import { isRelativeDtoPath } from '#/databases/modules/isRelativeDtoPath';
+import { getFastifySwaggerId } from '#/databases/modules/getFastifySwaggerId';
 import { describe, expect, it } from 'vitest';
 
-describe('isRelativeDtoPath', () => {
-  it('multiple-case', () => {
-    const r01 = isRelativeDtoPath({});
-    expect(r01).toBeFalsy();
-    const r02 = isRelativeDtoPath({ rootDir: './examples' });
-    expect(r02).toBeTruthy();
-    const r03 = isRelativeDtoPath({ rootDir: undefined });
-    expect(r03).toBeFalsy();
+describe('getFastifySwaggerId', () => {
+  it('no rootDirs', () => {
+    const r01 = getFastifySwaggerId('/a/b/c/d', {});
+    expect(r01).toEqual('-a-b-c-d');
+  });
+
+  it('with rootDirs', () => {
+    const r01 = getFastifySwaggerId('#/e/f/g/h', { rootDirs: ['a'] });
+    expect(r01).toEqual('-e-f-g-h');
   });
 });

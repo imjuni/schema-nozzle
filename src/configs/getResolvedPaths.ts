@@ -8,7 +8,7 @@ import type { SetOptional } from 'type-fest';
 
 export function getResolvedPaths(
   option: SetOptional<
-    Pick<TAddSchemaOption | TRefreshSchemaOption, 'project' | 'output' | 'rootDir'>,
+    Pick<TAddSchemaOption | TRefreshSchemaOption, 'project' | 'output' | 'rootDirs'>,
     'output'
   >,
 ): IResolvedPaths {
@@ -31,16 +31,22 @@ export function getResolvedPaths(
   };
 
   const getRootDirHandler = () => {
-    if (option.rootDir != null) {
-      const rootDir = path.isAbsolute(option.rootDir)
-        ? path.resolve(option.rootDir)
-        : path.resolve(path.join(cwd, option.rootDir));
+    if (option.rootDirs != null) {
+      const rootDirs = option.rootDirs.map((rootDir) =>
+        path.isAbsolute(rootDir) ? path.resolve(rootDir) : path.resolve(path.join(cwd, rootDir)),
+      );
 
-      return rootDir;
+      return rootDirs;
     }
 
     return undefined;
   };
 
-  return { project, projectDir, cwd, output: getOutputPathHandler(), rootDir: getRootDirHandler() };
+  return {
+    project,
+    projectDir,
+    cwd,
+    output: getOutputPathHandler(),
+    rootDirs: getRootDirHandler(),
+  };
 }
