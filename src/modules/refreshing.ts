@@ -10,7 +10,7 @@ import type {
   TRefreshSchemaOption,
 } from '#/configs/interfaces/TRefreshSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
+import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
@@ -27,7 +27,7 @@ import { unlink } from 'fs/promises';
 import { isError } from 'my-easy-fp';
 import { exists } from 'my-node-fp';
 import type * as tsm from 'ts-morph';
-import type { getTypeScriptConfig } from 'ts-morph-short';
+import { getImportInfoMap, type getTypeScriptConfig } from 'ts-morph-short';
 
 export async function refreshing(
   project: tsm.Project,
@@ -59,7 +59,7 @@ export async function refreshing(
       spinner.stop('truncated database!', 'succeed');
     }
 
-    await lokiBootstrap({ filename: dbPath });
+    lokiBootstrap({ filename: dbPath });
 
     const filePaths = project
       .getSourceFiles()
@@ -88,6 +88,7 @@ export async function refreshing(
 
     const projectExportedTypes = getExportedTypes(project, schemaFilePaths);
     const schemaTypes = await summarySchemaTypes(project, schemaFilePaths, option);
+    const importMap = getImportInfoMap(project);
 
     const generatedItems = schemaTypes
       .map((targetType) => {
@@ -97,7 +98,7 @@ export async function refreshing(
           return { $kind: 'fail', error: schema.fail };
         }
 
-        const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
+        const item = createDatabaseItem(option, projectExportedTypes, schema.pass, importMap);
         const withDependencies = [item.item, ...(item.definitions ?? [])];
 
         return { $kind: 'pass', items: withDependencies };

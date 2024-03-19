@@ -7,7 +7,7 @@ import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
 import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
+import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
@@ -25,7 +25,7 @@ import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { isError } from 'my-easy-fp';
 import type * as tsm from 'ts-morph';
-import type { getTypeScriptConfig } from 'ts-morph-short';
+import { getImportInfoMap, type getTypeScriptConfig } from 'ts-morph-short';
 
 export async function adding(
   project: tsm.Project,
@@ -51,7 +51,7 @@ export async function adding(
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     const dbPath = await getDatabaseFilePath(option);
-    await lokiBootstrap({ filename: dbPath });
+    lokiBootstrap({ filename: dbPath });
     generatorBootstrap(option);
 
     const filePaths = project
@@ -102,6 +102,7 @@ export async function adding(
       ...option,
       types: option.types,
     });
+    const importMap = getImportInfoMap(project);
 
     const generatedItems = schemaTypes
       .map((selectedType) => {
@@ -111,7 +112,7 @@ export async function adding(
           return { $kind: 'error', error: schema.fail };
         }
 
-        const item = createDatabaseItem(project, option, projectExportedTypes, schema.pass);
+        const item = createDatabaseItem(option, projectExportedTypes, schema.pass, importMap);
         const withDependencies = [item.item, ...(item.definitions ?? [])];
 
         return { $kind: 'item', items: withDependencies };

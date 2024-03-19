@@ -10,7 +10,8 @@
     "jest.config.cjs",
     "jest.config.js",
     "vitest.config.ts",
-    "prepublish.js"
+    "prepublish.js",
+    "commitlint.config.js"
   ],
   "exclude": ["**/node_modules/**", "**/dist/**/*", "**/.configs/**", "**/docs/**"]
 }

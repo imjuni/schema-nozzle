@@ -12,7 +12,13 @@ interface IRefreshSchemaOption {
   exclude: string[];
 
   /** specify the root folder within your schema path */
-  rootDir?: string;
+  rootDirs?: string[];
+
+  /**
+   * enter a prefix to add when writing a name or path in the `$id` field
+   * eg. #/components/schemas > #/components/schemas/component-name
+   * */
+  schemaPathPrefix?: string;
 
   /** Specify whether to include the DTO path in the schema ID */
   includePath?: boolean;

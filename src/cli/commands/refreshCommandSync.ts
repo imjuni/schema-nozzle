@@ -1,4 +1,5 @@
 import { spinner } from '#/cli/display/spinner';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import type { TRefreshSchemaBaseOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import { refreshing } from '#/modules/refreshing';
 import { showLogo } from '@maeum/cli-logo';
@@ -20,8 +21,9 @@ export async function refreshCommandSync(options: TRefreshSchemaBaseOption) {
 
     spinner.start('TypeScript source code compile, ...');
 
-    const project = getTypeScriptProject(options.project);
-    const tsconfig = getTypeScriptConfig(options.project);
+    const resolvedPaths = getResolvedPaths(options);
+    const project = getTypeScriptProject(resolvedPaths.project);
+    const tsconfig = getTypeScriptConfig(resolvedPaths.project);
 
     spinner.stop('TypeScript project loaded!', 'succeed');
 

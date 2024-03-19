@@ -9,6 +9,8 @@
 
   "include": ["*.ts"],
 
+  "rootDirs": ["examples"],
+
   "generatorOption": {
     "additionalProperties": true,
     "extraTags": ["example"]

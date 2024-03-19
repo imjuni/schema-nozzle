@@ -1,5 +1,5 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
-import { getDb as lokidb } from '#/databases/files/LokiDbContainer';
+import { getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import { toArray } from 'my-easy-fp';
 

@@ -1,11 +1,17 @@
+import { spinner } from '#/cli/display/spinner';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
-import { dbBootstrap as lokiBootstrap, getDb as lokidb } from '#/databases/files/LokiDbContainer';
+import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import fs from 'fs';
+import { exists } from 'find-up';
+import { unlink } from 'fs/promises';
 
 export async function truncating(option: TTruncateSchemaOption) {
   const dbPath = await getDatabaseFilePath(option);
-  await fs.promises.unlink(dbPath);
-  await lokiBootstrap({ filename: dbPath });
+  if (await exists(dbPath)) {
+    spinner.start('truncate database, ...');
+    await unlink(dbPath);
+    spinner.stop('truncated database!', 'succeed');
+  }
+  lokiBootstrap({ filename: dbPath });
   await lokidb().save();
 }
