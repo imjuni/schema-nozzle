@@ -113,6 +113,7 @@ dist/
 .swc
 .DS_Store
 git-short.sh
+git-short
 
 # Test
 jin-frame
