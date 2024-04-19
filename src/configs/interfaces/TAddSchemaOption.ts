@@ -11,6 +11,8 @@ export interface IAddSchemaOption {
   /** use checkbox with multiple selections */
   multiple: boolean;
 
+  useDefinitions: boolean;
+
   /** specify the root folder within your schema path */
   rootDirs?: string[];
 
@@ -23,7 +25,7 @@ export interface IAddSchemaOption {
   /** list of files to generate json-schema from */
   include: string[];
 
-  /** List of files to exclude from the list of files to generate json-schema from */
+  /** list of files to exclude from the list of files to generate json-schema from */
   exclude: string[];
 
   /** ts-json-schema-generator option file path */

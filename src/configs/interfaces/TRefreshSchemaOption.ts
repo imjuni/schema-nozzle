@@ -14,6 +14,8 @@ interface IRefreshSchemaOption {
   /** specify the root folder within your schema path */
   rootDirs?: string[];
 
+  useDefinitions: boolean;
+
   /**
    * enter a prefix to add when writing a name or path in the `$id` field
    * eg. #/components/schemas > #/components/schemas/component-name

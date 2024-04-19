@@ -1,19 +1,19 @@
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
-import * as container from '#/modules/generator/NozzleGeneratorContainer';
-import { generatorBootstrap as bootstrapGenerator } from '#/modules/generator/NozzleGeneratorContainer';
+import { makeSchemaGenerator } from '#/modules/generator/makeSchemaGenerator';
 import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
-import path from 'node:path';
-import { beforeAll, describe, expect, it, vitest } from 'vitest';
+import pathe from 'pathe';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-const tsconfigDir = path.join(process.cwd(), 'examples');
-const tsconfigFilePath = path.join(tsconfigDir, 'tsconfig.json');
+const tsconfigDir = pathe.join(process.cwd(), 'examples');
+const tsconfigFilePath = pathe.join(tsconfigDir, 'tsconfig.json');
 
 describe('create', () => {
   beforeAll(async () => {
-    bootstrapGenerator({
+    makeSchemaGenerator({
       project: tsconfigFilePath,
       generatorOptionObject: await getSchemaGeneratorOption({
         $kind: 'add-schema',
+        useDefinitions: false,
         project: tsconfigFilePath,
         skipError: false,
       }),
@@ -60,14 +60,5 @@ describe('create', () => {
         },
       },
     });
-  });
-
-  it('exception', () => {
-    vitest.spyOn(container, 'getGenerator').mockImplementationOnce(() => {
-      throw new Error('intentional raise error');
-    });
-
-    const r01 = createJsonSchema('examples/IProfessorEntity.ts', 'IProfessorEntity');
-    expect(r01).toMatchObject({ type: 'fail' });
   });
 });

@@ -1,28 +1,19 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import { NozzleGenerator } from '#/modules/generator/NozzleGenerator';
+import { container } from '#/modules/containers/container';
+import { SCHEMA_GENERATOR_SYMBOL_KEY } from '#/modules/containers/keys';
+import { asValue } from 'awilix';
+import { createGenerator } from 'ts-json-schema-generator';
 
-let it: NozzleGenerator;
-
-let isBootstrap: boolean = false;
-
-export function getGenerator(): Readonly<NozzleGenerator> {
-  return it;
-}
-
-export function generatorBootstrap(
+export function makeSchemaGenerator(
   options:
     | Pick<TAddSchemaOption, 'project' | 'generatorOptionObject'>
     | Pick<TRefreshSchemaOption, 'project' | 'generatorOptionObject'>,
 ) {
-  if (isBootstrap) {
-    return;
-  }
-
-  it = new NozzleGenerator({
+  const generator = createGenerator({
     ...options.generatorOptionObject,
     tsconfig: options.project,
   });
 
-  isBootstrap = true;
+  container.register(SCHEMA_GENERATOR_SYMBOL_KEY, asValue(generator));
 }

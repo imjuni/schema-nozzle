@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import cliProgesss from 'cli-progress';
 
-class Progress {
+export class ProgressBar {
   accessor isEnable: boolean;
 
   #bar: cliProgesss.SingleBar;
@@ -47,5 +47,3 @@ class Progress {
     }
   }
 }
-
-export const progress = new Progress();

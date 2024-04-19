@@ -9,14 +9,18 @@ export function refreshBuilder(argv: Argv) {
       default: undefined,
     })
     .option('include-path', {
-      describe: 'Specify whether to include the DTO path in the schema ID',
-      type: 'boolean',
-      default: false,
+      describe: 'list of files to generate json-schema from',
+      type: 'string',
+      array: true,
     })
-    .option('max-workers', {
-      describe: 'max worker count',
-      type: 'number',
-      default: undefined,
+    .option('exclude-path', {
+      describe: 'list of files to exclude from the list of files to generate json-schema from',
+      type: 'string',
+      array: true,
+    })
+    .option('use-definitions', {
+      describe: 'TBD',
+      type: 'boolean',
     })
     .option('generator-option', {
       describe: 'ts-json-schema-generator option file path',

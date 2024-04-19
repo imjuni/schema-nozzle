@@ -1,4 +1,4 @@
-import { spinner } from '#/cli/display/spinner';
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
@@ -21,6 +21,7 @@ export async function deleting(
   _tsconfig: ReturnType<typeof getTypeScriptConfig>,
   baseOption: IDeleteSchemaOption,
 ) {
+  const spinner = makeSpinner();
   const resolvedPaths = getResolvedPaths(baseOption);
   const option: TDeleteSchemaOption = {
     ...baseOption,

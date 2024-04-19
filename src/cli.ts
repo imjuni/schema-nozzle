@@ -8,8 +8,8 @@ import { deleteCommandSync } from '#/cli/commands/deleteCommandSync';
 import { initCommandSync } from '#/cli/commands/initCommandSync';
 import { refreshCommandSync } from '#/cli/commands/refreshCommandSync';
 import { truncateCommandSync } from '#/cli/commands/truncateCommandSync';
-import { progress } from '#/cli/display/progress';
-import { spinner } from '#/cli/display/spinner';
+import { makeProgressBar } from '#/cli/display/makeProgressBar';
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import { CE_COMMAND_LIST } from '#/cli/interfaces/CE_COMMAND_LIST';
 import type { IInitOption } from '#/configs/interfaces/IInitOption';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
@@ -32,8 +32,11 @@ const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
   describe: 'add or update json-schema to database file',
   builder: (argv) => addBuilder(builder(argv)),
   handler: async (argv) => {
+    const spinner = makeSpinner();
+    const progressBar = makeProgressBar();
+
     spinner.isEnable = true;
-    progress.isEnable = true;
+    progressBar.isEnable = true;
 
     await addCommandSync(argv);
   },
@@ -45,8 +48,11 @@ const deleteCmd: CommandModule<TDeleteSchemaOption, TDeleteSchemaOption> = {
   describe: 'delete json-schema from database file',
   builder: (argv) => deleteBuilder(builder(argv)),
   handler: async (argv) => {
+    const spinner = makeSpinner();
+    const progressBar = makeProgressBar();
+
     spinner.isEnable = true;
-    progress.isEnable = true;
+    progressBar.isEnable = true;
 
     const option = await withDefaultOption(argv);
     await deleteCommandSync(option);
@@ -59,8 +65,11 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
+    const spinner = makeSpinner();
+    const progressBar = makeProgressBar();
+
     spinner.isEnable = true;
-    progress.isEnable = true;
+    progressBar.isEnable = true;
 
     const option = await withDefaultOption(argv);
     await refreshCommandSync(option);
@@ -73,8 +82,11 @@ const truncateCmd: CommandModule<TTruncateSchemaOption, TTruncateSchemaOption> =
   describe: 'reset database file',
   builder: (argv) => truncateBuilder(builder(argv)),
   handler: async (argv) => {
+    const spinner = makeSpinner();
+    const progressBar = makeProgressBar();
+
     spinner.isEnable = true;
-    progress.isEnable = true;
+    progressBar.isEnable = true;
 
     const option = await withDefaultOption(argv);
     await truncateCommandSync(option);
@@ -87,8 +99,11 @@ const initCmd: CommandModule<IInitOption, IInitOption> = {
   describe: 'init schema-nozzle',
   builder: (argv) => argv,
   handler: async (argv) => {
+    const spinner = makeSpinner();
+    const progressBar = makeProgressBar();
+
     spinner.isEnable = true;
-    progress.isEnable = true;
+    progressBar.isEnable = true;
 
     await initCommandSync(argv);
   },

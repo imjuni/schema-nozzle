@@ -13,5 +13,11 @@
     "prepublish.js",
     "commitlint.config.js"
   ],
-  "exclude": ["**/node_modules/**", "**/dist/**/*", "**/.configs/**", "**/docs/**"]
+  "exclude": [
+    "**/node_modules/**",
+    "**/maeum-pet-store/**",
+    "**/dist/**/*",
+    "**/.configs/**",
+    "**/docs/**"
+  ]
 }

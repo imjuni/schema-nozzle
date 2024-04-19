@@ -2,11 +2,26 @@ import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOpti
 import type { Argv } from 'yargs';
 
 export function deleteBuilder(argv: Argv) {
-  argv.option('multiple', {
-    describe: 'use checkbox with multiple selections',
-    type: 'boolean',
-    default: false,
-  });
+  argv
+    .option('multiple', {
+      describe: 'use checkbox with multiple selections',
+      type: 'boolean',
+      default: false,
+    })
+    .option('include-path', {
+      describe: 'list of files to generate json-schema from',
+      type: 'string',
+      array: true,
+    })
+    .option('exclude-path', {
+      describe: 'list of files to exclude from the list of files to generate json-schema from',
+      type: 'string',
+      array: true,
+    })
+    .option('use-definitions', {
+      describe: 'TBD',
+      type: 'boolean',
+    });
 
   return argv as Argv<TDeleteSchemaOption>;
 }
