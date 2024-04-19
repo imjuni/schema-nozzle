@@ -1,4 +1,4 @@
-import { spinner } from '#/cli/display/spinner';
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import type { IDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import { deleting } from '#/modules/deleting';
 import { showLogo } from '@maeum/cli-logo';
@@ -6,6 +6,8 @@ import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
 export async function deleteCommandSync(options: IDeleteSchemaOption) {
+  const spinner = makeSpinner();
+
   try {
     if (options.cliLogo) {
       await showLogo({

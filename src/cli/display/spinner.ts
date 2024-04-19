@@ -1,7 +1,7 @@
 import { CE_STREAM_TYPE } from '#/cli/interfaces/CE_STREAM_TYPE';
 import ora from 'ora';
 
-class Spinner {
+export class Spinner {
   #spinner: ora.Ora;
 
   #stream: CE_STREAM_TYPE;
@@ -74,5 +74,3 @@ class Spinner {
     return this;
   }
 }
-
-export const spinner = new Spinner();

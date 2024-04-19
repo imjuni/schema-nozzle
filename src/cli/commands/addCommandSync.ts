@@ -1,4 +1,4 @@
-import { spinner } from '#/cli/display/spinner';
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import type { TAddSchemaBaseOption } from '#/configs/interfaces/TAddSchemaOption';
 import { adding } from '#/modules/adding';
 import { showLogo } from '@maeum/cli-logo';
@@ -6,6 +6,8 @@ import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
 export async function addCommandSync(options: TAddSchemaBaseOption): Promise<void> {
+  const spinner = makeSpinner();
+
   try {
     if (options.cliLogo) {
       await showLogo({

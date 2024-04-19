@@ -1,4 +1,4 @@
-import { spinner } from '#/cli/display/spinner';
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getInitialOption } from '#/configs/getInitialOption';
 import type { IInitOption } from '#/configs/interfaces/IInitOption';
@@ -14,6 +14,7 @@ import path from 'node:path';
 import { getTypeScriptConfig } from 'ts-morph-short';
 
 export async function initCommandSync(_option: IInitOption) {
+  const spinner = makeSpinner();
   const cwd = getCwd(process.env);
   const globs = new Glob(['**/tsconfig.json', '**/tsconfig.*.json'], {
     cwd,

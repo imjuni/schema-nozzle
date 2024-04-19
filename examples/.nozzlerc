@@ -9,6 +9,8 @@
 
   "include": ["*.ts"],
 
+  "topRef": true,
+
   "rootDirs": ["examples"],
 
   "generatorOption": {

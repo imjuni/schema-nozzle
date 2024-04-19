@@ -29,6 +29,7 @@ describe('getSchemaGeneratorOption', () => {
     const option = await getSchemaGeneratorOption({
       $kind: 'add-schema',
       project: data.resolvedPaths.project,
+      useDefinitions: false,
       skipError: true,
       generatorOption: undefined,
     });
@@ -52,6 +53,7 @@ describe('getSchemaGeneratorOption', () => {
       $kind: 'add-schema',
       project: data.resolvedPaths.project,
       skipError: false,
+      useDefinitions: false,
       generatorOption: {
         tsconfig: data.resolvedPaths.project,
         minify: true,
@@ -102,6 +104,7 @@ describe('getSchemaGeneratorOption', () => {
     const option = await getSchemaGeneratorOption({
       $kind: 'add-schema',
       project: data.resolvedPaths.project,
+      useDefinitions: false,
       skipError: false,
       generatorOption: './.tjsgrc',
     });
@@ -128,6 +131,7 @@ describe('getSchemaGeneratorOption', () => {
         $kind: 'add-schema',
         project: data.resolvedPaths.project,
         skipError: false,
+        useDefinitions: false,
         generatorOption: path.join(originPath, 'examples', '.tjsgrc'),
       });
     } catch (caught) {

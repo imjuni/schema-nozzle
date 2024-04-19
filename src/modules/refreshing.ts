@@ -1,5 +1,5 @@
+import { makeSpinner } from '#/cli/display/makeSpinner';
 import { showFailMessage } from '#/cli/display/showFailMessage';
-import { spinner } from '#/cli/display/spinner';
 import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFiles';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
 import { getExportedTypes } from '#/compilers/getExportedTypes';
@@ -14,14 +14,11 @@ import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/L
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
 import { merge as mergeItems } from '#/databases/files/repository/merge';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
-import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
-import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
-import { generatorBootstrap } from '#/modules/generator/NozzleGeneratorContainer';
+import { makeSchemaGenerator } from '#/modules/generator/makeSchemaGenerator';
 import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
-import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
-import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
-import { defaultExclude } from '#/modules/scopes/defaultExclude';
+import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
+import { makeIncludeContianer } from '#/modules/scopes/makeIncludeContianer';
 import { summarySchemaTypes } from '#/modules/summarySchemaTypes';
 import { unlink } from 'fs/promises';
 import { isError } from 'my-easy-fp';
@@ -34,6 +31,8 @@ export async function refreshing(
   tsconfig: ReturnType<typeof getTypeScriptConfig>,
   baseOption: TRefreshSchemaBaseOption,
 ) {
+  const spinner = makeSpinner();
+
   try {
     const resolvedPaths = getResolvedPaths(baseOption);
     const option: TRefreshSchemaOption = {
@@ -51,7 +50,7 @@ export async function refreshing(
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     const dbPath = await getDatabaseFilePath(option);
-    generatorBootstrap(option);
+    makeSchemaGenerator(option);
 
     if (option.truncate && (await exists(dbPath))) {
       spinner.start('truncate database, ...');
@@ -65,22 +64,9 @@ export async function refreshing(
       .getSourceFiles()
       .map((sourceFile) => sourceFile.getFilePath().toString());
 
-    const includeContainer = new IncludeContainer({
-      patterns: getIncludePatterns(baseOption, tsconfig, baseOption.project),
-      options: { absolute: true, ignore: defaultExclude, cwd: resolvedPaths.projectDir },
-    });
-
+    const includeContainer = makeIncludeContianer(option, tsconfig);
     const inlineExcludedFiles = getInlineExcludedFiles(project, resolvedPaths.projectDir);
-
-    /**
-     * SourceCode를 읽어서 inline file exclude 된 파일을 별도로 전달한다. 이렇게 하는 이유는, 이 파일은 왜 포함되지
-     * 않았지? 라는 등의 리포트를 생성할 때 한 곳에서 이 정보를 다 관리해야 리포트를 생성해서 보여줄 수 있기 때문이다
-     */
-    const excludeContainer = new ExcludeContainer({
-      patterns: getExcludePatterns(baseOption, tsconfig),
-      options: { absolute: true, ignore: defaultExclude, cwd: resolvedPaths.projectDir },
-      inlineExcludedFiles,
-    });
+    const excludeContainer = makeExcludeContainer(option, tsconfig, inlineExcludedFiles);
 
     const schemaFilePaths = filePaths
       .filter((filename) => includeContainer.isInclude(filename))

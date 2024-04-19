@@ -14,6 +14,8 @@ export interface IDeleteSchemaOption extends IBaseOption {
   /** List of files to exclude from the list of files to generate json-schema from */
   exclude: string[];
 
+  useDefinitions: boolean;
+
   /** specify the root folder within your schema path */
   rootDirs?: string[];
 
