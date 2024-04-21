@@ -11,3 +11,11 @@ export const EXCLUDE_CONTAINER_SYMBOL_KEY = Symbol('exclude-container-symbol-key
 export const SPINNER_SYMBOL_KEY = Symbol('spinner-symbol-key');
 
 export const PROGRESS_BAR_SYMBOL_KEY = Symbol('progress-bar-symbol-key');
+
+export const SCHEMA_DATABASE_SYMBOL_KEY = Symbol('schema-database-symbol-key');
+
+export const SCHEMA_ORIGIN_DATABASE_SYMBOL_KEY = Symbol('schema-origin-database-symbol-key');
+
+export const REPOSITORY_REFS_SYMBOL_KEY = Symbol('repository-refs-symbol-key');
+
+export const REPOSITORY_SCHEMAS_SYMBOL_KEY = Symbol('repository-schemas-symbol-key');

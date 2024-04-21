@@ -23,6 +23,7 @@
     },
     {
       "files": [
+        "**/*.json",
         "**/.nozzlerc",
         ".configs/.ctirc",
         "tsconfig.json",

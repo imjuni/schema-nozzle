@@ -9,7 +9,7 @@ import type {
 import { deleteDatabaseItem } from '#/databases/deleteDatabaseItem';
 import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import { types } from '#/databases/files/repository/types';
+import { types } from '#/databases/files/repository_bak/types';
 import { mergeDatabaseItems } from '#/databases/mergeDatabaseItems';
 import { getDeleteTypes } from '#/modules/cli/getDeleteTypes';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';

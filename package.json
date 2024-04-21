@@ -58,15 +58,7 @@
     "type": "git",
     "url": "git+https://github.com/imjuni/schema-nozzle.git"
   },
-  "keywords": [
-    "schema",
-    "json-schema",
-    "jsonschema",
-    "cli",
-    "typescript",
-    "ts",
-    "json"
-  ],
+  "keywords": ["schema", "json-schema", "jsonschema", "cli", "typescript", "ts", "json"],
   "author": "ByungJoon Lee",
   "license": "MIT",
   "bugs": {
@@ -103,9 +95,9 @@
     "ora": "^5.4.1",
     "pathe": "^1.1.2",
     "prettier": "^3.2.5",
-    "ts-json-schema-generator": "^1.5.0",
+    "ts-json-schema-generator": "^2.1.0",
     "ts-morph": "^22.0.0",
-    "ts-morph-short": "^0.9.0",
+    "ts-morph-short": "^0.9.1",
     "tslib": "^2.6.2",
     "type-fest": "^4.13.0",
     "yargs": "^17.7.2"
@@ -127,7 +119,7 @@
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
-    "@vitest/coverage-v8": "^1.4.0",
+    "@vitest/coverage-v8": "^1.5.0",
     "ajv": "^8.12.0",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
@@ -155,14 +147,12 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.8",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.2",
+    "typescript": "^5.4.5",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.4.0"
+    "vitest": "^1.5.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "cross-env NODE_ENV=production eslint --cache"
-    ],
+    "*.{js,jsx,ts,tsx}": ["cross-env NODE_ENV=production eslint --cache"],
     "*.{js,jsx,ts,tsx},*.json,.{eslintrc.cjs,prettierrc}": [
       "cross-env NODE_ENV=production prettier --ignore-path .eslintignore --parser json --write"
     ]

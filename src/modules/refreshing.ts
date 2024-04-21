@@ -12,7 +12,7 @@ import type {
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
 import { bootstrap as lokiBootstrap, getIt as lokidb } from '#/databases/files/LokiDbContainer';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import { merge as mergeItems } from '#/databases/files/repository/merge';
+import { merge as mergeItems } from '#/databases/files/repository_bak/merge';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { makeSchemaGenerator } from '#/modules/generator/makeSchemaGenerator';
 import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';

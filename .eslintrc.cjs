@@ -115,6 +115,12 @@ module.exports = {
       },
     },
     {
+      files: ['**/*Repository.ts'],
+      rules: {
+        'class-methods-use-this': ['off'],
+      },
+    },
+    {
       files: ['src/databases/createDatabaseItem.ts'],
       rules: {
         '@typescript-eslint/no-unsafe-argument': ['off'],
