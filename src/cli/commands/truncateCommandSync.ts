@@ -1,4 +1,4 @@
-import type { Spinner } from '#/cli/display/Spinner';
+import type { Spinner } from '#/cli/display/Spinners';
 import { makeSpinner } from '#/cli/display/makeSpinner';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
 import { container } from '#/modules/containers/container';

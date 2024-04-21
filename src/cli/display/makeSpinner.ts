@@ -1,4 +1,4 @@
-import { Spinner } from '#/cli/display/Spinner';
+import { Spinner } from '#/cli/display/Spinners';
 import { container } from '#/modules/containers/container';
 import { SPINNER_SYMBOL_KEY } from '#/modules/containers/keys';
 import { asValue } from 'awilix';

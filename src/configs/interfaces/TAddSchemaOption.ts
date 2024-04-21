@@ -18,7 +18,7 @@ export interface IAddSchemaOption {
 
   /**
    * enter a prefix to add when writing a name or path in the `$id` field
-   * eg. #/components/schemas > #/components/schemas/component-name
+   * eg. component-name > #/components/schemas/component-name
    * */
   schemaPathPrefix?: string;
 

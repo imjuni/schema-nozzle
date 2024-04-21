@@ -1,4 +1,4 @@
-import type { Spinner } from '#/cli/display/Spinner';
+import type { Spinner } from '#/cli/display/Spinners';
 import { makeProgressBar } from '#/cli/display/makeProgressBar';
 import { makeSpinner } from '#/cli/display/makeSpinner';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';

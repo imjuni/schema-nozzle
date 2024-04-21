@@ -1,9 +1,9 @@
 import { getExportedTypes } from '#/compilers/getExportedTypes';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { find } from '#/databases/files/repository/find';
-import { findOne } from '#/databases/files/repository/findOne';
-import { remove } from '#/databases/files/repository/remove';
+import { find } from '#/databases/files/repository_bak/find';
+import { findOne } from '#/databases/files/repository_bak/findOne';
+import { remove } from '#/databases/files/repository_bak/remove';
 import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
 import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
 import type * as tsm from 'ts-morph';
