@@ -6,25 +6,29 @@ import { startSepRemove } from 'my-node-fp';
 import pathe from 'pathe';
 import type * as tsm from 'ts-morph';
 import { getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
-import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vitest } from 'vitest';
 
 const data: {
   project: tsm.Project;
   config: ReturnType<typeof getTypeScriptConfig>;
   resolvedPaths: ReturnType<typeof getResolvedPaths>;
 } = {
-  project: getTypeScriptProject(pathe.join(process.cwd(), 'examples', 'tsconfig.json')),
-  config: getTypeScriptConfig(pathe.join(process.cwd(), 'examples', 'tsconfig.json')),
-  resolvedPaths: getResolvedPaths({
-    rootDirs: [pathe.join(process.cwd(), 'examples')],
-    project: pathe.join(process.cwd(), 'examples', 'tsconfig.json'),
-    output: pathe.join(process.cwd(), 'examples'),
-  }),
+  project: undefined,
+  config: undefined,
+  resolvedPaths: undefined,
 } as any;
 
 describe('getExportedFiles', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     vitest.stubEnv('INIT_CWD', pathe.join(process.cwd(), 'examples'));
+
+    data.project = getTypeScriptProject(pathe.join(process.cwd(), 'examples', 'tsconfig.json'));
+    data.config = getTypeScriptConfig(pathe.join(process.cwd(), 'examples', 'tsconfig.json'));
+    data.resolvedPaths = getResolvedPaths({
+      rootDirs: [pathe.join(process.cwd(), 'examples')],
+      project: pathe.join(process.cwd(), 'examples', 'tsconfig.json'),
+      output: pathe.join(process.cwd(), 'examples'),
+    });
   });
 
   it('export files', () => {
@@ -60,10 +64,14 @@ describe('getExportedTypes', () => {
       'IProfessorEntity',
       'IReqReadStudentQuerystring',
       'IReqReadStudentParam',
+      'IReqReadStudentIgnoreTest',
+      'IReqReadStudentIgnoreAliasTest',
       'ISlackMessageBotProfile',
       'ISlackMessageBody',
       'IStudentDto',
       'IStudentEntity',
+      'TGenericExample',
+      'TSimpleSetRequired',
       'ITid',
       'CE_MAJOR',
     ]);
@@ -72,12 +80,12 @@ describe('getExportedTypes', () => {
 
 describe('getDiagnostics', () => {
   it('pass', () => {
-    const r1 = getDiagnostics({ option: { skipError: true }, project: data.project });
+    const r1 = getDiagnostics({ options: { skipError: true }, project: data.project });
     expect(r1.type).toEqual('pass');
   });
 
   it('pass - skipError false', () => {
-    const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+    const r1 = getDiagnostics({ options: { skipError: false }, project: data.project });
     expect(r1.type).toEqual('pass');
   });
 
@@ -94,7 +102,7 @@ describe('getDiagnostics', () => {
       data.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
         overwrite: true,
       });
-      const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+      const r1 = getDiagnostics({ options: { skipError: false }, project: data.project });
       expect(r1.type).toEqual('fail');
     });
 
@@ -106,7 +114,7 @@ describe('getDiagnostics', () => {
       data.project.createSourceFile('diagonostic_fail.ts', 'const a = "1"; a = 3', {
         overwrite: true,
       });
-      const r1 = getDiagnostics({ option: { skipError: false }, project: data.project });
+      const r1 = getDiagnostics({ options: { skipError: false }, project: data.project });
       spy.mockRestore();
       expect(r1.type).toEqual('fail');
     });

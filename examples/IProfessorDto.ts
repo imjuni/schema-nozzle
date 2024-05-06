@@ -5,12 +5,10 @@ import type { TGenericExample } from './TGenericExample';
 
 /**
  * IProfessorDto
- *
- * @nozzleTag professor
  */
 export interface IProfessorDto {
   id: IStudentEntity['id'];
-  nick: IStudentEntity['nick'];
+  nick22: IStudentEntity['nick'];
   name: I18nDto['used'];
   /** professor age */
   age: IStudentEntity['age'];

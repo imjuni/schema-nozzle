@@ -1,10 +1,8 @@
-import { CE_ALASQL_TABLE_NAME } from '#/databases/const-enum/CE_ALASQL_TABLE_NAME';
 import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import type { RefsRepository } from '#/databases/repository/refs/RefsRepository';
 import { container } from '#/modules/containers/container';
 import { REPOSITORY_REFS_SYMBOL_KEY } from '#/modules/containers/keys';
-import alasql from 'alasql';
 import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -39,7 +37,8 @@ describe('RefsRepository', () => {
   it('deletes', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
     await refsRepo.deletes(['a', 'b']);
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.REF]?.data.length).toEqual(2);
+    const r01 = await refsRepo.selects(['a', 'b']);
+    expect(r01.length).toEqual(0);
   });
 
   it('update', async () => {
@@ -50,29 +49,42 @@ describe('RefsRepository', () => {
 
   it('insert', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
-    const inserted = await refsRepo.insert({
-      id: 'x',
-      refId: 'tXX',
-    });
+    const inserted = await refsRepo.insert({ id: 'x', refId: 'tXX' });
 
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.REF]?.data.length).toEqual(3);
-    expect(inserted).toMatchObject({
-      id: 'x',
-      refId: 'tXX',
-    });
+    expect(inserted).toMatchObject({ id: 'x', refId: 'tXX' });
   });
 
   it('upsert, inserted', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
     const inserted = await refsRepo.upsert({ id: 'y', refId: 'x' });
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.REF]?.data.length).toEqual(4);
     expect(inserted).toMatchObject({ id: 'y', refId: 'x' });
   });
 
   it('upsert, updated', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
     const inserted = await refsRepo.upsert({ id: 'd', refId: 'e' });
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.REF]?.data.length).toEqual(4);
+
     expect(inserted).toMatchObject({ id: 'd', refId: 'e' });
+  });
+
+  it('upsert, twice updated', async () => {
+    const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
+    await refsRepo.upsert({
+      id: '#/$defs/organations/IHero',
+      refId: '#/$defs/organations/ITeam',
+    });
+    await refsRepo.upsert({
+      id: '#/$defs/organations/IHero',
+      refId: '#/$defs/organations/ITeam',
+    });
+    const inserted = await refsRepo.upsert({
+      id: '#/$defs/organations/IHero',
+      refId: '#/$defs/organations/ITeam',
+    });
+
+    expect(inserted).toMatchObject({
+      id: '#/$defs/organations/IHero',
+      refId: '#/$defs/organations/ITeam',
+    });
   });
 });

@@ -46,9 +46,10 @@ export async function deleteCommandSync(cliOptions: TDeleteSchemaBaseOption) {
       cwd: resolvedPaths.cwd,
       projectDir: resolvedPaths.projectDir,
       resolved: resolvedPaths,
+      types: [],
     };
 
-    await deleting(project, tsconfig, options);
+    await deleting(project, options);
   } catch (caught) {
     spinner.stop('Error occured...', 'fail');
     const err = isError(caught, new Error('Unknown error raised'));

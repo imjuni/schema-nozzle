@@ -1,12 +1,12 @@
 import { getExportedName } from '#/compilers/getExportedName';
+import type { getExportedTypes } from '#/compilers/getExportedTypes';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
-import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExportTypesReturnType';
 import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import * as tsm from 'ts-morph';
 
 export function getSoruceFileExportedTypes(
   sourceFile: tsm.SourceFile,
-): IGetExportTypesReturnType[] {
+): ReturnType<typeof getExportedTypes> {
   const exportedTypes = Array.from(sourceFile.getExportedDeclarations().values()).flat();
 
   const statements = exportedTypes

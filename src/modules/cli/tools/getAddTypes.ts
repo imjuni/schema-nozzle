@@ -1,4 +1,5 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import type { ISimpleExportedDeclaration } from '#/modules/cli/interfaces/ISimpleExportedDeclaration';
 import { getAddMultipleTypesFromPrompt } from '#/modules/prompts/getAddMultipleTypesFromPrompt';
 import { getAddSingleTypesFromPrompt } from '#/modules/prompts/getAddSingleTypesFromPrompt';
 import { isError } from 'my-easy-fp';
@@ -7,7 +8,7 @@ import type { LastArrayElement } from 'type-fest';
 
 export async function getAddTypes(
   option: TAddSchemaOption,
-  exportedTypes: { filePath: string; identifier: string }[],
+  exportedTypes: ISimpleExportedDeclaration[],
 ): Promise<PassFailEither<Error, typeof exportedTypes>> {
   try {
     if (option.types.length <= 0) {
@@ -21,7 +22,7 @@ export async function getAddTypes(
     const exportedTypeMap = exportedTypes.reduce<
       Record<string, LastArrayElement<typeof exportedTypes>>
     >((aggregation, exportedType) => {
-      return { ...aggregation, [exportedType.identifier]: exportedType };
+      return { ...aggregation, [exportedType.typeName]: exportedType };
     }, {});
 
     return pass(

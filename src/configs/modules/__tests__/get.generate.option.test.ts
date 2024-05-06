@@ -18,7 +18,7 @@ describe('getGenerateOption', () => {
       rootDirs: [process.cwd()],
       skipError: true,
       topRef: false,
-      schemaPath: false,
+      useSchemaPath: false,
       serverUrl: 'schema-nozzle',
       generatorOption: {
         minify: false,

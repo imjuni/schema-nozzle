@@ -11,10 +11,27 @@ import { asValue } from 'awilix';
 export async function makeSQLDatabase(filePath: string) {
   const data = await readDatabaseFile(filePath);
 
+  // CREATE TABLE tab0(pk INTEGER NOT NULL PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 TEXT, col3 INTEGER, col4 FLOAT, col5 TEXT);
+  // INSERT INTO tab0 VALUES(0,6,4.67,'wdbsg',4,2.89,'altmp');
   alasql(
-    `CREATE TABLE IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.SCHEMA}] ([id] STRING, [schema] JSON, [typeName] STRING, [filePath] STRING NULL)`,
+    `CREATE TABLE 
+       IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.SCHEMA}] 
+       (
+         [id] STRING,
+         [schema] JSON,
+         [typeName] STRING,
+         [filePath] STRING NULL
+       )`,
   );
-  alasql(`CREATE TABLE IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.REF}] ([id] STRING, [refId] STRING)`);
+  alasql(
+    `CREATE TABLE 
+       IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.REF}] 
+       (
+         [pk] STRING,
+         [id] STRING,
+         [refId] STRING
+       )`,
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]!.data = data[CE_ALASQL_TABLE_NAME.SCHEMA];

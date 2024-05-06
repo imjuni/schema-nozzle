@@ -28,6 +28,7 @@ beforeAll(() => {
 beforeEach(() => {
   process.env.INIT_CWD = pathe.join(originPath, 'examples');
   data.resolvedPaths = getResolvedPaths({
+    rootDirs: [pathe.join(originPath, 'examples')],
     project: pathe.join(originPath, 'examples', 'tsconfig.json'),
     output: pathe.join(originPath, 'examples'),
   });

@@ -7,7 +7,7 @@
     { "id": "e", "schema": { "id": "e" }, "typeName": "tE" },
     { "id": "f", "schema": { "id": "f" }, "typeName": "tF" }
   ],
-  "references": [
+  "refs": [
     { "id": "a", "refId": "c" },
     { "id": "b", "refId": "d" },
     { "id": "c", "refId": "a" },

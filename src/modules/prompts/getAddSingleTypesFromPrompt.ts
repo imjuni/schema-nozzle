@@ -1,3 +1,4 @@
+import type { ISimpleExportedDeclaration } from '#/modules/cli/interfaces/ISimpleExportedDeclaration';
 import { CE_FUZZY_SCORE_LIMIT } from '#/modules/const-enum/CE_FUZZY_SCORE_LIMIT';
 import { getRatioNumber } from '#/tools/getRatioNumber';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
@@ -8,12 +9,12 @@ import type { LastArrayElement } from 'type-fest';
 
 export async function getAddSingleTypesFromPrompt(
   cwd: string,
-  exportedTypes: { filePath: string; identifier: string }[],
+  exportedTypes: ISimpleExportedDeclaration[],
 ): Promise<typeof exportedTypes> {
   const promptItems = exportedTypes.map((exportedType) => {
     const relative = getRelativeCwd(cwd, exportedType.filePath);
     return {
-      name: `${exportedType.identifier} - ${relative}`,
+      name: `${exportedType.typeName} - ${relative}`,
       value: { ...exportedType, relative },
     };
   });
