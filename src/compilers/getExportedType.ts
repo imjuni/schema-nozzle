@@ -1,4 +1,4 @@
-import { CE_EXPORTED_TYPE } from '#/compilers/interfaces/CE_EXPORTED_TYPE';
+import { CE_EXPORTED_TYPE } from '#/compilers/const-enum/CE_EXPORTED_TYPE';
 import * as tsm from 'ts-morph';
 
 export function getExportedType(

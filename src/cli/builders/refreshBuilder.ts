@@ -8,7 +8,7 @@ export function refreshBuilder(argv: Argv) {
       type: 'string',
       default: undefined,
     })
-    .option('schema-path', {
+    .option('use-schema-path', {
       describe: 'toggles whether to add the schema file path to the ID value',
       type: 'boolean',
       default: false,

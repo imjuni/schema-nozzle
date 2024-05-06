@@ -8,7 +8,7 @@ import {
 import alasql from 'alasql';
 import { asValue } from 'awilix';
 
-export async function makeSQLDatabase(filePath: string) {
+export async function makeDatabase(filePath: string) {
   const data = await readDatabaseFile(filePath);
 
   // CREATE TABLE tab0(pk INTEGER NOT NULL PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 TEXT, col3 INTEGER, col4 FLOAT, col5 TEXT);
@@ -20,14 +20,14 @@ export async function makeSQLDatabase(filePath: string) {
          [id] STRING,
          [schema] JSON,
          [typeName] STRING,
-         [filePath] STRING NULL
+         [filePath] STRING NULL,
+         [relativePath] STRING NULL
        )`,
   );
   alasql(
     `CREATE TABLE 
        IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.REF}] 
        (
-         [pk] STRING,
          [id] STRING,
          [refId] STRING
        )`,

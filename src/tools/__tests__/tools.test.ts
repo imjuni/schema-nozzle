@@ -1,10 +1,8 @@
 import { getCwd } from '#/tools/getCwd';
 import { getRatioNumber } from '#/tools/getRatioNumber';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
-import { safeParse } from '#/tools/safeParse';
-import * as jscp from 'jsonc-parser';
 import pathe from 'pathe';
-import { describe, expect, it, vitest } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('getRativeCwd', () => {
   it('default', () => {
@@ -19,50 +17,6 @@ describe('getRatioNumber', () => {
 
     expect(r01).toEqual(0.7);
     expect(r02).toEqual(70);
-  });
-});
-
-describe('safeParse', () => {
-  it('get object', () => {
-    const r01 = safeParse('{ "hello": "world" }');
-
-    if (r01.type === 'fail') {
-      throw new Error('invalid result');
-    }
-
-    expect(r01.pass).toMatchObject({ hello: 'world' });
-  });
-
-  it('exception', () => {
-    const r01 = safeParse('{ hel lo: "world" }');
-
-    if (r01.type === 'pass') {
-      throw new Error('invalid result');
-    }
-
-    expect(r01.fail).toMatchObject({});
-
-    const r02 = safeParse(
-      '{ hel lo: "world", "hello1": "world1", "hello2": "world2", "hello3": "world3" }',
-    );
-
-    if (r02.type === 'pass') {
-      throw new Error('invalid result');
-    }
-
-    expect(r02.fail).toMatchObject({});
-  });
-
-  it('exception -2', () => {
-    const spy = vitest.spyOn(jscp, 'parse').mockImplementationOnce(() => {
-      throw new Error();
-    });
-
-    const r = safeParse('{}');
-
-    spy.mockRestore();
-    if (r.type === 'pass') throw new Error('invalid');
-    expect(r.fail).toBeInstanceOf(Error);
   });
 });
 

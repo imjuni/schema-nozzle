@@ -1,6 +1,7 @@
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { replaceId } from '#/databases/modules/replaceId';
 import { getImportInfo } from '#/modules/generators/getImportInfo';
+import { getIsExternal } from '#/modules/generators/getIsExternal';
 import { escapeId } from '#/modules/paths/escapeId';
 import { getRelativePathByRootDirs } from '#/modules/paths/getRelativePathByRootDirs';
 import { getDirnameSync } from 'my-node-fp';
@@ -40,21 +41,33 @@ export function getDefinitionsSchemaId({
 }: IGetDefinitionsSchemaId): string {
   const escaping = isEscape ? escapeId : (name: string) => name;
   const importInfo = getImportInfo(typeName);
-  const isExternal = importInfo == null || importInfo?.moduleFilePath == null;
+  const isExternal = getIsExternal(importInfo);
 
   if (style === CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS_WITH_PATH) {
     const moduleFilePath = filePath ?? importInfo?.moduleFilePath;
     const relativePath =
       moduleFilePath == null
         ? undefined
-        : getRelativePathByRootDirs(rootDirs, getDirnameSync(moduleFilePath));
+        : getRelativePathByRootDirs(rootDirs, '', getDirnameSync(moduleFilePath));
     const paths = [
       '#',
       '$defs',
       isExternal ? 'external' : undefined,
-      relativePath,
+      isExternal ? undefined : relativePath,
       escaping(replaceId(typeName), escapeChar),
     ].filter((element) => element != null && element !== '');
+    return `${paths.join(path.posix.sep)}`;
+  }
+
+  if (isExternal) {
+    const paths = [
+      '#',
+      '$defs',
+      isExternal
+        ? `external-${escaping(replaceId(typeName), escapeChar)}`
+        : escaping(replaceId(typeName), escapeChar),
+    ].filter((element) => element != null);
+
     return `${paths.join(path.posix.sep)}`;
   }
 

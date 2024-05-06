@@ -1,4 +1,4 @@
-import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { makeStatementInfoMap } from '#/compilers/makeStatementInfoMap';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { getPlainSchemaId } from '#/modules/generators/getPlainSchemaId';
 import pathe from 'pathe';
@@ -28,7 +28,10 @@ describe('getPlainSchemaId', () => {
       `export interface ITeam { name: string; members: string[]; }`,
     );
 
-    makeStatementImportInfoMap(project);
+    makeStatementInfoMap(
+      project,
+      project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
+    );
   });
 
   it('id only', () => {

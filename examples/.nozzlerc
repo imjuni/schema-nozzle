@@ -11,6 +11,8 @@
 
   "topRef": true,
 
+  "useSchemaPath": false,
+
   "rootDirs": ["examples"],
 
   "generatorOption": {

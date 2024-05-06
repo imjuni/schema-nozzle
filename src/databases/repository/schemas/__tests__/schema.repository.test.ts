@@ -1,5 +1,5 @@
 import { CE_ALASQL_TABLE_NAME } from '#/databases/const-enum/CE_ALASQL_TABLE_NAME';
-import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
+import { makeDatabase } from '#/databases/files/makeDatabase';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
 import { container } from '#/modules/containers/container';
@@ -9,7 +9,7 @@ import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 beforeAll(async () => {
-  await makeSQLDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+  await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
   makeRepository();
 });
 
@@ -53,20 +53,6 @@ describe('SchemaRepository', () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     await schemasRepo.deletes(['a', 'b']);
     expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(4);
-  });
-
-  it('update', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
-    const updated = await schemasRepo.update({
-      id: 'e',
-      schema: { id: 'e', name: 'hello' },
-      typeName: 'tEEE',
-    });
-    expect(updated).toMatchObject({
-      id: 'e',
-      schema: { id: 'e', name: 'hello' },
-      typeName: 'tEEE',
-    });
   });
 
   it('insert', async () => {
@@ -119,5 +105,11 @@ describe('SchemaRepository', () => {
       typeName: 'tDD',
       filePath: 'my-path-d',
     });
+  });
+
+  it('tables, full-scan', async () => {
+    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const tables = await schemasRepo.tables();
+    expect(tables.length).toEqual(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length);
   });
 });

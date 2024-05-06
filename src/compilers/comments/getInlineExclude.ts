@@ -8,7 +8,7 @@ import { parse } from 'comment-parser';
 
 export function getInlineExclude(params: {
   comment: IStatementComments;
-  options: { keyword: string };
+  options: { keywords: string[] };
 }): IInlineExcludeInfo | undefined {
   const content = params.comment.range;
   const refined = getJsDocComment(params.comment.kind, content);
@@ -19,9 +19,10 @@ export function getInlineExclude(params: {
     return undefined;
   }
 
-  const tag = block.tags.find((element) => element.tag === getJsDocTag(params.options.keyword));
+  const keywords = params.options.keywords.map((keyword) => getJsDocTag(keyword));
+  const tag = block.tags.find((element) => keywords.includes(element.tag));
 
-  if (tag?.tag === params.options.keyword || tag?.tag === params.options.keyword.substring(1)) {
+  if (tag?.tag != null) {
     return {
       commentCode: content,
       filePath: params.comment.filePath,

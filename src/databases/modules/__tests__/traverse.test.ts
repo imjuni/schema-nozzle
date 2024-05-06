@@ -1,4 +1,4 @@
-import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { makeStatementInfoMap } from '#/compilers/makeStatementInfoMap';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { traverser } from '#/databases/modules/traverser';
 import type { AnySchemaObject } from 'ajv';
@@ -59,7 +59,10 @@ describe('traverser', () => {
       },
     };
 
-    makeStatementImportInfoMap(data.project);
+    makeStatementInfoMap(
+      data.project,
+      data.project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
+    );
   });
 
   it('replaced', () => {

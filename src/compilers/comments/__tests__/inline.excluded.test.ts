@@ -1,4 +1,5 @@
 import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFiles';
+import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import { randomUUID } from 'node:crypto';
 import pathe from 'pathe';
 import * as tsm from 'ts-morph';
@@ -36,7 +37,7 @@ describe('getInlineExcludedFiles', () => {
     const filename01 = `${uuid}_0${(data.context.index += 1)}.ts`;
     const source01 = `
 /**
- * @schema-nozzle-exclude schema-nozzle
+ * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle
  */
 import fs from 'node:fs';
 
@@ -72,14 +73,14 @@ export class SuperHero {
 
     expect(excluded).toMatchObject([
       {
-        commentCode: '/**\n * @schema-nozzle-exclude schema-nozzle\n */',
+        commentCode: `/**\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle\n */`,
         filePath: pathe.join(data.tsconfigDirPath, filename01),
         pos: {
           start: 48,
           line: 4,
           column: 1,
         },
-        tag: 'schema-nozzle-exclude',
+        tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
         workspaces: ['schema-nozzle'],
       },
     ]);
@@ -112,8 +113,8 @@ export class MarvelHero {
     this.#name = name;
   }
 }
+// ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle
 
-// @schema-nozzle-exclude schema-nozzle
 export class DCHero {
   #name: string;
 
@@ -131,14 +132,14 @@ export class DCHero {
 
     expect(excluded).toMatchObject([
       {
-        commentCode: '// @schema-nozzle-exclude schema-nozzle',
+        commentCode: `// ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle`,
         filePath: pathe.join(data.tsconfigDirPath, filename02),
         pos: {
           start: 173,
           line: 12,
           column: 1,
         },
-        tag: 'schema-nozzle-exclude',
+        tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
         workspaces: ['schema-nozzle'],
       },
     ]);

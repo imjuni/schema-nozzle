@@ -1,4 +1,4 @@
-import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { makeStatementInfoMap } from '#/compilers/makeStatementInfoMap';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { getDefinitionsSchemaId } from '#/modules/generators/getDefinitionsSchemaId';
 import pathe from 'pathe';
@@ -28,7 +28,10 @@ describe('getDefinitionsSchemaId', () => {
       `export interface ITeam { name: string; members: string[]; }`,
     );
 
-    makeStatementImportInfoMap(project);
+    makeStatementInfoMap(
+      project,
+      project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
+    );
   });
 
   it('definitions only', () => {
@@ -66,7 +69,7 @@ describe('getDefinitionsSchemaId', () => {
       style: CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS,
     });
 
-    expect(id).toEqual('#/$defs/external/IHeroine');
+    expect(id).toEqual('#/$defs/external-IHeroine');
   });
 
   it('definitions that with file path', () => {
