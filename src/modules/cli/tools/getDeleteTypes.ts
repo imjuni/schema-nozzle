@@ -5,21 +5,21 @@ import { fail, pass, type PassFailEither } from 'my-only-either';
 
 export async function getDeleteTypes({
   schemaTypes,
-  option,
+  options,
 }: {
   schemaTypes: { filePath?: string; id: string }[];
-  option: TDeleteSchemaOption;
+  options: TDeleteSchemaOption;
 }): Promise<PassFailEither<Error, string[]>> {
   try {
-    if (option.types.length <= 0) {
+    if (options.types.length <= 0) {
       const types = await getDeleteTypesFromPrompt({
         schemaTypes,
-        isMultipleSelect: option.multiple,
+        isMultipleSelect: options.multiple,
       });
       return pass(types);
     }
 
-    return pass(option.types);
+    return pass(options.types);
   } catch (caught) {
     const err = isError(caught) ?? new Error('unknown error raised get typescript files');
     return fail(err);

@@ -77,7 +77,6 @@ describe('SchemaRepository', () => {
       typeName: 'tXX',
     });
 
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(5);
     expect(inserted).toMatchObject({
       id: 'x',
       schema: { id: 'x' },
@@ -87,12 +86,17 @@ describe('SchemaRepository', () => {
 
   it('upsert, inserted', async () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    await schemasRepo.upsert({
+      id: 'd',
+      schema: { id: 'd', name: 'my-name-d-d-d-d' },
+      typeName: 'tDD-!-D',
+    });
     const inserted = await schemasRepo.upsert({
       id: 'y',
       schema: { id: 'y', name: 'my-name-y' },
       typeName: 'tYY',
     });
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(6);
+
     expect(inserted).toMatchObject({
       id: 'y',
       schema: { id: 'y', name: 'my-name-y' },

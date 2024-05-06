@@ -6,7 +6,7 @@ import { atOrThrow } from 'my-easy-fp';
 export class SchemaRepository {
   async select(id: string): Promise<ISchemaRecord | undefined> {
     const schemas = (await alasql.promise(
-      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id = ?`,
+      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE [id] = ?`,
       [id],
     )) as ISchemaRecord[];
 
@@ -15,7 +15,7 @@ export class SchemaRepository {
 
   async selectOrThrow(id: string): Promise<ISchemaRecord> {
     const schemas = (await alasql.promise(
-      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id = ?`,
+      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE [id] = ?`,
       [id],
     )) as ISchemaRecord[];
 
@@ -32,12 +32,12 @@ export class SchemaRepository {
   }
 
   async deletes(ids: string[]): Promise<void> {
-    await alasql.promise(`DELETE FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id IN @(?)`, [ids]);
+    await alasql.promise(`DELETE FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE [id] IN @(?)`, [ids]);
   }
 
   async update(schema: ISchemaRecord): Promise<ISchemaRecord> {
     await alasql.promise(
-      `UPDATE [${CE_ALASQL_TABLE_NAME.SCHEMA}] SET [schema] = ?, [typeName] = ?, [filePath] = ? WHERE id = ?`,
+      `UPDATE [${CE_ALASQL_TABLE_NAME.SCHEMA}] SET [schema] = ?, [typeName] = ?, [filePath] = ? WHERE [id] = ?`,
       [schema.schema, schema.typeName, schema.filePath, schema.id],
     );
     return this.selectOrThrow(schema.id);
@@ -59,7 +59,11 @@ export class SchemaRepository {
       return this.insert(schema);
     }
 
-    return this.update(schema);
+    // alasql has problem in PRIMARY KEY, So, we need to delete and insert
+    // @see https://github.com/AlaSQL/alasql/issues/1005
+    await this.deletes([schema.id]);
+    await this.insert(schema);
+    return this.selectOrThrow(schema.id);
   }
 
   async types(): Promise<Pick<ISchemaRecord, 'id' | 'filePath'>[]> {

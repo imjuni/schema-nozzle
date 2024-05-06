@@ -49,6 +49,7 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
       $kind: 'refresh-schema',
       ...getBaseOption(cliOptions),
       ...(await getGenerateOption(cliOptions)),
+      truncate: cliOptions.truncate,
       cwd: resolvedPaths.cwd,
       projectDir: resolvedPaths.projectDir,
       resolved: resolvedPaths,

@@ -6,10 +6,10 @@ import { getDiagnostics } from '#/compilers/getDiagnostics';
 import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
 import { summarySchemaTypes } from '#/compilers/summarySchemaTypes';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { createRecord } from '#/databases/createRecord';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
+import { getSQLDatabaseBuf } from '#/databases/files/getSQLDatabaseBuf';
 import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
-import { getSQLDatabaseBuf } from '#/databases/files/saveSQLDatabase';
 import { getSchemaIdStyle } from '#/databases/modules/getSchemaIdStyle';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import type { RefsRepository } from '#/databases/repository/refs/RefsRepository';
@@ -40,7 +40,7 @@ export async function refreshing(
   const progress = makeProgressBar();
 
   try {
-    const diagnostics = getDiagnostics({ option: options, project });
+    const diagnostics = getDiagnostics({ options, project });
 
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
@@ -56,6 +56,7 @@ export async function refreshing(
     await makeSQLDatabase(dbPath);
     makeRepository();
     makeStatementImportInfoMap(project);
+    makeSchemaGenerator(options.resolved.project, options.generatorOption);
 
     const generatedContainer = new GeneratedContainer();
     const filePaths = project
@@ -70,16 +71,14 @@ export async function refreshing(
       .filter((filename) => includeContainer.isInclude(filename))
       .filter((filename) => !excludeContainer.isExclude(filename));
 
-    const schemaTypes = await summarySchemaTypes(project, schemaFilePaths, options);
+    const schemaTypes = await summarySchemaTypes(schemaFilePaths);
     const schemaIdStyle = getSchemaIdStyle(options);
 
-    makeSchemaGenerator(options.resolved.project, options.generatorOption);
-
-    progress.start(schemaTypes.length, 0, 'schemas: ');
+    progress.start(schemaTypes.length, 0, 'refreshing: ');
 
     await Promise.all(
       schemaTypes.map(async (targetType) => {
-        const schema = createJsonSchema(targetType.filePath, targetType.identifier);
+        const schema = createJsonSchema(targetType.filePath, targetType.typeName);
 
         if (schema.type === 'fail') {
           generatedContainer.addErrors(schema.fail);
@@ -87,7 +86,7 @@ export async function refreshing(
           return;
         }
 
-        const items = createDatabaseItem({
+        const items = createRecord({
           style: schemaIdStyle,
           escapeChar: options.escapeChar,
           rootDirs: options.rootDirs,
@@ -101,31 +100,21 @@ export async function refreshing(
     );
 
     progress.stop();
+
     const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const refRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
 
-    await generatedContainer.records.reduce(async (prevHandle, schema) => {
-      await prevHandle;
-      const handle = async () => {
-        await schemaRepo.upsert(schema);
-      };
-      return handle();
-    }, Promise.resolve());
-
-    await generatedContainer.refs.reduce(async (prevHandle, ref) => {
-      await prevHandle;
-      const handle = async () => {
-        await refRepo.upsert(ref);
-      };
-      return handle();
-    }, Promise.resolve());
+    await Promise.all([
+      ...generatedContainer.records.map((record) => schemaRepo.upsert(record)),
+      ...generatedContainer.refs.map((ref) => refRepo.upsert(ref)),
+    ]);
 
     await fs.promises.writeFile(dbPath, getSQLDatabaseBuf());
 
     showFailMessage(generatedContainer.errors);
 
     spinner.stop(
-      `[${schemaTypes.map((targetType) => `"${targetType.identifier}"`).join(', ')}] add complete`,
+      `[${schemaTypes.map((targetType) => `"${targetType.typeName}"`).join(', ')}] add complete`,
       'succeed',
     );
   } catch (caught) {

@@ -7,15 +7,18 @@ import * as cp from 'comment-parser';
 import { randomUUID } from 'node:crypto';
 import pathe from 'pathe';
 import * as tsm from 'ts-morph';
-import { describe, expect, it, vi } from 'vitest';
+import { getTypeScriptProject } from 'ts-morph-short';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-const tsconfigPath = pathe.join(process.cwd(), 'examples', 'tsconfig.example.json');
-const context = {
-  tsconfig: tsconfigPath,
-  project: new tsm.Project({
-    tsConfigFilePath: tsconfigPath,
-  }),
-};
+const data: {
+  tsconfigDirPath: string;
+  tsconfigFilePath: string;
+  project: tsm.Project;
+} = {
+  tsconfigDirPath: '',
+  tsconfigFilePath: '',
+  project: undefined,
+} as any;
 
 vi.mock('comment-parser', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -26,6 +29,12 @@ vi.mock('comment-parser', async (importOriginal) => {
 });
 
 describe('getCommentKind', () => {
+  beforeAll(() => {
+    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
+    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
+    data.project = getTypeScriptProject(data.tsconfigFilePath);
+  });
+
   it('pass', () => {
     const r01 = getCommentKind(tsm.SyntaxKind.MultiLineCommentTrivia);
     const r02 = getCommentKind(tsm.SyntaxKind.SingleLineCommentTrivia);
@@ -38,6 +47,12 @@ describe('getCommentKind', () => {
 });
 
 describe('getSourceFileComments', () => {
+  beforeAll(() => {
+    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
+    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
+    data.project = getTypeScriptProject(data.tsconfigFilePath);
+  });
+
   it('inline comment by multiple line document comment', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;
@@ -59,14 +74,14 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = context.project.createSourceFile(filename, source.trim());
+    const sourceFile = data.project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
       filePath: pathe.join(process.cwd(), filename),
       comments: [
         { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 4, start: 34 } },
-        { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 9, start: 101 } },
+        { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 9, start: 97 } },
       ],
     });
   });
@@ -92,14 +107,14 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = context.project.createSourceFile(filename, source.trim());
+    const sourceFile = data.project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
       filePath: pathe.join(process.cwd(), filename),
       comments: [
         { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 4, start: 33 } },
-        { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 9, start: 98 } },
+        { kind: tsm.SyntaxKind.MultiLineCommentTrivia, pos: { column: 1, line: 9, start: 94 } },
       ],
     });
   });
@@ -121,14 +136,14 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = context.project.createSourceFile(filename, source.trim());
+    const sourceFile = data.project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
       filePath: pathe.join(process.cwd(), filename),
       comments: [
         { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 2, start: 26 } },
-        { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 5, start: 85 } },
+        { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 5, start: 81 } },
       ],
     });
   });
@@ -150,20 +165,26 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = context.project.createSourceFile(filename, source.trim());
+    const sourceFile = data.project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
       filePath: pathe.join(process.cwd(), filename),
       comments: [
         { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 2, start: 27 } },
-        { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 5, start: 87 } },
+        { kind: tsm.SyntaxKind.SingleLineCommentTrivia, pos: { column: 1, line: 5, start: 83 } },
       ],
     });
   });
 });
 
 describe('getInlineExclude', () => {
+  beforeAll(() => {
+    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
+    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
+    data.project = getTypeScriptProject(data.tsconfigFilePath);
+  });
+
   it('document comment string, no namespace', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;

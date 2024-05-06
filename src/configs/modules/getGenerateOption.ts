@@ -21,7 +21,7 @@ export async function getGenerateOption(
   const exclude = option.exclude ?? [];
   const rootDirs = getRootDirs(cwd, option.rootDirs);
   const topRef = option.topRef ?? false;
-  const schemaPath = option.useSchemaPath ?? false;
+  const useSchemaPath = option.useSchemaPath ?? false;
   const escapeChar = option.escapeChar ?? '_';
   const skipError = option.skipError ?? true;
   const serverUrl =
@@ -35,7 +35,7 @@ export async function getGenerateOption(
     skipError,
     topRef,
     escapeChar,
-    useSchemaPath: schemaPath,
+    useSchemaPath,
     serverUrl,
     generatorOption,
   };

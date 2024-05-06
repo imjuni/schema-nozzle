@@ -7,6 +7,8 @@ export interface IDeleteSchemaOption {
 
   /** use checkbox with multiple selections */
   multiple: boolean;
+
+  types: string[];
 }
 
 export type TDeleteSchemaBaseOption = IDeleteSchemaOption & IGenerateOption & IBaseOption;

@@ -24,10 +24,7 @@ export function getInlineExcludedFiles(project: tsm.Project, projectDir: string)
             options: { keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD },
           }),
         )
-        .filter((comment): comment is IInlineExcludeInfo => comment != null)
-        .filter((comment) =>
-          comment.workspaces.includes(CE_INLINE_COMMENT_KEYWORD.SCHEMA_NOZZLE_WORKSPACE),
-        );
+        .filter((comment): comment is IInlineExcludeInfo => comment != null);
 
       const firstExcludeComment = fileExcludeComment.at(0);
 

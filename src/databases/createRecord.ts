@@ -23,12 +23,7 @@ interface ICreateSchemaRecordParams {
   style: CE_SCHEMA_ID_GENERATION_STYLE;
 }
 
-export function createDatabaseItem({
-  escapeChar,
-  rootDirs,
-  schema,
-  style,
-}: ICreateSchemaRecordParams): {
+export function createRecord({ escapeChar, rootDirs, schema, style }: ICreateSchemaRecordParams): {
   schemas: ISchemaRecord[];
   refs: ISchemaRefRecord[];
 } {
@@ -51,6 +46,7 @@ export function createDatabaseItem({
 
   const id = currentSchema.$id;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
     const schemas: ISchemaRecord = {
       id,
@@ -64,6 +60,7 @@ export function createDatabaseItem({
   }
 
   // extract schema from definitions field
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const definitions = Object.entries(schema.schema.definitions)
     .map(([key, value]) => ({ key, value }))
     .filter(

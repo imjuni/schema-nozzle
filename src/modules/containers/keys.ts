@@ -22,4 +22,6 @@ export const REPOSITORY_SCHEMAS_SYMBOL_KEY = Symbol('repository-schemas-symbol-k
 
 export const STATEMENT_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-import-map-symbol-key');
 
+export const STATEMENT_FILE_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-file-import-map-symbol-key');
+
 export const NOZZLE_PACKAGE_JSON_SYMBOL_KEY = Symbol('nozzle-package-json');

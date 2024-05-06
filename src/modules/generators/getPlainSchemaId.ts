@@ -52,7 +52,7 @@ export function getPlainSchemaId({
       isExternal ? 'external' : undefined,
       relativePath,
       escaping(replaceId(typeName), escapeChar),
-    ].filter((element) => element != null);
+    ].filter((element) => element != null && element !== '');
     return `${paths.join(path.posix.sep)}`;
   }
 

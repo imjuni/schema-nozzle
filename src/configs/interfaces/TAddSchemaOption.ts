@@ -18,4 +18,6 @@ export type TAddSchemaBaseOption = IAddSchemaOption & IGenerateOption & IBaseOpt
 export type TAddSchemaOption = TAddSchemaBaseOption & {
   cwd: string;
   projectDir: string;
-} & { resolved: IResolvedPaths };
+} & {
+  resolved: IResolvedPaths;
+};

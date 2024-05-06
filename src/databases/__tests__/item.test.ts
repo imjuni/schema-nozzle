@@ -1,72 +1,33 @@
-import { createDatabaseItem } from '#/databases/createDatabaseItem';
+import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { createRecord } from '#/databases/createRecord';
+import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
+import type { AnySchemaObject } from 'ajv';
+import fs from 'fs';
 import pathe from 'pathe';
 import { getTypeScriptProject } from 'ts-morph-short';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
-const tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-const tsconfigFilePath = pathe.join(tsconfigDirPath, 'tsconfig.json');
-const project = getTypeScriptProject(tsconfigFilePath);
-const schemas = {
-  IProfessorEntity: {
-    filePath: 'examples/IProfessorEntity.ts',
-    exportedType: 'IProfessorEntity',
-    schema: {
-      $schema: 'http://json-schema.org/draft-07/schema#',
-      type: 'object',
-      properties: {
-        id: {
-          type: 'string',
-        },
-        name: {
-          type: 'string',
-        },
-        age: {
-          type: 'number',
-          description: 'professor age33',
-        },
-        joinAt: {
-          type: 'string',
-          format: 'date-time',
-        },
-        major: {
-          $ref: '#/definitions/CE_MAJOR',
-        },
-      },
-      required: ['id', 'name', 'age', 'joinAt', 'major'],
-      additionalProperties: false,
-      definitions: {
-        CE_MAJOR: {
-          type: 'string',
-          enum: ['computer science', 'electrical'],
-        },
-      },
-    },
-  },
-};
+const data: {
+  tsconfigDirPath: string;
+  tsconfigFilePath: string;
+  project: ReturnType<typeof getTypeScriptProject>;
+  schema: AnySchemaObject;
+} = {
+  project: undefined,
+  tsconfigDirPath: '',
+  tsconfigFilePath: '',
+  schema: undefined,
+} as any;
 
 describe('createDatabaseItem', () => {
-  it('using rootDir, build by relative path', () => {
-    const r01 = createDatabaseItem(
-      {
-        $kind: 'add-schema',
-        project: tsconfigFilePath,
-        projectDir: tsconfigDirPath,
-        rootDirs: ['examples'],
-      },
-      [
-        { filePath: 'examples/IProfessorEntity.ts', identifier: 'IProfessorEntity' },
-        { filePath: 'examples/const-enum/CE_MAJOR.ts', identifier: 'CE_MAJOR' },
-      ],
-      schemas.IProfessorEntity,
-    );
-
-    // console.log(JSON.stringify(r01, undefined, 2));
-    expect(r01).toMatchObject({
-      item: {
-        id: '-IProfessorEntity',
-        typeName: 'IProfessorEntity',
-        filePath: 'IProfessorEntity.ts',
-        $ref: ['-const-enum-CE_MAJOR'],
+  beforeAll(() => {
+    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
+    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.json');
+    data.project = getTypeScriptProject(data.tsconfigFilePath);
+    data.schema = {
+      IProfessorEntity: {
+        filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+        exportedType: 'IProfessorEntity',
         schema: {
           $schema: 'http://json-schema.org/draft-07/schema#',
           type: 'object',
@@ -86,34 +47,89 @@ describe('createDatabaseItem', () => {
               format: 'date-time',
             },
             major: {
-              $ref: '-const-enum-CE_MAJOR',
+              $ref: '#/definitions/CE_MAJOR',
             },
           },
           required: ['id', 'name', 'age', 'joinAt', 'major'],
           additionalProperties: false,
-          $id: '-IProfessorEntity',
-          title: '#/IProfessorEntity',
-        },
-        rawSchema:
-          '{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"age":{"type":"number","description":"professor age33"},"joinAt":{"type":"string","format":"date-time"},"major":{"$ref":"-const-enum-CE_MAJOR"}},"required":["id","name","age","joinAt","major"],"additionalProperties":false,"$id":"-IProfessorEntity","title":"#/IProfessorEntity"}',
-      },
-      definitions: [
-        {
-          id: '-const-enum-CE_MAJOR',
-          typeName: 'CE_MAJOR',
-          filePath: 'const-enum/CE_MAJOR.ts',
-          $ref: [],
-          schema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: '-const-enum-CE_MAJOR',
-            title: '#/const-enum/CE_MAJOR',
-            type: 'string',
-            enum: ['computer science', 'electrical'],
+          definitions: {
+            CE_MAJOR: {
+              type: 'string',
+              enum: ['computer science', 'electrical'],
+            },
           },
-          rawSchema:
-            '{"$schema":"http://json-schema.org/draft-07/schema#","$id":"-const-enum-CE_MAJOR","title":"#/const-enum/CE_MAJOR","type":"string","enum":["computer science","electrical"]}',
+        },
+      },
+    };
+
+    makeStatementImportInfoMap(data.project);
+  });
+
+  it('using rootDir, build by relative path', () => {
+    const r01 = createRecord({
+      escapeChar: '_',
+      rootDirs: [data.tsconfigDirPath],
+      schema: {
+        filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+        exportedType: 'IProfessorEntity',
+        schema: data.schema,
+      },
+      style: CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS_WITH_PATH,
+    });
+
+    if (r01 === undefined) {
+      fs.writeFileSync('test.json', JSON.stringify(r01, undefined, 2));
+    }
+
+    expect(r01).toMatchObject({
+      schemas: [
+        {
+          id: '#/$defs/IProfessorEntity',
+          typeName: 'IProfessorEntity',
+          filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+          relativePath: 'IProfessorEntity.ts',
+          schema: {
+            IProfessorEntity: {
+              filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+              exportedType: 'IProfessorEntity',
+              schema: {
+                $schema: 'http://json-schema.org/draft-07/schema#',
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                  },
+                  name: {
+                    type: 'string',
+                  },
+                  age: {
+                    type: 'number',
+                    description: 'professor age33',
+                  },
+                  joinAt: {
+                    type: 'string',
+                    format: 'date-time',
+                  },
+                  major: {
+                    $ref: '#/$defs/const-enum/CE_MAJOR',
+                  },
+                },
+                required: ['id', 'name', 'age', 'joinAt', 'major'],
+                additionalProperties: false,
+                definitions: {
+                  CE_MAJOR: {
+                    type: 'string',
+                    enum: ['computer science', 'electrical'],
+                  },
+                },
+              },
+            },
+            $id: '#/$defs/IProfessorEntity',
+            title: '#/$defs/IProfessorEntity',
+          },
         },
       ],
+      refs: [],
     });
   });
 });

@@ -1,19 +1,19 @@
-import type { IBaseOption } from '#/configs/interfaces/IBaseOption';
+import type { IGenerateOption } from '#/configs/interfaces/IGenerateOption';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
 import type * as tsm from 'ts-morph';
 
 interface IGetDiagnostics {
-  option: Pick<IBaseOption, 'skipError'>;
+  options: Pick<IGenerateOption, 'skipError'>;
   project: tsm.Project;
 }
 
 export function getDiagnostics({
-  option,
+  options,
   project,
 }: IGetDiagnostics): PassFailEither<Error, boolean> {
   try {
-    if (option.skipError === false) {
+    if (options.skipError === false) {
       const diagnostics = project.getPreEmitDiagnostics();
       const diagnosticFiles = diagnostics
         .map((diagnostic) => diagnostic.getSourceFile())
