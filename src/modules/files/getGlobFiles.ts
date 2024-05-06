@@ -1,6 +1,6 @@
 import type { Glob, GlobOptions } from 'glob';
 import { replaceSepToPosix } from 'my-node-fp';
-import path from 'node:path';
+import pathe from 'pathe';
 
 export function getGlobFiles<T extends GlobOptions>(glob: Glob<T>): string[] {
   const filePathSet = new Set<string>();
@@ -9,7 +9,7 @@ export function getGlobFiles<T extends GlobOptions>(glob: Glob<T>): string[] {
     filePathSet.add(
       typeof filePath === 'string'
         ? replaceSepToPosix(filePath)
-        : path.join(filePath.path, filePath.name),
+        : pathe.join(filePath.path, filePath.name),
     );
   }
 

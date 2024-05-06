@@ -5,30 +5,30 @@ import { atOrThrow } from 'my-easy-fp';
 
 export class SchemaRepository {
   async select(id: string): Promise<ISchemaRecord | undefined> {
-    const refs = (await alasql.promise(
+    const schemas = (await alasql.promise(
       `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id = ?`,
       [id],
     )) as ISchemaRecord[];
 
-    return refs.at(0);
+    return schemas.at(0);
   }
 
   async selectOrThrow(id: string): Promise<ISchemaRecord> {
-    const refs = (await alasql.promise(
+    const schemas = (await alasql.promise(
       `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id = ?`,
       [id],
     )) as ISchemaRecord[];
 
-    return atOrThrow(refs, 0, new Error(`Cannot found record ${id}`));
+    return atOrThrow(schemas, 0, new Error(`Cannot found record ${id}`));
   }
 
   async selects(ids: string[]): Promise<ISchemaRecord[]> {
-    const refs = (await alasql.promise(
+    const schemas = (await alasql.promise(
       `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE id IN @(?)`,
       [ids],
     )) as ISchemaRecord[];
 
-    return refs;
+    return schemas;
   }
 
   async deletes(ids: string[]): Promise<void> {
@@ -60,5 +60,13 @@ export class SchemaRepository {
     }
 
     return this.update(schema);
+  }
+
+  async types(): Promise<Pick<ISchemaRecord, 'id' | 'filePath'>[]> {
+    const schemas = (await alasql.promise(
+      `SELECT [id], [filePath] FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}]`,
+    )) as Pick<ISchemaRecord, 'id' | 'filePath'>[];
+
+    return schemas;
   }
 }

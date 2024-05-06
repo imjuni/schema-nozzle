@@ -1,6 +1,6 @@
 import { getGlobFiles } from '#/modules/files/getGlobFiles';
 import { Glob, type GlobOptions } from 'glob';
-import path from 'node:path';
+import pathe from 'pathe';
 
 export class IncludeContainer {
   #globs: Glob<GlobOptions>[];
@@ -28,11 +28,11 @@ export class IncludeContainer {
       return false;
     }
 
-    if (path.isAbsolute(filePath)) {
+    if (pathe.isAbsolute(filePath)) {
       return this.#map.get(filePath) != null;
     }
 
-    return this.#map.get(path.resolve(filePath)) != null;
+    return this.#map.get(pathe.resolve(filePath)) != null;
   }
 
   files() {

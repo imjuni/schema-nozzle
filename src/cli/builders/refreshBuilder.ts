@@ -8,6 +8,23 @@ export function refreshBuilder(argv: Argv) {
       type: 'string',
       default: undefined,
     })
+    .option('schema-path', {
+      describe: 'toggles whether to add the schema file path to the ID value',
+      type: 'boolean',
+      default: false,
+    })
+    .option('top-ref', {
+      describe:
+        'Specify whether the schema should be managed as `definitions`. Same as the `top-ref` setting for `ts-json-schema-generator`',
+      type: 'boolean',
+      default: false,
+    })
+    .option('server-url', {
+      describe:
+        'Specify whether the schema should be managed as `definitions`. Same as the `top-ref` setting for `ts-json-schema-generator`',
+      type: 'string',
+      default: undefined,
+    })
     .option('include-path', {
       describe: 'list of files to generate json-schema from',
       type: 'string',
@@ -17,10 +34,6 @@ export function refreshBuilder(argv: Argv) {
       describe: 'list of files to exclude from the list of files to generate json-schema from',
       type: 'string',
       array: true,
-    })
-    .option('use-definitions', {
-      describe: 'TBD',
-      type: 'boolean',
     })
     .option('generator-option', {
       describe: 'ts-json-schema-generator option file path',

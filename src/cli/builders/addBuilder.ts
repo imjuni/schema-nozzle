@@ -20,9 +20,21 @@ export function addBuilder(argv: Argv) {
       type: 'string',
       default: undefined,
     })
-    .option('use-definitions', {
-      describe: 'TBD',
+    .option('schema-path', {
+      describe: 'toggles whether to add the schema file path to the ID value',
       type: 'boolean',
+      default: false,
+    })
+    .option('top-ref', {
+      describe:
+        'Specify whether the schema should be managed as `definitions`. Same as the `top-ref` setting for `ts-json-schema-generator`',
+      type: 'boolean',
+    })
+    .option('server-url', {
+      describe:
+        'Specify whether the schema should be managed as `definitions`. Same as the `top-ref` setting for `ts-json-schema-generator`',
+      type: 'string',
+      default: undefined,
     })
     .option('include-path', {
       describe: 'list of files to generate json-schema from',

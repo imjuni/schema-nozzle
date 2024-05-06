@@ -2,7 +2,7 @@
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import chalk from 'chalk';
 
-export function showFailMessage(errors: CreateJSONSchemaError[]) {
+export function showFailMessage(errors: Readonly<CreateJSONSchemaError>[]) {
   if (errors.length <= 0) {
     return;
   }

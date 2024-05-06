@@ -1,22 +1,14 @@
-import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { getCwd } from '#/tools/getCwd';
 import { getRatioNumber } from '#/tools/getRatioNumber';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
 import { safeParse } from '#/tools/safeParse';
 import * as jscp from 'jsonc-parser';
-import path from 'node:path';
+import pathe from 'pathe';
 import { describe, expect, it, vitest } from 'vitest';
 
 describe('getRativeCwd', () => {
   it('default', () => {
     expect(getRelativeCwd('/a/b/c', '/a/b/c/d/test.ts')).toEqual('d/test.ts');
-  });
-});
-
-describe('posixJoin', () => {
-  it('join path', () => {
-    const joined = posixJoin('hello', 'world');
-    expect(joined).toEqual('hello/world');
   });
 });
 
@@ -77,7 +69,7 @@ describe('safeParse', () => {
 describe('getCwd', () => {
   it('cwd', () => {
     const r01 = getCwd({});
-    const e = path.resolve('.');
+    const e = pathe.resolve('.');
 
     expect(r01).toEqual(e);
 
@@ -91,7 +83,7 @@ describe('getCwd', () => {
     expect(r04).toEqual(process.cwd());
 
     const r05 = getCwd({ USE_INIT_CWD: 'true' });
-    const e2 = path.resolve('.');
+    const e2 = pathe.resolve('.');
 
     expect(r05).toEqual(e2);
   });

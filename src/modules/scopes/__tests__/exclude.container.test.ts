@@ -1,10 +1,9 @@
-import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
-import path from 'node:path';
+import pathe from 'pathe';
 import { describe, expect, it } from 'vitest';
 import { defaultExclude } from 'vitest/dist/config';
 
-const tsconfigDir = path.join(process.cwd(), 'examples');
+const tsconfigDir = pathe.join(process.cwd(), 'examples');
 
 describe('ExcludeContainer', () => {
   it('getter', () => {
@@ -53,7 +52,7 @@ describe('ExcludeContainer', () => {
             column: 1,
           },
           workspaces: [],
-          filePath: path.resolve('example/type03/HandsomelyCls.tsx'),
+          filePath: pathe.resolve('example/type03/HandsomelyCls.tsx'),
         },
       ],
       options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
@@ -61,9 +60,9 @@ describe('ExcludeContainer', () => {
 
     const r01 = container.isExclude('src/databases/deleteDatabaseItem.ts');
     const r02 = container.isExclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
-    const r03 = container.isExclude(posixJoin(process.cwd(), 'src/tools/getRatioNumber.ts'));
-    const r04 = container.isExclude(posixJoin(process.cwd(), 'src/compilers/getExportedFiles.ts'));
-    const r05 = container.isExclude(posixJoin(process.cwd(), 'src/compilers/getJsDocTags.ts'));
+    const r03 = container.isExclude(pathe.join(process.cwd(), 'src/tools/getRatioNumber.ts'));
+    const r04 = container.isExclude(pathe.join(process.cwd(), 'src/compilers/getExportedFiles.ts'));
+    const r05 = container.isExclude(pathe.join(process.cwd(), 'src/compilers/getJsDocTags.ts'));
 
     expect(r01).toBeFalsy();
     expect(r02).toBeTruthy();

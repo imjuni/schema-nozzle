@@ -1,10 +1,10 @@
 import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import path from 'node:path';
-import { getImportInfoMap, getTypeScriptProject } from 'ts-morph-short';
+import pathe from 'pathe';
+import { getTypeScriptProject } from 'ts-morph-short';
 import { describe, expect, it } from 'vitest';
 
-const tsconfigDirPath = path.join(process.cwd(), 'examples');
-const tsconfigFilePath = path.join(tsconfigDirPath, 'tsconfig.json');
+const tsconfigDirPath = pathe.join(process.cwd(), 'examples');
+const tsconfigFilePath = pathe.join(tsconfigDirPath, 'tsconfig.json');
 const project = getTypeScriptProject(tsconfigFilePath);
 const schemas = {
   IProfessorEntity: {
@@ -58,7 +58,6 @@ describe('createDatabaseItem', () => {
         { filePath: 'examples/const-enum/CE_MAJOR.ts', identifier: 'CE_MAJOR' },
       ],
       schemas.IProfessorEntity,
-      getImportInfoMap(project),
     );
 
     // console.log(JSON.stringify(r01, undefined, 2));

@@ -1,12 +1,11 @@
 import { getGlobFiles } from '#/modules/files/getGlobFiles';
-import { posixJoin } from '#/modules/paths/modules/posixJoin';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
 import { defaultExclude } from '#/modules/scopes/defaultExclude';
 import { Glob } from 'glob';
-import path from 'node:path';
+import pathe from 'pathe';
 import { describe, expect, it } from 'vitest';
 
-const tsconfigDir = path.join(process.cwd(), 'examples');
+const tsconfigDir = pathe.join(process.cwd(), 'examples');
 
 describe('IncludeContainer', () => {
   it('getter', () => {
@@ -37,8 +36,8 @@ describe('IncludeContainer', () => {
 
     const r01 = container.isInclude('src/databases/deleteDatabaseItem.ts');
     const r02 = container.isInclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
-    const r03 = container.isInclude(posixJoin(process.cwd(), 'src/tools/getRatioNumber.ts'));
-    const r04 = container.isInclude(posixJoin(process.cwd(), 'src/compilers/getExportedFiles.ts'));
+    const r03 = container.isInclude(pathe.join(process.cwd(), 'src/tools/getRatioNumber.ts'));
+    const r04 = container.isInclude(pathe.join(process.cwd(), 'src/compilers/getExportedFiles.ts'));
 
     expect(r01).toBeFalsy();
     expect(r02).toBeTruthy();

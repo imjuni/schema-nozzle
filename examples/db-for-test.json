@@ -1,11 +1,11 @@
 {
   "schemas": [
-    { "id": "a", "schema": "{ \"id\": \"a\" }", "typeName": "tA" },
-    { "id": "b", "schema": "{ \"id\": \"b\" }", "typeName": "tB" },
-    { "id": "c", "schema": "{ \"id\": \"c\" }", "typeName": "tC" },
-    { "id": "d", "schema": "{ \"id\": \"d\" }", "typeName": "tD" },
-    { "id": "e", "schema": "{ \"id\": \"e\" }", "typeName": "tE" },
-    { "id": "f", "schema": "{ \"id\": \"f\" }", "typeName": "tF" }
+    { "id": "a", "schema": { "id": "a" }, "typeName": "tA" },
+    { "id": "b", "schema": { "id": "b" }, "typeName": "tB", "filePath": "/a/b/c" },
+    { "id": "c", "schema": { "id": "c" }, "typeName": "tC" },
+    { "id": "d", "schema": { "id": "d" }, "typeName": "tD" },
+    { "id": "e", "schema": { "id": "e" }, "typeName": "tE" },
+    { "id": "f", "schema": { "id": "f" }, "typeName": "tF" }
   ],
   "references": [
     { "id": "a", "refId": "c" },

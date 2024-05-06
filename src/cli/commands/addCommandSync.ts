@@ -1,15 +1,19 @@
 import { makeSpinner } from '#/cli/display/makeSpinner';
-import type { TAddSchemaBaseOption } from '#/configs/interfaces/TAddSchemaOption';
-import { adding } from '#/modules/adding';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import type { TAddSchemaBaseOption, TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
+import { makePackageJson } from '#/configs/makePackageJson';
+import { getBaseOption } from '#/configs/modules/getBaseOption';
+import { getGenerateOption } from '#/configs/modules/getGenerateOption';
+import { adding } from '#/modules/cli/commands/adding';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
-export async function addCommandSync(options: TAddSchemaBaseOption): Promise<void> {
+export async function addCommandSync(cliOptions: TAddSchemaBaseOption): Promise<void> {
   const spinner = makeSpinner();
 
   try {
-    if (options.cliLogo) {
+    if (cliOptions.cliLogo) {
       await showLogo({
         message: 'Schema Nozzle',
         figlet: { font: 'ANSI Shadow', width: 80 },
@@ -22,12 +26,26 @@ export async function addCommandSync(options: TAddSchemaBaseOption): Promise<voi
 
     spinner.start('TypeScript source code compile, ...');
 
-    const project = getTypeScriptProject(options.project);
-    const tsconfig = getTypeScriptConfig(options.project);
+    const resolvedPaths = getResolvedPaths(cliOptions);
+    const project = getTypeScriptProject(resolvedPaths.project);
+    const tsconfig = getTypeScriptConfig(resolvedPaths.project);
+    makePackageJson();
 
     spinner.stop('TypeScript project loaded!', 'succeed');
 
     ProjectContainer.bootstrap({ 'schema-nozzle': { project, config: tsconfig } });
+
+    const options: TAddSchemaOption = {
+      $kind: 'add-schema',
+      ...getBaseOption(cliOptions),
+      ...(await getGenerateOption(cliOptions)),
+      cwd: resolvedPaths.cwd,
+      projectDir: resolvedPaths.projectDir,
+      resolved: resolvedPaths,
+      multiple: cliOptions.multiple,
+      types: [],
+      files: [],
+    };
 
     await adding(project, tsconfig, options);
   } catch (caught) {

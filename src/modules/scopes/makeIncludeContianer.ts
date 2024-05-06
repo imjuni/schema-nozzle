@@ -9,12 +9,12 @@ import { asValue } from 'awilix';
 import type { getTypeScriptConfig } from 'ts-morph-short';
 
 export function makeIncludeContianer(
-  options: Pick<TAddSchemaOption | TRefreshSchemaOption, 'include' | 'project' | 'projectDir'>,
+  options: Pick<TAddSchemaOption | TRefreshSchemaOption, 'include' | 'project' | 'resolved'>,
   tsconfig: ReturnType<typeof getTypeScriptConfig>,
 ) {
   const includeContainer = new IncludeContainer({
     patterns: getIncludePatterns(options, tsconfig, options.project),
-    options: { absolute: true, ignore: defaultExclude, cwd: options.projectDir },
+    options: { absolute: true, ignore: defaultExclude, cwd: options.resolved.projectDir },
   });
 
   container.register(INCLUDE_CONTAINER_SYMBOL_KEY, asValue(includeContainer));

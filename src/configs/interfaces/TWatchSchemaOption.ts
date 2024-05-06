@@ -6,7 +6,7 @@ interface IWatchSchemaOption {
   $kind: 'watch-schema';
 
   /** specify the root folder within your schema path */
-  rootDir?: string;
+  rootDirs?: string[];
 
   /** watch debounce time: default 500ms */
   debounceTime: number;

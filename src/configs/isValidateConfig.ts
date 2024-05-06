@@ -7,7 +7,7 @@ import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchema
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import consola from 'consola';
 import { existsSync } from 'my-node-fp';
-import path from 'node:path';
+import pathe from 'pathe';
 import type { Arguments } from 'yargs';
 
 const commands: string[] = [
@@ -47,7 +47,7 @@ export function isValidateConfig<
   }
 
   const { project } = argv;
-  const resolvedProject = path.isAbsolute(project) ? project : path.resolve(project);
+  const resolvedProject = pathe.isAbsolute(project) ? project : pathe.resolve(project);
 
   if (existsSync(resolvedProject) === false) {
     consola.error(`Cannot found project: ${resolvedProject}`);

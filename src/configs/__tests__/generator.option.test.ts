@@ -1,8 +1,8 @@
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import { getSchemaGeneratorOption } from '#/configs/getSchemaGeneratorOption';
+import { getSchemaGeneratorOption } from '#/configs/modules/getSchemaGeneratorOption';
 import fs from 'fs/promises';
 import * as mnf from 'my-node-fp';
-import path from 'node:path';
+import pathe from 'pathe';
 import { beforeEach, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('my-node-fp', async (importOriginal) => {
@@ -18,18 +18,18 @@ const data: { resolvedPaths: ReturnType<typeof getResolvedPaths> } = {} as any;
 
 describe('getSchemaGeneratorOption', () => {
   beforeEach(() => {
-    vitest.stubEnv('INIT_CWD', path.join(originPath, 'examples'));
+    vitest.stubEnv('INIT_CWD', pathe.join(originPath, 'examples'));
     data.resolvedPaths = getResolvedPaths({
-      project: path.join(originPath, 'examples', 'tsconfig.json'),
-      output: path.join(originPath, 'examples'),
+      rootDirs: [],
+      project: pathe.join(originPath, 'examples', 'tsconfig.json'),
+      output: pathe.join(originPath, 'examples'),
     });
   });
 
   it('undefined', async () => {
     const option = await getSchemaGeneratorOption({
-      $kind: 'add-schema',
       project: data.resolvedPaths.project,
-      useDefinitions: false,
+      topRef: false,
       skipError: true,
       generatorOption: undefined,
     });
@@ -50,10 +50,9 @@ describe('getSchemaGeneratorOption', () => {
 
   it('option object', async () => {
     const option = await getSchemaGeneratorOption({
-      $kind: 'add-schema',
       project: data.resolvedPaths.project,
       skipError: false,
-      useDefinitions: false,
+      topRef: false,
       generatorOption: {
         tsconfig: data.resolvedPaths.project,
         minify: true,
@@ -102,9 +101,8 @@ describe('getSchemaGeneratorOption', () => {
     );
 
     const option = await getSchemaGeneratorOption({
-      $kind: 'add-schema',
       project: data.resolvedPaths.project,
-      useDefinitions: false,
+      topRef: false,
       skipError: false,
       generatorOption: './.tjsgrc',
     });
@@ -128,11 +126,10 @@ describe('getSchemaGeneratorOption', () => {
 
     try {
       await getSchemaGeneratorOption({
-        $kind: 'add-schema',
         project: data.resolvedPaths.project,
         skipError: false,
-        useDefinitions: false,
-        generatorOption: path.join(originPath, 'examples', '.tjsgrc'),
+        topRef: false,
+        generatorOption: pathe.join(originPath, 'examples', '.tjsgrc'),
       });
     } catch (caught) {
       expect(caught).toBeTruthy();

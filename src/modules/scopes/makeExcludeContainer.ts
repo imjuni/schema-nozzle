@@ -10,7 +10,7 @@ import { asValue } from 'awilix';
 import type { getTypeScriptConfig } from 'ts-morph-short';
 
 export function makeExcludeContainer(
-  options: Pick<TAddSchemaOption | TRefreshSchemaOption, 'exclude' | 'project' | 'projectDir'>,
+  options: Pick<TAddSchemaOption | TRefreshSchemaOption, 'exclude' | 'project' | 'resolved'>,
   tsconfig: ReturnType<typeof getTypeScriptConfig>,
   inlineExcludedFiles: ReturnType<typeof getInlineExcludedFiles>,
 ) {
@@ -20,7 +20,7 @@ export function makeExcludeContainer(
    */
   const excludeContainer = new ExcludeContainer({
     patterns: getExcludePatterns(options, tsconfig),
-    options: { absolute: true, ignore: defaultExclude, cwd: options.projectDir },
+    options: { absolute: true, ignore: defaultExclude, cwd: options.resolved.projectDir },
     inlineExcludedFiles,
   });
 
