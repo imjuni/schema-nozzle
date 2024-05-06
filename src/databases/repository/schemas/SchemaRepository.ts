@@ -35,18 +35,10 @@ export class SchemaRepository {
     await alasql.promise(`DELETE FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}] WHERE [id] IN @(?)`, [ids]);
   }
 
-  async update(schema: ISchemaRecord): Promise<ISchemaRecord> {
-    await alasql.promise(
-      `UPDATE [${CE_ALASQL_TABLE_NAME.SCHEMA}] SET [schema] = ?, [typeName] = ?, [filePath] = ? WHERE [id] = ?`,
-      [schema.schema, schema.typeName, schema.filePath, schema.id],
-    );
-    return this.selectOrThrow(schema.id);
-  }
-
   async insert(schema: ISchemaRecord): Promise<ISchemaRecord> {
     await alasql.promise(
-      `INSERT INTO [${CE_ALASQL_TABLE_NAME.SCHEMA}] ([id], [schema], [typeName], [filePath]) VALUES (?, ?, ?, ?)`,
-      [schema.id, schema.schema, schema.typeName, schema.filePath],
+      `INSERT INTO [${CE_ALASQL_TABLE_NAME.SCHEMA}] ([id], [schema], [typeName], [filePath], [relativePath]) VALUES (?, ?, ?, ?, ?)`,
+      [schema.id, schema.schema, schema.typeName, schema.filePath, schema.relativePath],
     );
     const inserted = await this.selectOrThrow(schema.id);
     return inserted;
@@ -71,6 +63,13 @@ export class SchemaRepository {
       `SELECT [id], [filePath] FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}]`,
     )) as Pick<ISchemaRecord, 'id' | 'filePath'>[];
 
+    return schemas;
+  }
+
+  async tables(): Promise<ISchemaRecord[]> {
+    const schemas = (await alasql.promise(
+      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.SCHEMA}]`,
+    )) as ISchemaRecord[];
     return schemas;
   }
 }

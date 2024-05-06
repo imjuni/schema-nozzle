@@ -1,8 +1,8 @@
-import { CE_INLINE_COMMENT_KEYWORD } from '#/compilers/comments/const-enum/CE_INLINE_COMMENT_KEYWORD';
 import { getInlineExclude } from '#/compilers/comments/getInlineExclude';
 import { getSourceFileComments } from '#/compilers/comments/getSourceFileComments';
 import type { IExcludeFile } from '#/compilers/comments/interfaces/IExcludeFile';
 import type { IInlineExcludeInfo } from '#/compilers/comments/interfaces/IInlineExcludeInfo';
+import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import { isDescendant } from 'my-node-fp';
 import pathe from 'pathe';
 import type * as tsm from 'ts-morph';
@@ -21,7 +21,9 @@ export function getInlineExcludedFiles(project: tsm.Project, projectDir: string)
         .map((comment) =>
           getInlineExclude({
             comment,
-            options: { keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD },
+            options: {
+              keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
+            },
           }),
         )
         .filter((comment): comment is IInlineExcludeInfo => comment != null);

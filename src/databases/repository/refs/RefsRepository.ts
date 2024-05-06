@@ -22,6 +22,24 @@ export class RefsRepository {
     return atOrThrow(refs, 0, new Error(`Cannot found record ${id}`));
   }
 
+  async selectWithRefId(id: string, refId: string): Promise<ISchemaRefRecord | undefined> {
+    const refs = (await alasql.promise(
+      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.REF}] WHERE [id] = ? and [refId] = ?`,
+      [id, refId],
+    )) as ISchemaRefRecord[];
+
+    return refs.at(0);
+  }
+
+  async selectWithRefIdOrThrow(id: string, refId: string): Promise<ISchemaRefRecord> {
+    const refs = (await alasql.promise(
+      `SELECT * FROM [${CE_ALASQL_TABLE_NAME.REF}] WHERE [id] = ? and [refId] = ?`,
+      [id, refId],
+    )) as ISchemaRefRecord[];
+
+    return atOrThrow(refs, 0, new Error(`Cannot found record ${id} >> ${refId}`));
+  }
+
   async selects(ids: string[]): Promise<ISchemaRefRecord[]> {
     const refs = (await alasql.promise(
       `SELECT * FROM [${CE_ALASQL_TABLE_NAME.REF}] WHERE id IN @(?)`,
@@ -35,33 +53,31 @@ export class RefsRepository {
     await alasql.promise(`DELETE FROM [${CE_ALASQL_TABLE_NAME.REF}] WHERE [id] IN @(?)`, [ids]);
   }
 
-  async update(ref: ISchemaRefRecord): Promise<ISchemaRefRecord> {
+  async deleteWithRefId(id: string, refId: string): Promise<void> {
     await alasql.promise(
-      `UPDATE [${CE_ALASQL_TABLE_NAME.REF}] SET [id] = ?, [refId] = ? WHERE [id] = ?`,
-      [ref.id, ref.refId, ref.id],
+      `DELETE FROM [${CE_ALASQL_TABLE_NAME.REF}] WHERE [id] = ? and [refId] = ?`,
+      [id, refId],
     );
-    const updated = await this.selectOrThrow(ref.id);
-    return updated;
   }
 
   async insert(ref: ISchemaRefRecord): Promise<ISchemaRefRecord> {
     await alasql.promise(
-      `INSERT INTO [${CE_ALASQL_TABLE_NAME.REF}] ([id], [id], [refId]) VALUES (?, ?, ?)`,
-      [ref.id, ref.id, ref.refId],
+      `INSERT INTO [${CE_ALASQL_TABLE_NAME.REF}] ([id], [refId]) VALUES (?, ?)`,
+      [ref.id, ref.refId],
     );
     const inserted = await this.selectOrThrow(ref.id);
     return inserted;
   }
 
   async upsert(ref: ISchemaRefRecord): Promise<ISchemaRefRecord> {
-    const prev = await this.select(ref.id);
+    const prev = await this.selectWithRefId(ref.id, ref.refId);
 
     if (prev == null) {
       return this.insert(ref);
     }
 
-    await this.deletes([ref.id]);
+    await this.deleteWithRefId(ref.id, ref.refId);
     await this.insert(ref);
-    return this.selectOrThrow(ref.id);
+    return this.selectWithRefIdOrThrow(ref.id, ref.refId);
   }
 }

@@ -1,4 +1,4 @@
-import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
+import { makeDatabase } from '#/databases/files/makeDatabase';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import type { RefsRepository } from '#/databases/repository/refs/RefsRepository';
 import { container } from '#/modules/containers/container';
@@ -7,7 +7,7 @@ import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 beforeAll(async () => {
-  await makeSQLDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+  await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
   makeRepository();
 });
 
@@ -41,12 +41,6 @@ describe('RefsRepository', () => {
     expect(r01.length).toEqual(0);
   });
 
-  it('update', async () => {
-    const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
-    const updated = await refsRepo.update({ id: 'c', refId: 'd' });
-    expect(updated).toMatchObject({ id: 'c', refId: 'd' });
-  });
-
   it('insert', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
     const inserted = await refsRepo.insert({ id: 'x', refId: 'tXX' });
@@ -62,9 +56,9 @@ describe('RefsRepository', () => {
 
   it('upsert, updated', async () => {
     const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
-    const inserted = await refsRepo.upsert({ id: 'd', refId: 'e' });
+    const inserted = await refsRepo.upsert({ id: 'd', refId: 'b' });
 
-    expect(inserted).toMatchObject({ id: 'd', refId: 'e' });
+    expect(inserted).toMatchObject({ id: 'd', refId: 'b' });
   });
 
   it('upsert, twice updated', async () => {

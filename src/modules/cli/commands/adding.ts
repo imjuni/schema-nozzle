@@ -3,25 +3,20 @@ import { makeSpinner } from '#/cli/display/makeSpinner';
 import { showFailMessage } from '#/cli/display/showFailMessage';
 import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFiles';
 import { getDiagnostics } from '#/compilers/getDiagnostics';
-import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { makeStatementInfoMap } from '#/compilers/makeStatementInfoMap';
 import { summarySchemaTypes } from '#/compilers/summarySchemaTypes';
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import { createRecord } from '#/databases/createRecord';
+import { createStore } from '#/databases/createStore';
+import { getDatabaseBuf } from '#/databases/files/getDatabaseBuf';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import { getSQLDatabaseBuf } from '#/databases/files/getSQLDatabaseBuf';
-import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
+import { makeDatabase } from '#/databases/files/makeDatabase';
 import { getSchemaIdStyle } from '#/databases/modules/getSchemaIdStyle';
+import { GeneratedContainer } from '#/databases/repository/GeneratedContainer';
 import { makeRepository } from '#/databases/repository/makeRepository';
-import type { RefsRepository } from '#/databases/repository/refs/RefsRepository';
-import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
+import { upserts } from '#/databases/repository/upserts';
 import { getAddFiles } from '#/modules/cli/tools/getAddFiles';
 import { getAddTypes } from '#/modules/cli/tools/getAddTypes';
-import { container } from '#/modules/containers/container';
-import {
-  REPOSITORY_REFS_SYMBOL_KEY,
-  REPOSITORY_SCHEMAS_SYMBOL_KEY,
-} from '#/modules/containers/keys';
-import { GeneratedContainer } from '#/modules/generators/GeneratedContainer';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
@@ -48,10 +43,9 @@ export async function adding(
 
     const dbPath = await getDatabaseFilePath(options);
 
-    await makeSQLDatabase(dbPath);
+    await makeDatabase(dbPath);
     makeRepository();
     makeSchemaGenerator(options.resolved.project, options.generatorOption);
-    makeStatementImportInfoMap(project);
 
     const generatedContainer = new GeneratedContainer();
     const filePaths = project
@@ -65,6 +59,8 @@ export async function adding(
     const schemaFilePaths = filePaths
       .filter((filename) => includeContainer.isInclude(filename))
       .filter((filename) => !excludeContainer.isExclude(filename));
+
+    makeStatementInfoMap(project, schemaFilePaths);
 
     const selectedFiles = await getAddFiles(
       options,
@@ -114,15 +110,12 @@ export async function adding(
 
     progress.stop();
 
-    const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
-    const refRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
+    await upserts(generatedContainer);
 
-    await Promise.all([
-      ...generatedContainer.records.map((record) => schemaRepo.upsert(record)),
-      ...generatedContainer.refs.map((ref) => refRepo.upsert(ref)),
-    ]);
+    const store = await createStore(options.serverUrl, schemaIdStyle);
+    const buf = getDatabaseBuf(store);
 
-    await fs.promises.writeFile(dbPath, getSQLDatabaseBuf());
+    await fs.promises.writeFile(dbPath, buf);
 
     showFailMessage(generatedContainer.errors);
 

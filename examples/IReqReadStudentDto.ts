@@ -17,14 +17,14 @@ export interface IReqReadStudentParam {
 }
 
 /**
- * @schema-nozzle-exclude
+ * @schema-nozzle-exclude-next
  */
 export interface IReqReadStudentIgnoreTest {
   id: IStudentDto['id'];
 }
 
 /**
- * @schema-nozzle-exclude
+ * @schema-nozzle-exclude-next
  */
 export interface IReqReadStudentIgnoreAliasTest {
   id: IStudentDto['id'];

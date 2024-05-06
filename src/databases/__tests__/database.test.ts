@@ -1,6 +1,6 @@
 import { CE_DEFAULT_VALUE } from '#/configs/const-enum/CE_DEFAULT_VALUE';
 import { getDatabaseFilePath } from '#/databases/files/getDatabaseFilePath';
-import { makeSQLDatabase } from '#/databases/files/makeSQLDatabase';
+import { makeDatabase } from '#/databases/files/makeDatabase';
 import pathe from 'pathe';
 import { describe, expect, it, vitest } from 'vitest';
 
@@ -28,6 +28,6 @@ describe('getDatabaseFilePath', () => {
 
 describe('makeAlaSQL', () => {
   it('make-ala-sql', async () => {
-    await makeSQLDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+    await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
   });
 });

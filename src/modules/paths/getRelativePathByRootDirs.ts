@@ -1,30 +1,36 @@
 import { addCurrentDirPrefix } from '#/modules/paths/addCurrentDirPrefix';
 import { first } from 'my-easy-fp';
 import { isDescendant } from 'my-node-fp';
-import path from 'path';
+import pathe from 'pathe';
 
-export function getRelativePathByRootDirs(rootDirs: string[], filePath: string): string {
-  const parentDirs = rootDirs.filter((rootDir) => isDescendant(rootDir, filePath));
+export function getRelativePathByRootDirs(
+  rootDirs: string[],
+  typeName: string,
+  dirPath: string,
+): string {
+  const parentDirs = rootDirs.filter((rootDir) => isDescendant(rootDir, dirPath));
 
-  if (parentDirs.at(0) != null && first(parentDirs) === filePath) {
-    return '';
+  if (parentDirs.at(0) != null && first(parentDirs) === dirPath) {
+    return typeName;
   }
 
   if (parentDirs.at(0) != null) {
-    return addCurrentDirPrefix(path.relative(first(parentDirs), filePath));
+    return addCurrentDirPrefix(pathe.join(pathe.relative(first(parentDirs), dirPath), typeName));
   }
 
   const resolvedParentDirs = rootDirs
-    .map((rootDir) => path.resolve(rootDir))
-    .filter((rootDir) => isDescendant(rootDir, filePath));
+    .map((rootDir) => pathe.resolve(rootDir))
+    .filter((rootDir) => isDescendant(rootDir, dirPath));
 
-  if (resolvedParentDirs.at(0) != null && first(resolvedParentDirs) === filePath) {
-    return '';
+  if (resolvedParentDirs.at(0) != null && first(resolvedParentDirs) === dirPath) {
+    return typeName;
   }
 
   if (resolvedParentDirs.at(0) != null) {
-    return addCurrentDirPrefix(path.relative(first(resolvedParentDirs), filePath));
+    return addCurrentDirPrefix(
+      pathe.join(pathe.relative(first(resolvedParentDirs), dirPath), typeName),
+    );
   }
 
-  return addCurrentDirPrefix(path.relative(first(rootDirs), filePath));
+  return addCurrentDirPrefix(pathe.join(pathe.relative(first(rootDirs), dirPath), typeName));
 }

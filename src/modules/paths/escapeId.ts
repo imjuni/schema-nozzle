@@ -16,7 +16,7 @@ export function escapeId(id: string, escapeChar: string): string {
       return element;
     }
 
-    return escapeChar ?? '_';
+    return escapeChar;
   });
 
   return encodeURIComponent(escapedElements.join(''));

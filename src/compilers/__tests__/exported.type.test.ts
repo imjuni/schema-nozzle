@@ -57,7 +57,7 @@ describe('getExportedTypes', () => {
   it('every file on tsconfig', () => {
     const types = getExportedTypes(data.project, data.config.fileNames);
 
-    expect(types.map((type) => type.identifier)).toMatchObject([
+    expect(types.map((type) => type.typeName)).toMatchObject([
       'I18nDto',
       'ILanguageDto',
       'IProfessorDto',

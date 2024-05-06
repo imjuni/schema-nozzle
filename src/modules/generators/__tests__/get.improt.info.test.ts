@@ -1,4 +1,4 @@
-import { makeStatementImportInfoMap } from '#/compilers/makeStatementImportInfoMap';
+import { makeStatementInfoMap } from '#/compilers/makeStatementInfoMap';
 import { getImportInfo } from '#/modules/generators/getImportInfo';
 import pathe from 'pathe';
 import { getTypeScriptProject } from 'ts-morph-short';
@@ -27,7 +27,10 @@ describe('getImprotInfo', () => {
       `export interface ITeam { name: string; members: string[]; }`,
     );
 
-    makeStatementImportInfoMap(project);
+    makeStatementInfoMap(
+      project,
+      project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
+    );
   });
 
   it('non generic type searching', () => {

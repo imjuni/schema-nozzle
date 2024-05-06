@@ -24,4 +24,8 @@ export const STATEMENT_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-import-map-symb
 
 export const STATEMENT_FILE_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-file-import-map-symbol-key');
 
+export const STATEMENT_EXPORT_MAP_SYMBOL_KEY = Symbol('statement-export-map-symbol-key');
+
+export const STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY = Symbol('statement-file-export-map-symbol-key');
+
 export const NOZZLE_PACKAGE_JSON_SYMBOL_KEY = Symbol('nozzle-package-json');

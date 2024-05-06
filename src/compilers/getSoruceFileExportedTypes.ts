@@ -31,7 +31,7 @@ export function getSoruceFileExportedTypes(
       return {
         sourceFile: exportedType.getSourceFile(),
         filePath: exportedType.getSourceFile().getFilePath().toString(),
-        identifier: getExportedName(exportedType),
+        typeName: getExportedName(exportedType),
         node: exportedType,
       };
     });

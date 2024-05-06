@@ -1,8 +1,8 @@
-import { CE_INLINE_COMMENT_KEYWORD } from '#/compilers/comments/const-enum/CE_INLINE_COMMENT_KEYWORD';
 import { getCommentKind } from '#/compilers/comments/getCommentKind';
 import { getInlineExclude } from '#/compilers/comments/getInlineExclude';
 import { getSourceFileComments } from '#/compilers/comments/getSourceFileComments';
 import type { IStatementComments } from '#/compilers/comments/interfaces/IStatementComments';
+import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import * as cp from 'comment-parser';
 import { randomUUID } from 'node:crypto';
 import pathe from 'pathe';
@@ -196,20 +196,20 @@ describe('getInlineExclude', () => {
         start: 1,
       },
       filePath: pathe.join(process.cwd(), filename),
-      range: '/**\n * @schema-nozzle-exclude\n */',
+      range: `/**\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n */`,
     };
 
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
-      commentCode: '/**\n * @schema-nozzle-exclude\n */',
+      commentCode: `/**\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n */`,
       filePath: pathe.join(process.cwd(), filename),
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 1,
         column: 1,
@@ -230,20 +230,20 @@ describe('getInlineExclude', () => {
         start: 2,
       },
       filePath: pathe.join(process.cwd(), filename),
-      range: '/*\n\n * @schema-nozzle-exclude\n */',
+      range: `/*\n\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n */`,
     };
 
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
-      commentCode: '/*\n\n * @schema-nozzle-exclude\n */',
+      commentCode: `/*\n\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n */`,
       filePath: pathe.join(process.cwd(), filename),
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 2,
         column: 2,
@@ -261,7 +261,7 @@ describe('getInlineExclude', () => {
       `\n * @augments PostEffect\n * @param {GraphicsDevice} graphicsDevice - The graphics device of the application.`,
       `\n * @property {Texture} blendMap The texture with which to blend the input render target with.`,
       `\n * @property {number} mixRatio The amount of blending between the input and the blendMap. Ranges from 0 to 1.`,
-      `\n *\n * @schema-nozzle-exclude\n */`,
+      `\n *\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n */`,
     ].join('');
     const comment: IStatementComments = {
       kind: tsm.SyntaxKind.MultiLineCommentTrivia,
@@ -277,13 +277,13 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
       commentCode: range,
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 3,
         column: 3,
@@ -298,7 +298,7 @@ describe('getInlineExclude', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;
     const range = [
-      `/**\n * @schema-nozzle-exclude\n * @class\n * @name BlendEffect\n * @classdesc Blends the input render target with another texture.\n * @description Creates new instance of the post effect.`,
+      `/**\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG}\n * @class\n * @name BlendEffect\n * @classdesc Blends the input render target with another texture.\n * @description Creates new instance of the post effect.`,
       `\n * @augments PostEffect\n * @param {GraphicsDevice} graphicsDevice - The graphics device of the application.`,
       `\n * @property {Texture} blendMap The texture with which to blend the input render target with.`,
       `\n * @property {number} mixRatio The amount of blending between the input and the blendMap. Ranges from 0 to 1.`,
@@ -318,13 +318,13 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
       commentCode: range,
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 4,
         column: 4,
@@ -343,7 +343,7 @@ describe('getInlineExclude', () => {
       `\n * @augments PostEffect\n * @param {GraphicsDevice} graphicsDevice - The graphics device of the application.`,
       `\n * @property {Texture} blendMap The texture with which to blend the input render target with.`,
       `\n * @property {number} mixRatio The amount of blending between the input and the blendMap. Ranges from 0 to 1.`,
-      `\n *\n * @schema-nozzle-exclude i-am-ironman\n */`,
+      `\n *\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} i-am-ironman\n */`,
     ].join('');
     const comment: IStatementComments = {
       kind: tsm.SyntaxKind.MultiLineCommentTrivia,
@@ -359,13 +359,13 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
       commentCode: range,
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 5,
         column: 5,
@@ -384,7 +384,7 @@ describe('getInlineExclude', () => {
       `\n * @augments PostEffect\n * @param {GraphicsDevice} graphicsDevice - The graphics device of the application.`,
       `\n * @property {Texture} blendMap The texture with which to blend the input render target with.`,
       `\n * @property {number} mixRatio The amount of blending between the input and the blendMap. Ranges from 0 to 1.`,
-      `\n *\n * @schema-nozzle-exclude i-am-ironman, i-am-marvel\n */`,
+      `\n *\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} i-am-ironman, i-am-marvel\n */`,
     ].join('');
     const comment: IStatementComments = {
       kind: tsm.SyntaxKind.MultiLineCommentTrivia,
@@ -400,13 +400,13 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
       commentCode: range,
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 6,
         column: 6,
@@ -420,7 +420,7 @@ describe('getInlineExclude', () => {
   it('multiline statement comment string, no namespace', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;
-    const range = '/** @schema-nozzle-exclude */';
+    const range = `/** ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} */`;
     const comment: IStatementComments = {
       kind: tsm.SyntaxKind.MultiLineCommentTrivia,
       pos: {
@@ -435,13 +435,13 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
     expect(r01).toMatchObject({
       commentCode: range,
-      tag: 'schema-nozzle-exclude',
+      tag: CE_JSDOC_EXTENDS.IGNORE_FILE_TAG.substring(1),
       pos: {
         line: 7,
         column: 7,
@@ -469,7 +469,7 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
@@ -498,7 +498,7 @@ describe('getInlineExclude', () => {
     const r01 = getInlineExclude({
       comment,
       options: {
-        keyword: CE_INLINE_COMMENT_KEYWORD.FILE_EXCLUDE_KEYWORD,
+        keywords: [CE_JSDOC_EXTENDS.IGNORE_FILE_TAG, CE_JSDOC_EXTENDS.IGNORE_FILE_TAG_ALIAS],
       },
     });
 
