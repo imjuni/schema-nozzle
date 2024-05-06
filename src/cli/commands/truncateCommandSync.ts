@@ -1,9 +1,9 @@
 import type { Spinner } from '#/cli/display/Spinners';
 import { makeSpinner } from '#/cli/display/makeSpinner';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
+import { truncating } from '#/modules/cli/commands/truncating';
 import { container } from '#/modules/containers/container';
 import { SPINNER_SYMBOL_KEY } from '#/modules/containers/keys';
-import { truncating } from '#/modules/truncating';
 import { showLogo } from '@maeum/cli-logo';
 
 import { isError } from 'my-easy-fp';

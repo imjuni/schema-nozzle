@@ -14,10 +14,23 @@ beforeAll(async () => {
 });
 
 describe('SchemaRepository', () => {
+  it('types', async () => {
+    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const types = await schemasRepo.types();
+    expect(types).toMatchObject([
+      { id: 'a', filePath: undefined },
+      { id: 'b', filePath: '/a/b/c' },
+      { id: 'c', filePath: undefined },
+      { id: 'd', filePath: undefined },
+      { id: 'e', filePath: undefined },
+      { id: 'f', filePath: undefined },
+    ]);
+  });
+
   it('select', async () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const r01 = await schemasRepo.select('a');
-    expect(r01).toMatchObject({ id: 'a', schema: '{ "id": "a" }', typeName: 'tA' });
+    expect(r01).toMatchObject({ id: 'a', schema: { id: 'a' }, typeName: 'tA' });
   });
 
   it('select schemas, but cannot found record', async () => {
@@ -31,8 +44,8 @@ describe('SchemaRepository', () => {
     const r01 = await schemasRepo.selects(['a', 'b']);
 
     expect(r01).toMatchObject([
-      { id: 'a', schema: '{ "id": "a" }', typeName: 'tA' },
-      { id: 'b', schema: '{ "id": "b" }', typeName: 'tB' },
+      { id: 'a', schema: { id: 'a' }, typeName: 'tA' },
+      { id: 'b', schema: { id: 'b' }, typeName: 'tB' },
     ]);
   });
 
@@ -46,12 +59,12 @@ describe('SchemaRepository', () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const updated = await schemasRepo.update({
       id: 'e',
-      schema: '{ "id": "e", "name": "hello" }',
+      schema: { id: 'e', name: 'hello' },
       typeName: 'tEEE',
     });
     expect(updated).toMatchObject({
       id: 'e',
-      schema: '{ "id": "e", "name": "hello" }',
+      schema: { id: 'e', name: 'hello' },
       typeName: 'tEEE',
     });
   });
@@ -60,14 +73,14 @@ describe('SchemaRepository', () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const inserted = await schemasRepo.insert({
       id: 'x',
-      schema: '{ "id": "x" }',
+      schema: { id: 'x' },
       typeName: 'tXX',
     });
 
     expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(5);
     expect(inserted).toMatchObject({
       id: 'x',
-      schema: '{ "id": "x" }',
+      schema: { id: 'x' },
       typeName: 'tXX',
     });
   });
@@ -76,13 +89,13 @@ describe('SchemaRepository', () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const inserted = await schemasRepo.upsert({
       id: 'y',
-      schema: '{ "id": "y", "name": "my-name-y" }',
+      schema: { id: 'y', name: 'my-name-y' },
       typeName: 'tYY',
     });
     expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(6);
     expect(inserted).toMatchObject({
       id: 'y',
-      schema: '{ "id": "y", "name": "my-name-y" }',
+      schema: { id: 'y', name: 'my-name-y' },
       typeName: 'tYY',
     });
   });
@@ -91,14 +104,14 @@ describe('SchemaRepository', () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
     const inserted = await schemasRepo.upsert({
       id: 'd',
-      schema: '{ "id": "d", "name": "my-name-d" }',
+      schema: { id: 'd', name: 'my-name-d' },
       typeName: 'tDD',
       filePath: 'my-path-d',
     });
     expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(6);
     expect(inserted).toMatchObject({
       id: 'd',
-      schema: '{ "id": "d", "name": "my-name-d" }',
+      schema: { id: 'd', name: 'my-name-d' },
       typeName: 'tDD',
       filePath: 'my-path-d',
     });

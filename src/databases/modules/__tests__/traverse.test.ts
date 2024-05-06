@@ -1,6 +1,6 @@
 import { traverser } from '#/databases/modules/traverser';
 import fastCopy from 'fast-copy';
-import path from 'node:path';
+import pathe from 'pathe';
 import type { IImportInfoMapElement } from 'ts-morph-short';
 import { describe, expect, it } from 'vitest';
 
@@ -54,9 +54,9 @@ describe('traverser', () => {
           {
             name: 'CE_MAJOR',
             sourceFilePath: new Map<string, boolean>([
-              [path.join(process.cwd(), 'examples', 'IProfessorEntity.ts'), true],
+              [pathe.join(process.cwd(), 'examples', 'IProfessorEntity.ts'), true],
             ]),
-            moduleFilePath: path.join(process.cwd(), 'examples', 'const-enum', 'CE_MAJOR.ts'),
+            moduleFilePath: pathe.join(process.cwd(), 'examples', 'const-enum', 'CE_MAJOR.ts'),
             isExternal: false,
             isNamespace: false,
           },

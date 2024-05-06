@@ -18,7 +18,7 @@ export function deleteBuilder(argv: Argv) {
       type: 'string',
       array: true,
     })
-    .option('use-definitions', {
+    .option('top-ref', {
       describe: 'TBD',
       type: 'boolean',
     });

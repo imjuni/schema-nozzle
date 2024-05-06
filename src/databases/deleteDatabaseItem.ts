@@ -1,29 +1,27 @@
-import { getExportedTypes } from '#/compilers/getExportedTypes';
 import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
-import { createDatabaseItem } from '#/databases/createDatabaseItem';
-import { find } from '#/databases/files/repository_bak/find';
-import { findOne } from '#/databases/files/repository_bak/findOne';
-import { remove } from '#/databases/files/repository_bak/remove';
-import { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
-import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import type { ISchemaRecord } from '#/databases/interfaces/ISchemaRecord';
+import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
+import { container } from '#/modules/containers/container';
+import { REPOSITORY_SCHEMAS_SYMBOL_KEY } from '#/modules/containers/keys';
 import type * as tsm from 'ts-morph';
-import type { getImportInfoMap, IImportInfoMapElement } from 'ts-morph-short';
-import type { SetRequired } from 'type-fest';
+import type { getImportInfoMap } from 'ts-morph-short';
 
-export function deleteDatabaseItem(
+export async function deleteDatabaseItem(
   project: tsm.Project,
   option: Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>,
   importMap: ReturnType<typeof getImportInfoMap>,
   identifier: string,
 ) {
-  const item = findOne({ id: { $eq: identifier } });
+  const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+  const item = await schemaRepo.select(identifier);
 
   if (item == null) {
     return [];
   }
 
-  remove(item.id);
+  await schemaRepo.deletes([item.id]);
 
+  /*
   const refItems = find({ $ref: { $contains: item.id } });
 
   const importInfos = refItems
@@ -59,11 +57,13 @@ export function deleteDatabaseItem(
 
       const projectExportedTypes = getExportedTypes(project, [importInfo.filePath]);
       const nextRefItem = createDatabaseItem(option, projectExportedTypes, schema.pass, importMap);
-      const withDependencies = [nextRefItem.item, ...(nextRefItem.definitions ?? [])];
+      const withDependencies = [nextRefItem.schemas, ...(nextRefItem.definitions ?? [])];
       return withDependencies;
     })
     .flat()
     .filter((record): record is IDatabaseItem => record != null);
 
-  return items;
+    */
+  // return items;
+  return [] as ISchemaRecord[];
 }

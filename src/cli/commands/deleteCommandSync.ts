@@ -1,15 +1,22 @@
 import { makeSpinner } from '#/cli/display/makeSpinner';
-import type { IDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
-import { deleting } from '#/modules/deleting';
+import { getResolvedPaths } from '#/configs/getResolvedPaths';
+import type {
+  TDeleteSchemaBaseOption,
+  TDeleteSchemaOption,
+} from '#/configs/interfaces/TDeleteSchemaOption';
+import { makePackageJson } from '#/configs/makePackageJson';
+import { getBaseOption } from '#/configs/modules/getBaseOption';
+import { getGenerateOption } from '#/configs/modules/getGenerateOption';
+import { deleting } from '#/modules/cli/commands/deleting';
 import { showLogo } from '@maeum/cli-logo';
 import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
-export async function deleteCommandSync(options: IDeleteSchemaOption) {
+export async function deleteCommandSync(cliOptions: TDeleteSchemaBaseOption) {
   const spinner = makeSpinner();
 
   try {
-    if (options.cliLogo) {
+    if (cliOptions.cliLogo) {
       await showLogo({
         message: 'Schema Nozzle',
         figlet: { font: 'ANSI Shadow', width: 80 },
@@ -22,12 +29,24 @@ export async function deleteCommandSync(options: IDeleteSchemaOption) {
 
     spinner.start('TypeScript project loading, ...');
 
-    const project = getTypeScriptProject(options.project);
-    const tsconfig = getTypeScriptConfig(options.project);
+    const resolvedPaths = getResolvedPaths(cliOptions);
+    const project = getTypeScriptProject(resolvedPaths.project);
+    const tsconfig = getTypeScriptConfig(resolvedPaths.project);
+    makePackageJson();
 
     spinner.stop('TypeScript project load success', 'succeed');
 
     ProjectContainer.bootstrap({ 'schema-nozzle': { project, config: tsconfig } });
+
+    const options: TDeleteSchemaOption = {
+      $kind: 'delete-schema',
+      ...getBaseOption(cliOptions),
+      ...(await getGenerateOption(cliOptions)),
+      multiple: cliOptions.multiple,
+      cwd: resolvedPaths.cwd,
+      projectDir: resolvedPaths.projectDir,
+      resolved: resolvedPaths,
+    };
 
     await deleting(project, tsconfig, options);
   } catch (caught) {

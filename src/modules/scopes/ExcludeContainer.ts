@@ -1,7 +1,7 @@
 import type { IInlineExcludeInfo } from '#/compilers/comments/interfaces/IInlineExcludeInfo';
 import { getGlobFiles } from '#/modules/files/getGlobFiles';
 import { Glob, type GlobOptions } from 'glob';
-import path from 'node:path';
+import pathe from 'pathe';
 
 export class ExcludeContainer {
   #globs: Glob<GlobOptions>[];
@@ -22,9 +22,9 @@ export class ExcludeContainer {
     this.#inline = new Map<string, IInlineExcludeInfo & { filePath: string }>();
 
     params.inlineExcludedFiles.forEach((inlineExcluded) => {
-      const filePath = path.isAbsolute(inlineExcluded.filePath)
+      const filePath = pathe.isAbsolute(inlineExcluded.filePath)
         ? inlineExcluded.filePath
-        : path.resolve(inlineExcluded.filePath);
+        : pathe.resolve(inlineExcluded.filePath);
       this.#inline.set(filePath, inlineExcluded);
     });
   }
@@ -42,13 +42,13 @@ export class ExcludeContainer {
       return false;
     }
 
-    if (path.isAbsolute(filePath)) {
+    if (pathe.isAbsolute(filePath)) {
       return this.#map.get(filePath) != null || this.#inline.get(filePath) != null;
     }
 
     return (
-      this.#map.get(path.resolve(filePath)) != null ||
-      this.#inline.get(path.resolve(filePath)) != null
+      this.#map.get(pathe.resolve(filePath)) != null ||
+      this.#inline.get(pathe.resolve(filePath)) != null
     );
   }
 }

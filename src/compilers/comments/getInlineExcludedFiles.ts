@@ -4,14 +4,14 @@ import { getSourceFileComments } from '#/compilers/comments/getSourceFileComment
 import type { IExcludeFile } from '#/compilers/comments/interfaces/IExcludeFile';
 import type { IInlineExcludeInfo } from '#/compilers/comments/interfaces/IInlineExcludeInfo';
 import { isDescendant } from 'my-node-fp';
-import path from 'node:path';
+import pathe from 'pathe';
 import type * as tsm from 'ts-morph';
 import type { SetRequired } from 'type-fest';
 
 export function getInlineExcludedFiles(project: tsm.Project, projectDir: string) {
   const sourceFiles = project.getSourceFiles();
   const descendantFiles = sourceFiles.filter((sourceFile) =>
-    isDescendant(projectDir, path.resolve(sourceFile.getFilePath().toString())),
+    isDescendant(projectDir, pathe.resolve(sourceFile.getFilePath().toString())),
   );
   const excluded = descendantFiles
     .map((sourceFile): IExcludeFile => {

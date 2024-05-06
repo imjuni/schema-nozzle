@@ -96,14 +96,17 @@ importers:
         specifier: ^3.2.5
         version: 3.2.5
       ts-json-schema-generator:
-        specifier: ^2.1.0
-        version: 2.1.0
+        specifier: ^2.0.1
+        version: 2.0.1
       ts-morph:
         specifier: ^22.0.0
         version: 22.0.0
       ts-morph-short:
         specifier: ^0.9.1
         version: 0.9.1
+      ts-pattern:
+        specifier: ^5.1.1
+        version: 5.1.1
       tslib:
         specifier: ^2.6.2
         version: 2.6.2
@@ -1884,13 +1887,12 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
-  glob@10.3.12:
-    resolution: {integrity: sha512-TCNv8vJ+xz4QiqTpfOJA7HvYv+tNIRHKfUWw/q+v2jdgN4ebz+KY9tGx5J4rHP0o84mNP+ApH66HRX8us3Khqg==}
-    engines: {node: '>=16 || 14 >=14.17'}
-    hasBin: true
-
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+
+  glob@8.1.0:
+    resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
+    engines: {node: '>=12'}
 
   global-directory@4.0.1:
     resolution: {integrity: sha512-wHTUcDUoZ1H5/0iVqEudYW4/kAlN5cZ3j/bXn0Dpbizl9iaUVeWSHqiOjsgk6OW2bkLclbBjzewBz6weQ1zA2Q==}
@@ -2338,10 +2340,6 @@ packages:
     resolution: {integrity: sha512-IJ4uwUTi2qCccrioU6g9g/5rvvVl13bsdczUUcqbciD9iLr095yj8DQKdObriEvuNSx325N1rV1O0sJFszx75g==}
     engines: {node: 14 || >=16.14}
 
-  lru-cache@10.2.0:
-    resolution: {integrity: sha512-2bIM8x+VAf6JT4bKAljS1qUWgMsqZRPGJS6FSahIMPVvctcNhyVp7AJu7quxOW9jwkryBReKZY5tY5JYv2n/7Q==}
-    engines: {node: 14 || >=16.14}
-
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
@@ -2406,6 +2404,10 @@ packages:
 
   minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
+
+  minimatch@5.1.6:
+    resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
+    engines: {node: '>=10'}
 
   minimatch@7.4.6:
     resolution: {integrity: sha512-sBz8G/YjVniEz6lKPNpKxXwazJe4c19fEfV2GDMX6AjFz+MX9uDWIZW8XreVhkFW3fkIdTv/gxWr/Kks5FFAVw==}
@@ -2656,10 +2658,6 @@ packages:
 
   path-scurry@1.10.1:
     resolution: {integrity: sha512-MkhCqzzBEpPvxxQ71Md0b1Kk51W01lrYvlMzSUaIzNsODdd7mqhiimSZlr+VegAz5Z6Vzt9Xg2ttE//XBhH3EQ==}
-    engines: {node: '>=16 || 14 >=14.17'}
-
-  path-scurry@1.10.2:
-    resolution: {integrity: sha512-7xTavNy5RQXnsjANvVvMkEjvloOinkAjv/Z6Ildz9v2RinZ4SBKTWFOVRbaF8p0vpHnyjV/UwNDdKuUv6M5qcA==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   path-type@3.0.0:
@@ -3153,9 +3151,9 @@ packages:
     peerDependencies:
       typescript: '>=4.2.0'
 
-  ts-json-schema-generator@2.1.0:
-    resolution: {integrity: sha512-w0Mlotd5SIUEGpXcg54UwpTRLXNtUaItt1XQO7mpW63TeV6gKmaGIInENxgccpUkj/ReBxbRoZAN79YU2Mc3YA==}
-    engines: {node: '>=18.0.0'}
+  ts-json-schema-generator@2.0.1:
+    resolution: {integrity: sha512-0sWa9uXFzkcZS/0LV4BLB91elC+2brg6JyIYXZEUCs6P7Z/BXuhUutxO4ssg7Kb9Xe4dzQXsc5IAmOHt7IETmA==}
+    engines: {node: '>=10.0.0'}
     hasBin: true
 
   ts-morph-short@0.9.1:
@@ -3182,8 +3180,8 @@ packages:
       '@swc/wasm':
         optional: true
 
-  ts-pattern@5.0.5:
-    resolution: {integrity: sha512-tL0w8U/pgaacOmkb9fRlYzWEUDCfVjjv9dD4wHTgZ61MjhuMt46VNWTG747NqW6vRzoWIKABVhFSOJ82FvXrfA==}
+  ts-pattern@5.1.1:
+    resolution: {integrity: sha512-i+owkHr5RYdQxj8olUgRrqpiWH9x27PuWVfXwDmJ/n/CoF/SAa7WW1i2oUpPDMQpJ4U+bGRUcZkVq7i1m3zFCg==}
 
   tsc-alias@1.8.8:
     resolution: {integrity: sha512-OYUOd2wl0H858NvABWr/BoSKNERw3N9GTi3rHPK8Iv4O1UyUXIrTTOAZNHsjlVpXFOhpJBVARI1s+rzwLivN3Q==}
@@ -4640,7 +4638,7 @@ snapshots:
       prettier: 3.2.5
       source-map-support: 0.5.21
       ts-morph: 20.0.0
-      ts-pattern: 5.0.5
+      ts-pattern: 5.1.1
       tslib: 2.6.2
       type-fest: 4.13.0
       typescript: 5.4.5
@@ -5248,14 +5246,6 @@ snapshots:
       minipass: 7.0.4
       path-scurry: 1.10.1
 
-  glob@10.3.12:
-    dependencies:
-      foreground-child: 3.1.1
-      jackspeak: 2.3.6
-      minimatch: 9.0.3
-      minipass: 7.0.4
-      path-scurry: 1.10.2
-
   glob@7.2.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -5264,6 +5254,14 @@ snapshots:
       minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
+
+  glob@8.1.0:
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 5.1.6
+      once: 1.4.0
 
   global-directory@4.0.1:
     dependencies:
@@ -5692,8 +5690,6 @@ snapshots:
 
   lru-cache@10.0.1: {}
 
-  lru-cache@10.2.0: {}
-
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
@@ -5756,6 +5752,10 @@ snapshots:
   minimatch@3.1.2:
     dependencies:
       brace-expansion: 1.1.11
+
+  minimatch@5.1.6:
+    dependencies:
+      brace-expansion: 2.0.1
 
   minimatch@7.4.6:
     dependencies:
@@ -6009,11 +6009,6 @@ snapshots:
   path-scurry@1.10.1:
     dependencies:
       lru-cache: 10.0.1
-      minipass: 7.0.4
-
-  path-scurry@1.10.2:
-    dependencies:
-      lru-cache: 10.2.0
       minipass: 7.0.4
 
   path-type@3.0.0:
@@ -6481,11 +6476,11 @@ snapshots:
     dependencies:
       typescript: 5.4.5
 
-  ts-json-schema-generator@2.1.0:
+  ts-json-schema-generator@2.0.1:
     dependencies:
       '@types/json-schema': 7.0.15
       commander: 12.0.0
-      glob: 10.3.12
+      glob: 8.1.0
       json5: 2.2.3
       normalize-path: 3.0.0
       safe-stable-stringify: 2.4.3
@@ -6525,7 +6520,7 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
 
-  ts-pattern@5.0.5: {}
+  ts-pattern@5.1.1: {}
 
   tsc-alias@1.8.8:
     dependencies:

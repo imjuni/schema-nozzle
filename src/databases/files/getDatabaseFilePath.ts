@@ -3,7 +3,7 @@ import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { TWatchSchemaOption } from '#/configs/interfaces/TWatchSchemaOption';
 import { isDirectory } from 'my-node-fp';
-import path from 'node:path';
+import pathe from 'pathe';
 
 export async function getDatabaseFilePath(
   option:
@@ -12,7 +12,7 @@ export async function getDatabaseFilePath(
     | Pick<TAddSchemaOption, 'output'>,
 ): Promise<string> {
   const dbPath = (await isDirectory(option.output))
-    ? path.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
+    ? pathe.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
     : option.output;
 
   return dbPath;

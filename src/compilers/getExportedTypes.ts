@@ -1,6 +1,12 @@
 import { getSoruceFileExportedTypes } from '#/compilers/getSoruceFileExportedTypes';
-import type { IGetExportTypesReturnType } from '#/compilers/interfaces/IGetExportTypesReturnType';
 import type * as tsm from 'ts-morph';
+
+interface IGetExportTypesReturnType {
+  sourceFile: tsm.SourceFile;
+  filePath: string;
+  identifier: string;
+  node: tsm.ExportedDeclarations;
+}
 
 export function getExportedTypes(
   project: tsm.Project,

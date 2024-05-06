@@ -19,3 +19,7 @@ export const SCHEMA_ORIGIN_DATABASE_SYMBOL_KEY = Symbol('schema-origin-database-
 export const REPOSITORY_REFS_SYMBOL_KEY = Symbol('repository-refs-symbol-key');
 
 export const REPOSITORY_SCHEMAS_SYMBOL_KEY = Symbol('repository-schemas-symbol-key');
+
+export const STATEMENT_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-import-map-symbol-key');
+
+export const NOZZLE_PACKAGE_JSON_SYMBOL_KEY = Symbol('nozzle-package-json');

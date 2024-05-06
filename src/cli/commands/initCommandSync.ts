@@ -10,7 +10,7 @@ import { Glob } from 'glob';
 import inquirer from 'inquirer';
 import { getDirname } from 'my-node-fp';
 import fs from 'node:fs/promises';
-import path from 'node:path';
+import pathe from 'pathe';
 import { getTypeScriptConfig } from 'ts-morph-short';
 
 export async function initCommandSync(_option: IInitOption) {
@@ -44,19 +44,19 @@ export async function initCommandSync(_option: IInitOption) {
 
   spinner.start(`create ${CE_DEFAULT_VALUE.CONFIG_FILE_NAME}, ...`);
 
-  const outputFilePath = path.relative(
+  const outputFilePath = pathe.relative(
     tsconfigDirPath,
-    path.resolve(path.join(tsconfigDirPath, CE_DEFAULT_VALUE.DB_FILE_NAME)),
+    pathe.resolve(pathe.join(tsconfigDirPath, CE_DEFAULT_VALUE.DB_FILE_NAME)),
   );
-  const configFilePath = path.resolve(
-    path.join(tsconfigDirPath, CE_DEFAULT_VALUE.CONFIG_FILE_NAME),
+  const configFilePath = pathe.resolve(
+    pathe.join(tsconfigDirPath, CE_DEFAULT_VALUE.CONFIG_FILE_NAME),
   );
 
   await fs.writeFile(
     configFilePath,
     getInitialOption(
       outputFilePath,
-      path.relative(tsconfigDirPath, tsconfigFilePath),
+      pathe.relative(tsconfigDirPath, tsconfigFilePath),
       tsconfig.raw.include ?? [],
     ),
   );

@@ -1,63 +1,66 @@
-import type { getExportedTypes } from '#/compilers/getExportedTypes';
-import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
-import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOption';
-import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
-import { getBaseSchemaId } from '#/databases/modules/getBaseSchemaId';
-import { getFastifySwaggerId } from '#/databases/modules/getFastifySwaggerId';
-import { getSchemaId } from '#/databases/modules/getSchemaId';
+import type { IGenerateOption } from '#/configs/interfaces/IGenerateOption';
+import type { ISchemaRecord } from '#/databases/interfaces/ISchemaRecord';
+import type { ISchemaRefRecord } from '#/databases/interfaces/ISchemaRefRecord';
+import type { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
+import { replaceId } from '#/databases/modules/replaceId';
 import { traverser } from '#/databases/modules/traverser';
-import type { createJsonSchema } from '#/modules/generator/modules/createJsonSchema';
-import type { IDatabaseItem } from '#/modules/interfaces/IDatabaseItem';
+import { container } from '#/modules/containers/container';
+import { STATEMENT_IMPORT_MAP_SYMBOL_KEY } from '#/modules/containers/keys';
+import type { createJsonSchema } from '#/modules/generators/createJsonSchema';
+import { getGenericType } from '#/modules/generators/getGenericType';
+import { getSchemaId } from '#/modules/generators/getSchemaId';
+import { getRelativePathByRootDirs } from '#/modules/paths/getRelativePathByRootDirs';
 import type { AnySchemaObject } from 'ajv';
 import consola from 'consola';
 import fastCopy from 'fast-copy';
 import type { TPickPass } from 'my-only-either';
-import path from 'node:path';
 import type { getImportInfoMap } from 'ts-morph-short';
-import type { LastArrayElement } from 'type-fest';
 
-type TExportedType = LastArrayElement<ReturnType<typeof getExportedTypes>>;
+interface ICreateSchemaRecordParams {
+  escapeChar: IGenerateOption['escapeChar'];
+  rootDirs: IGenerateOption['rootDirs'];
+  schema: TPickPass<ReturnType<typeof createJsonSchema>>;
+  style: CE_SCHEMA_ID_GENERATION_STYLE;
+}
 
-export function createDatabaseItem(
-  option:
-    | Pick<TAddSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>
-    | Pick<TRefreshSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>
-    | Pick<TDeleteSchemaOption, '$kind' | 'project' | 'projectDir' | 'rootDirs'>,
-  exportedTypes: Pick<TExportedType, 'filePath' | 'identifier'>[],
-  schema: TPickPass<ReturnType<typeof createJsonSchema>>,
-  importInfoMap: ReturnType<typeof getImportInfoMap>,
-): {
-  item: IDatabaseItem;
-  definitions?: IDatabaseItem[];
+export function createDatabaseItem({
+  escapeChar,
+  rootDirs,
+  schema,
+  style,
+}: ICreateSchemaRecordParams): {
+  schemas: ISchemaRecord[];
+  refs: ISchemaRefRecord[];
 } {
-  const basePath = option.projectDir;
   const currentSchema = fastCopy(schema.schema);
-  const importedMap = exportedTypes.reduce<
-    Partial<Record<string, Pick<TExportedType, 'filePath' | 'identifier'>>>
-  >((aggregation, exportedType) => {
-    return { ...aggregation, [exportedType.identifier]: exportedType };
-  }, {});
-
-  currentSchema.$id = getFastifySwaggerId(
-    getBaseSchemaId(schema.exportedType, schema.filePath, option),
-    option,
+  const importInfoMap = container.resolve<ReturnType<typeof getImportInfoMap>>(
+    STATEMENT_IMPORT_MAP_SYMBOL_KEY,
   );
-  currentSchema.title = getBaseSchemaId(schema.exportedType, schema.filePath, option, false);
-  traverser({ ...currentSchema, $$filePath: schema.filePath }, importInfoMap, option);
+
+  currentSchema.$id = getSchemaId({
+    typeName: schema.exportedType,
+    filePath: schema.filePath,
+    isEscape: false,
+    escapeChar,
+    rootDirs,
+    style,
+  });
+  currentSchema.title = currentSchema.$id;
+
+  traverser({ ...currentSchema, $$options: { style, escapeChar, rootDirs } });
 
   const id = currentSchema.$id;
 
   if (schema.schema.definitions == null || Object.values(schema.schema.definitions).length <= 0) {
-    const item: IDatabaseItem = {
+    const schemas: ISchemaRecord = {
       id,
       typeName: schema.exportedType,
-      filePath: path.relative(basePath, schema.filePath),
-      $ref: [],
+      filePath: schema.filePath,
+      relativePath: getRelativePathByRootDirs(rootDirs, schema.filePath),
       schema: currentSchema,
-      rawSchema: JSON.stringify(currentSchema),
     };
 
-    return { item };
+    return { schemas: [schemas], refs: [] };
   }
 
   // extract schema from definitions field
@@ -68,12 +71,18 @@ export function createDatabaseItem(
         typeof definition.value === 'object',
     )
     .map((definition) => {
-      const definitionId = getFastifySwaggerId(
-        getSchemaId(definition.key, importInfoMap, option),
-        option,
-      );
-      const title = getSchemaId(definition.key, importInfoMap, option, false);
-      const importDeclaration = importedMap[definition.key];
+      const keyInfo = { key: definition.key, replaced: replaceId(definition.key) };
+      const genericInfo = getGenericType(keyInfo.replaced);
+
+      const definitionId = getSchemaId({
+        typeName: keyInfo.replaced,
+        isEscape: false,
+        escapeChar,
+        rootDirs,
+        style,
+      });
+      const title = keyInfo.replaced;
+      const importDeclaration = importInfoMap.get(genericInfo.name);
       const definitionSchema: AnySchemaObject = {
         $schema: schema.schema.$schema,
         $id: definitionId,
@@ -81,15 +90,15 @@ export function createDatabaseItem(
         ...definition.value,
       };
 
-      traverser({ ...definitionSchema, $$filePath: schema.filePath }, importInfoMap, option);
+      traverser({ ...definitionSchema, $$options: { style, escapeChar, rootDirs } });
 
       consola.trace(`ID: ${definitionId}/ ${id}`);
 
       const definitionStringified = definitionSchema;
-      // const exportValue: ISchemaExportInfo = { name: definitionId, to: [id] };
 
       delete definitionStringified.definitions;
-      const definitionRecord: IDatabaseItem = {
+
+      const definitionRecord: ISchemaRecord = {
         id: definitionId,
         typeName: definition.key,
         filePath:
@@ -98,26 +107,27 @@ export function createDatabaseItem(
           // Target interface, type alias, class from the external module(via npm install) that
           // cannot found import declaration map. Because import declaration map made by local
           // export map.
-          importDeclaration != null
-            ? path.relative(basePath, importDeclaration.filePath)
+          importDeclaration != null && importDeclaration.moduleFilePath != null
+            ? getRelativePathByRootDirs(rootDirs, importDeclaration.moduleFilePath)
             : undefined,
-        $ref: [],
         schema: definitionStringified,
-        rawSchema: JSON.stringify(definitionStringified),
       };
 
       return definitionRecord;
     });
 
   delete currentSchema.definitions;
-  const item: IDatabaseItem = {
+  const schemas: ISchemaRecord = {
     id,
     typeName: schema.exportedType,
-    filePath: path.relative(basePath, schema.filePath),
-    $ref: definitions.map((definition) => definition.id),
+    filePath: getRelativePathByRootDirs(rootDirs, schema.filePath),
     schema: currentSchema,
-    rawSchema: JSON.stringify(currentSchema),
   };
 
-  return { item, definitions };
+  const refs = definitions.map((definition) => {
+    const ref: ISchemaRefRecord = { id, refId: definition.id };
+    return ref;
+  });
+
+  return { schemas: [schemas, ...definitions], refs };
 }

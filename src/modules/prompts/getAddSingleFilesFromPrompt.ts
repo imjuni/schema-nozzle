@@ -3,7 +3,7 @@ import { getRatioNumber } from '#/tools/getRatioNumber';
 import Fuse from 'fuse.js';
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
-import path from 'node:path';
+import pathe from 'pathe';
 import type { LastArrayElement } from 'type-fest';
 
 // single file select ui
@@ -13,7 +13,7 @@ export async function getAddSingleFilesFromPrompt(
   inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);
 
   const promptItems = schemaFiles.map((schemaFile) => {
-    const basename = path.basename(schemaFile.origin);
+    const basename = pathe.basename(schemaFile.origin);
     return {
       name: `${basename} - ${schemaFile.refined}`,
       value: { ...schemaFile, search: basename },

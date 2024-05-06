@@ -1,7 +1,7 @@
 import { getExportedName } from '#/compilers/getExportedName';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
-import path from 'node:path';
+import pathe from 'pathe';
 import * as tsm from 'ts-morph';
 import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
 
@@ -21,15 +21,15 @@ const data: {
 
 beforeAll(() => {
   data.project = new tsm.Project({
-    tsConfigFilePath: path.join(originPath, 'examples', 'tsconfig.json'),
+    tsConfigFilePath: pathe.join(originPath, 'examples', 'tsconfig.json'),
   });
 });
 
 beforeEach(() => {
-  process.env.INIT_CWD = path.join(originPath, 'examples');
+  process.env.INIT_CWD = pathe.join(originPath, 'examples');
   data.resolvedPaths = getResolvedPaths({
-    project: path.join(originPath, 'examples', 'tsconfig.json'),
-    output: path.join(originPath, 'examples'),
+    project: pathe.join(originPath, 'examples', 'tsconfig.json'),
+    output: pathe.join(originPath, 'examples'),
   });
 });
 

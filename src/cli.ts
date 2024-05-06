@@ -18,7 +18,6 @@ import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOp
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
 import { isValidateConfig } from '#/configs/isValidateConfig';
 import { preLoadConfig } from '#/configs/preLoadConfig';
-import { withDefaultOption } from '#/configs/withDefaultOption';
 import consola from 'consola';
 import { isError } from 'my-easy-fp';
 import yargs, { type Arguments, type CommandModule } from 'yargs';
@@ -54,8 +53,7 @@ const deleteCmd: CommandModule<TDeleteSchemaOption, TDeleteSchemaOption> = {
     spinner.isEnable = true;
     progressBar.isEnable = true;
 
-    const option = await withDefaultOption(argv);
-    await deleteCommandSync(option);
+    await deleteCommandSync(argv);
   },
 };
 
@@ -71,8 +69,7 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
     spinner.isEnable = true;
     progressBar.isEnable = true;
 
-    const option = await withDefaultOption(argv);
-    await refreshCommandSync(option);
+    await refreshCommandSync(argv);
   },
 };
 
@@ -88,8 +85,7 @@ const truncateCmd: CommandModule<TTruncateSchemaOption, TTruncateSchemaOption> =
     spinner.isEnable = true;
     progressBar.isEnable = true;
 
-    const option = await withDefaultOption(argv);
-    await truncateCommandSync(option);
+    await truncateCommandSync(argv);
   },
 };
 

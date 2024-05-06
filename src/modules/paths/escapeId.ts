@@ -3,7 +3,7 @@
  * @param id
  * @returns
  */
-export function escapeId(id: string): string {
+export function escapeId(id: string, escapeChar: string): string {
   const encoded = encodeURIComponent(id);
 
   if (id === encoded) {
@@ -16,8 +16,8 @@ export function escapeId(id: string): string {
       return element;
     }
 
-    return '_';
+    return escapeChar ?? '_';
   });
 
-  return escapedElements.join('');
+  return encodeURIComponent(escapedElements.join(''));
 }

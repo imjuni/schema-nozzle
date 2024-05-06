@@ -12,14 +12,14 @@ export async function makeSQLDatabase(filePath: string) {
   const data = await readDatabaseFile(filePath);
 
   alasql(
-    `CREATE TABLE IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.SCHEMA}] ([id] STRING, [schema] STRING, [typeName] STRING, [filePath] STRING NULL)`,
+    `CREATE TABLE IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.SCHEMA}] ([id] STRING, [schema] JSON, [typeName] STRING, [filePath] STRING NULL)`,
   );
   alasql(`CREATE TABLE IF NOT EXISTS [${CE_ALASQL_TABLE_NAME.REF}] ([id] STRING, [refId] STRING)`);
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]!.data = data.schemas;
+  alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]!.data = data[CE_ALASQL_TABLE_NAME.SCHEMA];
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  alasql.tables[CE_ALASQL_TABLE_NAME.REF]!.data = data.references;
+  alasql.tables[CE_ALASQL_TABLE_NAME.REF]!.data = data[CE_ALASQL_TABLE_NAME.REF];
 
   // 원본 데이터는 복제되어 테이블에 보관되는 것을 보인다, 그래서 삭제 테스트 후 둘을 비교하면 다른 결과가 나온다
   // alasql create clone data from origin because I did delete query after compare two data sets that is different
