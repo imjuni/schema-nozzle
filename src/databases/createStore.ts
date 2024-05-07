@@ -35,7 +35,8 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
         $defs: {},
       },
     );
-    return store;
+
+    return { style, store };
   }
 
   if (style === CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS) {
@@ -59,7 +60,8 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
         $defs: {},
       },
     );
-    return store;
+
+    return { style, store };
   }
 
   if (style === CE_SCHEMA_ID_GENERATION_STYLE.ID_WITH_PATH) {
@@ -76,7 +78,7 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
       return { ...aggregation, [relativePath]: schema };
     }, {});
 
-    return store;
+    return { style, store };
   }
 
   // CE_SCHEMA_ID_GENERATION_STYLE.ID
@@ -87,5 +89,5 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
     return { ...json, [record.typeName]: schema };
   }, {});
 
-  return store;
+  return { style: CE_SCHEMA_ID_GENERATION_STYLE.ID, store };
 }

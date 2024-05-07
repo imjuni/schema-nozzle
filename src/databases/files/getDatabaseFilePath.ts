@@ -6,14 +6,14 @@ import { isDirectory } from 'my-node-fp';
 import pathe from 'pathe';
 
 export async function getDatabaseFilePath(
-  option:
+  options:
     | Pick<TWatchSchemaOption, 'output'>
     | Pick<TRefreshSchemaOption, 'output'>
     | Pick<TAddSchemaOption, 'output'>,
 ): Promise<string> {
-  const dbPath = (await isDirectory(option.output))
-    ? pathe.join(option.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
-    : option.output;
+  const dbPath = (await isDirectory(options.output))
+    ? pathe.join(options.output, CE_DEFAULT_VALUE.DB_FILE_NAME)
+    : options.output;
 
   return dbPath;
 }

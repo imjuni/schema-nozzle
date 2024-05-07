@@ -6,17 +6,17 @@ import { getDirnameSync } from 'my-node-fp';
 import pathe from 'pathe';
 
 export function getResolvedPaths(
-  option: Pick<TAddSchemaOption | TRefreshSchemaOption, 'project' | 'output' | 'rootDirs'>,
+  options: Pick<TAddSchemaOption | TRefreshSchemaOption, 'project' | 'output' | 'rootDirs'>,
 ): IResolvedPaths {
   const cwd = getCwd(process.env);
-  const project = pathe.isAbsolute(option.project)
-    ? pathe.resolve(option.project)
-    : pathe.resolve(pathe.join(cwd, option.project));
+  const project = pathe.isAbsolute(options.project)
+    ? pathe.resolve(options.project)
+    : pathe.resolve(pathe.join(cwd, options.project));
   const projectDir = getDirnameSync(project);
-  const output = pathe.isAbsolute(option.output)
-    ? pathe.resolve(option.output)
-    : pathe.resolve(pathe.join(cwd, option.output));
-  const rootDirs = option.rootDirs.map((rootDir) =>
+  const output = pathe.isAbsolute(options.output)
+    ? pathe.resolve(options.output)
+    : pathe.resolve(pathe.join(cwd, options.output));
+  const rootDirs = options.rootDirs.map((rootDir) =>
     pathe.isAbsolute(rootDir) ? rootDir : pathe.resolve(rootDir),
   );
 

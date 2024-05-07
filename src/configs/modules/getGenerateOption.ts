@@ -9,7 +9,7 @@ import type { Config } from 'ts-json-schema-generator';
 import type { PackageJson } from 'type-fest';
 
 export async function getGenerateOption(
-  option: Omit<Partial<IGenerateOption>, 'generatorOption'> & {
+  options: Omit<Partial<IGenerateOption>, 'generatorOption'> & {
     generatorOption?: string | Config;
     project: string;
   },
@@ -17,16 +17,16 @@ export async function getGenerateOption(
   const cwd = getCwd(process.env);
   const packageJson = container.resolve<PackageJson>(NOZZLE_PACKAGE_JSON_SYMBOL_KEY);
 
-  const include = option.include ?? [];
-  const exclude = option.exclude ?? [];
-  const rootDirs = getRootDirs(cwd, option.rootDirs);
-  const topRef = option.topRef ?? false;
-  const useSchemaPath = option.useSchemaPath ?? false;
-  const escapeChar = option.escapeChar ?? '_';
-  const skipError = option.skipError ?? true;
+  const include = options.include ?? [];
+  const exclude = options.exclude ?? [];
+  const rootDirs = getRootDirs(cwd, options.rootDirs);
+  const topRef = options.topRef ?? false;
+  const useSchemaPath = options.useSchemaPath ?? false;
+  const escapeChar = options.escapeChar ?? '_';
+  const skipError = options.skipError ?? true;
   const serverUrl =
-    option.serverUrl ?? orThrow(packageJson.name, new Error('Cannot found package name'));
-  const generatorOption = await getSchemaGeneratorOption({ ...option, topRef, skipError });
+    options.serverUrl ?? orThrow(packageJson.name, new Error('Cannot found package name'));
+  const generatorOption = await getSchemaGeneratorOption({ ...options, topRef, skipError });
 
   return {
     include,
