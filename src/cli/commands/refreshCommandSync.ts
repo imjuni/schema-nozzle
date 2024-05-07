@@ -36,10 +36,11 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
 
     spinner.start('TypeScript source code compile, ...');
 
-    const resolvedPaths = getResolvedPaths(cliOptions);
+    makePackageJson();
+    const generateOption = await getGenerateOption(cliOptions);
+    const resolvedPaths = getResolvedPaths({ ...cliOptions, rootDirs: generateOption.rootDirs });
     const project = getTypeScriptProject(resolvedPaths.project);
     const tsconfig = getTypeScriptConfig(resolvedPaths.project);
-    makePackageJson();
 
     spinner.stop('TypeScript project loaded!', 'succeed');
 
@@ -48,7 +49,7 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
     const options: TRefreshSchemaOption = {
       $kind: 'refresh-schema',
       ...getBaseOption(cliOptions),
-      ...(await getGenerateOption(cliOptions)),
+      ...generateOption,
       truncate: cliOptions.truncate,
       cwd: resolvedPaths.cwd,
       projectDir: resolvedPaths.projectDir,

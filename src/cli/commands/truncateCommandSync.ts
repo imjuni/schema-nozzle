@@ -8,13 +8,13 @@ import { showLogo } from '@maeum/cli-logo';
 
 import { isError } from 'my-easy-fp';
 
-export async function truncateCommandSync(option: TTruncateSchemaOption) {
+export async function truncateCommandSync(options: TTruncateSchemaOption) {
   makeSpinner();
 
   const spinner = container.resolve<Spinner>(SPINNER_SYMBOL_KEY);
 
   try {
-    if (option.cliLogo) {
+    if (options.cliLogo) {
       await showLogo({
         message: 'Schema Nozzle',
         figlet: { font: 'ANSI Shadow', width: 80 },
@@ -27,7 +27,7 @@ export async function truncateCommandSync(option: TTruncateSchemaOption) {
 
     spinner.start('database truncate start, ...');
 
-    await truncating(option);
+    await truncating(options);
 
     spinner.stop('database truncate complete', 'succeed');
   } catch (caught) {

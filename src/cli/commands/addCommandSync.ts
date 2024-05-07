@@ -26,10 +26,11 @@ export async function addCommandSync(cliOptions: TAddSchemaBaseOption): Promise<
 
     spinner.start('TypeScript source code compile, ...');
 
-    const resolvedPaths = getResolvedPaths(cliOptions);
+    makePackageJson();
+    const generateOption = await getGenerateOption(cliOptions);
+    const resolvedPaths = getResolvedPaths({ ...cliOptions, rootDirs: generateOption.rootDirs });
     const project = getTypeScriptProject(resolvedPaths.project);
     const tsconfig = getTypeScriptConfig(resolvedPaths.project);
-    makePackageJson();
 
     spinner.stop('TypeScript project loaded!', 'succeed');
 
@@ -38,7 +39,7 @@ export async function addCommandSync(cliOptions: TAddSchemaBaseOption): Promise<
     const options: TAddSchemaOption = {
       $kind: 'add-schema',
       ...getBaseOption(cliOptions),
-      ...(await getGenerateOption(cliOptions)),
+      ...generateOption,
       cwd: resolvedPaths.cwd,
       projectDir: resolvedPaths.projectDir,
       resolved: resolvedPaths,

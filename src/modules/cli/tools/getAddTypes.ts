@@ -7,14 +7,14 @@ import { fail, pass, type PassFailEither } from 'my-only-either';
 import type { LastArrayElement } from 'type-fest';
 
 export async function getAddTypes(
-  option: TAddSchemaOption,
+  options: TAddSchemaOption,
   exportedTypes: ISimpleExportedDeclaration[],
 ): Promise<PassFailEither<Error, typeof exportedTypes>> {
   try {
-    if (option.types.length <= 0) {
-      const types = option.multiple
-        ? await getAddMultipleTypesFromPrompt(option.cwd, exportedTypes)
-        : await getAddSingleTypesFromPrompt(option.cwd, exportedTypes);
+    if (options.types.length <= 0) {
+      const types = options.multiple
+        ? await getAddMultipleTypesFromPrompt(options.cwd, exportedTypes)
+        : await getAddSingleTypesFromPrompt(options.cwd, exportedTypes);
 
       return pass(types);
     }
@@ -26,7 +26,7 @@ export async function getAddTypes(
     }, {});
 
     return pass(
-      option.types
+      options.types
         .map((exportedType) => exportedTypeMap[exportedType])
         .filter(
           (exportedType): exportedType is LastArrayElement<typeof exportedTypes> =>

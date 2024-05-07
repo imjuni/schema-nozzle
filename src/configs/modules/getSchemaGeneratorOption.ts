@@ -19,38 +19,38 @@ const defaultGeneratorOption: Config = {
 };
 
 export async function getSchemaGeneratorOption(
-  option: (
+  options: (
     | Pick<TAddSchemaOption, 'project' | 'skipError' | 'topRef'>
     | Pick<TRefreshSchemaOption, 'project' | 'skipError' | 'topRef'>
     | Pick<TDeleteSchemaOption, 'project' | 'skipError' | 'topRef'>
   ) & { generatorOption?: string | Config },
 ): Promise<Config> {
-  if (option.generatorOption == null) {
+  if (options.generatorOption == null) {
     const generatorOption: Config = {
       ...defaultGeneratorOption,
       topRef: false,
       encodeRefs: false,
-      tsconfig: option.project,
-      skipTypeCheck: option.skipError,
+      tsconfig: options.project,
+      skipTypeCheck: options.skipError,
     };
 
     return generatorOption;
   }
 
-  if (typeof option.generatorOption === 'object') {
+  if (typeof options.generatorOption === 'object') {
     return {
       ...defaultGeneratorOption,
-      tsconfig: option.project,
-      skipTypeCheck: option.skipError,
-      ...option.generatorOption,
+      tsconfig: options.project,
+      skipTypeCheck: options.skipError,
+      ...options.generatorOption,
       encodeRefs: false,
       topRef: false,
     };
   }
 
-  const filePath = pathe.isAbsolute(option.generatorOption)
-    ? option.generatorOption
-    : pathe.resolve(option.generatorOption);
+  const filePath = pathe.isAbsolute(options.generatorOption)
+    ? options.generatorOption
+    : pathe.resolve(options.generatorOption);
 
   if (await exists(filePath)) {
     const configBuf = await fs.promises.readFile(filePath);

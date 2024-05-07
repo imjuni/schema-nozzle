@@ -29,10 +29,11 @@ export async function deleteCommandSync(cliOptions: TDeleteSchemaBaseOption) {
 
     spinner.start('TypeScript project loading, ...');
 
-    const resolvedPaths = getResolvedPaths(cliOptions);
+    makePackageJson();
+    const generateOption = await getGenerateOption(cliOptions);
+    const resolvedPaths = getResolvedPaths({ ...cliOptions, rootDirs: generateOption.rootDirs });
     const project = getTypeScriptProject(resolvedPaths.project);
     const tsconfig = getTypeScriptConfig(resolvedPaths.project);
-    makePackageJson();
 
     spinner.stop('TypeScript project load success', 'succeed');
 
@@ -41,7 +42,7 @@ export async function deleteCommandSync(cliOptions: TDeleteSchemaBaseOption) {
     const options: TDeleteSchemaOption = {
       $kind: 'delete-schema',
       ...getBaseOption(cliOptions),
-      ...(await getGenerateOption(cliOptions)),
+      ...generateOption,
       multiple: cliOptions.multiple,
       cwd: resolvedPaths.cwd,
       projectDir: resolvedPaths.projectDir,

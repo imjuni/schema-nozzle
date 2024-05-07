@@ -30,7 +30,8 @@
     "test": "vitest --run --coverage",
     "dd": "deps-diff md -d prod -d dev --title-list-type '*' --deps-list-type '*' --content-list-type '*'",
     "lnb": "run-p lint build",
-    "pub": "pnpm run bundle && NODE_ENV=production RELEASE_MODE=true pnpm publish --registry http://localhost:8901 --force",
+    "prepub": "run-s unpub bundle",
+    "pub": "NODE_ENV=production RELEASE_MODE=true pnpm publish --registry http://localhost:8901 --force",
     "pub:prod": "pnpm run bundle && NODE_ENV=production RELEASE_MODE=true pnpm publish",
     "unpub": "pnpm unpublish $npm_package_name@$npm_package_version --registry http://localhost:8901 --force",
     "prepublishOnly": "node prepublish.cjs",
@@ -58,15 +59,7 @@
     "type": "git",
     "url": "git+https://github.com/imjuni/schema-nozzle.git"
   },
-  "keywords": [
-    "schema",
-    "json-schema",
-    "jsonschema",
-    "cli",
-    "typescript",
-    "ts",
-    "json"
-  ],
+  "keywords": ["schema", "json-schema", "jsonschema", "cli", "typescript", "ts", "json"],
   "author": "ByungJoon Lee",
   "license": "MIT",
   "bugs": {
@@ -104,7 +97,7 @@
     "ora": "^5.4.1",
     "pathe": "^1.1.2",
     "prettier": "^3.2.5",
-    "ts-json-schema-generator": "^2.0.1",
+    "ts-json-schema-generator": "2.0.1",
     "ts-morph": "^22.0.0",
     "ts-morph-short": "^0.9.1",
     "ts-pattern": "^5.1.1",
@@ -162,9 +155,7 @@
     "vitest": "^1.5.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "cross-env NODE_ENV=production eslint --cache"
-    ],
+    "*.{js,jsx,ts,tsx}": ["cross-env NODE_ENV=production eslint --cache"],
     "*.{js,jsx,ts,tsx},*.json,.{eslintrc.cjs,prettierrc}": [
       "cross-env NODE_ENV=production prettier --ignore-path .eslintignore --parser json --write"
     ]
