@@ -14,20 +14,21 @@ vitest.mock('my-node-fp', async (importOriginal) => {
 
 describe('getDatabaseFilePath', () => {
   it('pass - directory', async () => {
-    const r = await getDatabaseFilePath({ output: pathe.join(process.cwd(), 'examples') });
-    expect(r).toEqual(pathe.join(process.cwd(), 'examples', CE_DEFAULT_VALUE.DB_FILE_NAME));
+    const r = await getDatabaseFilePath({ output: $context.tsconfigDirPath });
+
+    expect(r).toEqual(pathe.join($context.tsconfigDirPath, CE_DEFAULT_VALUE.DB_FILE_NAME));
   });
 
   it('pass - file', async () => {
     const r = await getDatabaseFilePath({
-      output: pathe.join(process.cwd(), 'examples', 'tsconfig.json'),
+      output: pathe.join($context.tsconfigDirPath, 'tsconfig.json'),
     });
-    expect(r).toEqual(pathe.join(process.cwd(), 'examples', 'tsconfig.json'));
+    expect(r).toEqual(pathe.join($context.tsconfigDirPath, 'tsconfig.json'));
   });
 });
 
 describe('makeAlaSQL', () => {
   it('make-ala-sql', async () => {
-    await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+    await makeDatabase(pathe.join($context.tsconfigDirPath, 'db-for-test.json'));
   });
 });

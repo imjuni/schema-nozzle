@@ -99,7 +99,7 @@ importers:
         specifier: ^3.2.5
         version: 3.2.5
       ts-json-schema-generator:
-        specifier: ^2.0.1
+        specifier: 2.0.1
         version: 2.0.1
       ts-morph:
         specifier: ^22.0.0
@@ -174,6 +174,9 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.12.0
+      ajv-formats:
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.12.0)
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -1073,6 +1076,14 @@ packages:
     resolution: {integrity: sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  ajv-formats@3.0.1:
+    resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
 
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
@@ -4213,6 +4224,10 @@ snapshots:
   acorn@8.10.0: {}
 
   acorn@8.11.3: {}
+
+  ajv-formats@3.0.1(ajv@8.12.0):
+    optionalDependencies:
+      ajv: 8.12.0
 
   ajv@6.12.6:
     dependencies:

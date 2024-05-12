@@ -17,6 +17,11 @@ export function builder(argv: Argv) {
       alias: 'o',
       describe: 'database file path',
       type: 'string',
+    })
+    .option('verbose', {
+      describe: 'verbose',
+      type: 'boolean',
+      default: false,
     });
 
   // have no alias option

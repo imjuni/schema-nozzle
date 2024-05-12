@@ -8,14 +8,15 @@ export function getImportInfo(typeName: string) {
   const importInfoMap = container.resolve<ReturnType<typeof getImportInfoMap>>(
     STATEMENT_IMPORT_MAP_SYMBOL_KEY,
   );
+  const wsRemovedTypeName = typeName.replace(/\s/g, '');
 
-  const importInfo = importInfoMap.get(typeName);
+  const importInfo = importInfoMap.get(wsRemovedTypeName);
 
   if (importInfo != null) {
     return importInfo;
   }
 
-  const result = getGenericType(typeName);
+  const result = getGenericType(wsRemovedTypeName);
 
   if (isFalse(result.generic)) {
     return undefined;

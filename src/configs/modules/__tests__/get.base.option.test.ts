@@ -14,6 +14,7 @@ describe('getBaseOption', () => {
       project: 'tsconfig.json',
       output: '.',
       cliLogo: false,
+      verbose: false,
     });
   });
 
@@ -23,13 +24,15 @@ describe('getBaseOption', () => {
       project: 'tsconfig.json',
       output: 'examples',
       cliLogo: true,
+      verbose: true,
     });
 
     expect(option).toEqual({
       config: CE_DEFAULT_VALUE.CONFIG_FILE_NAME,
       project: 'tsconfig.json',
-      output: pathe.join(process.cwd(), 'examples'),
+      output: pathe.resolve(pathe.join($context.tsconfigDirPath, '..')),
       cliLogo: true,
+      verbose: true,
     });
   });
 });

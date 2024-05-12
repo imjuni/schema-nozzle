@@ -4,32 +4,32 @@ import pathe from 'pathe';
 import { getTypeScriptProject } from 'ts-morph-short';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+const data: { project: ReturnType<typeof getTypeScriptProject> } = {} as any;
+
 describe('getImprotInfo', () => {
   beforeAll(() => {
-    const tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    const tsconfigFilePath = pathe.join(tsconfigDirPath, 'tsconfig.example.json');
-    const project = getTypeScriptProject(tsconfigFilePath);
+    data.project = getTypeScriptProject($context.tsconfigFilePath);
 
-    project.createSourceFile(
+    data.project.createSourceFile(
       pathe.join('ability/IHero.ts'),
       `export interface IHero { name: string; ability: string; }`,
     );
-    project.createSourceFile(
+    data.project.createSourceFile(
       pathe.join('ability/TGeneric.ts'),
       `export type TGeneric<T> = Record<string, T>\nexport type TNumberGeneric = TGeneric<number>;`,
     );
-    project.createSourceFile(
+    data.project.createSourceFile(
       pathe.join('organization/IOrganization.ts'),
       `export interface IOrganization { name: string; address: string; }`,
     );
-    project.createSourceFile(
+    data.project.createSourceFile(
       pathe.join('organization/ITeam.ts'),
       `export interface ITeam { name: string; members: string[]; }`,
     );
 
     makeStatementInfoMap(
-      project,
-      project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
+      data.project,
+      data.project.getSourceFiles().map((sourceFile) => sourceFile.getFilePath().toString()),
     );
   });
 

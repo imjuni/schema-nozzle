@@ -9,5 +9,15 @@ export default defineConfig({
       all: false,
     },
   },
-  plugins: [tsconfigPaths({ projects: ['tsconfig.json'] })],
+  plugins: [
+    tsconfigPaths({ projects: ['tsconfig.json'] }),
+    {
+      name: 'test-context-loader',
+      config: () => ({
+        test: {
+          setupFiles: ['./setupFiles/test-context.ts'],
+        },
+      }),
+    },
+  ],
 });

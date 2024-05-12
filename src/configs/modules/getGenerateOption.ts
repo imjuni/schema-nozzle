@@ -20,20 +20,20 @@ export async function getGenerateOption(
   const include = options.include ?? [];
   const exclude = options.exclude ?? [];
   const rootDirs = getRootDirs(cwd, options.rootDirs);
-  const topRef = options.topRef ?? false;
   const useSchemaPath = options.useSchemaPath ?? false;
+  const jsVar = options.jsVar ?? false;
   const escapeChar = options.escapeChar ?? '_';
   const skipError = options.skipError ?? true;
   const serverUrl =
     options.serverUrl ?? orThrow(packageJson.name, new Error('Cannot found package name'));
-  const generatorOption = await getSchemaGeneratorOption({ ...options, topRef, skipError });
+  const generatorOption = await getSchemaGeneratorOption({ ...options, skipError });
 
   return {
     include,
     exclude,
     rootDirs,
     skipError,
-    topRef,
+    jsVar,
     escapeChar,
     useSchemaPath,
     serverUrl,

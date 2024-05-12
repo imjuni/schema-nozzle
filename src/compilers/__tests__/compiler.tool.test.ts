@@ -2,7 +2,8 @@ import { getExportedName } from '#/compilers/getExportedName';
 import { getJsDocTags } from '#/compilers/getJsDocTags';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import pathe from 'pathe';
-import * as tsm from 'ts-morph';
+import type * as tsm from 'ts-morph';
+import { getTypeScriptProject } from 'ts-morph-short';
 import { beforeAll, beforeEach, describe, expect, it, vitest } from 'vitest';
 
 vitest.mock('my-node-fp', async (importOriginal) => {
@@ -20,9 +21,7 @@ const data: {
 } = {} as any;
 
 beforeAll(() => {
-  data.project = new tsm.Project({
-    tsConfigFilePath: pathe.join(originPath, 'examples', 'tsconfig.json'),
-  });
+  data.project = getTypeScriptProject($context.tsconfigFilePath);
 });
 
 beforeEach(() => {

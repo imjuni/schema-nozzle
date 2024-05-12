@@ -3,7 +3,6 @@ import { getExportedFiles } from '#/compilers/getExportedFiles';
 import { getExportedTypes } from '#/compilers/getExportedTypes';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import { startSepRemove } from 'my-node-fp';
-import pathe from 'pathe';
 import type * as tsm from 'ts-morph';
 import { getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 import { afterEach, beforeAll, describe, expect, it, vitest } from 'vitest';
@@ -20,21 +19,21 @@ const data: {
 
 describe('getExportedFiles', () => {
   beforeAll(() => {
-    vitest.stubEnv('INIT_CWD', pathe.join(process.cwd(), 'examples'));
+    vitest.stubEnv('INIT_CWD', $context.tsconfigDirPath);
 
-    data.project = getTypeScriptProject(pathe.join(process.cwd(), 'examples', 'tsconfig.json'));
-    data.config = getTypeScriptConfig(pathe.join(process.cwd(), 'examples', 'tsconfig.json'));
+    data.project = getTypeScriptProject($context.tsconfigFilePath);
+    data.config = getTypeScriptConfig($context.tsconfigFilePath);
     data.resolvedPaths = getResolvedPaths({
-      rootDirs: [pathe.join(process.cwd(), 'examples')],
-      project: pathe.join(process.cwd(), 'examples', 'tsconfig.json'),
-      output: pathe.join(process.cwd(), 'examples'),
+      rootDirs: [$context.tsconfigDirPath],
+      project: $context.tsconfigFilePath,
+      output: $context.tsconfigDirPath,
     });
   });
 
   it('export files', () => {
     const files = getExportedFiles(data.project);
     const refinedFiles = files.map((file) =>
-      startSepRemove(file.replace(pathe.join(process.cwd(), 'examples'), '')),
+      startSepRemove(file.replace($context.tsconfigDirPath, '')),
     );
 
     expect(refinedFiles).toMatchObject([

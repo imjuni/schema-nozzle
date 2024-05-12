@@ -4,12 +4,15 @@ import { replaceId } from '#/databases/modules/replaceId';
 import { getSchemaId } from '#/modules/generators/getSchemaId';
 import type { AnySchemaObject } from 'ajv';
 import { traverse, type TraversalCallback, type TraversalCallbackContext } from 'object-traversal';
+import type { Config } from 'ts-json-schema-generator';
 
 type TTraverserParams = AnySchemaObject & {
   $$options: {
     style: CE_SCHEMA_ID_GENERATION_STYLE;
     escapeChar: IGenerateOption['escapeChar'];
     rootDirs: IGenerateOption['rootDirs'];
+    jsVar: IGenerateOption['jsVar'];
+    encodeRefs: NonNullable<Config['encodeRefs']>;
   };
 };
 
@@ -18,12 +21,19 @@ export function traverser(context: TTraverserParams) {
     const next = ctx.parent;
 
     if (next != null && ctx.key != null && ctx.key === '$ref' && typeof ctx.value === 'string') {
+      const decodedSchemaId = context.$$options.encodeRefs
+        ? decodeURIComponent(ctx.value)
+        : ctx.value;
+
       const $id = getSchemaId({
-        typeName: replaceId(ctx.value),
+        typeName: replaceId(decodedSchemaId),
         style: context.$$options.style,
         escapeChar: context.$$options.escapeChar,
         rootDirs: context.$$options.rootDirs,
-        isEscape: false,
+        encoding: {
+          url: context.$$options.encodeRefs,
+          jsVar: context.$$options.jsVar,
+        },
       });
 
       next[ctx.key] = $id;

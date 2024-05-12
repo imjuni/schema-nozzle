@@ -1,12 +1,13 @@
 {
   "name": "schema-nozzle",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "json-schema generate from typescript interface and type alias, class, enum",
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@9.0.6",
+  "packageManager": "pnpm@9.1.0",
   "scripts": {
+    "slt": "echo \"schema loading test\"; node examples/schema-loader/schema-loader.mjs",
     "clean": "rimraf dist artifact",
     "build": "pnpm run clean && tsc --incremental --project tsconfig.json --tsBuildInfoFile .tsbuildinfo",
     "dev": "ts-node --project ./tsconfig.json src/cli.ts",
@@ -124,6 +125,7 @@
     "@typescript-eslint/parser": "^7.3.1",
     "@vitest/coverage-v8": "^1.5.0",
     "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "ctix": "^2.4.1",

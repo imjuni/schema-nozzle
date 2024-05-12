@@ -1,8 +1,8 @@
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { replaceId } from '#/databases/modules/replaceId';
+import { getEscaping } from '#/modules/generators/getEscaping';
 import { getImportInfo } from '#/modules/generators/getImportInfo';
 import { getIsExternal } from '#/modules/generators/getIsExternal';
-import { escapeId } from '#/modules/paths/escapeId';
 import { getRelativePathByRootDirs } from '#/modules/paths/getRelativePathByRootDirs';
 import { getDirnameSync } from 'my-node-fp';
 import path from 'node:path';
@@ -19,7 +19,10 @@ export interface IGetDefinitionsSchemaId {
   filePath?: string;
 
   /** url-encoding 및 pathId 옵션을 활성화 했을 때 경로에 포함된 encode 되지 않은 문자를 안전하게 변경할 것인지 결정 */
-  isEscape: boolean;
+  encoding: {
+    url: boolean;
+    jsVar: boolean;
+  };
 
   /** pathId 옵션을 활성화 했을 때 path에 relative를 적용하기 위한 root directory */
   rootDirs: string[];
@@ -35,11 +38,11 @@ export function getDefinitionsSchemaId({
   typeName,
   filePath,
   rootDirs,
-  isEscape,
+  encoding,
   escapeChar,
   style,
 }: IGetDefinitionsSchemaId): string {
-  const escaping = isEscape ? escapeId : (name: string) => name;
+  const escaping = getEscaping(encoding);
   const importInfo = getImportInfo(typeName);
   const isExternal = getIsExternal(importInfo);
 
@@ -49,34 +52,29 @@ export function getDefinitionsSchemaId({
       moduleFilePath == null
         ? undefined
         : getRelativePathByRootDirs(rootDirs, '', getDirnameSync(moduleFilePath));
+
     const paths = [
       '#',
       '$defs',
       isExternal ? 'external' : undefined,
       isExternal ? undefined : relativePath,
-      escaping(replaceId(typeName), escapeChar),
+      escaping(typeName, escapeChar),
     ].filter((element) => element != null && element !== '');
+
     return `${paths.join(path.posix.sep)}`;
   }
 
   if (isExternal) {
-    const paths = [
-      '#',
-      '$defs',
-      isExternal
-        ? `external-${escaping(replaceId(typeName), escapeChar)}`
-        : escaping(replaceId(typeName), escapeChar),
-    ].filter((element) => element != null);
+    const paths = ['#', '$defs', `external-${escaping(replaceId(typeName), escapeChar)}`].filter(
+      (element) => element != null,
+    );
 
     return `${paths.join(path.posix.sep)}`;
   }
 
-  const paths = [
-    '#',
-    '$defs',
-    isExternal ? 'external' : undefined,
-    escaping(replaceId(typeName), escapeChar),
-  ].filter((element) => element != null);
+  const paths = ['#', '$defs', escaping(replaceId(typeName), escapeChar)].filter(
+    (element) => element != null,
+  );
 
   return `${paths.join(path.posix.sep)}`;
 }

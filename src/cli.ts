@@ -18,7 +18,7 @@ import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOp
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
 import { isValidateConfig } from '#/configs/isValidateConfig';
 import { preLoadConfig } from '#/configs/preLoadConfig';
-import consola from 'consola';
+import consola, { LogLevels } from 'consola';
 import { isError } from 'my-easy-fp';
 import yargs, { type Arguments, type CommandModule } from 'yargs';
 
@@ -63,6 +63,10 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(builder(argv)),
   handler: async (argv) => {
+    if (argv.verbose) {
+      consola.level = LogLevels.verbose;
+    }
+
     const spinner = makeSpinner();
     const progressBar = makeProgressBar();
 

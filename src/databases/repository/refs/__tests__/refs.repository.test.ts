@@ -7,7 +7,7 @@ import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 beforeAll(async () => {
-  await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+  await makeDatabase(pathe.join($context.tsconfigDirPath, 'db-for-test.json'));
   makeRepository();
 });
 

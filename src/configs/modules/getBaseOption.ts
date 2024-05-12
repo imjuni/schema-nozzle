@@ -9,11 +9,13 @@ export function getBaseOption(option: SetRequired<Partial<IBaseOption>, 'project
   const { config, project } = option;
   const output = getOutputPath(cwd, project, option.output);
   const cliLogo = option.cliLogo ?? false;
+  const verbose = option.verbose ?? false;
 
   return {
     config,
     project,
     output,
     cliLogo,
+    verbose,
   };
 }

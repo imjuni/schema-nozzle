@@ -5,7 +5,10 @@ import { describe, expect, it } from 'vitest';
 
 describe('getGlobFiles', () => {
   it('globe file from examples', () => {
-    const files = new Glob(['**/*.ts'], { cwd: pathe.join(process.cwd(), 'examples') });
+    const files = new Glob(['**/*.ts'], {
+      cwd: $context.tsconfigDirPath,
+    });
+
     const r01 = getGlobFiles(files);
     expect(r01).toMatchObject([
       'hello.ts',
@@ -25,23 +28,23 @@ describe('getGlobFiles', () => {
 
   it('globe file from examples', () => {
     const files = new Glob(['**/*.ts'], {
-      cwd: pathe.join(process.cwd(), 'examples'),
+      cwd: $context.tsconfigDirPath,
       withFileTypes: true,
     });
     const r01 = getGlobFiles(files);
     expect(r01).toMatchObject([
-      pathe.join(process.cwd(), 'examples', 'hello.ts'),
-      pathe.join(process.cwd(), 'examples', 'TSimpleSetRequired.ts'),
-      pathe.join(process.cwd(), 'examples', 'TGenericExample.ts'),
-      pathe.join(process.cwd(), 'examples', 'IStudentEntity.ts'),
-      pathe.join(process.cwd(), 'examples', 'IStudentDto.ts'),
-      pathe.join(process.cwd(), 'examples', 'ISlackMessage.ts'),
-      pathe.join(process.cwd(), 'examples', 'IReqReadStudentDto.ts'),
-      pathe.join(process.cwd(), 'examples', 'IProfessorEntity.ts'),
-      pathe.join(process.cwd(), 'examples', 'IProfessorDto.ts'),
-      pathe.join(process.cwd(), 'examples', 'I18nDto.ts'),
-      pathe.join(process.cwd(), 'examples', 'const-enum/CE_MAJOR.ts'),
-      pathe.join(process.cwd(), 'examples', 'base/ITid.ts'),
+      pathe.join($context.tsconfigDirPath, 'hello.ts'),
+      pathe.join($context.tsconfigDirPath, 'TSimpleSetRequired.ts'),
+      pathe.join($context.tsconfigDirPath, 'TGenericExample.ts'),
+      pathe.join($context.tsconfigDirPath, 'IStudentEntity.ts'),
+      pathe.join($context.tsconfigDirPath, 'IStudentDto.ts'),
+      pathe.join($context.tsconfigDirPath, 'ISlackMessage.ts'),
+      pathe.join($context.tsconfigDirPath, 'IReqReadStudentDto.ts'),
+      pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
+      pathe.join($context.tsconfigDirPath, 'IProfessorDto.ts'),
+      pathe.join($context.tsconfigDirPath, 'I18nDto.ts'),
+      pathe.join($context.tsconfigDirPath, 'const-enum/CE_MAJOR.ts'),
+      pathe.join($context.tsconfigDirPath, 'base/ITid.ts'),
     ]);
   });
 });
