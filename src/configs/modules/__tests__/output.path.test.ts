@@ -5,25 +5,25 @@ import { describe, expect, it } from 'vitest';
 describe('getOutputPathHandler', () => {
   it('not set output directory', () => {
     const cwd = pathe.resolve(process.cwd());
-    const project = pathe.join(cwd, 'examples', 'tsconfig.json');
+    const project = $context.tsconfigFilePath;
     const output = getOutputPath(cwd, project);
 
-    expect(output).toEqual(pathe.join(process.cwd(), 'examples'));
+    expect(output).toEqual($context.tsconfigDirPath);
   });
 
   it('set output directory', () => {
     const cwd = pathe.resolve(process.cwd());
-    const project = pathe.join(cwd, 'examples', 'tsconfig.json');
+    const project = $context.tsconfigFilePath;
     const output = getOutputPath(cwd, project, 'examples');
 
-    expect(output).toEqual(pathe.join(process.cwd(), 'examples'));
+    expect(output).toEqual(pathe.resolve(pathe.join($context.tsconfigDirPath, '..')));
   });
 
   it('set absolute output directory', () => {
     const cwd = pathe.resolve(process.cwd());
-    const project = pathe.join(cwd, 'examples', 'tsconfig.json');
+    const project = $context.tsconfigFilePath;
     const output = getOutputPath(cwd, project, pathe.join(cwd, 'examples'));
 
-    expect(output).toEqual(pathe.join(process.cwd(), 'examples'));
+    expect(output).toEqual(pathe.resolve(pathe.join($context.tsconfigDirPath, '..')));
   });
 });

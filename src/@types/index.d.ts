@@ -7,3 +7,9 @@ declare namespace NodeJS {
     USE_INIT_CWD?: string;
   }
 }
+
+declare const $context: {
+  tsconfigDirPath: string;
+  tsconfigFilePath: string;
+  tsconfigEmptyPath: string;
+};

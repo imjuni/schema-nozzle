@@ -8,17 +8,7 @@ import { randomUUID } from 'node:crypto';
 import pathe from 'pathe';
 import * as tsm from 'ts-morph';
 import { getTypeScriptProject } from 'ts-morph-short';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
-
-const data: {
-  tsconfigDirPath: string;
-  tsconfigFilePath: string;
-  project: tsm.Project;
-} = {
-  tsconfigDirPath: '',
-  tsconfigFilePath: '',
-  project: undefined,
-} as any;
+import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('comment-parser', async (importOriginal) => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -29,12 +19,6 @@ vi.mock('comment-parser', async (importOriginal) => {
 });
 
 describe('getCommentKind', () => {
-  beforeAll(() => {
-    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
-    data.project = getTypeScriptProject(data.tsconfigFilePath);
-  });
-
   it('pass', () => {
     const r01 = getCommentKind(tsm.SyntaxKind.MultiLineCommentTrivia);
     const r02 = getCommentKind(tsm.SyntaxKind.SingleLineCommentTrivia);
@@ -47,12 +31,6 @@ describe('getCommentKind', () => {
 });
 
 describe('getSourceFileComments', () => {
-  beforeAll(() => {
-    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
-    data.project = getTypeScriptProject(data.tsconfigFilePath);
-  });
-
   it('inline comment by multiple line document comment', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;
@@ -74,7 +52,8 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = data.project.createSourceFile(filename, source.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    const sourceFile = project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
@@ -107,7 +86,8 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = data.project.createSourceFile(filename, source.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    const sourceFile = project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
@@ -136,7 +116,8 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = data.project.createSourceFile(filename, source.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    const sourceFile = project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
@@ -165,7 +146,8 @@ export default class Hero {
 }
     `;
 
-    const sourceFile = data.project.createSourceFile(filename, source.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    const sourceFile = project.createSourceFile(filename, source.trim());
     const comments = getSourceFileComments(sourceFile);
 
     expect(comments).toMatchObject({
@@ -179,12 +161,6 @@ export default class Hero {
 });
 
 describe('getInlineExclude', () => {
-  beforeAll(() => {
-    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
-    data.project = getTypeScriptProject(data.tsconfigFilePath);
-  });
-
   it('document comment string, no namespace', () => {
     const uuid = randomUUID();
     const filename = `${uuid}.ts`;

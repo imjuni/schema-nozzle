@@ -9,24 +9,18 @@ import { getTypeScriptProject } from 'ts-morph-short';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 const data: {
-  tsconfigDirPath: string;
-  tsconfigFilePath: string;
   project: ReturnType<typeof getTypeScriptProject>;
   schema: TPickPass<ReturnType<typeof createJsonSchema>>['schema'];
 } = {
   project: undefined,
-  tsconfigDirPath: '',
-  tsconfigFilePath: '',
   schema: undefined,
 } as any;
 
 describe('createRecord', () => {
   beforeAll(() => {
-    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.json');
-    data.project = getTypeScriptProject(data.tsconfigFilePath);
+    data.project = getTypeScriptProject($context.tsconfigFilePath);
     data.schema = {
-      filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+      filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
       exportedType: 'IProfessorEntity',
       schema: {
         $schema: 'http://json-schema.org/draft-07/schema#',
@@ -70,9 +64,11 @@ describe('createRecord', () => {
   it('definitions with path that have not a definitions in scheam', () => {
     const r01 = createRecord({
       escapeChar: '_',
-      rootDirs: [data.tsconfigDirPath],
+      rootDirs: [$context.tsconfigDirPath],
+      encodeRefs: false,
+      jsVar: false,
       schema: {
-        filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+        filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
         exportedType: 'IProfessorEntity',
         schema: { ...data.schema.schema, definitions: undefined },
       },
@@ -88,7 +84,7 @@ describe('createRecord', () => {
         {
           id: '#/$defs/IProfessorEntity',
           typeName: 'IProfessorEntity',
-          filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+          filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
           relativePath: 'IProfessorEntity',
           schema: {
             $schema: 'http://json-schema.org/draft-07/schema#',
@@ -127,9 +123,11 @@ describe('createRecord', () => {
   it('definitions with path that have a definitions in scheam', () => {
     const r01 = createRecord({
       escapeChar: '_',
-      rootDirs: [data.tsconfigDirPath],
+      rootDirs: [$context.tsconfigDirPath],
+      encodeRefs: false,
+      jsVar: false,
       schema: {
-        filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+        filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
         exportedType: 'IProfessorEntity',
         schema: data.schema.schema,
       },
@@ -145,7 +143,7 @@ describe('createRecord', () => {
         {
           id: '#/$defs/IProfessorEntity',
           typeName: 'IProfessorEntity',
-          filePath: pathe.join(data.tsconfigDirPath, 'IProfessorEntity.ts'),
+          filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
           relativePath: 'IProfessorEntity',
           schema: {
             $schema: 'http://json-schema.org/draft-07/schema#',
@@ -178,7 +176,7 @@ describe('createRecord', () => {
         {
           id: '#/$defs/const-enum/CE_MAJOR',
           typeName: 'CE_MAJOR',
-          filePath: pathe.join(data.tsconfigDirPath, 'const-enum', 'CE_MAJOR.ts'),
+          filePath: pathe.join($context.tsconfigDirPath, 'const-enum', 'CE_MAJOR.ts'),
           relativePath: 'const-enum/CE_MAJOR',
           schema: {
             $schema: 'http://json-schema.org/draft-07/schema#',

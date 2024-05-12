@@ -2,22 +2,15 @@ import { getInlineExcludedFiles } from '#/compilers/comments/getInlineExcludedFi
 import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import { randomUUID } from 'node:crypto';
 import pathe from 'pathe';
-import * as tsm from 'ts-morph';
 import { getTypeScriptProject } from 'ts-morph-short';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 const data: {
-  tsconfigDirPath: string;
-  tsconfigFilePath: string;
-  project: tsm.Project;
   context: {
     index: number;
     tsconfig: string;
   };
 } = {
-  tsconfigDirPath: '',
-  tsconfigFilePath: '',
-  project: undefined,
   context: {
     index: 0,
     tsconfig: '',
@@ -26,10 +19,7 @@ const data: {
 
 describe('getInlineExcludedFiles', () => {
   beforeAll(() => {
-    data.tsconfigDirPath = pathe.join(process.cwd(), 'examples');
-    data.tsconfigFilePath = pathe.join(data.tsconfigDirPath, 'tsconfig.example.json');
-    data.project = getTypeScriptProject(data.tsconfigFilePath);
-    data.context.tsconfig = data.tsconfigDirPath;
+    data.context.tsconfig = $context.tsconfigDirPath;
   });
 
   it('comment top of file', () => {
@@ -66,15 +56,16 @@ export class SuperHero {
 }
     `;
 
-    data.project.createSourceFile(pathe.join(data.tsconfigDirPath, filename01), source01.trim());
-    data.project.createSourceFile(pathe.join(data.tsconfigDirPath, filename02), source02.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    project.createSourceFile(pathe.join($context.tsconfigDirPath, filename01), source01.trim());
+    project.createSourceFile(pathe.join($context.tsconfigDirPath, filename02), source02.trim());
 
-    const excluded = getInlineExcludedFiles(data.project, data.tsconfigDirPath);
+    const excluded = getInlineExcludedFiles(project, $context.tsconfigDirPath);
 
     expect(excluded).toMatchObject([
       {
         commentCode: `/**\n * ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle\n */`,
-        filePath: pathe.join(data.tsconfigDirPath, filename01),
+        filePath: pathe.join($context.tsconfigDirPath, filename01),
         pos: {
           start: 48,
           line: 4,
@@ -124,16 +115,16 @@ export class DCHero {
 }
     `;
 
-    const project = new tsm.Project({ tsConfigFilePath: data.tsconfigFilePath });
-    project.createSourceFile(pathe.join(data.tsconfigDirPath, filename01), source01.trim());
-    project.createSourceFile(pathe.join(data.tsconfigDirPath, filename02), source02.trim());
+    const project = getTypeScriptProject($context.tsconfigEmptyPath);
+    project.createSourceFile(pathe.join($context.tsconfigDirPath, filename01), source01.trim());
+    project.createSourceFile(pathe.join($context.tsconfigDirPath, filename02), source02.trim());
 
-    const excluded = getInlineExcludedFiles(project, data.tsconfigDirPath);
+    const excluded = getInlineExcludedFiles(project, $context.tsconfigDirPath);
 
     expect(excluded).toMatchObject([
       {
         commentCode: `// ${CE_JSDOC_EXTENDS.IGNORE_FILE_TAG} schema-nozzle`,
-        filePath: pathe.join(data.tsconfigDirPath, filename02),
+        filePath: pathe.join($context.tsconfigDirPath, filename02),
         pos: {
           start: 173,
           line: 12,

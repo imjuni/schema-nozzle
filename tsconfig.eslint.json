@@ -5,6 +5,7 @@
   },
   "include": [
     "src/**/*.ts",
+    "setupFiles/**/*.ts",
     "examples/**/*.ts",
     ".eslintrc.cjs",
     "jest.config.cjs",

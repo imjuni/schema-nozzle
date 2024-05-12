@@ -121,8 +121,9 @@ module.exports = {
       },
     },
     {
-      files: ['**/__tests__/*.ts'],
+      files: ['**/__tests__/*.ts', 'setupFiles/**/*.ts'],
       rules: {
+        'import/no-extraneous-dependencies': ['off'],
         '@typescript-eslint/no-unsafe-assignment': ['off'],
         '@typescript-eslint/no-non-null-assertion': ['off'],
         '@typescript-eslint/no-explicit-any': ['off'],
@@ -147,7 +148,7 @@ module.exports = {
       },
     },
     {
-      files: ['examples/*.ts'],
+      files: ['examples/**/*.ts'],
       rules: {
         '@typescript-eslint/naming-convention': ['off'],
       },

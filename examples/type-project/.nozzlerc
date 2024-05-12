@@ -9,14 +9,17 @@
 
   "include": ["*.ts"],
 
-  "topRef": true,
+  "topRef": false,
 
   "useSchemaPath": false,
+
+  "jsVar": false,
 
   "rootDirs": ["examples"],
 
   "generatorOption": {
     "additionalProperties": true,
+    "encodeRefs": false,
     "extraTags": ["example"]
   }
 }

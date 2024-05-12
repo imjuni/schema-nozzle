@@ -10,4 +10,6 @@ export interface IBaseOption {
 
   /** display cli logo */
   cliLogo: boolean;
+
+  verbose: boolean;
 }

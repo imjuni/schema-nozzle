@@ -3,27 +3,47 @@ import pathe from 'pathe';
 import { describe, expect, it } from 'vitest';
 
 describe('getRelativePathByRootDirs', () => {
-  it('second descendent', () => {
+  it('relative path root-dirs parameters, and target directory is relative and same root-dirs', () => {
     const r01 = getRelativePathByRootDirs(
-      ['src/cli', 'src/configs/interfaces'].map((originPath) => pathe.resolve(originPath)),
+      ['src/cli', 'src/configs'],
+      'getInitialOption',
+      'src/configs',
+    );
+
+    expect(r01).toEqual('getInitialOption');
+  });
+
+  it('relative path root-dirs parameters, and target directory is relative and decscendent of root-dirs', () => {
+    const r01 = getRelativePathByRootDirs(
+      ['src/cli', 'src/configs'],
+      'IBaseOption',
+      'src/configs/interfaces',
+    );
+
+    expect(r01).toEqual('interfaces/IBaseOption');
+  });
+
+  it('relative path root-dirs parameters, but directory is same root-dirs', () => {
+    const r01 = getRelativePathByRootDirs(
+      ['src/cli', 'src/configs'],
+      'getInitialOption',
+      pathe.join(process.cwd(), 'src/configs'),
+    );
+
+    expect(r01).toEqual('getInitialOption');
+  });
+
+  it('relative path root-dirs parameters, but descendent directory is absolute', () => {
+    const r01 = getRelativePathByRootDirs(
+      ['src/cli', 'src/configs'],
       'IBaseOption',
       pathe.join(process.cwd(), 'src/configs/interfaces'),
     );
 
-    expect(r01).toEqual('IBaseOption');
+    expect(r01).toEqual('interfaces/IBaseOption');
   });
 
-  it('same directory', () => {
-    const r01 = getRelativePathByRootDirs(
-      ['src/cli', 'src/configs/interfaces'],
-      'A',
-      pathe.join(process.cwd(), 'src/cli'),
-    );
-
-    expect(r01).toEqual('A');
-  });
-
-  it('not descendent', () => {
+  it('relative path root-dirs parameters, but target directory are not descendent', () => {
     const r01 = getRelativePathByRootDirs(
       ['src/cli', 'src/configs/interfaces'],
       'getCwd',

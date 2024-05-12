@@ -17,15 +17,25 @@ import consola from 'consola';
 import fastCopy from 'fast-copy';
 import { getDirnameSync } from 'my-node-fp';
 import type { TPickPass } from 'my-only-either';
+import type { Config } from 'ts-json-schema-generator';
 
 interface ICreateSchemaRecordParams {
   escapeChar: IGenerateOption['escapeChar'];
   rootDirs: IGenerateOption['rootDirs'];
   schema: TPickPass<ReturnType<typeof createJsonSchema>>;
   style: CE_SCHEMA_ID_GENERATION_STYLE;
+  encodeRefs: NonNullable<Config['encodeRefs']>;
+  jsVar: IGenerateOption['jsVar'];
 }
 
-export function createRecord({ escapeChar, rootDirs, schema, style }: ICreateSchemaRecordParams): {
+export function createRecord({
+  escapeChar,
+  rootDirs,
+  schema,
+  style,
+  jsVar,
+  encodeRefs,
+}: ICreateSchemaRecordParams): {
   schemas: ISchemaRecord[];
   refs: ISchemaRefRecord[];
 } {
@@ -34,14 +44,19 @@ export function createRecord({ escapeChar, rootDirs, schema, style }: ICreateSch
   currentSchema.$id = getSchemaId({
     typeName: schema.exportedType,
     filePath: schema.filePath,
-    isEscape: false,
     escapeChar,
     rootDirs,
     style,
+    encoding: { url: encodeRefs, jsVar },
   });
+
   currentSchema.title = currentSchema.$id;
 
-  traverser({ ...currentSchema, $$options: { style, escapeChar, rootDirs } });
+  consola.verbose(
+    `ID[{encodeRefs: ${encodeRefs}, jsVar: ${jsVar}}]: ${currentSchema.$id}/ ${currentSchema.$id}`,
+  );
+
+  traverser({ ...currentSchema, $$options: { style, escapeChar, rootDirs, jsVar, encodeRefs } });
 
   const id = currentSchema.$id;
 
@@ -76,7 +91,7 @@ export function createRecord({ escapeChar, rootDirs, schema, style }: ICreateSch
 
       const definitionId = getSchemaId({
         typeName: keyInfo.replaced,
-        isEscape: false,
+        encoding: { url: encodeRefs, jsVar },
         escapeChar,
         rootDirs,
         style,
@@ -92,9 +107,12 @@ export function createRecord({ escapeChar, rootDirs, schema, style }: ICreateSch
         ...definition.value,
       };
 
-      traverser({ ...definitionSchema, $$options: { style, escapeChar, rootDirs } });
+      traverser({
+        ...definitionSchema,
+        $$options: { style, escapeChar, rootDirs, jsVar, encodeRefs },
+      });
 
-      consola.trace(`ID: ${definitionId}/ ${id}`);
+      consola.verbose(`ID[{encodeRefs: ${encodeRefs}, jsVar: ${jsVar}}]: ${definitionId}/ ${id}`);
 
       const definitionStringified = definitionSchema;
 

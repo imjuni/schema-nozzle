@@ -5,7 +5,7 @@ import { describe, expect, it, vitest } from 'vitest';
 describe('getResolvedPaths', () => {
   it('normal', async () => {
     const originPath = process.cwd();
-    vitest.stubEnv('INIT_CWD', pathe.join(process.cwd(), 'examples'));
+    vitest.stubEnv('INIT_CWD', $context.tsconfigDirPath);
 
     const r = getResolvedPaths({
       rootDirs: [pathe.join(originPath, 'examples')],

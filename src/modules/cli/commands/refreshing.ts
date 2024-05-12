@@ -19,6 +19,7 @@ import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
 import { makeIncludeContianer } from '#/modules/scopes/makeIncludeContianer';
+import consola from 'consola';
 import { unlink } from 'fs/promises';
 import { isError } from 'my-easy-fp';
 import { exists } from 'my-node-fp';
@@ -41,6 +42,9 @@ export async function refreshing(
     if (diagnostics.pass === false) throw new Error('project compile error');
 
     const dbPath = await getDatabaseFilePath(options);
+
+    consola.verbose('options: ', JSON.stringify(options, undefined, 2));
+    consola.verbose('database path: ', dbPath);
 
     if (options.truncate && (await exists(dbPath))) {
       spinner.start('truncate database, ...');
@@ -68,17 +72,26 @@ export async function refreshing(
     makeStatementInfoMap(project, schemaFilePaths);
 
     const schemaTypes = await summarySchemaTypes(schemaFilePaths);
-    const schemaIdStyle = getSchemaIdStyle(options);
+    const schemaIdStyle = getSchemaIdStyle({
+      topRef: options.generatorOption.topRef ?? false,
+      useSchemaPath: options.useSchemaPath,
+    });
 
-    progress.start(schemaTypes.length, 0, 'refreshing: ');
+    consola.verbose('schema id generation style: ', schemaIdStyle);
+
+    if (!options.verbose) progress.start(schemaTypes.length, 0, 'refreshing: ');
+
+    consola.verbose(`Refreshing schema store, ${schemaTypes.length} schemas`);
 
     await Promise.all(
       schemaTypes.map(async (targetType) => {
+        consola.verbose('create json-schema: ', targetType.typeName);
         const schema = createJsonSchema(targetType.filePath, targetType.typeName);
 
         if (schema.type === 'fail') {
           generatedContainer.addErrors(schema.fail);
-          progress.increment();
+
+          if (!options.verbose) progress.increment();
           return;
         }
 
@@ -87,15 +100,17 @@ export async function refreshing(
           escapeChar: options.escapeChar,
           rootDirs: options.rootDirs,
           schema: schema.pass,
+          encodeRefs: options.generatorOption.encodeRefs,
+          jsVar: options.jsVar,
         });
 
         generatedContainer.addRecord(...items.schemas);
         generatedContainer.addRefs(...items.refs);
-        progress.increment();
+        if (!options.verbose) progress.increment();
       }),
     );
 
-    progress.stop();
+    if (!options.verbose) progress.stop();
 
     await upserts(generatedContainer);
 

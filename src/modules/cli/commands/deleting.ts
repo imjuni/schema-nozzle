@@ -66,7 +66,10 @@ export async function deleting(
   const targetTypes = await getDeleteTypes({ schemaTypes, options });
   if (targetTypes.type === 'fail') throw targetTypes.fail;
 
-  const schemaIdStyle = getSchemaIdStyle(options);
+  const schemaIdStyle = getSchemaIdStyle({
+    topRef: options.generatorOption.topRef ?? false,
+    useSchemaPath: options.useSchemaPath,
+  });
 
   const needUpdateSchemaIds = await schemasRepo.selects(
     (await Promise.all(targetTypes.pass.map((targetType) => deleteRecord(targetType)))).flat(),
@@ -90,6 +93,8 @@ export async function deleting(
           escapeChar: options.escapeChar,
           rootDirs: options.rootDirs,
           schema: schema.pass,
+          encodeRefs: options.generatorOption.encodeRefs,
+          jsVar: options.jsVar,
         });
 
         generatedContainer.addRecord(...items.schemas);

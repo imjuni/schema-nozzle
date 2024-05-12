@@ -1,6 +1,6 @@
 import { orThrow } from 'my-easy-fp';
 
-const reg = /^([a-zA-Z][A-Za-z0-9$_]*)<([a-zA-Z][A-Za-z0-9$_]*)>$/;
+const reg = /^([a-zA-Z][A-Za-z0-9$_]*)<([a-zA-Z][A-Za-z0-9$_"', ]*)>\[*\]*$/;
 
 export function getGenericType(typeName: string): {
   name: string;

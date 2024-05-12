@@ -81,7 +81,10 @@ export async function adding(
 
     const types = selectedTypes.pass.map((exportedType) => exportedType.typeName);
     const schemaTypes = await summarySchemaTypes(files, types);
-    const schemaIdStyle = getSchemaIdStyle(options);
+    const schemaIdStyle = getSchemaIdStyle({
+      topRef: options.generatorOption.topRef ?? false,
+      useSchemaPath: options.useSchemaPath,
+    });
 
     progress.start(schemaTypes.length, 0, 'adding: ');
 
@@ -100,6 +103,8 @@ export async function adding(
           escapeChar: options.escapeChar,
           rootDirs: options.rootDirs,
           schema: schema.pass,
+          encodeRefs: options.generatorOption.encodeRefs,
+          jsVar: options.jsVar,
         });
 
         generatedContainer.addRecord(...items.schemas);

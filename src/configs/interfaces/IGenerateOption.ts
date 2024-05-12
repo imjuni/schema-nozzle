@@ -1,4 +1,5 @@
 import type { Config } from 'ts-json-schema-generator';
+import type { SetRequired } from 'type-fest';
 
 export interface IGenerateOption {
   /** list of files to generate json-schema from */
@@ -10,11 +11,10 @@ export interface IGenerateOption {
   /** specify the root folder within your schema path */
   rootDirs: string[];
 
+  jsVar: boolean;
+
   /** skip compile error */
   skipError: boolean;
-
-  /** use topRef configuration in generatorOption */
-  topRef: boolean;
 
   /** include path in schema id */
   useSchemaPath: boolean;
@@ -28,5 +28,5 @@ export interface IGenerateOption {
   serverUrl: string;
 
   /** ts-json-schema-generator option file path */
-  generatorOption: Config;
+  generatorOption: SetRequired<Config, 'encodeRefs'>;
 }

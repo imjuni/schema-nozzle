@@ -13,11 +13,14 @@ export interface ISchemaIdParams {
    * */
   filePath?: string;
 
-  /** url-encoding 및 pathId 옵션을 활성화 했을 때 경로에 포함된 encode 되지 않은 문자를 안전하게 변경할 것인지 결정 */
-  isEscape: boolean;
-
   /** pathId 옵션을 활성화 했을 때 path에 relative를 적용하기 위한 root directory */
   rootDirs: string[];
+
+  /** url-encoding 및 pathId 옵션을 활성화 했을 때 경로에 포함된 encode 되지 않은 문자를 안전하게 변경할 것인지 결정 */
+  encoding: {
+    url: boolean;
+    jsVar: boolean;
+  };
 
   escapeChar: string;
 
@@ -28,9 +31,9 @@ export function getSchemaId({
   typeName,
   style,
   filePath,
-  isEscape,
   rootDirs,
   escapeChar,
+  encoding,
 }: ISchemaIdParams): string {
   if (
     style === CE_SCHEMA_ID_GENERATION_STYLE.ID ||
@@ -40,7 +43,7 @@ export function getSchemaId({
       typeName,
       style,
       filePath,
-      isEscape,
+      encoding,
       rootDirs,
       escapeChar,
     });
@@ -52,7 +55,7 @@ export function getSchemaId({
     typeName,
     style,
     filePath,
-    isEscape,
+    encoding,
     rootDirs,
     escapeChar,
   });

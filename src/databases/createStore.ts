@@ -73,7 +73,6 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
       }
 
       const schema = fastCopy(record.schema);
-      schema.id = undefined;
 
       return { ...aggregation, [relativePath]: schema };
     }, {});
@@ -84,9 +83,8 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
   // CE_SCHEMA_ID_GENERATION_STYLE.ID
   const store = tables.reduce<Record<string, AnySchemaObject>>((json, record) => {
     const schema = fastCopy(record.schema);
-    schema.id = undefined;
 
-    return { ...json, [record.typeName]: schema };
+    return { ...json, [record.id]: schema };
   }, {});
 
   return { style: CE_SCHEMA_ID_GENERATION_STYLE.ID, store };

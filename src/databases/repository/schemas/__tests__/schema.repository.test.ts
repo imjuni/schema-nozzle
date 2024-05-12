@@ -9,7 +9,7 @@ import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 beforeAll(async () => {
-  await makeDatabase(pathe.join(process.cwd(), 'examples', 'db-for-test.json'));
+  await makeDatabase(pathe.join($context.tsconfigDirPath, 'db-for-test.json'));
   makeRepository();
 });
 
@@ -51,8 +51,9 @@ describe('SchemaRepository', () => {
 
   it('deletes', async () => {
     const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const prevLen = alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length ?? 0;
     await schemasRepo.deletes(['a', 'b']);
-    expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(4);
+    expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(prevLen - 2);
   });
 
   it('insert', async () => {
