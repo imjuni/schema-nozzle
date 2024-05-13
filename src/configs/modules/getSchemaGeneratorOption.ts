@@ -29,7 +29,6 @@ export async function getSchemaGeneratorOption(
   if (options.generatorOption == null) {
     const generatorOption: SetRequired<Config, 'encodeRefs'> = {
       ...defaultGeneratorOption,
-      topRef: false,
       tsconfig: options.project,
       skipTypeCheck: options.skipError,
     };
@@ -43,7 +42,6 @@ export async function getSchemaGeneratorOption(
       tsconfig: options.project,
       skipTypeCheck: options.skipError,
       ...options.generatorOption,
-      topRef: false,
     };
   }
 
@@ -59,7 +57,6 @@ export async function getSchemaGeneratorOption(
     return {
       ...config,
       encodeRefs,
-      topRef: false,
     };
   }
 
