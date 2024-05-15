@@ -1,6 +1,7 @@
 import { addBuilder } from '#/cli/builders/addBuilder';
 import { builder } from '#/cli/builders/builder';
 import { deleteBuilder } from '#/cli/builders/deleteBuilder';
+import { generateBuilder } from '#/cli/builders/generateBuilder';
 import { refreshBuilder } from '#/cli/builders/refreshBuilder';
 import { truncateBuilder } from '#/cli/builders/truncateBuilder';
 import { addCommandSync } from '#/cli/commands/addCommandSync';
@@ -29,7 +30,7 @@ const addCmd: CommandModule<TAddSchemaOption, TAddSchemaOption> = {
   command: CE_COMMAND_LIST.ADD,
   aliases: CE_COMMAND_LIST.ADD_ALIAS,
   describe: 'add or update json-schema to database file',
-  builder: (argv) => addBuilder(builder(argv)),
+  builder: (argv) => addBuilder(generateBuilder(builder(argv))),
   handler: async (argv) => {
     const spinner = makeSpinner();
     const progressBar = makeProgressBar();
@@ -45,7 +46,7 @@ const deleteCmd: CommandModule<TDeleteSchemaOption, TDeleteSchemaOption> = {
   command: CE_COMMAND_LIST.DEL,
   aliases: CE_COMMAND_LIST.DEL_ALIAS,
   describe: 'delete json-schema from database file',
-  builder: (argv) => deleteBuilder(builder(argv)),
+  builder: (argv) => deleteBuilder(generateBuilder(builder(argv))),
   handler: async (argv) => {
     const spinner = makeSpinner();
     const progressBar = makeProgressBar();
@@ -61,7 +62,7 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   command: CE_COMMAND_LIST.REFRESH,
   aliases: CE_COMMAND_LIST.REFRESH_ALIAS,
   describe: 'regenerate all json-schema in database file',
-  builder: (argv) => refreshBuilder(builder(argv)),
+  builder: (argv) => refreshBuilder(generateBuilder(builder(argv))),
   handler: async (argv) => {
     if (argv.verbose) {
       consola.level = LogLevels.verbose;

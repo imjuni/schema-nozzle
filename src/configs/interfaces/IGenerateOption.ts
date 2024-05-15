@@ -11,20 +11,25 @@ export interface IGenerateOption {
   /** specify the root folder within your schema path */
   rootDirs: string[];
 
+  /**
+   * include the schema path in the schema id to convert the path and schema name to
+   * js variables for use in places like OpenAPI v2 that can't handle paths when the
+   * schema is created, such as
+   */
   jsVar: boolean;
 
   /** skip compile error */
   skipError: boolean;
 
-  /** include path in schema id */
+  /** include schema file path in schema id */
   useSchemaPath: boolean;
 
   /**
-   * URL escaping character
+   * Characters that cannot be used as variable names when converting JS variables Characters to use when converting
    */
   escapeChar: string;
 
-  /** server url */
+  /** enter the server url that will be used as the `$id` in the schema store when the topRef setting is set to true */
   serverUrl: string;
 
   /** ts-json-schema-generator option file path */
