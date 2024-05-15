@@ -19,33 +19,10 @@ export function builder(argv: Argv) {
       type: 'string',
     })
     .option('verbose', {
-      describe: 'verbose',
+      describe: 'verbose message. verbose option disable spinner and progress bar',
+      alias: 'v',
       type: 'boolean',
       default: false,
-    });
-
-  // have no alias option
-  argv
-    .option('cli-logo', {
-      describe: 'display cli logo',
-      type: 'boolean',
-      default: false,
-    })
-    .option('types', {
-      describe: 'TypeScript type of source code. You can use interface, type alias, enum, class',
-      type: 'string',
-      default: [],
-      array: true,
-    })
-    .option('skip-error', {
-      describe: 'skip compile error on project source file',
-      type: 'boolean',
-      default: true,
-    })
-    .option('list-file', {
-      describe: 'schema file listing filename',
-      type: 'string',
-      default: undefined,
     });
 
   return argv;

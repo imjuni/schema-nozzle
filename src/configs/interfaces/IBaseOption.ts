@@ -11,5 +11,6 @@ export interface IBaseOption {
   /** display cli logo */
   cliLogo: boolean;
 
+  /** verbose message. verbose option disable spinner and progress bar */
   verbose: boolean;
 }
