@@ -15,10 +15,14 @@ import { getSchemaIdStyle } from '#/databases/modules/getSchemaIdStyle';
 import { GeneratedContainer } from '#/databases/repository/GeneratedContainer';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import { upserts } from '#/databases/repository/upserts';
+import { container } from '#/modules/containers/container';
+import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
 import { makeIncludeContianer } from '#/modules/scopes/makeIncludeContianer';
+import { asValue } from 'awilix';
+import chalk from 'chalk';
 import consola from 'consola';
 import { unlink } from 'fs/promises';
 import { isError } from 'my-easy-fp';
@@ -41,6 +45,7 @@ export async function refreshing(
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
+    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
     const dbPath = await getDatabaseFilePath(options);
 
     consola.verbose('options: ', JSON.stringify(options, undefined, 2));
@@ -53,8 +58,8 @@ export async function refreshing(
     }
 
     await makeDatabase(dbPath);
+    await makeSchemaGenerator(options.resolved.project, options.generatorOption);
     makeRepository();
-    makeSchemaGenerator(options.resolved.project, options.generatorOption);
 
     const generatedContainer = new GeneratedContainer();
     const filePaths = project
@@ -71,9 +76,12 @@ export async function refreshing(
 
     makeStatementInfoMap(project, schemaFilePaths);
 
+    consola.verbose(chalk.greenBright(`  FILES:  `));
+    consola.verbose(schemaFilePaths.join(', \n'));
+
     const schemaTypes = await summarySchemaTypes(schemaFilePaths);
     const schemaIdStyle = getSchemaIdStyle({
-      topRef: options.generatorOption.topRef ?? false,
+      topRef: options.originTopRef,
       useSchemaPath: options.useSchemaPath,
     });
 
@@ -86,9 +94,17 @@ export async function refreshing(
     await Promise.all(
       schemaTypes.map(async (targetType) => {
         consola.verbose('create json-schema: ', targetType.typeName);
+
         const schema = createJsonSchema(targetType.filePath, targetType.typeName);
 
         if (schema.type === 'fail') {
+          consola.verbose(
+            chalk.red(`  ERROR   `),
+            targetType.filePath,
+            targetType.typeName,
+            schema.fail.message,
+          );
+
           generatedContainer.addErrors(schema.fail);
 
           if (!options.verbose) progress.increment();

@@ -5,7 +5,10 @@ import { makePackageJson } from '#/configs/makePackageJson';
 import { getBaseOption } from '#/configs/modules/getBaseOption';
 import { getGenerateOption } from '#/configs/modules/getGenerateOption';
 import { adding } from '#/modules/cli/commands/adding';
+import { container } from '#/modules/containers/container';
+import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { showLogo } from '@maeum/cli-logo';
+import { asValue } from 'awilix';
 import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
@@ -47,6 +50,8 @@ export async function addCommandSync(cliOptions: TAddSchemaBaseOption): Promise<
       types: [],
       files: [],
     };
+
+    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
 
     await adding(project, tsconfig, options);
   } catch (caught) {

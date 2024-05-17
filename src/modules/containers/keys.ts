@@ -1,6 +1,8 @@
-export const TS_PROJECT_SYMBOL_KEY = Symbol('ts-project-symbol-key');
+export const SYMBOL_KEY_TS_PROJECT = Symbol('symbol-key-ts-project');
 
-export const TS_CONFIG_SYMBOL_KEY = Symbol('ts-config-symbol-key');
+export const SYMBOL_KEY_TS_CONFIG = Symbol('symbol-key-ts-config');
+
+export const SYMBOL_KEY_APP_CONFIG = Symbol('symbol-key-app-config');
 
 export const SCHEMA_GENERATOR_SYMBOL_KEY = Symbol('schema-generator-symbol-key');
 

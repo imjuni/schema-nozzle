@@ -32,6 +32,8 @@ export interface IGenerateOption {
   /** enter the server url that will be used as the `$id` in the schema store when the topRef setting is set to true */
   serverUrl: string;
 
+  originTopRef: boolean;
+
   /** ts-json-schema-generator option file path */
   generatorOption: SetRequired<Config, 'encodeRefs'>;
 }
