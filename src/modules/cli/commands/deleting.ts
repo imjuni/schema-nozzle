@@ -18,11 +18,14 @@ import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepo
 import { upserts } from '#/databases/repository/upserts';
 import { getDeleteTypes } from '#/modules/cli/tools/getDeleteTypes';
 import { container } from '#/modules/containers/container';
-import { REPOSITORY_SCHEMAS_SYMBOL_KEY } from '#/modules/containers/keys';
+import { REPOSITORY_SCHEMAS_SYMBOL_KEY, SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
 import { makeIncludeContianer } from '#/modules/scopes/makeIncludeContianer';
+import { asValue } from 'awilix';
+import chalk from 'chalk';
+import consola from 'consola';
 import fs from 'node:fs';
 import type * as tsm from 'ts-morph';
 import type { getTypeScriptConfig } from 'ts-morph-short';
@@ -40,11 +43,15 @@ export async function deleting(
   if (diagnostics.type === 'fail') throw diagnostics.fail;
   if (diagnostics.pass === false) throw new Error('project compile error');
 
+  container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
   const dbPath = await getDatabaseFilePath(options);
 
+  consola.verbose('options: ', JSON.stringify(options, undefined, 2));
+  consola.verbose('database path: ', dbPath);
+
   await makeDatabase(dbPath);
+  await makeSchemaGenerator(options.resolved.project, options.generatorOption);
   makeRepository();
-  makeSchemaGenerator(options.resolved.project, options.generatorOption);
 
   const generatedContainer = new GeneratedContainer();
   const filePaths = project
@@ -61,6 +68,9 @@ export async function deleting(
 
   makeStatementInfoMap(project, schemaFilePaths);
 
+  consola.verbose(chalk.greenBright(`  FILES:  `));
+  consola.verbose(schemaFilePaths.join(', \n'));
+
   const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
   const schemaTypes = await schemasRepo.types();
   const targetTypes = await getDeleteTypes({ schemaTypes, options });
@@ -71,11 +81,17 @@ export async function deleting(
     useSchemaPath: options.useSchemaPath,
   });
 
+  consola.verbose('schema id generation style: ', schemaIdStyle);
+
   const needUpdateSchemaIds = await schemasRepo.selects(
     (await Promise.all(targetTypes.pass.map((targetType) => deleteRecord(targetType)))).flat(),
   );
 
-  progress.start(schemaTypes.length, 0, 'deleting: ');
+  consola.verbose('schema id generation style: ', schemaIdStyle);
+
+  if (!options.verbose) progress.start(schemaTypes.length, 0, 'deleting: ');
+
+  consola.verbose(`Refreshing schema store, ${schemaTypes.length} schemas`);
 
   await Promise.all(
     needUpdateSchemaIds.map(async (record) => {
@@ -83,8 +99,16 @@ export async function deleting(
         const schema = createJsonSchema(record.filePath, record.typeName);
 
         if (schema.type === 'fail') {
+          consola.verbose(
+            chalk.red(`  ERROR   `),
+            schema.fail.filePath,
+            schema.fail.typeName,
+            schema.fail.message,
+          );
+
           generatedContainer.addErrors(schema.fail);
-          progress.increment();
+
+          if (!options.verbose) progress.increment();
           return;
         }
 
@@ -99,9 +123,12 @@ export async function deleting(
 
         generatedContainer.addRecord(...items.schemas);
         generatedContainer.addRefs(...items.refs);
+        if (!options.verbose) progress.increment();
       }
     }),
   );
+
+  if (!options.verbose) progress.stop();
 
   await upserts(generatedContainer);
 

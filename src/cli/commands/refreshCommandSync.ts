@@ -11,8 +11,9 @@ import { getBaseOption } from '#/configs/modules/getBaseOption';
 import { getGenerateOption } from '#/configs/modules/getGenerateOption';
 import { refreshing } from '#/modules/cli/commands/refreshing';
 import { container } from '#/modules/containers/container';
-import { SPINNER_SYMBOL_KEY } from '#/modules/containers/keys';
+import { SPINNER_SYMBOL_KEY, SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { showLogo } from '@maeum/cli-logo';
+import { asValue } from 'awilix';
 import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
@@ -55,6 +56,8 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
       projectDir: resolvedPaths.projectDir,
       resolved: resolvedPaths,
     };
+
+    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
 
     await refreshing(project, tsconfig, options);
   } catch (caught) {

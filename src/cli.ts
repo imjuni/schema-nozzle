@@ -64,15 +64,17 @@ const refreshCmd: CommandModule<TRefreshSchemaOption, TRefreshSchemaOption> = {
   describe: 'regenerate all json-schema in database file',
   builder: (argv) => refreshBuilder(generateBuilder(builder(argv))),
   handler: async (argv) => {
-    if (argv.verbose) {
-      consola.level = LogLevels.verbose;
-    }
-
     const spinner = makeSpinner();
     const progressBar = makeProgressBar();
 
-    spinner.isEnable = true;
-    progressBar.isEnable = true;
+    if (argv.verbose) {
+      consola.level = LogLevels.verbose;
+      spinner.isEnable = false;
+      progressBar.isEnable = false;
+    } else {
+      spinner.isEnable = true;
+      progressBar.isEnable = true;
+    }
 
     await refreshCommandSync(argv);
   },

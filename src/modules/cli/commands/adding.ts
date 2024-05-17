@@ -17,11 +17,16 @@ import { makeRepository } from '#/databases/repository/makeRepository';
 import { upserts } from '#/databases/repository/upserts';
 import { getAddFiles } from '#/modules/cli/tools/getAddFiles';
 import { getAddTypes } from '#/modules/cli/tools/getAddTypes';
+import { container } from '#/modules/containers/container';
+import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
 import { makeIncludeContianer } from '#/modules/scopes/makeIncludeContianer';
 import { getRelativeCwd } from '#/tools/getRelativeCwd';
+import { asValue } from 'awilix';
+import chalk from 'chalk';
+import consola from 'consola';
 import fs from 'fs';
 import { isError } from 'my-easy-fp';
 import type * as tsm from 'ts-morph';
@@ -41,11 +46,15 @@ export async function adding(
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
+    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
     const dbPath = await getDatabaseFilePath(options);
 
+    consola.verbose('options: ', JSON.stringify(options, undefined, 2));
+    consola.verbose('database path: ', dbPath);
+
     await makeDatabase(dbPath);
+    await makeSchemaGenerator(options.resolved.project, options.generatorOption);
     makeRepository();
-    makeSchemaGenerator(options.resolved.project, options.generatorOption);
 
     const generatedContainer = new GeneratedContainer();
     const filePaths = project
@@ -61,6 +70,9 @@ export async function adding(
       .filter((filename) => !excludeContainer.isExclude(filename));
 
     makeStatementInfoMap(project, schemaFilePaths);
+
+    consola.verbose(chalk.greenBright(`  FILES:  `));
+    consola.verbose(schemaFilePaths.join(', \n'));
 
     const selectedFiles = await getAddFiles(
       options,
@@ -86,15 +98,29 @@ export async function adding(
       useSchemaPath: options.useSchemaPath,
     });
 
-    progress.start(schemaTypes.length, 0, 'adding: ');
+    consola.verbose('schema id generation style: ', schemaIdStyle);
+
+    if (!options.verbose) progress.start(schemaTypes.length, 0, 'adding: ');
+
+    consola.verbose(`Refreshing schema store, ${schemaTypes.length} schemas`);
 
     await Promise.all(
-      schemaTypes.map(async (selectedType) => {
-        const schema = createJsonSchema(selectedType.filePath, selectedType.typeName);
+      schemaTypes.map(async (targetType) => {
+        consola.verbose('create json-schema: ', targetType.typeName);
+
+        const schema = createJsonSchema(targetType.filePath, targetType.typeName);
 
         if (schema.type === 'fail') {
+          consola.verbose(
+            chalk.red(`  ERROR   `),
+            targetType.filePath,
+            targetType.typeName,
+            schema.fail.message,
+          );
+
           generatedContainer.addErrors(schema.fail);
-          progress.increment();
+
+          if (!options.verbose) progress.increment();
           return;
         }
 
@@ -109,11 +135,11 @@ export async function adding(
 
         generatedContainer.addRecord(...items.schemas);
         generatedContainer.addRefs(...items.refs);
-        progress.increment();
+        if (!options.verbose) progress.increment();
       }),
     );
 
-    progress.stop();
+    if (!options.verbose) progress.stop();
 
     await upserts(generatedContainer);
 

@@ -8,7 +8,10 @@ import { makePackageJson } from '#/configs/makePackageJson';
 import { getBaseOption } from '#/configs/modules/getBaseOption';
 import { getGenerateOption } from '#/configs/modules/getGenerateOption';
 import { deleting } from '#/modules/cli/commands/deleting';
+import { container } from '#/modules/containers/container';
+import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { showLogo } from '@maeum/cli-logo';
+import { asValue } from 'awilix';
 import { isError } from 'my-easy-fp';
 import { ProjectContainer, getTypeScriptConfig, getTypeScriptProject } from 'ts-morph-short';
 
@@ -49,6 +52,8 @@ export async function deleteCommandSync(cliOptions: TDeleteSchemaBaseOption) {
       resolved: resolvedPaths,
       types: [],
     };
+
+    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
 
     await deleting(project, tsconfig, options);
   } catch (caught) {
