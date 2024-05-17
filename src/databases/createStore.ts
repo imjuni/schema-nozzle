@@ -36,6 +36,10 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
       },
     );
 
+    if (store.$id == null || store.$id === '') {
+      delete store.$id;
+    }
+
     return { style, store };
   }
 
@@ -60,6 +64,10 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
         $defs: {},
       },
     );
+
+    if (store.$id == null || store.$id === '') {
+      delete store.$id;
+    }
 
     return { style, store };
   }
