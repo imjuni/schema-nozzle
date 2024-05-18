@@ -34,7 +34,7 @@ describe('IncludeContainer', () => {
       options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
     });
 
-    const r01 = container.isInclude('src/databases/deleteDatabaseItem.ts');
+    const r01 = container.isInclude('src/databases/createRecord.ts');
     const r02 = container.isInclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
     const r03 = container.isInclude(pathe.join(process.cwd(), 'src/tools/getRatioNumber.ts'));
     const r04 = container.isInclude(pathe.join(process.cwd(), 'src/compilers/getExportedFiles.ts'));

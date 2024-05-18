@@ -1,5 +1,5 @@
+import { getJsDocTags } from '#/compilers/comments/getJsDocTags';
 import { getExportedName } from '#/compilers/getExportedName';
-import { getJsDocTags } from '#/compilers/getJsDocTags';
 import { getResolvedPaths } from '#/configs/getResolvedPaths';
 import pathe from 'pathe';
 import type * as tsm from 'ts-morph';
