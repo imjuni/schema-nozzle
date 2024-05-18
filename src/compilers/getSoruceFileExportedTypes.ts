@@ -1,6 +1,7 @@
+import { getJsDocTag } from '#/compilers/comments/getJsDocTag';
+import { getJsDocTags } from '#/compilers/comments/getJsDocTags';
 import { getExportedName } from '#/compilers/getExportedName';
 import type { getExportedTypes } from '#/compilers/getExportedTypes';
-import { getJsDocTags } from '#/compilers/getJsDocTags';
 import { CE_JSDOC_EXTENDS } from '#/modules/const-enum/CE_JSDOC_EXTENDS';
 import * as tsm from 'ts-morph';
 
@@ -22,8 +23,8 @@ export function getSoruceFileExportedTypes(
       const tags = getJsDocTags(exportedDeclaration);
       const ignoreTag = tags.find(
         (tag) =>
-          tag.getTagName() === CE_JSDOC_EXTENDS.IGNORE_TAG ||
-          tag.getTagName() === CE_JSDOC_EXTENDS.IGNORE_TAG_ALIAS,
+          getJsDocTag(tag.getTagName()) === getJsDocTag(CE_JSDOC_EXTENDS.IGNORE_TAG) ||
+          getJsDocTag(tag.getTagName()) === getJsDocTag(CE_JSDOC_EXTENDS.IGNORE_TAG_ALIAS),
       );
       return ignoreTag == null;
     })

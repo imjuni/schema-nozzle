@@ -34,37 +34,39 @@ describe('ExcludeContainer', () => {
       inlineExcludedFiles: [
         {
           commentCode: 'inline exclude test',
-          tag: 'ctix-exclude',
+          tag: 'schema-nozzle-exclude',
           pos: {
             line: 1,
             start: 1,
             column: 1,
           },
           workspaces: [],
-          filePath: 'example/type03/ComparisonCls.tsx',
+          filePath: 'src/databases/createRecord.ts',
         },
         {
           commentCode: 'inline exclude test',
-          tag: 'ctix-exclude',
+          tag: 'schema-nozzle-exclude',
           pos: {
             line: 1,
             start: 1,
             column: 1,
           },
           workspaces: [],
-          filePath: pathe.resolve('example/type03/HandsomelyCls.tsx'),
+          filePath: pathe.resolve('src/compilers/getExportedFiles.ts'),
         },
       ],
       options: { absolute: true, ignore: defaultExclude, cwd: process.cwd() },
     });
 
-    const r01 = container.isExclude('src/databases/deleteDatabaseItem.ts');
+    const r01 = container.isExclude('src/databases/createRecord.ts');
     const r02 = container.isExclude('src/modules/prompts/getAddMultipleFilesFromPrompt.ts');
     const r03 = container.isExclude(pathe.join(process.cwd(), 'src/tools/getRatioNumber.ts'));
     const r04 = container.isExclude(pathe.join(process.cwd(), 'src/compilers/getExportedFiles.ts'));
-    const r05 = container.isExclude(pathe.join(process.cwd(), 'src/compilers/getJsDocTags.ts'));
+    const r05 = container.isExclude(
+      pathe.join(process.cwd(), 'src/compilers/comments/getJsDocTags.ts'),
+    );
 
-    expect(r01).toBeFalsy();
+    expect(r01).toBeTruthy();
     expect(r02).toBeTruthy();
     expect(r03).toBeFalsy();
     expect(r04).toBeTruthy();

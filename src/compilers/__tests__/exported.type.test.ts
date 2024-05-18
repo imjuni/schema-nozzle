@@ -63,8 +63,6 @@ describe('getExportedTypes', () => {
       'IProfessorEntity',
       'IReqReadStudentQuerystring',
       'IReqReadStudentParam',
-      'IReqReadStudentIgnoreTest',
-      'IReqReadStudentIgnoreAliasTest',
       'ISlackMessageBotProfile',
       'ISlackMessageBody',
       'IStudentDto',
