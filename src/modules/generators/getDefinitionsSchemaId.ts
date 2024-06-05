@@ -1,3 +1,4 @@
+import type { getKeys } from '#/databases/getKeys';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { replaceId } from '#/databases/modules/replaceId';
 import { getEscaping } from '#/modules/generators/getEscaping';
@@ -8,6 +9,8 @@ import { getDirnameSync } from 'my-node-fp';
 import path from 'node:path';
 
 export interface IGetDefinitionsSchemaId {
+  keys: ReturnType<typeof getKeys>;
+
   /**
    * type-name of the schema
    * */
@@ -35,6 +38,7 @@ export interface IGetDefinitionsSchemaId {
 }
 
 export function getDefinitionsSchemaId({
+  keys,
   typeName,
   filePath,
   rootDirs,
@@ -55,7 +59,7 @@ export function getDefinitionsSchemaId({
 
     const paths = [
       '#',
-      '$defs',
+      keys.def,
       isExternal ? 'external' : undefined,
       isExternal ? undefined : relativePath,
       escaping(typeName, escapeChar),
@@ -65,14 +69,14 @@ export function getDefinitionsSchemaId({
   }
 
   if (isExternal) {
-    const paths = ['#', '$defs', `external-${escaping(replaceId(typeName), escapeChar)}`].filter(
+    const paths = ['#', keys.def, `external-${escaping(replaceId(typeName), escapeChar)}`].filter(
       (element) => element != null,
     );
 
     return `${paths.join(path.posix.sep)}`;
   }
 
-  const paths = ['#', '$defs', escaping(replaceId(typeName), escapeChar)].filter(
+  const paths = ['#', keys.def, escaping(replaceId(typeName), escapeChar)].filter(
     (element) => element != null,
   );
 

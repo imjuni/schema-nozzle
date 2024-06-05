@@ -23,7 +23,7 @@ describe('createRecord', () => {
       filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
       exportedType: 'IProfessorEntity',
       schema: {
-        $schema: 'http://json-schema.org/draft-07/schema#',
+        $schema: 'http://json-schema.org/draft-08/schema#',
         type: 'object',
         properties: {
           id: {
@@ -63,6 +63,7 @@ describe('createRecord', () => {
 
   it('definitions with path that have not a definitions in scheam', () => {
     const r01 = createRecord({
+      draft: 8,
       escapeChar: '_',
       rootDirs: [$context.tsconfigDirPath],
       encodeRefs: false,
@@ -87,7 +88,7 @@ describe('createRecord', () => {
           filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
           relativePath: 'IProfessorEntity',
           schema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: 'http://json-schema.org/draft-08/schema#',
             type: 'object',
             properties: {
               id: {
@@ -122,6 +123,7 @@ describe('createRecord', () => {
 
   it('definitions with path that have a definitions in scheam', () => {
     const r01 = createRecord({
+      draft: 8,
       escapeChar: '_',
       rootDirs: [$context.tsconfigDirPath],
       encodeRefs: false,
@@ -146,7 +148,7 @@ describe('createRecord', () => {
           filePath: pathe.join($context.tsconfigDirPath, 'IProfessorEntity.ts'),
           relativePath: 'IProfessorEntity',
           schema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: 'http://json-schema.org/draft-08/schema#',
             type: 'object',
             properties: {
               id: {
@@ -179,7 +181,7 @@ describe('createRecord', () => {
           filePath: pathe.join($context.tsconfigDirPath, 'const-enum', 'CE_MAJOR.ts'),
           relativePath: 'const-enum/CE_MAJOR',
           schema: {
-            $schema: 'http://json-schema.org/draft-07/schema#',
+            $schema: 'http://json-schema.org/draft-08/schema#',
             $id: '#/$defs/const-enum/CE_MAJOR',
             title: 'CE_MAJOR',
             type: 'string',

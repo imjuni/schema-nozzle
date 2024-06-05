@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { IGenerateOption } from '#/configs/interfaces/IGenerateOption';
+import { getKeys } from '#/databases/getKeys';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
 import { container } from '#/modules/containers/container';
@@ -8,17 +10,25 @@ import { set } from 'dot-prop';
 import fastCopy from 'fast-copy';
 import path from 'path/posix';
 
-export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERATION_STYLE) {
+interface ICreateStoreProps {
+  draft: IGenerateOption['draft'];
+  serverUrl: string;
+  style: CE_SCHEMA_ID_GENERATION_STYLE;
+}
+
+export async function createStore({ draft, serverUrl, style }: ICreateStoreProps) {
   const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
   const tables = await schemaRepo.tables();
+  const keys = getKeys(draft);
 
   if (style === CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS_WITH_PATH) {
     const store = tables.reduce<SchemaObject>(
       (aggregation, record) => {
         const schema = fastCopy(record.schema);
-        schema.id = undefined;
-        schema.$id = undefined;
-        const { $defs } = aggregation;
+        delete schema.$id;
+        delete schema.id;
+
+        const $defs = aggregation[keys.def];
 
         if ($defs == null || record.relativePath == null) {
           return aggregation;
@@ -28,11 +38,11 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
 
         set($defs, storePath, schema);
 
-        return { ...aggregation, $defs };
+        return { ...aggregation, [keys.def]: $defs };
       },
       {
-        $id: serverUrl,
-        $defs: {},
+        [keys.id]: serverUrl,
+        [keys.def]: {},
       },
     );
 
@@ -47,9 +57,10 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
     const store = tables.reduce<SchemaObject>(
       (aggregation, record) => {
         const schema = fastCopy(record.schema);
-        schema.id = undefined;
-        schema.$id = undefined;
-        const { $defs } = aggregation;
+        delete schema.$id;
+        delete schema.id;
+
+        const $defs = aggregation[keys.def];
 
         if ($defs == null || record.relativePath == null) {
           return aggregation;
@@ -57,11 +68,11 @@ export async function createStore(serverUrl: string, style: CE_SCHEMA_ID_GENERAT
 
         set($defs, record.typeName, schema);
 
-        return { ...aggregation, $defs };
+        return { ...aggregation, [keys.def]: $defs };
       },
       {
-        $id: serverUrl,
-        $defs: {},
+        [keys.id]: serverUrl,
+        [keys.def]: {},
       },
     );
 

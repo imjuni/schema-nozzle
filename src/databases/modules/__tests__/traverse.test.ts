@@ -136,6 +136,7 @@ describe('traverser', () => {
     traverser({
       ...cloned,
       $$options: {
+        keys: { id: '$id', def: 'definitions' },
         style: CE_SCHEMA_ID_GENERATION_STYLE.ID,
         escapeChar: '_',
         jsVar: false,
@@ -187,6 +188,7 @@ describe('traverser', () => {
     traverser({
       ...cloned,
       $$options: {
+        keys: { id: '$id', def: 'definitions' },
         style: CE_SCHEMA_ID_GENERATION_STYLE.ID,
         escapeChar: '_',
         jsVar: false,

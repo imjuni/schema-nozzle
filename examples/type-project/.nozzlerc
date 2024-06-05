@@ -7,17 +7,18 @@
 
   "cli-logo": true,
 
+  "draft": 7,
+
   "include": ["*.ts"],
 
-  "topRef": false,
-
-  "useSchemaPath": false,
+  "useSchemaPath": true,
 
   "jsVar": false,
 
-  "rootDirs": ["examples"],
+  "rootDirs": ["examples/type-project"],
 
   "generatorOption": {
+    "topRef": true,
     "additionalProperties": true,
     "encodeRefs": false,
     "extraTags": ["example"]

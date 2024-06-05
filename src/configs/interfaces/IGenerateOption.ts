@@ -34,6 +34,9 @@ export interface IGenerateOption {
 
   originTopRef: boolean;
 
+  /** json-schema version */
+  draft: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
   /** ts-json-schema-generator option file path */
   generatorOption: SetRequired<Config, 'encodeRefs'>;
 }
