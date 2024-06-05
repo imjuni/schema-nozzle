@@ -16,6 +16,10 @@ export function getInitialOption(output: string, project: string, includeGlob: s
   // use checkbox with multiple selections
   "multiple": true,
 
+  // json-schema draft version
+  // recommand using draft 7
+  "draft": 7,
+
   // display cli logo
   "cli-logo": false,
 

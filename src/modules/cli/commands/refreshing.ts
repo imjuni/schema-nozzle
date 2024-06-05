@@ -16,7 +16,7 @@ import { GeneratedContainer } from '#/databases/repository/GeneratedContainer';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import { upserts } from '#/databases/repository/upserts';
 import { container } from '#/modules/containers/container';
-import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
+import { $YMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
@@ -45,7 +45,7 @@ export async function refreshing(
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
+    container.register($YMBOL_KEY_APP_CONFIG, asValue(options));
     const dbPath = await getDatabaseFilePath(options);
 
     consola.verbose('options: ', JSON.stringify(options, undefined, 2));

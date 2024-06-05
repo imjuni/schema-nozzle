@@ -2,10 +2,10 @@ import { getExportedTypeMap } from '#/compilers/getExportedTypeMap';
 import { getFileImportInfoMap } from '#/compilers/getFileImportInfoMap';
 import { container } from '#/modules/containers/container';
 import {
-  STATEMENT_EXPORT_MAP_SYMBOL_KEY,
-  STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY,
-  STATEMENT_FILE_IMPORT_MAP_SYMBOL_KEY,
-  STATEMENT_IMPORT_MAP_SYMBOL_KEY,
+  $YMBOL_KEY_STATEMENT_EXPORT_MAP,
+  $YMBOL_KEY_STATEMENT_FILE_EXPORT_MAP,
+  $YMBOL_KEY_STATEMENT_FILE_IMPORT_MAP,
+  $YMBOL_KEY_STATEMENT_IMPORT_MAP,
 } from '#/modules/containers/keys';
 import { asValue } from 'awilix';
 import type * as tsm from 'ts-morph';
@@ -16,11 +16,11 @@ export function makeStatementInfoMap(project: tsm.Project, filePaths: string[]) 
   const fileImportInfoMap = getFileImportInfoMap(importInfoMap);
   const { exportedTypeMap, fileExportedTypeMap } = getExportedTypeMap(project, filePaths);
 
-  container.register(STATEMENT_IMPORT_MAP_SYMBOL_KEY, asValue(importInfoMap));
-  container.register(STATEMENT_FILE_IMPORT_MAP_SYMBOL_KEY, asValue(fileImportInfoMap));
+  container.register($YMBOL_KEY_STATEMENT_IMPORT_MAP, asValue(importInfoMap));
+  container.register($YMBOL_KEY_STATEMENT_FILE_IMPORT_MAP, asValue(fileImportInfoMap));
 
-  container.register(STATEMENT_EXPORT_MAP_SYMBOL_KEY, asValue(exportedTypeMap));
-  container.register(STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY, asValue(fileExportedTypeMap));
+  container.register($YMBOL_KEY_STATEMENT_EXPORT_MAP, asValue(exportedTypeMap));
+  container.register($YMBOL_KEY_STATEMENT_FILE_EXPORT_MAP, asValue(fileExportedTypeMap));
 
   return importInfoMap;
 }

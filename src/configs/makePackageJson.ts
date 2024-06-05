@@ -1,5 +1,5 @@
 import { container } from '#/modules/containers/container';
-import { NOZZLE_PACKAGE_JSON_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_NOZZLE_PACKAGE_JSON } from '#/modules/containers/keys';
 import { getCwd } from '#/tools/getCwd';
 import { asValue } from 'awilix';
 import { sync } from 'find-up';
@@ -17,5 +17,5 @@ export function makePackageJson() {
   const packageJsonBuf = fs.readFileSync(packageJsonPath);
   const packageJson = parse(packageJsonBuf.toString()) as PackageJson;
 
-  container.register(NOZZLE_PACKAGE_JSON_SYMBOL_KEY, asValue(packageJson));
+  container.register($YMBOL_KEY_NOZZLE_PACKAGE_JSON, asValue(packageJson));
 }

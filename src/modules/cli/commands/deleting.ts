@@ -18,7 +18,7 @@ import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepo
 import { upserts } from '#/databases/repository/upserts';
 import { getDeleteTypes } from '#/modules/cli/tools/getDeleteTypes';
 import { container } from '#/modules/containers/container';
-import { REPOSITORY_SCHEMAS_SYMBOL_KEY, SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
+import { $YMBOL_KEY_APP_CONFIG, $YMBOL_KEY_REPOSITORY_SCHEMAS } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
@@ -43,7 +43,7 @@ export async function deleting(
   if (diagnostics.type === 'fail') throw diagnostics.fail;
   if (diagnostics.pass === false) throw new Error('project compile error');
 
-  container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
+  container.register($YMBOL_KEY_APP_CONFIG, asValue(options));
   const dbPath = await getDatabaseFilePath(options);
 
   consola.verbose('options: ', JSON.stringify(options, undefined, 2));
@@ -71,7 +71,7 @@ export async function deleting(
   consola.verbose(chalk.greenBright(`  FILES:  `));
   consola.verbose(schemaFilePaths.join(', \n'));
 
-  const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+  const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
   const schemaTypes = await schemasRepo.types();
   const targetTypes = await getDeleteTypes({ schemaTypes, options });
   if (targetTypes.type === 'fail') throw targetTypes.fail;

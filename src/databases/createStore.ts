@@ -4,7 +4,7 @@ import { getKeys } from '#/databases/getKeys';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
 import { container } from '#/modules/containers/container';
-import { REPOSITORY_SCHEMAS_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_REPOSITORY_SCHEMAS } from '#/modules/containers/keys';
 import type { AnySchemaObject, SchemaObject } from 'ajv';
 import { set } from 'dot-prop';
 import fastCopy from 'fast-copy';
@@ -17,7 +17,7 @@ interface ICreateStoreProps {
 }
 
 export async function createStore({ draft, serverUrl, style }: ICreateStoreProps) {
-  const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+  const schemaRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
   const tables = await schemaRepo.tables();
   const keys = getKeys(draft);
 

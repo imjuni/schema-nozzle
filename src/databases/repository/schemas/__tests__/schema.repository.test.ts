@@ -3,7 +3,7 @@ import { makeDatabase } from '#/databases/files/makeDatabase';
 import { makeRepository } from '#/databases/repository/makeRepository';
 import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
 import { container } from '#/modules/containers/container';
-import { REPOSITORY_SCHEMAS_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_REPOSITORY_SCHEMAS } from '#/modules/containers/keys';
 import alasql from 'alasql';
 import pathe from 'pathe';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -15,7 +15,7 @@ beforeAll(async () => {
 
 describe('SchemaRepository', () => {
   it('types', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const types = await schemasRepo.types();
     expect(types).toMatchObject([
       { id: 'a', filePath: undefined },
@@ -28,19 +28,19 @@ describe('SchemaRepository', () => {
   });
 
   it('select', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const r01 = await schemasRepo.select('a');
     expect(r01).toMatchObject({ id: 'a', schema: { id: 'a' }, typeName: 'tA' });
   });
 
   it('select schemas, but cannot found record', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const r01 = await schemasRepo.select('z');
     expect(r01).toBeUndefined();
   });
 
   it('selects', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const r01 = await schemasRepo.selects(['a', 'b']);
 
     expect(r01).toMatchObject([
@@ -50,14 +50,14 @@ describe('SchemaRepository', () => {
   });
 
   it('deletes', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const prevLen = alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length ?? 0;
     await schemasRepo.deletes(['a', 'b']);
     expect(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length).toEqual(prevLen - 2);
   });
 
   it('insert', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const inserted = await schemasRepo.insert({
       id: 'x',
       schema: { id: 'x' },
@@ -72,7 +72,7 @@ describe('SchemaRepository', () => {
   });
 
   it('upsert, inserted', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     await schemasRepo.upsert({
       id: 'd',
       schema: { id: 'd', name: 'my-name-d-d-d-d' },
@@ -92,7 +92,7 @@ describe('SchemaRepository', () => {
   });
 
   it('upsert, updated', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const inserted = await schemasRepo.upsert({
       id: 'd',
       schema: { id: 'd', name: 'my-name-d' },
@@ -109,7 +109,7 @@ describe('SchemaRepository', () => {
   });
 
   it('tables, full-scan', async () => {
-    const schemasRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
+    const schemasRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
     const tables = await schemasRepo.tables();
     expect(tables.length).toEqual(alasql.tables[CE_ALASQL_TABLE_NAME.SCHEMA]?.data.length);
   });

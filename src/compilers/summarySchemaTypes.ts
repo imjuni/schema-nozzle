@@ -2,14 +2,14 @@ import type { getExportedTypeMap } from '#/compilers/getExportedTypeMap';
 import type { IExportedTypeInfo } from '#/compilers/interfaces/IExportedTypeInfo';
 import { container } from '#/modules/containers/container';
 import {
-  STATEMENT_EXPORT_MAP_SYMBOL_KEY,
-  STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY,
+  $YMBOL_KEY_STATEMENT_EXPORT_MAP,
+  $YMBOL_KEY_STATEMENT_FILE_EXPORT_MAP,
 } from '#/modules/containers/keys';
 
 export async function summarySchemaTypes(filePaths: string[], typeNames?: string[]) {
   const fileExportedInfoMap = container.resolve<
     ReturnType<typeof getExportedTypeMap>['fileExportedTypeMap']
-  >(STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY);
+  >($YMBOL_KEY_STATEMENT_FILE_EXPORT_MAP);
 
   if (typeNames == null) {
     return filePaths
@@ -27,7 +27,7 @@ export async function summarySchemaTypes(filePaths: string[], typeNames?: string
 
   const exportedInfoMap = container.resolve<
     ReturnType<typeof getExportedTypeMap>['exportedTypeMap']
-  >(STATEMENT_EXPORT_MAP_SYMBOL_KEY);
+  >($YMBOL_KEY_STATEMENT_EXPORT_MAP);
 
   return typeNames
     .map((typeName) => exportedInfoMap.get(typeName))
