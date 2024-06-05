@@ -1,6 +1,6 @@
 import { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { container } from '#/modules/containers/container';
-import { SCHEMA_GENERATOR_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_CHEMA_GENERATOR } from '#/modules/containers/keys';
 import type { AnySchemaObject } from 'ajv';
 import { isError } from 'my-easy-fp';
 import { fail, pass, type PassFailEither } from 'my-only-either';
@@ -15,7 +15,7 @@ export function createJsonSchema(
 > {
   try {
     const generator = container.resolve<ReturnType<typeof createGenerator>>(
-      SCHEMA_GENERATOR_SYMBOL_KEY,
+      $YMBOL_KEY_CHEMA_GENERATOR,
     );
     const schema: AnySchemaObject = generator.createSchema(exportedType);
     return pass({ filePath, exportedType, schema });

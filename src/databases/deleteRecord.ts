@@ -2,13 +2,13 @@ import type { RefsRepository } from '#/databases/repository/refs/RefsRepository'
 import type { SchemaRepository } from '#/databases/repository/schemas/SchemaRepository';
 import { container } from '#/modules/containers/container';
 import {
-  REPOSITORY_REFS_SYMBOL_KEY,
-  REPOSITORY_SCHEMAS_SYMBOL_KEY,
+  $YMBOL_KEY_REPOSITORY_REFS,
+  $YMBOL_KEY_REPOSITORY_SCHEMAS,
 } from '#/modules/containers/keys';
 
 export async function deleteRecord(typeName: string) {
-  const schemaRepo = container.resolve<SchemaRepository>(REPOSITORY_SCHEMAS_SYMBOL_KEY);
-  const refsRepo = container.resolve<RefsRepository>(REPOSITORY_REFS_SYMBOL_KEY);
+  const schemaRepo = container.resolve<SchemaRepository>($YMBOL_KEY_REPOSITORY_SCHEMAS);
+  const refsRepo = container.resolve<RefsRepository>($YMBOL_KEY_REPOSITORY_REFS);
 
   const record = await schemaRepo.select(typeName);
 

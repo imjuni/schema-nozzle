@@ -3,7 +3,7 @@ import { makeSpinner } from '#/cli/display/makeSpinner';
 import type { TTruncateSchemaOption } from '#/configs/interfaces/TTruncateSchemaOption';
 import { truncating } from '#/modules/cli/commands/truncating';
 import { container } from '#/modules/containers/container';
-import { SPINNER_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_SPINNER } from '#/modules/containers/keys';
 import { showLogo } from '@maeum/cli-logo';
 
 import { isError } from 'my-easy-fp';
@@ -11,7 +11,7 @@ import { isError } from 'my-easy-fp';
 export async function truncateCommandSync(options: TTruncateSchemaOption) {
   makeSpinner();
 
-  const spinner = container.resolve<Spinner>(SPINNER_SYMBOL_KEY);
+  const spinner = container.resolve<Spinner>($YMBOL_KEY_SPINNER);
 
   try {
     if (options.cliLogo) {

@@ -2,8 +2,8 @@ import { CE_ALASQL_TABLE_NAME } from '#/databases/const-enum/CE_ALASQL_TABLE_NAM
 import { readDatabaseFile } from '#/databases/files/readDatabaseFile';
 import { container } from '#/modules/containers/container';
 import {
-  SCHEMA_DATABASE_SYMBOL_KEY,
-  SCHEMA_ORIGIN_DATABASE_SYMBOL_KEY,
+  $YMBOL_KEY_SCHEMA_DATABASE,
+  $YMBOL_KEY_SCHEMA_ORIGIN_DATABASE,
 } from '#/modules/containers/keys';
 import alasql from 'alasql';
 import { asValue } from 'awilix';
@@ -40,8 +40,8 @@ export async function makeDatabase(filePath: string) {
 
   // 원본 데이터는 복제되어 테이블에 보관되는 것을 보인다, 그래서 삭제 테스트 후 둘을 비교하면 다른 결과가 나온다
   // alasql create clone data from origin because I did delete query after compare two data sets that is different
-  container.register(SCHEMA_DATABASE_SYMBOL_KEY, asValue(alasql.tables));
-  container.register(SCHEMA_ORIGIN_DATABASE_SYMBOL_KEY, asValue(data));
+  container.register($YMBOL_KEY_SCHEMA_DATABASE, asValue(alasql.tables));
+  container.register($YMBOL_KEY_SCHEMA_ORIGIN_DATABASE, asValue(data));
 
   return data;
 }

@@ -1,5 +1,5 @@
 import { container } from '#/modules/containers/container';
-import { SCHEMA_GENERATOR_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_CHEMA_GENERATOR } from '#/modules/containers/keys';
 import { asValue } from 'awilix';
 import chalk from 'chalk';
 import consola from 'consola';
@@ -27,5 +27,5 @@ export async function makeSchemaGenerator(project: string, options: Config) {
   )) as typeof import('ts-json-schema-generator');
   const generator = tjsg.createGenerator(generatorOptions);
 
-  container.register(SCHEMA_GENERATOR_SYMBOL_KEY, asValue(generator));
+  container.register($YMBOL_KEY_CHEMA_GENERATOR, asValue(generator));
 }

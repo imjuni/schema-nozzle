@@ -2,7 +2,7 @@ import type { getInlineExcludedFiles } from '#/compilers/comments/getInlineExclu
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import { container } from '#/modules/containers/container';
-import { EXCLUDE_CONTAINER_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_EXCLUDE_CONTAINER } from '#/modules/containers/keys';
 import { getExcludePatterns } from '#/modules/files/getExcludePatterns';
 import { ExcludeContainer } from '#/modules/scopes/ExcludeContainer';
 import { defaultExclude } from '#/modules/scopes/defaultExclude';
@@ -24,7 +24,7 @@ export function makeExcludeContainer(
     inlineExcludedFiles,
   });
 
-  container.register(EXCLUDE_CONTAINER_SYMBOL_KEY, asValue(excludeContainer));
+  container.register($YMBOL_KEY_EXCLUDE_CONTAINER, asValue(excludeContainer));
 
   return excludeContainer;
 }

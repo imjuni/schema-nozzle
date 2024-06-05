@@ -11,7 +11,7 @@ import { getBaseOption } from '#/configs/modules/getBaseOption';
 import { getGenerateOption } from '#/configs/modules/getGenerateOption';
 import { refreshing } from '#/modules/cli/commands/refreshing';
 import { container } from '#/modules/containers/container';
-import { SPINNER_SYMBOL_KEY, SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
+import { $YMBOL_KEY_APP_CONFIG, $YMBOL_KEY_SPINNER } from '#/modules/containers/keys';
 import { showLogo } from '@maeum/cli-logo';
 import { asValue } from 'awilix';
 import { isError } from 'my-easy-fp';
@@ -21,7 +21,7 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
   makeProgressBar();
   makeSpinner();
 
-  const spinner = container.resolve<Spinner>(SPINNER_SYMBOL_KEY);
+  const spinner = container.resolve<Spinner>($YMBOL_KEY_SPINNER);
 
   try {
     if (cliOptions.cliLogo) {
@@ -57,7 +57,7 @@ export async function refreshCommandSync(cliOptions: TRefreshSchemaBaseOption) {
       resolved: resolvedPaths,
     };
 
-    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
+    container.register($YMBOL_KEY_APP_CONFIG, asValue(options));
 
     await refreshing(project, tsconfig, options);
   } catch (caught) {

@@ -1,16 +1,16 @@
 import { ProgressBar } from '#/cli/display/ProgressBar';
 import { container } from '#/modules/containers/container';
-import { PROGRESS_BAR_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_PROGRESS_BAR } from '#/modules/containers/keys';
 import { asValue } from 'awilix';
 import { isFalse } from 'my-easy-fp';
 
 export function makeProgressBar() {
-  if (isFalse(container.hasRegistration(PROGRESS_BAR_SYMBOL_KEY))) {
+  if (isFalse(container.hasRegistration($YMBOL_KEY_PROGRESS_BAR))) {
     const progressBar = new ProgressBar();
-    container.register(PROGRESS_BAR_SYMBOL_KEY, asValue(progressBar));
+    container.register($YMBOL_KEY_PROGRESS_BAR, asValue(progressBar));
 
     return progressBar;
   }
 
-  return container.resolve<ProgressBar>(PROGRESS_BAR_SYMBOL_KEY);
+  return container.resolve<ProgressBar>($YMBOL_KEY_PROGRESS_BAR);
 }

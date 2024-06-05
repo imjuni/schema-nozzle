@@ -1,7 +1,7 @@
 import type { TAddSchemaOption } from '#/configs/interfaces/TAddSchemaOption';
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import { container } from '#/modules/containers/container';
-import { INCLUDE_CONTAINER_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_INCLUDE_CONTAINER } from '#/modules/containers/keys';
 import { getIncludePatterns } from '#/modules/files/getIncludePatterns';
 import { IncludeContainer } from '#/modules/scopes/IncludeContainer';
 import { defaultExclude } from '#/modules/scopes/defaultExclude';
@@ -17,7 +17,7 @@ export function makeIncludeContianer(
     options: { absolute: true, ignore: defaultExclude, cwd: options.resolved.projectDir },
   });
 
-  container.register(INCLUDE_CONTAINER_SYMBOL_KEY, asValue(includeContainer));
+  container.register($YMBOL_KEY_INCLUDE_CONTAINER, asValue(includeContainer));
 
   return includeContainer;
 }

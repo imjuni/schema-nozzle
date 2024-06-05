@@ -18,7 +18,7 @@ import { upserts } from '#/databases/repository/upserts';
 import { getAddFiles } from '#/modules/cli/tools/getAddFiles';
 import { getAddTypes } from '#/modules/cli/tools/getAddTypes';
 import { container } from '#/modules/containers/container';
-import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
+import { $YMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import { createJsonSchema } from '#/modules/generators/createJsonSchema';
 import { makeSchemaGenerator } from '#/modules/generators/makeSchemaGenerator';
 import { makeExcludeContainer } from '#/modules/scopes/makeExcludeContainer';
@@ -46,7 +46,7 @@ export async function adding(
     if (diagnostics.type === 'fail') throw diagnostics.fail;
     if (diagnostics.pass === false) throw new Error('project compile error');
 
-    container.register(SYMBOL_KEY_APP_CONFIG, asValue(options));
+    container.register($YMBOL_KEY_APP_CONFIG, asValue(options));
     const dbPath = await getDatabaseFilePath(options);
 
     consola.verbose('options: ', JSON.stringify(options, undefined, 2));

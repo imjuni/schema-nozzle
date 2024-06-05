@@ -1,7 +1,7 @@
 import { CE_ALASQL_TABLE_NAME } from '#/databases/const-enum/CE_ALASQL_TABLE_NAME';
 import type { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { container } from '#/modules/containers/container';
-import { NOZZLE_PACKAGE_JSON_SYMBOL_KEY } from '#/modules/containers/keys';
+import { $YMBOL_KEY_NOZZLE_PACKAGE_JSON } from '#/modules/containers/keys';
 import type { AnySchemaObject } from 'ajv';
 import alasql from 'alasql';
 import type { PackageJson } from 'type-fest';
@@ -10,7 +10,7 @@ export function getDatabaseBuf(store: {
   style: CE_SCHEMA_ID_GENERATION_STYLE;
   store: Record<string, AnySchemaObject>;
 }) {
-  const packageJson = container.resolve<PackageJson>(NOZZLE_PACKAGE_JSON_SYMBOL_KEY);
+  const packageJson = container.resolve<PackageJson>($YMBOL_KEY_NOZZLE_PACKAGE_JSON);
   const buf = Buffer.from(
     JSON.stringify(
       {

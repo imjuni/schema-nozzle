@@ -1,33 +1,33 @@
-export const SYMBOL_KEY_TS_PROJECT = Symbol('symbol-key-ts-project');
+export const $YMBOL_KEY_TS_PROJECT = Symbol('symbol-key-ts-project');
 
-export const SYMBOL_KEY_TS_CONFIG = Symbol('symbol-key-ts-config');
+export const $YMBOL_KEY_TS_CONFIG = Symbol('symbol-key-ts-config');
 
-export const SYMBOL_KEY_APP_CONFIG = Symbol('symbol-key-app-config');
+export const $YMBOL_KEY_APP_CONFIG = Symbol('symbol-key-app-config');
 
-export const SCHEMA_GENERATOR_SYMBOL_KEY = Symbol('schema-generator-symbol-key');
+export const $YMBOL_KEY_CHEMA_GENERATOR = Symbol('symbol-key-schema-generator');
 
-export const INCLUDE_CONTAINER_SYMBOL_KEY = Symbol('include-container-symbol-key');
+export const $YMBOL_KEY_INCLUDE_CONTAINER = Symbol('symbol-key-include-container');
 
-export const EXCLUDE_CONTAINER_SYMBOL_KEY = Symbol('exclude-container-symbol-key');
+export const $YMBOL_KEY_EXCLUDE_CONTAINER = Symbol('symbol-key-exclude-container');
 
-export const SPINNER_SYMBOL_KEY = Symbol('spinner-symbol-key');
+export const $YMBOL_KEY_SPINNER = Symbol('symbol-key-spinner');
 
-export const PROGRESS_BAR_SYMBOL_KEY = Symbol('progress-bar-symbol-key');
+export const $YMBOL_KEY_PROGRESS_BAR = Symbol('symbol-key-progress-bar');
 
-export const SCHEMA_DATABASE_SYMBOL_KEY = Symbol('schema-database-symbol-key');
+export const $YMBOL_KEY_SCHEMA_DATABASE = Symbol('symbol-key-schema-database');
 
-export const SCHEMA_ORIGIN_DATABASE_SYMBOL_KEY = Symbol('schema-origin-database-symbol-key');
+export const $YMBOL_KEY_SCHEMA_ORIGIN_DATABASE = Symbol('symbol-key-schema-origin-database');
 
-export const REPOSITORY_REFS_SYMBOL_KEY = Symbol('repository-refs-symbol-key');
+export const $YMBOL_KEY_REPOSITORY_REFS = Symbol('symbol-key-repository-refs');
 
-export const REPOSITORY_SCHEMAS_SYMBOL_KEY = Symbol('repository-schemas-symbol-key');
+export const $YMBOL_KEY_REPOSITORY_SCHEMAS = Symbol('symbol-key-repository-schemas');
 
-export const STATEMENT_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-import-map-symbol-key');
+export const $YMBOL_KEY_STATEMENT_IMPORT_MAP = Symbol('symbol-key-statement-import-map');
 
-export const STATEMENT_FILE_IMPORT_MAP_SYMBOL_KEY = Symbol('statement-file-import-map-symbol-key');
+export const $YMBOL_KEY_STATEMENT_FILE_IMPORT_MAP = Symbol('symbol-key-statement-file-import-map');
 
-export const STATEMENT_EXPORT_MAP_SYMBOL_KEY = Symbol('statement-export-map-symbol-key');
+export const $YMBOL_KEY_STATEMENT_EXPORT_MAP = Symbol('symbol-key-statement-export-map');
 
-export const STATEMENT_FILE_EXPORT_MAP_SYMBOL_KEY = Symbol('statement-file-export-map-symbol-key');
+export const $YMBOL_KEY_STATEMENT_FILE_EXPORT_MAP = Symbol('symbol-key-statement-file-export-map');
 
-export const NOZZLE_PACKAGE_JSON_SYMBOL_KEY = Symbol('nozzle-package-json');
+export const $YMBOL_KEY_NOZZLE_PACKAGE_JSON = Symbol('symbol-key-nozzle-package-json');

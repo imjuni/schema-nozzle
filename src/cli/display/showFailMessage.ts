@@ -4,12 +4,12 @@ import type { TDeleteSchemaOption } from '#/configs/interfaces/TDeleteSchemaOpti
 import type { TRefreshSchemaOption } from '#/configs/interfaces/TRefreshSchemaOption';
 import type { CreateJSONSchemaError } from '#/errors/CreateJsonSchemaError';
 import { container } from '#/modules/containers/container';
-import { SYMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
+import { $YMBOL_KEY_APP_CONFIG } from '#/modules/containers/keys';
 import chalk from 'chalk';
 
 export function showFailMessage(errors: Readonly<CreateJSONSchemaError>[]) {
   const options = container.resolve<TAddSchemaOption | TRefreshSchemaOption | TDeleteSchemaOption>(
-    SYMBOL_KEY_APP_CONFIG,
+    $YMBOL_KEY_APP_CONFIG,
   );
 
   if (errors.length <= 0) {
