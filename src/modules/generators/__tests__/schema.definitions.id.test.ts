@@ -36,6 +36,7 @@ describe('getDefinitionsSchemaId', () => {
 
   it('definitions only', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: '$defs' },
       typeName: 'IHero',
       filePath: 'ability/IHero.ts',
       rootDirs: [pathe.resolve(process.cwd())],
@@ -52,6 +53,7 @@ describe('getDefinitionsSchemaId', () => {
 
   it('definitions that without file path and generic(include escape)', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: 'definitions' },
       typeName: 'TGeneric<T>',
       filePath: 'ability/TGeneric.ts',
       rootDirs: [pathe.resolve(process.cwd())],
@@ -63,11 +65,12 @@ describe('getDefinitionsSchemaId', () => {
       style: CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS,
     });
 
-    expect(id).toEqual('#/$defs/TGeneric_T_');
+    expect(id).toEqual('#/definitions/TGeneric_T_');
   });
 
   it('definitions that with file path with external type', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: '$defs' },
       typeName: 'IHeroine',
       rootDirs: [pathe.resolve(process.cwd())],
       encoding: {
@@ -83,6 +86,7 @@ describe('getDefinitionsSchemaId', () => {
 
   it('definitions that with file path', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: 'definitions' },
       typeName: 'IHero',
       filePath: 'ability/IHero.ts',
       rootDirs: [pathe.resolve(process.cwd())],
@@ -94,11 +98,12 @@ describe('getDefinitionsSchemaId', () => {
       style: CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS_WITH_PATH,
     });
 
-    expect(id).toEqual('#/$defs/ability/IHero');
+    expect(id).toEqual('#/definitions/ability/IHero');
   });
 
   it('definitions that with file path', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: '$defs' },
       typeName: 'IHero',
       rootDirs: [pathe.resolve(process.cwd())],
       encoding: {
@@ -114,6 +119,7 @@ describe('getDefinitionsSchemaId', () => {
 
   it('definitions that with file path and generic(include escape)', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: 'definitions' },
       typeName: 'TGeneric<T>',
       filePath: 'ability/TGeneric.ts',
       rootDirs: [pathe.resolve(process.cwd())],
@@ -125,11 +131,12 @@ describe('getDefinitionsSchemaId', () => {
       style: CE_SCHEMA_ID_GENERATION_STYLE.DEFINITIONS_WITH_PATH,
     });
 
-    expect(id).toEqual('#/$defs/ability/TGeneric_T_');
+    expect(id).toEqual('#/definitions/ability/TGeneric_T_');
   });
 
   it('definitions that with file path and external type', () => {
     const id = getDefinitionsSchemaId({
+      keys: { id: '$id', def: '$defs' },
       typeName: 'IHeroine',
       rootDirs: [pathe.resolve(process.cwd())],
       encoding: {

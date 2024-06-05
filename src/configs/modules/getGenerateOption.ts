@@ -17,6 +17,7 @@ export async function getGenerateOption(
   const rootDirs = getRootDirs(cwd, options.rootDirs);
   const useSchemaPath = options.useSchemaPath ?? false;
   const jsVar = options.jsVar ?? false;
+  const draft = options.draft ?? 7;
   const escapeChar = options.escapeChar ?? '_';
   const skipError = options.skipError ?? true;
   const serverUrl = options.serverUrl ?? '';
@@ -25,6 +26,7 @@ export async function getGenerateOption(
 
   return {
     include,
+    draft,
     exclude,
     rootDirs,
     skipError,

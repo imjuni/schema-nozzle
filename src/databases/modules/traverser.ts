@@ -1,4 +1,5 @@
 import type { IGenerateOption } from '#/configs/interfaces/IGenerateOption';
+import type { getKeys } from '#/databases/getKeys';
 import type { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { replaceId } from '#/databases/modules/replaceId';
 import { getSchemaId } from '#/modules/generators/getSchemaId';
@@ -8,6 +9,7 @@ import type { Config } from 'ts-json-schema-generator';
 
 type TTraverserParams = AnySchemaObject & {
   $$options: {
+    keys: ReturnType<typeof getKeys>;
     style: CE_SCHEMA_ID_GENERATION_STYLE;
     escapeChar: IGenerateOption['escapeChar'];
     rootDirs: IGenerateOption['rootDirs'];
@@ -25,7 +27,8 @@ export function traverser(context: TTraverserParams) {
         ? decodeURIComponent(ctx.value)
         : ctx.value;
 
-      const $id = getSchemaId({
+      const childId = getSchemaId({
+        keys: context.$$options.keys,
         typeName: replaceId(decodedSchemaId),
         style: context.$$options.style,
         escapeChar: context.$$options.escapeChar,
@@ -36,7 +39,7 @@ export function traverser(context: TTraverserParams) {
         },
       });
 
-      next[ctx.key] = $id;
+      next[ctx.key] = childId;
     }
 
     return next;

@@ -1,8 +1,11 @@
+import type { getKeys } from '#/databases/getKeys';
 import { CE_SCHEMA_ID_GENERATION_STYLE } from '#/databases/modules/const-enum/CE_SCHEMA_ID_GENERATION_STYLE';
 import { getDefinitionsSchemaId } from '#/modules/generators/getDefinitionsSchemaId';
 import { getPlainSchemaId } from '#/modules/generators/getPlainSchemaId';
 
 export interface ISchemaIdParams {
+  keys: ReturnType<typeof getKeys>;
+
   /**
    * type-name of the schema
    * */
@@ -28,6 +31,7 @@ export interface ISchemaIdParams {
 }
 
 export function getSchemaId({
+  keys,
   typeName,
   style,
   filePath,
@@ -52,6 +56,7 @@ export function getSchemaId({
   }
 
   const id = getDefinitionsSchemaId({
+    keys,
     typeName,
     style,
     filePath,

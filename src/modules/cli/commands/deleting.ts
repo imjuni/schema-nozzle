@@ -113,6 +113,7 @@ export async function deleting(
         }
 
         const items = createRecord({
+          draft: options.draft,
           style: schemaIdStyle,
           escapeChar: options.escapeChar,
           rootDirs: options.rootDirs,
@@ -132,7 +133,11 @@ export async function deleting(
 
   await upserts(generatedContainer);
 
-  const store = await createStore(options.serverUrl, schemaIdStyle);
+  const store = await createStore({
+    draft: options.draft,
+    serverUrl: options.serverUrl,
+    style: schemaIdStyle,
+  });
   const buf = getDatabaseBuf(store);
 
   await fs.promises.writeFile(dbPath, buf);
