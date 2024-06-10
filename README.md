@@ -10,13 +10,14 @@
 [![codecov](https://codecov.io/gh/imjuni/schema-nozzle/branch/master/graph/badge.svg?token=cYJEAvZUFU)](https://codecov.io/gh/imjuni/schema-nozzle)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-`schema-nozzle` generates json-schema in the **TypeScript** `interface`, `type alias`, `class` and `enum`.
+`schema-nozzle` generates JSON Schema from TypeScript interfaces, type aliases, classes, and enums. When developing a RESTful API server using frameworks like Express.js or Fastify.js, you might have experienced the need to write both JSON Schema and TypeScript types. Although the code is different, the meaning is the same, making it feel like doing the same work twice. To solve this problem, tools like [json-schema-to-ts](https://www.npmjs.com/package/json-schema-to-ts) are used. Schema-nozzle does the reverse of json-schema-to-ts, automating the process of converting TypeScript types into JSON Schema.
 
 Why `schema-nozzle`?
 
-- json-schema good solution for that validate request, response DTO
-- share code documentation with [jsdoc](https://jsdoc.app/) or [typedoc](https://typedoc.org/)
-- swagger.io documentation from json-schema using [@fastify/swagger](https://www.npmjs.com/package/@fastify/swagger), Don't need any effort!
+- Generates JSON Schema from TypeScript types.
+- Integrates well with documentation tools like [JSDoc](https://jsdoc.app/) and [TypeDoc](https://typedoc.org/) as it uses TypeScript types.
+- When using Fastify, it can automate validation and automatically generate Swagger documentation.
+- Supports various shapes of generating JSON Schema.
 
 Strict JSON data validations are need many effort. You can reduce effort using `schema-nozzle` and Feel free 🤩!
 
@@ -260,10 +261,10 @@ A complete example of using schema-nozzle to create a swagger.io document and us
 - [x] add watch command: watch `.nozzlefiles` list and add/del schema
 - [x] enhance init command: find varity name of tsconfig. eg. tsconfig.\*.json
 - [ ] tag support each schema
-- [ ] load, get, set interface for schema store
+- [x] load, get, set interface for schema store
 - [ ] documentation site
-- [ ] $id field enhance: enclude directory path like `#/greeting/hello/world`
-- [ ] add more test
+- [x] $id field enhance: enclude directory path like `#/greeting/hello/world`
+- [x] add more test
 
 ## License
 

@@ -98,7 +98,6 @@
     "ora": "^5.4.1",
     "pathe": "^1.1.2",
     "prettier": "^3.2.5",
-    "ts-json-schema-generator": "2.1.1",
     "ts-morph": "^22.0.0",
     "ts-morph-short": "^0.9.1",
     "ts-pattern": "^5.1.1",
@@ -164,6 +163,7 @@
     ]
   },
   "peerDependencies": {
-    "ajv": "^8.12.0"
+    "ts-json-schema-generator": "^2.0.0",
+    "ajv": "^8.0.0"
   }
 }
