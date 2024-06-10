@@ -3,18 +3,20 @@
 ![ts](https://flat.badgen.net/badge/Built%20With/TypeScript/blue)
 [![Download Status](https://img.shields.io/npm/dw/schema-nozzle.svg?style=flat-square)](https://npmcharts.com/compare/schema-nozzle) [![Github Star](https://img.shields.io/github/stars/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle) [![Github Issues](https://img.shields.io/github/issues-raw/imjuni/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/issues) [![NPM version](https://img.shields.io/npm/v/schema-nozzle.svg?style=flat-square)](https://www.npmjs.com/package/schema-nozzle) [![License](https://img.shields.io/npm/l/schema-nozzle.svg?style=flat-square)](https://github.com/imjuni/schema-nozzle/blob/master/LICENSE)
 
-`schema-nozzle`은 타입스크립트 `interface`, `type alias`, `class`, `enum`에서 json-schema를 생성합니다.
+`schema-nozzle`은 타입스크립트 `interface`, `type alias`, `class`, `enum`에서 json-schema를 생성합니다. express.js, fastify.js를 사용해서 RESTful API 서버를 개발할 때 json-schema를 작성하고, 타입도 작성하는 경험을 해보았을 것입니다. json-schema와 타입은 코드는 다르지만 의미는 동일하여 이를 모두 작성하는 것은 같은 일을 두 번하는 것과 같습니다. 그래서 [json-schema-to-ts](https://www.npmjs.com/package/json-schema-to-ts)와 같은 도구를 사용합니다. schema-nozzle는 json-schema-to-ts의 역, 타입스크립트 타입을 json-schema로 변환하는 작업을 자동화 합니다.
 
 왜 `schema-nozzle`을 사용해야 하나요?
 
-- json-schema는 json 데이터가 DTO 형식에 올바른지 검증할 수 있는 방법입니다
-- jsdoc, typedoc와 같은 문서화 도구와 문서를 공유할 수 있습니다
-- fastify를 사용하면 swagger 문서도 자동으로 생성할 수 있습니다
+- 타입스크립트 타입을 json-schema로 변환합니다
+- 타입스크립트 타입을 사용하기 때문에 jsdoc, typedoc와 같은 문서화 도구와 잘 어울립니다
+- fastify를 사용하면 validation을 자동화 할 수 있고, swagger 문서도 자동으로 작성합니다
+- 여러가지 json-schema 생성 방식을 지원합니다
 
-데이터 정합성 검증은 많은 시간이 필요한 작업입니다. `schema-nozzle`을 사용해서 데이터 정합성 검증 로직 작성에 소비되는 시간을 최소화 하세요!
+`schema-nozzle`로 json-schema를 자동으로 추출하세요!
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -38,7 +40,13 @@ init 명령어를 사용하면 `.nozzlerc` 파일과 `.nozzlefiles` 파일을 �
 ## Installation
 
 ```bash
-npm install schema-nozzle
+# npm
+npm install schema-nozzle --save-dev
+```
+
+```bash
+# npm
+pnpm add schema-nozzle --dev
 ```
 
 ## Usage
